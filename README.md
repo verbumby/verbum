@@ -1,2 +1,2 @@
 # verbum
-An online dictionary platform
+Online dictionary platform
