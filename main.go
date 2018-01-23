@@ -25,7 +25,7 @@ func bootstrap() error {
 		}
 	}
 
-	http.HandleFunc("/admin", func(w http.ResponseWriter, r *http.Request) {
+	http.HandleFunc("/admin/", func(w http.ResponseWriter, r *http.Request) {
 		if err := tm.Render("admin", w, nil); err != nil {
 			http.Error(w, "", http.StatusInternalServerError)
 		}

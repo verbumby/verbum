@@ -6,6 +6,7 @@ import thunkMiddleware from 'redux-thunk'
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom'
 
 import TopNav from './core/components/top-nav'
+import Dictionaries from './dictionaries/components/index'
 import HomePage from './home/components/home-page'
 import Messages from './messages/messages'
 
@@ -33,9 +34,10 @@ ReactDOM.render(
                     <TopNav />
                     <Messages />
                 </div>
-                <div className="container-fluid">
+                <div className="container">
                     <Switch>
                         <Route exact path="/" component={HomePage} />
+                        <Route path="/dictionaries" component={Dictionaries} />
                     </Switch>
                 </div>
             </div>
