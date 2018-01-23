@@ -30,6 +30,8 @@ func bootstrap() error {
 			http.Error(w, "", http.StatusInternalServerError)
 		}
 	})
+	statics := http.FileServer(http.Dir("statics"))
+	http.Handle("/statics/", http.StripPrefix("/statics/", statics))
 
 	log.Println("listening on :8080")
 	err := http.ListenAndServe(":8080", nil)

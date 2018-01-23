@@ -14,16 +14,22 @@
         <script defer src="https://use.fontawesome.com/releases/v5.0.0/js/all.js"></script>
     </head>
     <body>
-        <section class="section">
-            <div class="container">
-              <h1 class="title">
-                Hello World
-              </h1>
-              <p class="subtitle">
-                My first website with <strong>Bulma</strong>!
-              </p>
-            </div>
-          </section>
+        <div id="root"></div>
+
+        <script crossorigin src="https://unpkg.com/react@16/umd/react.production.min.js"></script>
+        <script crossorigin src="https://unpkg.com/react-dom@16/umd/react-dom.production.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/redux/3.7.2/redux.min.js" integrity="sha256-Y8AuGIYFWCOBO5/w1oXzcEErW4JALGUWiG5VWleVWyw=" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/react-redux/5.0.6/react-redux.min.js" integrity="sha256-8eU0LhHhnabf4Va66EQUxv2fkHer7yLgdQPgI5/hnRs=" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/redux-thunk/2.2.0/redux-thunk.min.js" integrity="sha256-2xw5MpPcdu82/nmW2XQ6Ise9hKxziLWV2GupkS9knuw=" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/react-router-dom/4.2.2/react-router-dom.min.js" integrity="sha256-jLCuf08f087TmqfJOoAIRiS+J81kiDT4hdxuxdmPyUQ=" crossorigin="anonymous"></script>
+        <script type="text/javascript">
+            window.verbumInitData = {
+                user: {
+                    name: 'Vadzim Ramanenka'
+                }
+            }
+        </script>
+        <script src="{{ "/statics/admin.js" | staticURL }}"></script>
     </body>
 </html>
 {{end}}

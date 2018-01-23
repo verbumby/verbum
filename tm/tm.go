@@ -4,6 +4,9 @@ import (
 	"fmt"
 	"html/template"
 	"io"
+	"log"
+	"os"
+	"strconv"
 
 	"github.com/pkg/errors"
 )
@@ -12,7 +15,9 @@ var templates = map[string]*template.Template{}
 
 // Compile compiles a named templates from files
 func Compile(name string, files []string) error {
-	t, err := template.ParseFiles(files...)
+	t, err := template.New(name).Funcs(template.FuncMap{
+		"staticURL": staticURL,
+	}).ParseFiles(files...)
 	if err != nil {
 		return errors.Wrap(err, "parse files")
 	}
@@ -32,4 +37,12 @@ func Render(name string, w io.Writer, data interface{}) error {
 	}
 
 	return nil
+}
+
+func staticURL(file string) string {
+	info, err := os.Stat("." + file)
+	if err != nil {
+		log.Fatalln(err)
+	}
+	return file + "?" + strconv.FormatInt(info.ModTime().Unix(), 10)
 }
