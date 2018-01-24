@@ -8,12 +8,12 @@ export default class Index extends React.Component {
     render() {
         const { path } = this.props.match
         return (
-            <section className="section">
+            <div className="container is-fluid">
                 <Switch>
                     <Route exact path={path} component={ListPage} />
                     <Route path={`${path}/new`} component={NewPage} />
                 </Switch>
-            </section>
+            </div>
         )
     }
 }

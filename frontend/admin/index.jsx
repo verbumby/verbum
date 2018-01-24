@@ -34,12 +34,12 @@ ReactDOM.render(
                     <TopNav />
                     <Messages />
                 </div>
-                <div className="container">
+                <section className="section">
                     <Switch>
                         <Route exact path="/" component={HomePage} />
                         <Route path="/dictionaries" component={Dictionaries} />
                     </Switch>
-                </div>
+                </section>
             </div>
         </Router>
     </Provider>,
