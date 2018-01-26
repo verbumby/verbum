@@ -1,4 +1,7 @@
 import React from 'react'
+import { Link } from 'react-router-dom'
+
+export * from './form/input-element'
 
 export default class Form extends React.Component {
     render() {
@@ -9,7 +12,7 @@ export default class Form extends React.Component {
                     <button className="button is-link">Save</button>
                 </p>
                 <p class="control">
-                    <button class="button">Cancel</button>
+                    <Link className="button" to={this.props.onCancelRedirectTo}>Cancel</Link>
                 </p>
             </div>
         </div>)
