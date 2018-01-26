@@ -5,7 +5,7 @@ class Messages extends React.Component {
     render() {
         return (<div className="messages">
             {this.props.messages.map(message => (
-                <div key={message.id} className={`alert alert-${message.level}`}>
+                <div key={message.id} className={`notification is-${message.level}`}>
                     {message.message}
                 </div>
             ))}
