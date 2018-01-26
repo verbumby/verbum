@@ -23,5 +23,6 @@ module.exports = {
     'react-redux': 'ReactRedux',
     'redux-thunk': 'ReduxThunk',
     'react-router-dom': 'ReactRouterDOM',
+    'prop-types': 'PropTypes',
   }
 };
