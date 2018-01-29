@@ -14,3 +14,4 @@ vendor/
 verbum
 node_modules/
 statics/admin.js
+*_reform.go

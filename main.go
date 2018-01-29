@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"net/http"
 
@@ -25,6 +26,7 @@ func bootstrap() error {
 		}
 	}
 
+	http.HandleFunc("/admin/api/dictionaries", dictionaryCollectionHandler)
 	http.HandleFunc("/admin/", func(w http.ResponseWriter, r *http.Request) {
 		if err := tm.Render("admin", w, nil); err != nil {
 			http.Error(w, "", http.StatusInternalServerError)
@@ -40,4 +42,11 @@ func bootstrap() error {
 	}
 
 	return nil
+}
+
+func dictionaryCollectionHandler(w http.ResponseWriter, r *http.Request) {
+	switch r.Method {
+	case http.MethodPost:
+		fmt.Fprintln(w, "OK")
+	}
 }

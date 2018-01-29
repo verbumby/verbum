@@ -7,9 +7,15 @@
   revision = "645ef00459ed84a119197bfb8d8205042c6df63d"
   version = "v0.8.0"
 
+[[projects]]
+  name = "gopkg.in/reform.v1"
+  packages = ["."]
+  revision = "161dee950cbd38085dac33c87ef81140f2da99cc"
+  version = "v1.3.1"
+
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "df403961fabdd5cf36043d4eb5cfc5f765b639bcddf753aba3cd50bf19a802b8"
+  inputs-digest = "cf2d52cb5137ba1584784b8e2c931b08a08aa44180090120d16729f6655d1091"
   solver-name = "gps-cdcl"
   solver-version = 1
