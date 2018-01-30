@@ -1,0 +1,19 @@
+version: '3.4'
+services:
+  db:
+    image: mariadb:10.2
+    environment:
+      - MYSQL_ALLOW_EMPTY_PASSWORD=true
+      - MYSQL_DATABASE=verbum
+    volumes:
+      - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql
+      - db:/var/lib/mysql
+
+  http:
+    build: .
+    command: /verbum/verbum -db-host db
+    ports:
+      - "8080:8080"
+
+volumes:
+  db:

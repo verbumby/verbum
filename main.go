@@ -3,6 +3,8 @@ package main
 import (
 	"database/sql"
 	"encoding/json"
+	"flag"
+	"fmt"
 	"log"
 	"net/http"
 
@@ -16,7 +18,10 @@ import (
 )
 
 var (
-	DB *reform.DB
+	DB     *reform.DB
+	Config struct {
+		DBHost string
+	}
 )
 
 func main() {
@@ -27,9 +32,11 @@ func main() {
 }
 
 func bootstrap() error {
+	flag.StringVar(&Config.DBHost, "db-host", "localhost", "hostname of the database server")
+	flag.Parse()
 
 	// TODO: parametrize db connection
-	db, err := sql.Open("mysql", "root@/verbum")
+	db, err := sql.Open("mysql", fmt.Sprintf("root@tcp(%s:3306)/verbum", Config.DBHost))
 	if err != nil {
 		return errors.Wrap(err, "open db")
 	}
