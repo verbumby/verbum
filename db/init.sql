@@ -1,0 +1,4 @@
+CREATE TABLE dicts (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    title VARCHAR(200)
+);

@@ -1,12 +1,22 @@
 package main
 
 import (
-	"fmt"
+	"database/sql"
+	"encoding/json"
 	"log"
 	"net/http"
 
+	"gopkg.in/reform.v1"
+	"gopkg.in/reform.v1/dialects/mysql"
+
+	_ "github.com/go-sql-driver/mysql"
 	"github.com/pkg/errors"
+	"github.com/verbumby/verbum/dict"
 	"github.com/verbumby/verbum/tm"
+)
+
+var (
+	DB *reform.DB
 )
 
 func main() {
@@ -17,6 +27,14 @@ func main() {
 }
 
 func bootstrap() error {
+
+	// TODO: parametrize db connection
+	db, err := sql.Open("mysql", "root@/verbum")
+	if err != nil {
+		return errors.Wrap(err, "open db")
+	}
+	DB = reform.NewDB(db, mysql.Dialect, reform.NewPrintfLogger(log.Printf))
+
 	templates := map[string][]string{
 		"admin": []string{"./templates/admin/layout.html"},
 	}
@@ -36,7 +54,7 @@ func bootstrap() error {
 	http.Handle("/statics/", http.StripPrefix("/statics/", statics))
 
 	log.Println("listening on :8080")
-	err := http.ListenAndServe(":8080", nil)
+	err = http.ListenAndServe(":8080", nil)
 	if err != nil {
 		return errors.Wrap(err, "listen and serve")
 	}
@@ -47,6 +65,16 @@ func bootstrap() error {
 func dictionaryCollectionHandler(w http.ResponseWriter, r *http.Request) {
 	switch r.Method {
 	case http.MethodPost:
-		fmt.Fprintln(w, "OK")
+		d := &dict.Dict{}
+		if err := json.NewDecoder(r.Body).Decode(d); err != nil {
+			http.Error(w, errors.Wrap(err, "decode body").Error(), http.StatusBadRequest)
+			return
+		}
+
+		if err := DB.Save(d); err != nil {
+			log.Println(errors.Wrap(err, "save dictionary"))
+			http.Error(w, "", http.StatusInternalServerError)
+		}
+		log.Println(d)
 	}
 }
