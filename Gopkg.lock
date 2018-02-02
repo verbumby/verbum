@@ -8,6 +8,18 @@
   version = "v1.3"
 
 [[projects]]
+  name = "github.com/gorilla/context"
+  packages = ["."]
+  revision = "1ea25387ff6f684839d82767c1733ff4d4d15d0a"
+  version = "v1.1"
+
+[[projects]]
+  name = "github.com/gorilla/mux"
+  packages = ["."]
+  revision = "53c1911da2b537f792e7cafcb446b05ffe33b996"
+  version = "v1.6.1"
+
+[[projects]]
   name = "github.com/pkg/errors"
   packages = ["."]
   revision = "645ef00459ed84a119197bfb8d8205042c6df63d"
@@ -17,6 +29,7 @@
   name = "gopkg.in/reform.v1"
   packages = [
     ".",
+    "dialects/mysql",
     "parse"
   ]
   revision = "161dee950cbd38085dac33c87ef81140f2da99cc"
@@ -25,6 +38,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "7324a2ecba7f3f13441cd9a9414b784405ffae9aa572c84a96ae071937ce5f27"
+  inputs-digest = "9efceeb212d16b1fbca0362424fd57f8dc51afe8527ab464ffaaf8a6bc6c2fe5"
   solver-name = "gps-cdcl"
   solver-version = 1

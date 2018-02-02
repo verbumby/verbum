@@ -2,7 +2,6 @@ package main
 
 import (
 	"database/sql"
-	"encoding/json"
 	"flag"
 	"fmt"
 	"log"
@@ -12,13 +11,17 @@ import (
 	"gopkg.in/reform.v1/dialects/mysql"
 
 	_ "github.com/go-sql-driver/mysql"
+	"github.com/gorilla/mux"
 	"github.com/pkg/errors"
 	"github.com/verbumby/verbum/dict"
 	"github.com/verbumby/verbum/tm"
 )
 
 var (
-	DB     *reform.DB
+	// DB reform database handler
+	DB *reform.DB
+
+	// Config global application config
 	Config struct {
 		DBHost string
 	}
@@ -51,37 +54,29 @@ func bootstrap() error {
 		}
 	}
 
-	http.HandleFunc("/admin/api/dictionaries", dictionaryCollectionHandler)
-	http.HandleFunc("/admin/", func(w http.ResponseWriter, r *http.Request) {
+	r := mux.NewRouter()
+	r.Handle("/admin/api/dictionaries", &RecordListHandler{
+		Table: dict.DictTable,
+		DB:    DB,
+	}).Methods(http.MethodGet)
+	r.Handle("/admin/api/dictionaries", &RecordCreateHandler{
+		Table: dict.DictTable,
+		DB:    DB,
+	}).Methods(http.MethodPost)
+	r.PathPrefix("/admin/").HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if err := tm.Render("admin", w, nil); err != nil {
 			http.Error(w, "", http.StatusInternalServerError)
 		}
 	})
+
 	statics := http.FileServer(http.Dir("statics"))
-	http.Handle("/statics/", http.StripPrefix("/statics/", statics))
+	r.PathPrefix("/statics/").Handler(http.StripPrefix("/statics/", statics))
 
 	log.Println("listening on :8080")
-	err = http.ListenAndServe(":8080", nil)
+	err = http.ListenAndServe(":8080", r)
 	if err != nil {
 		return errors.Wrap(err, "listen and serve")
 	}
 
 	return nil
-}
-
-func dictionaryCollectionHandler(w http.ResponseWriter, r *http.Request) {
-	switch r.Method {
-	case http.MethodPost:
-		d := &dict.Dict{}
-		if err := json.NewDecoder(r.Body).Decode(d); err != nil {
-			http.Error(w, errors.Wrap(err, "decode body").Error(), http.StatusBadRequest)
-			return
-		}
-
-		if err := DB.Save(d); err != nil {
-			log.Println(errors.Wrap(err, "save dictionary"))
-			http.Error(w, "", http.StatusInternalServerError)
-		}
-		log.Println(d)
-	}
 }

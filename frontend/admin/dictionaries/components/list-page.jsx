@@ -1,8 +1,24 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
+import { connect } from 'react-redux'
+import { bindActionCreators } from 'redux'
 
-export default class ListPage extends React.Component {
+import { fetchList, leaveList } from '../actions'
+
+class ListPage extends React.Component {
+    componentWillMount() {
+        this.props.fetchList()
+    }
+
+    componentWillUnmount() {
+        this.props.leaveList()
+    }
+
     render() {
+        if (!this.props.data) {
+            return null
+        }
+
         const { url } = this.props.match
         return (<div>
             <div className="level">
@@ -18,9 +34,22 @@ export default class ListPage extends React.Component {
                 </div>
             </div>
             <hr />
+            <table className="table is-hoverable is-fullwidth">
+                <thead>
+                    <tr><th>Title</th></tr>
+                </thead>
+                <tbody>
+                    {this.props.data.map(item => <tr><td>{item.Title}</td></tr>)}
+                </tbody>
+            </table>
 
-
-            Dict list
         </div>)
     }
 }
+
+export default connect(
+    state => ({
+        data: state.dictionaries.list,
+    }),
+    dispatch => bindActionCreators({ fetchList, leaveList }, dispatch),
+)(ListPage)
