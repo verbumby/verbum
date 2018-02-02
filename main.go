@@ -63,6 +63,9 @@ func bootstrap() error {
 		Table: dict.DictTable,
 		DB:    DB,
 	}).Methods(http.MethodPost)
+	r.PathPrefix("/admin/api/articles").HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		http.Error(w, "", http.StatusNotImplemented)
+	})
 	r.PathPrefix("/admin/").HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if err := tm.Render("admin", w, nil); err != nil {
 			http.Error(w, "", http.StatusInternalServerError)

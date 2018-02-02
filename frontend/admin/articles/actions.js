@@ -1,0 +1,18 @@
+import { req } from '../utils'
+
+export const fetchList = () => req('/admin/api/articles', {
+    actionPrefix: 'ARTICLES/LIST/FETCH',
+    errorMessagePrefix: 'Failed to fetch Articles list',
+})
+
+export const leaveList = () => ({ type: 'ARTICLES/LIST/LEAVE' })
+
+export const createRecord = ({ formData }) => req('/admin/api/articles', {
+    options: {
+        method: 'post',
+        body: JSON.stringify(formData),
+    },
+    actionPrefix: 'ARTICLES/RECORD/CREATE',
+    errorMessagePrefix: 'Failed to create article',
+    successMessage: 'Article has been created successfully',
+})

@@ -10,9 +10,8 @@ class TopNav extends React.Component {
             </div>
             <div className="navbar-menu">
                 <div className="navbar-start">
-                    <Route path="/dictionaries" children={({ match }) => (
-                        <Link className={`navbar-item ${match ? 'is-active' : ''}`} to="/dictionaries">Dictionaries</Link>
-                    )} />
+                    <NavLink path="/dictionaries">Dictionaries</NavLink>
+                    <NavLink path="/articles">Articles</NavLink>
                 </div>
                 <div className="navbar-end">
                     <div className="navbar-item">
@@ -23,6 +22,10 @@ class TopNav extends React.Component {
         </nav>)
     }
 }
+
+const NavLink = ({ path, children }) => <Route path={path} children={({ match }) => (
+    <Link className={`navbar-item ${match ? 'is-active' : ''}`} to={path}>{children}</Link>
+)} />
 
 export default withRouter(connect(
     store => ({
