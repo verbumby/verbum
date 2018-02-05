@@ -2,3 +2,8 @@ CREATE TABLE dicts (
     id INT PRIMARY KEY AUTO_INCREMENT,
     title VARCHAR(200)
 );
+
+CREATE TABLE articles (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    content VARCHAR(10000)
+);

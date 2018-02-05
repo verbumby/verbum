@@ -13,6 +13,7 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/gorilla/mux"
 	"github.com/pkg/errors"
+	"github.com/verbumby/verbum/article"
 	"github.com/verbumby/verbum/dict"
 	"github.com/verbumby/verbum/tm"
 )
@@ -63,9 +64,14 @@ func bootstrap() error {
 		Table: dict.DictTable,
 		DB:    DB,
 	}).Methods(http.MethodPost)
-	r.PathPrefix("/admin/api/articles").HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		http.Error(w, "", http.StatusNotImplemented)
-	})
+	r.Handle("/admin/api/articles", &RecordListHandler{
+		Table: article.ArticleTable,
+		DB:    DB,
+	}).Methods(http.MethodGet)
+	r.Handle("/admin/api/articles", &RecordCreateHandler{
+		Table: article.ArticleTable,
+		DB:    DB,
+	}).Methods(http.MethodPost)
 	r.PathPrefix("/admin/").HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if err := tm.Render("admin", w, nil); err != nil {
 			http.Error(w, "", http.StatusInternalServerError)

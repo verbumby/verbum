@@ -9,7 +9,8 @@ RUN dep ensure -v -vendor-only
 COPY *.go ./
 COPY dict dict/
 COPY tm tm/
-RUN (cd dict && go generate)
+RUN (cd dict && go generate) \
+    && (cd article && go generate)
 RUN go install
 
 FROM node:9 as frontend

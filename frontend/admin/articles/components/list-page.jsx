@@ -39,7 +39,7 @@ class ListPage extends React.Component {
                     <tr><th>Article</th></tr>
                 </thead>
                 <tbody>
-                    {this.props.data.map(item => <tr><td>{item.Article}</td></tr>)}
+                    {this.props.data.map(item => <tr><td>{item.Content}</td></tr>)}
                 </tbody>
             </table>
 
