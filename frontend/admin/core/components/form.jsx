@@ -2,6 +2,7 @@ import React from 'react'
 import { Link } from 'react-router-dom'
 
 export * from './form/input-element'
+export * from './form/textarea-element'
 
 export default class Form extends React.Component {
     constructor(props) {
