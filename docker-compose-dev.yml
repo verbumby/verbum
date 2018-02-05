@@ -9,4 +9,5 @@ services:
       - MYSQL_DATABASE=verbum
     volumes:
       - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql
+      - ./db/config.cnf:/etc/mysql/conf.d/config.cnf
       - ./db/data:/var/lib/mysql
