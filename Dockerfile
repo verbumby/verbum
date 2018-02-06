@@ -8,6 +8,7 @@ COPY Gopkg* ./
 RUN dep ensure -v -vendor-only
 COPY *.go ./
 COPY dict dict/
+COPY article article/
 COPY tm tm/
 RUN (cd dict && go generate) \
     && (cd article && go generate)

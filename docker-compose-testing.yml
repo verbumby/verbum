@@ -16,5 +16,13 @@ services:
     ports:
       - "8080:8080"
 
+  sphinx:
+    build: ./sphinx
+    volumes:
+      - sphinx:/var/data
+      - sphinx-logs:/var/log
+
 volumes:
   db:
+  sphinx:
+  sphinx-logs:

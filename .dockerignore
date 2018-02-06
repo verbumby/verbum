@@ -1,3 +1,4 @@
-db/data
+db/
+sphinx/
 vendor
 node_modules

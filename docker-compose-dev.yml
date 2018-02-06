@@ -11,3 +11,11 @@ services:
       - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql
       - ./db/config.cnf:/etc/mysql/conf.d/config.cnf
       - ./db/data:/var/lib/mysql
+
+  sphinx:
+    build: ./sphinx
+    ports:
+      - "9306:9306"
+    volumes:
+      - ./sphinx/data:/var/data
+      - ./sphinx/logs:/var/log
