@@ -6,6 +6,6 @@ package article
 //
 // reform:articles
 type Article struct {
-	ID      int32  `reform:"id,pk"`
-	Content string `reform:"content"`
+	ID      int32  `reform:"id,pk" json:"id"`
+	Content string `reform:"content" json:"content"`
 }

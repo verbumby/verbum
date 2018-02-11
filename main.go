@@ -72,6 +72,10 @@ func bootstrap() error {
 		Table: article.ArticleTable,
 		DB:    DB,
 	}).Methods(http.MethodPost)
+	r.Handle("/admin/api/articles/{ID}", &RecordFetchHandler{
+		Table: article.ArticleTable,
+		DB:    DB,
+	}).Methods(http.MethodGet)
 	r.PathPrefix("/admin/").HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if err := tm.Render("admin", w, nil); err != nil {
 			http.Error(w, "", http.StatusInternalServerError)

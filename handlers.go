@@ -5,7 +5,11 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"strconv"
 	"strings"
+
+	"github.com/gorilla/mux"
+	"github.com/pkg/errors"
 
 	"gopkg.in/reform.v1"
 )
@@ -51,4 +55,40 @@ func (h *RecordListHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	}{
 		Data: records,
 	})
+}
+
+// RecordFetchHandler record fetch handler
+type RecordFetchHandler struct {
+	Table reform.Table
+	DB    *reform.DB
+}
+
+func (h *RecordFetchHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	id, err := parseIntID(vars["ID"])
+	if err != nil {
+		http.Error(w, errors.Wrap(err, "parse ID param").Error(), http.StatusBadRequest)
+		return
+	}
+	record, err := h.DB.FindByPrimaryKeyFrom(h.Table, id)
+	if err != nil {
+		http.Error(w, "", http.StatusInternalServerError)
+		log.Println(errors.Wrap(err, "find by primary key"))
+		return
+	}
+
+	json.NewEncoder(w).Encode(struct {
+		Data interface{} `json:"data"`
+	}{
+		Data: record,
+	})
+}
+
+func parseIntID(str string) (int, error) {
+	id64, err := strconv.ParseInt(str, 10, 32)
+	if err != nil {
+		return 0, errors.Wrap(err, "parse int")
+	}
+
+	return int(id64), nil
 }

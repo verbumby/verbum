@@ -11,6 +11,18 @@ const list = (state = [], action) => {
     }
 }
 
+const record = (state = {}, action) => {
+    switch (action.type) {
+        case 'ARTICLES/RECORD/FETCH/FULFILLED':
+            return { ...state, data: action.data }
+        case 'ARTICLES/RECORD/LEAVE':
+            return {}
+        default:
+            return state
+    }
+}
+
 export default combineReducers({
     list,
+    record,
 })
