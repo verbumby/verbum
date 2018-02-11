@@ -26,6 +26,15 @@
   version = "v0.8.0"
 
 [[projects]]
+  branch = "master"
+  name = "golang.org/x/net"
+  packages = [
+    "html",
+    "html/atom"
+  ]
+  revision = "f5dfe339be1d06f81b22525fe34671ee7d2c8904"
+
+[[projects]]
   name = "gopkg.in/reform.v1"
   packages = [
     ".",
@@ -38,6 +47,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "9efceeb212d16b1fbca0362424fd57f8dc51afe8527ab464ffaaf8a6bc6c2fe5"
+  inputs-digest = "39aa4fa2a6a60776ebe3a3354b2c3a74c92044624ae5e5a491bbbdbc07b2901c"
   solver-name = "gps-cdcl"
   solver-version = 1
