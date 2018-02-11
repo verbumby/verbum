@@ -27,7 +27,16 @@ func (h *RecordSaveHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if err := h.DB.Save(record); err != nil {
+	var err error
+	if record.HasPK() {
+		err = h.DB.Update(record)
+		if err == reform.ErrNoRows {
+			err = nil
+		}
+	} else {
+		err = h.DB.Insert(record)
+	}
+	if err != nil {
 		log.Printf("save record: %v", err)
 		http.Error(w, "", http.StatusInternalServerError)
 		return
