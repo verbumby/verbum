@@ -14,7 +14,7 @@ export const createRecord = ({ formData }) => req('/admin/api/articles', {
     },
     actionPrefix: 'ARTICLES/RECORD/CREATE',
     errorMessagePrefix: 'Failed to create article',
-    successMessage: 'Article has been created successfully',
+    successMessage: 'Article has been created',
 })
 
 export const leaveRecord = () => ({ type: 'ARTICLES/RECORD/LEAVE' })
@@ -22,4 +22,14 @@ export const leaveRecord = () => ({ type: 'ARTICLES/RECORD/LEAVE' })
 export const fetchRecord = (articleID)  => req(`/admin/api/articles/${articleID}`, {
     actionPrefix: 'ARTICLES/RECORD/FETCH',
     errorMessagePrefix: 'Failed to fetch article',
+})
+
+export const updateRecord = ({ formData }) => req(`/admin/api/articles`, {
+    options: {
+        method: 'post',
+        body: JSON.stringify(formData),
+    },
+    actionPrefix: 'ARTICLES/RECORD/UPDATE',
+    errorMessagePrefix: 'Failed to update article',
+    successMessage: 'Article has been updated',
 })

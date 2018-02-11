@@ -37,12 +37,14 @@ class ListPage extends React.Component {
             <table className="table is-hoverable is-fullwidth">
                 <thead>
                     <tr>
-                        <th>Article</th>
+                        <th>ID</th>
+                        <th>Content</th>
                         <th></th>
                     </tr>
                 </thead>
                 <tbody>
                     {this.props.data.map(item => <tr>
+                        <td>{item.id}</td>
                         <td>{item.content}</td>
                         <td><Link to={`${url}/${item.id}/edit`} className="button">
                             <i class="fas fa-edit"></i>&nbsp;Edit</Link>

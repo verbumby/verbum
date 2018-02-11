@@ -14,13 +14,13 @@ import (
 	"gopkg.in/reform.v1"
 )
 
-// RecordCreateHandler record create handler
-type RecordCreateHandler struct {
+// RecordSaveHandler record create handler
+type RecordSaveHandler struct {
 	Table reform.Table
 	DB    *reform.DB
 }
 
-func (h *RecordCreateHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+func (h *RecordSaveHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	record := h.Table.NewRecord()
 	if err := json.NewDecoder(r.Body).Decode(record); err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
@@ -28,7 +28,7 @@ func (h *RecordCreateHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) 
 	}
 
 	if err := h.DB.Save(record); err != nil {
-		log.Printf("create dict: %v", err)
+		log.Printf("save record: %v", err)
 		http.Error(w, "", http.StatusInternalServerError)
 		return
 	}
@@ -45,7 +45,7 @@ func (h *RecordListHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	query = fmt.Sprintf(query, strings.Join(h.Table.Columns(), ", "), h.Table.Name())
 	records, err := h.DB.SelectAllFrom(h.Table, "")
 	if err != nil {
-		log.Printf("list dict: %v", err)
+		log.Printf("list record: %v", err)
 		http.Error(w, "", http.StatusInternalServerError)
 		return
 	}

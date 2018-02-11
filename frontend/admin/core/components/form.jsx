@@ -20,7 +20,7 @@ export default class Form extends React.Component {
     }
 
     onChildChange(key, value) {
-        this.setState({ formData: { ...this.formData, [key]: value } })
+        this.setState({ formData: { ...this.state.formData, [key]: value } })
     }
 
     render() {

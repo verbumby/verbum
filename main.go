@@ -60,7 +60,7 @@ func bootstrap() error {
 		Table: dict.DictTable,
 		DB:    DB,
 	}).Methods(http.MethodGet)
-	r.Handle("/admin/api/dictionaries", &RecordCreateHandler{
+	r.Handle("/admin/api/dictionaries", &RecordSaveHandler{
 		Table: dict.DictTable,
 		DB:    DB,
 	}).Methods(http.MethodPost)
@@ -68,7 +68,7 @@ func bootstrap() error {
 		Table: article.ArticleTable,
 		DB:    DB,
 	}).Methods(http.MethodGet)
-	r.Handle("/admin/api/articles", &RecordCreateHandler{
+	r.Handle("/admin/api/articles", &RecordSaveHandler{
 		Table: article.ArticleTable,
 		DB:    DB,
 	}).Methods(http.MethodPost)
