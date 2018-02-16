@@ -22,9 +22,13 @@ var (
 	// DB reform database handler
 	DB *reform.DB
 
+	// Sphinx is a reform connection adapter to sphinxsearch
+	Sphinx *reform.DB
+
 	// Config global application config
 	Config struct {
-		DBHost string
+		DBHost     string
+		SphinxHost string
 	}
 )
 
@@ -37,6 +41,7 @@ func main() {
 
 func bootstrap() error {
 	flag.StringVar(&Config.DBHost, "db-host", "localhost", "hostname of the database server")
+	flag.StringVar(&Config.SphinxHost, "sphinx-host", "localhost", "hostname of the sphinx server")
 	flag.Parse()
 
 	// TODO: parametrize db connection
@@ -45,6 +50,12 @@ func bootstrap() error {
 		return errors.Wrap(err, "open db")
 	}
 	DB = reform.NewDB(db, mysql.Dialect, reform.NewPrintfLogger(log.Printf))
+
+	db, err = sql.Open("mysql", fmt.Sprintf("tcp(%s:9306)/?interpolateParams=true", Config.SphinxHost))
+	if err != nil {
+		return errors.Wrap(err, "open sphinx")
+	}
+	Sphinx = reform.NewDB(db, mysql.Dialect, reform.NewPrintfLogger(log.Printf))
 
 	templates := map[string][]string{
 		"admin": []string{"./templates/admin/layout.html"},
