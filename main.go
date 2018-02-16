@@ -15,15 +15,13 @@ import (
 	"github.com/pkg/errors"
 	"github.com/verbumby/verbum/article"
 	"github.com/verbumby/verbum/dict"
+	"github.com/verbumby/verbum/fts"
 	"github.com/verbumby/verbum/tm"
 )
 
 var (
 	// DB reform database handler
 	DB *reform.DB
-
-	// Sphinx is a reform connection adapter to sphinxsearch
-	Sphinx *reform.DB
 
 	// Config global application config
 	Config struct {
@@ -51,11 +49,10 @@ func bootstrap() error {
 	}
 	DB = reform.NewDB(db, mysql.Dialect, reform.NewPrintfLogger(log.Printf))
 
-	db, err = sql.Open("mysql", fmt.Sprintf("tcp(%s:9306)/?interpolateParams=true", Config.SphinxHost))
-	if err != nil {
-		return errors.Wrap(err, "open sphinx")
+	sphinxConnString := fmt.Sprintf("tcp(%s:9306)/?interpolateParams=true", Config.SphinxHost)
+	if err := fts.Initialize(sphinxConnString); err != nil {
+		return errors.Wrap(err, "fts initialize")
 	}
-	Sphinx = reform.NewDB(db, mysql.Dialect, reform.NewPrintfLogger(log.Printf))
 
 	templates := map[string][]string{
 		"admin": []string{"./templates/admin/layout.html"},
