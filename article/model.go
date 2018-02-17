@@ -59,12 +59,12 @@ func (a *Article) BeforeSave() error {
 			if startingTagIDX < 0 {
 				return fmt.Errorf("no starting tag found for closing tag %s", t.Type)
 			}
-			if err := processTokenQueue(queue[startingTagIDX:]); err != nil {
+			if err := processTokenQueue(queue[startingTagIDX:], a); err != nil {
 				return errors.Wrap(err, "processing tags sequence")
 			}
 		}
-
 	}
+
 	content := ""
 	for _, t := range queue {
 		content += t.String()
@@ -73,7 +73,7 @@ func (a *Article) BeforeSave() error {
 	return nil
 }
 
-func processTokenQueue(q []html.Token) error {
+func processTokenQueue(q []html.Token, a *Article) error {
 	if len(q) < 2 {
 		return fmt.Errorf("expected at least two (openning and closing) tokens")
 	}
@@ -104,7 +104,8 @@ func processTokenQueue(q []html.Token) error {
 	}
 
 	hw := &headword.Headword{
-		Headword: hwcontent,
+		Headword:  hwcontent,
+		ArticleID: a.ID,
 	}
 
 	var idxAttr *html.Attribute
