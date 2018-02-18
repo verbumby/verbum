@@ -5,11 +5,10 @@
 *.test
 *.out
 
-vendor/
 verbum
 node_modules/
 statics/admin.js
-*_reform.go
+
 db/data/
 sphinx/data/
 sphinx/logs/

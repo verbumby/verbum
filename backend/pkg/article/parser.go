@@ -5,9 +5,9 @@ import (
 	"io"
 	"strings"
 
-	"github.com/verbumby/verbum/fts"
+	"github.com/verbumby/verbum/backend/pkg/fts"
 
-	"github.com/verbumby/verbum/headword"
+	"github.com/verbumby/verbum/backend/pkg/headword"
 
 	"github.com/pkg/errors"
 	"golang.org/x/net/html"
