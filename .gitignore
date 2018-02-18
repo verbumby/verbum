@@ -5,7 +5,7 @@
 *.test
 *.out
 
-verbum
+/verbum
 node_modules/
 statics/admin.js
 

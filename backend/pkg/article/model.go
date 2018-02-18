@@ -2,6 +2,7 @@ package article
 
 import (
 	"github.com/pkg/errors"
+	"gopkg.in/reform.v1"
 )
 
 //go:generate reform
@@ -14,20 +15,10 @@ type Article struct {
 	Content string `reform:"content" json:"content"`
 }
 
-// BeforeInsert implements reform.BeforeInserter
-func (a *Article) BeforeInsert() error {
-	return a.BeforeSave()
-}
-
-// BeforeUpdate implements reform.BeforeUpdater
-func (a *Article) BeforeUpdate() error {
-	return a.BeforeSave()
-}
-
-// BeforeSave updates sphinx index/indices
-func (a *Article) BeforeSave() error {
+// Index updates sphinx index
+func Index(record reform.Struct) error {
 	p := parser{
-		a: a,
+		a: record.(*Article),
 	}
 	if err := p.parse(); err != nil {
 		return errors.Wrap(err, "parse article")
