@@ -1,0 +1,248 @@
+{{define "layout" -}}
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Verbum - Анлайн Слоўнік Беларускай Мовы</title>
+    <meta name="viewport" content="width=device-width">
+
+    <link rel="icon" type="image/png" href="{{"/statics/favicon.png" | staticURL}}" />
+    <style media="screen">
+      html {min-height: 100%;}
+      body {margin: 0;}
+
+      textarea, input[type="text"], input[type="button"], input[type="submit"] {
+        -webkit-appearance: none; border-radius: 0; outline: none; }
+
+      .content {max-width: 800px; margin: 0 auto; padding: 5px;}
+
+      #search {position:relative;}
+      .search-input {margin: 0 0 0 0; display: flex; align-items: stretch; height: 30px}
+
+      .search-input input[type=text] {flex: 2; margin: 0; padding: 0 0 0 5px; width:100%;
+        border: 1px solid lightgrey; border-right:none;}
+
+      #search, .search-input input {font-size: 1.1em; font-family: Helvetica, sans-serif}
+      .search-input .button {border: none; cursor:pointer; font-family: Helvetica, sans-serif}
+      .search-input .button-search {color:white; background: red; margin: 0; padding:5px 10px;}
+      .search-input .button-search:active {background: black;}
+      .search-input .button-search-small {display:none; padding: 4px 10px; font-size: 21px;}
+      .search-input .button-clear {color:grey; padding: 3px 10px; font-size: 21px; line-height: 0;
+        border: 1px solid lightgrey; border-right: none; border-left: none;}
+      .search-input .button-clear:active {color: red;}
+
+      .suggestions {position: absolute; width: 100%; box-sizing: border-box;
+        background: white; padding: 0; margin: 0; list-style: none;
+        border: 1px solid lightgrey; border-top: none; box-shadow: 0 2px 4px rgba(0,0,0,0.1)}
+      .suggestions li {padding: 5px;}
+      .suggestions li.active {background-color: #e3e3e3; cursor: pointer;}
+
+      .article {padding: 6px; border-bottom: 1px solid lightgrey;}
+      .article:last-child {border-bottom: none;}
+      .article v-hw {font-weight: bold}
+
+      .logo {color:darkgrey; padding: 6px;}
+      .logo a {color:red; font-size: xx-large;text-decoration: none}
+
+      @media only screen and (max-width: 400px) {
+        .search-input .button-search-small {display: inherit;}
+        .search-input .button-search-wide {display: none;}
+      }
+    </style>
+  </head>
+  <body>
+    <div class="content">
+      <div class="logo"><a href="/">Verbum</a> анлайн слоўнік</div>
+      <div id="search">
+        <form action="/" method="get">
+          <div class="search-input">
+            <input type="text" name="q" value="{{.Q}}" autocomplete="off" autofocus="autofocus"/>
+            <span class="button button-clear">
+              <i class="fa fa-times" aria-hidden="true"></i>
+            </span>
+            <span class="button button-search button-search-wide">Шукаць</span>
+            <span class="button button-search button-search-small">
+              <i class="fa fa-search" aria-hidden="true"></i>
+            </span>
+          </div>
+          <ul class="suggestions" style="display:none;">
+          </ul>
+        </form>
+      </div>
+      <script type="text/javascript">
+        class SearchControl {
+          constructor(el) {
+            this.hideSuggestions = this.hideSuggestions.bind(this)
+
+            this.el = el
+            this.input = el.querySelector('input[name=q]')
+            this.clearButton = el.querySelector('.button-clear')
+            this.suggestions = el.querySelector('.suggestions')
+            this.form = el.querySelector('form')
+            for (let buttonSearch of el.querySelectorAll('.button-search')) {
+              buttonSearch.addEventListener('click', () => {
+                this.form.submit()
+              })
+            }
+
+            this.input.addEventListener('input', () => {
+              this.onValueChange()
+            })
+            this.input.addEventListener('keydown', (ev) => {
+              switch(ev.code) {
+                case "Escape":
+                  ev.preventDefault()
+                  this.resetActiveSuggestion()
+                  this.hideSuggestions()
+                  break;
+                case "ArrowDown":
+                  if (this.activeSuggestion) {
+                    if (this.activeSuggestion.nextSibling) {
+                      this.activateSuggestion(this.activeSuggestion.nextSibling)
+                    } else {
+                      this.resetActiveSuggestion()
+                    }
+                  } else {
+                    let li = this.suggestions.querySelector('li:first-child')
+                    if (li) {
+                      this.activateSuggestion(li)
+                    }
+                  }
+                  ev.preventDefault()
+                  break;
+                case "ArrowUp":
+                  if (this.activeSuggestion) {
+                    if (this.activeSuggestion.previousSibling) {
+                      this.activateSuggestion(this.activeSuggestion.previousSibling)
+                    } else {
+                      this.resetActiveSuggestion()
+                    }
+                  } else {
+                    let li = this.suggestions.querySelector('li:last-child')
+                    if (li) {
+                      this.activateSuggestion(li)
+                    }
+                  }
+                  ev.preventDefault()
+                  break;
+              }
+            })
+
+            this.input.setSelectionRange(0, this.input.value.length)
+            this.updateClearButton()
+
+            this.clearButton.addEventListener('click', () => {
+              this.input.value = ''
+              this.input.focus()
+              this.onValueChange()
+            })
+
+            this.suggestions.addEventListener('mouseover', (ev) => {
+              if (ev.target == this.suggestions) {
+                return
+              }
+              this.activateSuggestion(ev.target)
+            })
+
+            this.suggestions.addEventListener('mouseleave', () => {
+              this.resetActiveSuggestion()
+            })
+
+            this.suggestions.addEventListener('click', (ev) => {
+              if (this.activeSuggestion) {
+                this.form.submit()
+              }
+            })
+          }
+
+          onValueChange() {
+            this.resetActiveSuggestion()
+            this.updateClearButton()
+            if (!this.input.value) {
+              this.hideSuggestions()
+              return
+            } else {
+              if (this.req) {
+                this.req.abort()
+              }
+              this.req = new XMLHttpRequest()
+              let self = this
+              this.req.addEventListener('load', function() {
+                self.updateSuggestions(JSON.parse(this.responseText))
+                self.req = false
+              })
+              this.req.open('GET', '/_suggest?q=' + encodeURIComponent(this.input.value))
+              this.req.send()
+            }
+          }
+
+          showSuggestions() {
+            document.addEventListener('click', this.hideSuggestions)
+            this.suggestions.style.display = ''
+          }
+
+          hideSuggestions() {
+            document.removeEventListener('click', this.hideSuggestions)
+            this.suggestions.style.display = 'none'
+            this.suggestions.innerHTML = ''
+          }
+
+          updateSuggestions(suggestions) {
+            if (suggestions.length == 0) {
+              this.hideSuggestions()
+              return
+            } else {
+              this.suggestions.innerHTML = ''
+            }
+
+
+            for (let suggestion of suggestions) {
+              let li = document.createElement('li')
+              li.innerText = suggestion
+              this.suggestions.appendChild(li)
+            }
+
+            this.showSuggestions()
+          }
+
+          activateSuggestion(li) {
+            if (!this.activeSuggestion) {
+              this.backupInputValue = this.input.value
+            } else {
+              this.activeSuggestion.classList.remove('active')
+            }
+
+            this.activeSuggestion = li
+            li.classList.add('active')
+            this.input.value = li.innerText
+          }
+
+          resetActiveSuggestion() {
+            if (this.activeSuggestion) {
+              this.input.value = this.backupInputValue
+              this.backupInputValue = ''
+              this.activeSuggestion.classList.remove('active')
+              this.activeSuggestion = null
+            }
+          }
+
+          updateClearButton() {
+            if (this.input.value.length > 0) {
+              this.clearButton.style.display = ''
+            } else {
+              this.clearButton.style.display = 'none'
+            }
+          }
+        }
+
+        //new SearchControl(document.getElementById('search'))
+      </script>
+      {{range .Articles}}
+      <div class="article">
+        {{ .Content | md }}
+      </div>
+      {{end}}
+    </div>
+  </body>
+</html>
+{{end}}

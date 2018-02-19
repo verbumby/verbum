@@ -9,6 +9,7 @@ import (
 	"strconv"
 
 	"github.com/pkg/errors"
+	blackfriday "gopkg.in/russross/blackfriday.v2"
 )
 
 var templates = map[string]*template.Template{}
@@ -17,6 +18,7 @@ var templates = map[string]*template.Template{}
 func Compile(name string, files []string) error {
 	t, err := template.New(name).Funcs(template.FuncMap{
 		"staticURL": staticURL,
+		"md":        md,
 	}).ParseFiles(files...)
 	if err != nil {
 		return errors.Wrap(err, "parse files")
@@ -45,4 +47,8 @@ func staticURL(file string) string {
 		log.Fatalln(err)
 	}
 	return file + "?" + strconv.FormatInt(info.ModTime().Unix(), 10)
+}
+
+func md(input string) template.HTML {
+	return template.HTML(blackfriday.Run([]byte(input)))
 }

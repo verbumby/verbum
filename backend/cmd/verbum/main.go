@@ -56,6 +56,7 @@ func bootstrap() error {
 
 	templates := map[string][]string{
 		"admin": []string{"./templates/admin/layout.html"},
+		"index": []string{"./templates/index.html"},
 	}
 	for tn, files := range templates {
 		if err := tm.Compile(tn, files); err != nil {
@@ -93,6 +94,49 @@ func bootstrap() error {
 
 	statics := http.FileServer(http.Dir("statics"))
 	r.PathPrefix("/statics/").Handler(http.StripPrefix("/statics/", statics))
+	r.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+		q := r.URL.Query().Get("q")
+
+		var articles []article.Article
+		if q != "" {
+			articles, err = func() ([]article.Article, error) {
+				rows, err := fts.Sphinx.Query("SELECT article_id, MAX(WEIGHT()) mw FROM headwords WHERE MATCH(?) GROUP BY article_id ORDER BY mw DESC LIMIT 20", q)
+				if err != nil {
+					return nil, errors.Wrap(err, "query sphinx")
+				}
+				defer rows.Close()
+
+				articleIDs := []int32{}
+				for rows.Next() {
+					var articleID int32
+					var maxWeight float32
+					if err := rows.Scan(&articleID, &maxWeight); err != nil {
+						return nil, errors.Wrap(err, "sphinx rows scan")
+					}
+					log.Println(maxWeight)
+					articleIDs = append(articleIDs, articleID)
+				}
+
+				result := make([]article.Article, len(articleIDs))
+				for i, id := range articleIDs {
+					if err := DB.FindByPrimaryKeyTo(&result[i], id); err != nil {
+						return nil, errors.Wrapf(err, "find article by pk %d", id)
+					}
+				}
+				return result, nil
+			}()
+			if err != nil {
+				log.Println(err)
+			}
+		}
+		tm.Render("index", w, struct {
+			Articles []article.Article
+			Q        string
+		}{
+			Articles: articles,
+			Q:        q,
+		})
+	})
 
 	log.Println("listening on :8080")
 	err = http.ListenAndServe(":8080", r)

@@ -118,6 +118,10 @@ func (p *parser) indexHeadwords() error {
 		})
 	}
 
+	if len(hws) == 0 {
+		return nil
+	}
+
 	tx, err := fts.Sphinx.Begin()
 	if err != nil {
 		return errors.Wrap(err, "begin sphinx tx")
@@ -138,11 +142,13 @@ func (p *parser) indexHeadwords() error {
 	}
 
 	query := fmt.Sprintf(
-		"DELETE FROM `%s` WHERE id NOT IN (%s)",
+		"DELETE FROM `%s` WHERE `article_id` = ? AND `id` NOT IN (%s)",
 		headword.HeadwordTable.Name(),
 		strings.Join(fts.Sphinx.Placeholders(1, len(ids)), ", "),
 	)
-	if _, err := tx.Exec(query, ids...); err != nil {
+	args := []interface{}{p.a.ID}
+	args = append(args, ids...)
+	if _, err := tx.Exec(query, args...); err != nil {
 		tx.Rollback()
 		return errors.Wrapf(err, "delete obsolete headwords of article %d", p.a.ID)
 	}
