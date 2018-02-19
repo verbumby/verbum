@@ -1,11 +1,11 @@
 import { combineReducers } from "redux";
 
-const list = (state = [], action) => {
+const list = (state = null, action) => {
     switch (action.type) {
         case 'ARTICLES/LIST/FETCH/FULFILLED':
             return action.data
         case 'ARTICLES/LIST/LEAVE':
-            return []
+            return null
         default:
             return state
     }

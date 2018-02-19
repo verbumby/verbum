@@ -15,10 +15,6 @@ class ListPage extends React.Component {
     }
 
     render() {
-        if (!this.props.data) {
-            return null
-        }
-
         const { url } = this.props.match
         return (<div>
             <div className="level">
@@ -34,6 +30,7 @@ class ListPage extends React.Component {
                 </div>
             </div>
             <hr />
+            {this.props.data &&
             <table className="table is-hoverable is-fullwidth">
                 <thead>
                     <tr><th>Title</th></tr>
@@ -42,6 +39,7 @@ class ListPage extends React.Component {
                     {this.props.data.map(item => <tr><td>{item.Title}</td></tr>)}
                 </tbody>
             </table>
+            }
 
         </div>)
     }

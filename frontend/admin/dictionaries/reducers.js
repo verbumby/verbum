@@ -1,11 +1,11 @@
 import { combineReducers } from "redux";
 
-const list = (state = [], action) => {
+const list = (state = null, action) => {
     switch (action.type) {
         case 'DICTIONARIES/LIST/FETCH/FULFILLED':
             return action.data
         case 'DICTIONARIES/LIST/LEAVE':
-            return []
+            return null
         default:
             return state
     }

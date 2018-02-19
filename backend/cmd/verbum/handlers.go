@@ -44,10 +44,12 @@ func (h *RecordSaveHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if err := h.AfterSave(record); err != nil {
-		log.Printf("save record: %v", err)
-		http.Error(w, "", http.StatusInternalServerError)
-		return
+	if h.AfterSave != nil {
+		if err := h.AfterSave(record); err != nil {
+			log.Printf("save record: %v", err)
+			http.Error(w, "", http.StatusInternalServerError)
+			return
+		}
 	}
 }
 
