@@ -87,7 +87,19 @@ func bootstrap() error {
 		DB:    DB,
 	}).Methods(http.MethodGet)
 	r.PathPrefix("/admin/").HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		if err := tm.Render("admin", w, nil); err != nil {
+		dicts, err := DB.SelectAllFrom(dict.DictTable, "")
+		if err != nil {
+			log.Println(errors.Wrap(err, "select all dicts"))
+			http.Error(w, "", http.StatusInternalServerError)
+			return
+		}
+
+		data := struct {
+			Dicts []reform.Struct
+		}{
+			Dicts: dicts,
+		}
+		if err := tm.Render("admin", w, data); err != nil {
 			http.Error(w, "", http.StatusInternalServerError)
 		}
 	})
@@ -113,7 +125,6 @@ func bootstrap() error {
 					if err := rows.Scan(&articleID, &maxWeight); err != nil {
 						return nil, errors.Wrap(err, "sphinx rows scan")
 					}
-					log.Println(maxWeight)
 					articleIDs = append(articleIDs, articleID)
 				}
 
