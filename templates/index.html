@@ -5,8 +5,8 @@
     <meta charset="utf-8">
     <title>Verbum - Анлайн Слоўнік Беларускай Мовы</title>
     <meta name="viewport" content="width=device-width">
-
     <link rel="icon" type="image/png" href="{{"/statics/favicon.png" | staticURL}}" />
+    <script defer src="https://use.fontawesome.com/releases/v5.0.6/js/all.js"></script>
     <style media="screen">
       html {min-height: 100%;}
       body {margin: 0;}
@@ -58,11 +58,11 @@
           <div class="search-input">
             <input type="text" name="q" value="{{.Q}}" autocomplete="off" autofocus="autofocus"/>
             <span class="button button-clear">
-              <i class="fa fa-times" aria-hidden="true"></i>
+              <i class="fas fa-times" aria-hidden="true"></i>
             </span>
             <span class="button button-search button-search-wide">Шукаць</span>
             <span class="button button-search button-search-small">
-              <i class="fa fa-search" aria-hidden="true"></i>
+              <i class="fas fa-search" aria-hidden="true"></i>
             </span>
           </div>
           <ul class="suggestions" style="display:none;">
@@ -162,7 +162,7 @@
               this.hideSuggestions()
               return
             } else {
-              if (this.req) {
+              /*if (this.req) {
                 this.req.abort()
               }
               this.req = new XMLHttpRequest()
@@ -172,7 +172,7 @@
                 self.req = false
               })
               this.req.open('GET', '/_suggest?q=' + encodeURIComponent(this.input.value))
-              this.req.send()
+              this.req.send()*/
             }
           }
 
@@ -235,7 +235,7 @@
           }
         }
 
-        //new SearchControl(document.getElementById('search'))
+        new SearchControl(document.getElementById('search'))
       </script>
       {{range .Articles}}
       <div class="article">
