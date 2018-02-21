@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"flag"
 	"fmt"
+	"html/template"
 	"log"
 	"net/http"
 
@@ -54,13 +55,30 @@ func bootstrap() error {
 		return errors.Wrap(err, "fts initialize")
 	}
 
-	templates := map[string][]string{
-		"admin": []string{"./templates/admin/layout.html"},
-		"index": []string{"./templates/index.html"},
+	templates := []struct {
+		name    string
+		files   []string
+		funcMap template.FuncMap
+	}{
+		{
+			name:    "admin",
+			files:   []string{"./templates/admin/layout.html"},
+			funcMap: template.FuncMap{},
+		},
+		{
+			name:  "index",
+			files: []string{"./templates/index.html"},
+			funcMap: template.FuncMap{
+				"dictByPK": func(id int32) (reform.Record, error) {
+					return DB.FindByPrimaryKeyFrom(dict.DictTable, id)
+				},
+			},
+		},
 	}
-	for tn, files := range templates {
-		if err := tm.Compile(tn, files); err != nil {
-			return errors.Wrapf(err, "compile %s template", tn)
+
+	for _, t := range templates {
+		if err := tm.Compile(t.name, t.files, t.funcMap); err != nil {
+			return errors.Wrapf(err, "compile %s template", t.name)
 		}
 	}
 

@@ -15,11 +15,10 @@ import (
 var templates = map[string]*template.Template{}
 
 // Compile compiles a named templates from files
-func Compile(name string, files []string) error {
-	t, err := template.New(name).Funcs(template.FuncMap{
-		"staticURL": staticURL,
-		"md":        md,
-	}).ParseFiles(files...)
+func Compile(name string, files []string, funcMap template.FuncMap) error {
+	funcMap["staticURL"] = staticURL
+	funcMap["md"] = md
+	t, err := template.New(name).Funcs(funcMap).ParseFiles(files...)
 	if err != nil {
 		return errors.Wrap(err, "parse files")
 	}

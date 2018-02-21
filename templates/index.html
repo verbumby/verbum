@@ -40,6 +40,7 @@
       .article {padding: 6px; border-bottom: 1px solid lightgrey;}
       .article:last-child {border-bottom: none;}
       .article v-hw {font-weight: bold}
+      .article .source {text-align: right; color: darkgrey; font-size: 0.9em;}
 
       .logo {color:darkgrey; padding: 6px;}
       .logo a {color:red; font-size: xx-large;text-decoration: none}
@@ -240,6 +241,11 @@
       {{range .Articles}}
       <div class="article">
         {{ .Content | md }}
+        {{ with dictByPK .DictID }}
+        <div class="source">
+          {{ .Title }}
+        </div>
+        {{ end }}
       </div>
       {{end}}
     </div>
