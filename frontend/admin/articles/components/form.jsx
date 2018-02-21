@@ -13,8 +13,14 @@ class Form extends React.Component {
 
     handleInputChange(event) {
         const target = event.target
-        const value = target.type === 'checkbox' ? target.checked : target.value
+        let value = target.type === 'checkbox' ? target.checked : target.value
         const name = target.name
+
+        switch (name) {
+            case "DictID":
+                value = parseInt(value)
+                break;
+        }
 
         this.setState({
             [name]: value
@@ -32,7 +38,8 @@ class Form extends React.Component {
                 <label class="label">Dictionary</label>
                 <div class="control">
                     <div class="select">
-                        <select name="DictID" value={this.state.DictID} onChange={this.handleInputChange} >
+                        <select name="DictID" value={this.state.DictID} onChange={this.handleInputChange} required >
+                            <option />
                             {this.props.dicts.map(d => <option value={d.ID}>{d.Title}</option>)}
                         </select>
                     </div>

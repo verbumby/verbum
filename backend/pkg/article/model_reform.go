@@ -27,7 +27,7 @@ func (v *articleTableType) Name() string {
 
 // Columns returns a new slice of column names for that view or table in SQL database.
 func (v *articleTableType) Columns() []string {
-	return []string{"id", "content"}
+	return []string{"id", "content", "dict_id"}
 }
 
 // NewStruct makes a new struct for that view or table.
@@ -47,15 +47,16 @@ func (v *articleTableType) PKColumnIndex() uint {
 
 // ArticleTable represents articles view or table in SQL database.
 var ArticleTable = &articleTableType{
-	s: parse.StructInfo{Type: "Article", SQLSchema: "", SQLName: "articles", Fields: []parse.FieldInfo{{Name: "ID", Type: "int32", Column: "id"}, {Name: "Content", Type: "string", Column: "content"}}, PKFieldIndex: 0},
+	s: parse.StructInfo{Type: "Article", SQLSchema: "", SQLName: "articles", Fields: []parse.FieldInfo{{Name: "ID", Type: "int32", Column: "id"}, {Name: "Content", Type: "string", Column: "content"}, {Name: "DictID", Type: "int32", Column: "dict_id"}}, PKFieldIndex: 0},
 	z: new(Article).Values(),
 }
 
 // String returns a string representation of this struct or record.
 func (s Article) String() string {
-	res := make([]string, 2)
+	res := make([]string, 3)
 	res[0] = "ID: " + reform.Inspect(s.ID, true)
 	res[1] = "Content: " + reform.Inspect(s.Content, true)
+	res[2] = "DictID: " + reform.Inspect(s.DictID, true)
 	return strings.Join(res, ", ")
 }
 
@@ -65,6 +66,7 @@ func (s *Article) Values() []interface{} {
 	return []interface{}{
 		s.ID,
 		s.Content,
+		s.DictID,
 	}
 }
 
@@ -74,6 +76,7 @@ func (s *Article) Pointers() []interface{} {
 	return []interface{}{
 		&s.ID,
 		&s.Content,
+		&s.DictID,
 	}
 }
 

@@ -13,6 +13,7 @@ import (
 type Article struct {
 	ID      int32  `reform:"id,pk"`
 	Content string `reform:"content"`
+	DictID  int32  `reform:"dict_id"`
 }
 
 // Index updates sphinx index

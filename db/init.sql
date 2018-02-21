@@ -5,5 +5,6 @@ CREATE TABLE dicts (
 
 CREATE TABLE articles (
     id INT PRIMARY KEY AUTO_INCREMENT,
-    content VARCHAR(10000)
+    content VARCHAR(10000),
+    dict_id INT NOT NULL DEFAULT(-1)
 );
