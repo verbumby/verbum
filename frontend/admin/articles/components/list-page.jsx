@@ -41,9 +41,9 @@ class ListPage extends React.Component {
                 </thead>
                 <tbody>
                     {this.props.data.map(item => <tr>
-                        <td>{item.id}</td>
-                        <td>{item.content}</td>
-                        <td><Link to={`${url}/${item.id}/edit`} className="button">
+                        <td>{item.ID}</td>
+                        <td>{item.Content}</td>
+                        <td><Link to={`${url}/${item.ID}/edit`} className="button">
                             <i class="fas fa-edit"></i>&nbsp;Edit</Link>
                         </td>
                     </tr>)}

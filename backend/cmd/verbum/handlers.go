@@ -70,7 +70,7 @@ func (h *RecordListHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	}
 
 	json.NewEncoder(w).Encode(struct {
-		Data interface{} `json:"data"`
+		Data interface{}
 	}{
 		Data: records,
 	})
@@ -97,7 +97,7 @@ func (h *RecordFetchHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	}
 
 	json.NewEncoder(w).Encode(struct {
-		Data interface{} `json:"data"`
+		Data interface{}
 	}{
 		Data: record,
 	})

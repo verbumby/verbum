@@ -46,7 +46,7 @@ class Form extends React.Component {
                         type="text"
                         name="content"
                         rows="15"
-                        value={this.state.content}
+                        value={this.state.Content}
                         onChange={this.handleInputChange}
                     />
                 </div>

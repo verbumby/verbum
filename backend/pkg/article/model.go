@@ -11,8 +11,8 @@ import (
 //
 // reform:articles
 type Article struct {
-	ID      int32  `reform:"id,pk" json:"id"`
-	Content string `reform:"content" json:"content"`
+	ID      int32  `reform:"id,pk"`
+	Content string `reform:"content"`
 }
 
 // Index updates sphinx index
