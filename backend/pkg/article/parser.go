@@ -111,7 +111,7 @@ func (p *parser) indexHeadwords() error {
 
 		content := ""
 		for _, t := range tokens[1 : len(tokens)-1] {
-			content += t.String()
+			content += t.Data
 		}
 
 		hws = append(hws, &headword.Headword{
