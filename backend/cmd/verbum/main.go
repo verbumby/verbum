@@ -2,6 +2,7 @@ package main
 
 import (
 	"database/sql"
+	"encoding/json"
 	"flag"
 	"fmt"
 	"html/template"
@@ -124,6 +125,34 @@ func bootstrap() error {
 
 	statics := http.FileServer(http.Dir("statics"))
 	r.PathPrefix("/statics/").Handler(http.StripPrefix("/statics/", statics))
+	r.HandleFunc("/_suggest", func(w http.ResponseWriter, r *http.Request) {
+		q := r.URL.Query().Get("q")
+		query := "SELECT typeahead, MAX(WEIGHT()) mwt " +
+			"FROM typeaheads " +
+			"WHERE MATCH(?) " +
+			"GROUP BY typeahead " +
+			"ORDER BY mwt DESC " +
+			"LIMIT 10"
+
+		rows, err := fts.Sphinx.Query(query, q)
+		if err != nil {
+			log.Println(errors.Wrap(err, "find typeaheads"))
+		}
+		data := []string{}
+		for rows.Next() {
+			var th string
+			var mwt int32
+			if err := rows.Scan(&th, &mwt); err != nil {
+				log.Println(errors.Wrap(err, "scan typeaheads"))
+			}
+
+			data = append(data, th)
+		}
+
+		if err := json.NewEncoder(w).Encode(data); err != nil {
+			log.Println(errors.Wrap(err, "encode response"))
+		}
+	})
 	r.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		q := r.URL.Query().Get("q")
 
