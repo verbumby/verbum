@@ -6,6 +6,8 @@ import (
 	"strings"
 
 	"github.com/verbumby/verbum/backend/pkg/fts"
+	"github.com/verbumby/verbum/backend/pkg/typeahead"
+	reform "gopkg.in/reform.v1"
 
 	"github.com/verbumby/verbum/backend/pkg/headword"
 
@@ -98,7 +100,8 @@ func (p *parser) validateTagTokens(tokens []html.Token) error {
 }
 
 func (p *parser) indexHeadwords() error {
-	hws := []headword.Headword{}
+	hws := []reform.Record{}
+	ths := []reform.Record{}
 
 	for i, tokens := range p.hws {
 		if i >= 1<<4 {
@@ -111,9 +114,15 @@ func (p *parser) indexHeadwords() error {
 			content += t.String()
 		}
 
-		hws = append(hws, headword.Headword{
+		hws = append(hws, &headword.Headword{
 			ID:        idx,
 			Headword:  content,
+			ArticleID: p.a.ID,
+		})
+
+		ths = append(ths, &typeahead.Typeahead{
+			ID:        idx,
+			Typeahead: content,
 			ArticleID: p.a.ID,
 		})
 	}
@@ -122,41 +131,58 @@ func (p *parser) indexHeadwords() error {
 		return nil
 	}
 
-	tx, err := fts.Sphinx.Begin()
-	if err != nil {
-		return errors.Wrap(err, "begin sphinx tx")
-	}
-
-	ids := make([]interface{}, len(hws))
-
-	for i, hw := range hws {
-		columns := hw.Table().Columns()
-		placeholders := fts.Sphinx.Placeholders(1, len(columns))
-		query := "REPLACE INTO headwords (" + strings.Join(columns, ", ") + ") " +
-			"VALUES (" + strings.Join(placeholders, ", ") + ")"
-		if _, err := fts.Sphinx.Exec(query, hw.Values()...); err != nil {
-			tx.Rollback()
-			return errors.Wrapf(err, "replace headword %d", hw.ID)
+	for _, records := range [][]reform.Record{hws, ths} {
+		tx, err := fts.Sphinx.Begin()
+		if err != nil {
+			return errors.Wrap(err, "begin sphinx tx")
 		}
-		ids[i] = hw.ID
-	}
 
-	query := fmt.Sprintf(
-		"DELETE FROM `%s` WHERE `article_id` = ? AND `id` NOT IN (%s)",
-		headword.HeadwordTable.Name(),
-		strings.Join(fts.Sphinx.Placeholders(1, len(ids)), ", "),
-	)
-	args := []interface{}{p.a.ID}
-	args = append(args, ids...)
-	if _, err := tx.Exec(query, args...); err != nil {
-		tx.Rollback()
-		return errors.Wrapf(err, "delete obsolete headwords of article %d", p.a.ID)
-	}
+		table := records[0].Table()
+		if err := replaceInto(records, tx); err != nil {
+			tx.Rollback()
+			return errors.Wrapf(err, "replace $s of article %d", table.Name(), p.a.ID)
+		}
 
-	if err := tx.Commit(); err != nil {
-		tx.Rollback()
-		return errors.Wrap(err, "commit sphinx tx")
+		firstRecord := records[0].PKValue()
+		lastRecord := records[len(hws)-1].PKValue()
+		if err := deleteWhereArticleID(table, p.a.ID, firstRecord, lastRecord, tx); err != nil {
+			tx.Rollback()
+			return errors.Wrapf(err, "delete obsolete headwords of article %d", p.a.ID)
+		}
+
+		if err := tx.Commit(); err != nil {
+			tx.Rollback()
+			return errors.Wrap(err, "commit sphinx tx")
+		}
 	}
 
 	return nil
+}
+
+func replaceInto(records []reform.Record, tx reform.TXInterface) error {
+	table := records[0].Table()
+	columns := strings.Join(table.Columns(), ", ")
+
+	placeholders := strings.Join(fts.Sphinx.Placeholders(1, len(table.Columns())), ", ")
+	placeholderRows := []string{}
+	for range records {
+		placeholderRows = append(placeholderRows, "("+placeholders+")")
+	}
+
+	query := "REPLACE INTO " + table.Name() + " (" + columns + ") VALUES " +
+		strings.Join(placeholderRows, ", ")
+
+	values := []interface{}{}
+	for _, record := range records {
+		values = append(values, record.Values()...)
+	}
+
+	_, err := tx.Exec(query, values...)
+	return err
+}
+
+func deleteWhereArticleID(table reform.Table, articleID, idsFirst, idLast interface{}, tx reform.TXInterface) error {
+	query := "DELETE FROM `" + table.Name() + "` WHERE `article_id` = ? AND id NOT BETWEEN ? AND ?"
+	_, err := tx.Exec(query, articleID, idsFirst, idLast)
+	return err
 }

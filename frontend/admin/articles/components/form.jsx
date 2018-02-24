@@ -51,7 +51,7 @@ class Form extends React.Component {
                     <textarea
                         className="textarea"
                         type="text"
-                        name="content"
+                        name="Content"
                         rows="15"
                         value={this.state.Content}
                         onChange={this.handleInputChange}
