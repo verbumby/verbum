@@ -132,7 +132,8 @@ func bootstrap() error {
 			"WHERE MATCH(?) " +
 			"GROUP BY typeahead " +
 			"ORDER BY mwt DESC " +
-			"LIMIT 10"
+			"LIMIT 10 " +
+			"OPTION ranker=sph04 "
 
 		rows, err := fts.Sphinx.Query(query, q)
 		if err != nil {
@@ -159,7 +160,16 @@ func bootstrap() error {
 		var articles []article.Article
 		if q != "" {
 			articles, err = func() ([]article.Article, error) {
-				rows, err := fts.Sphinx.Query("SELECT article_id, MAX(WEIGHT()) mw FROM headwords WHERE MATCH(?) GROUP BY article_id ORDER BY mw DESC LIMIT 20", q)
+				rows, err := fts.Sphinx.Query(
+					"SELECT article_id, MAX(WEIGHT()) mw "+
+						"FROM headwords "+
+						"WHERE MATCH(?) "+
+						"GROUP BY article_id "+
+						"ORDER BY mw DESC "+
+						"LIMIT 20 "+
+						"OPTION ranker=sph04",
+					q,
+				)
 				if err != nil {
 					return nil, errors.Wrap(err, "query sphinx")
 				}
