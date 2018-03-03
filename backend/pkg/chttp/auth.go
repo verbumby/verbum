@@ -48,6 +48,20 @@ func AuthHandler(w http.ResponseWriter, ctx *Context) error {
 		return nil
 	}
 
+	stateCookie, err := ctx.R.Cookie(viper.GetString("cookie.nameState"))
+	if err != nil {
+		http.Error(w, "", http.StatusUnauthorized)
+		return nil
+	}
+	if stateCookie.Value != ctx.R.Form.Get("state") {
+		http.Error(w, "", http.StatusUnauthorized)
+		return nil
+	}
+	stateCookie.MaxAge = -1
+	stateCookie.Path = "/admin/"
+	stateCookie.HttpOnly = true
+	http.SetCookie(w, stateCookie)
+
 	// exchange code for access token
 	code := ctx.R.Form.Get("code")
 	bodyValues := url.Values{}
@@ -108,6 +122,8 @@ func AuthHandler(w http.ResponseWriter, ctx *Context) error {
 		return errors.Wrap(err, "userinfo request body read")
 	}
 
+	// TODO: whitelist users by emails
+
 	cookie, err := encodeCookie(p)
 	if err != nil {
 		return errors.Wrap(err, "auth set cookie")
@@ -151,10 +167,18 @@ func AuthMiddleware(f HandlerFunc) HandlerFunc {
 		query.Set("client_id", viper.GetString("oauth.clientID"))
 		query.Set("scope", "openid profile email")
 		query.Set("redirect_uri", redirectURL)
-		query.Set("state", fmt.Sprintf("%d", rand.Int()))
+		state := fmt.Sprintf("%d", rand.Int())
+		query.Set("state", state)
 		query.Set("nonce", fmt.Sprintf("%d", rand.Int()))
 
 		oauthURL := viper.GetString("oauth.endpoint") + "/v2/auth?" + query.Encode()
+		http.SetCookie(w, &http.Cookie{
+			Name:     viper.GetString("cookie.nameState"),
+			Value:    state,
+			Path:     "/admin/",
+			HttpOnly: true,
+			MaxAge:   60 * 5,
+		})
 		http.Redirect(w, ctx.R, oauthURL, http.StatusFound)
 		return nil
 	}
