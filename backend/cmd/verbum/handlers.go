@@ -10,6 +10,9 @@ import (
 
 	"github.com/gorilla/mux"
 	"github.com/pkg/errors"
+	"github.com/verbumby/verbum/backend/pkg/chttp"
+	"github.com/verbumby/verbum/backend/pkg/dict"
+	"github.com/verbumby/verbum/backend/pkg/tm"
 
 	"gopkg.in/reform.v1"
 )
@@ -110,4 +113,21 @@ func parseIntID(str string) (int, error) {
 	}
 
 	return int(id64), nil
+}
+
+func IndexHandler(w http.ResponseWriter, ctx *chttp.Context) error {
+	dicts, err := DB.SelectAllFrom(dict.DictTable, "")
+	if err != nil {
+		return errors.Wrap(err, "select all dicts")
+	}
+
+	data := struct {
+		Dicts []reform.Struct
+	}{
+		Dicts: dicts,
+	}
+	if err := tm.Render("admin", w, data); err != nil {
+		return errors.Wrap(err, "render admin")
+	}
+	return nil
 }

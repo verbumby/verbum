@@ -17,6 +17,7 @@ import (
 	"github.com/spf13/pflag"
 	"github.com/spf13/viper"
 	"github.com/verbumby/verbum/backend/pkg/article"
+	"github.com/verbumby/verbum/backend/pkg/chttp"
 	"github.com/verbumby/verbum/backend/pkg/dict"
 	"github.com/verbumby/verbum/backend/pkg/fts"
 	"github.com/verbumby/verbum/backend/pkg/tm"
@@ -109,27 +110,12 @@ func bootstrap() error {
 		DB:        DB,
 		AfterSave: article.Index,
 	}).Methods(http.MethodPost)
-	r.Handle("/admin/api/articles/{ID}", &RecordFetchHandler{
+	r.HandleFunc("/admin/api/articles/{ID}", (&RecordFetchHandler{
 		Table: article.ArticleTable,
 		DB:    DB,
-	}).Methods(http.MethodGet)
-	r.PathPrefix("/admin/").HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		dicts, err := DB.SelectAllFrom(dict.DictTable, "")
-		if err != nil {
-			log.Println(errors.Wrap(err, "select all dicts"))
-			http.Error(w, "", http.StatusInternalServerError)
-			return
-		}
-
-		data := struct {
-			Dicts []reform.Struct
-		}{
-			Dicts: dicts,
-		}
-		if err := tm.Render("admin", w, data); err != nil {
-			http.Error(w, "", http.StatusInternalServerError)
-		}
-	})
+	}).ServeHTTP).Methods(http.MethodGet)
+	r.HandleFunc("/admin/auth", chttp.MakeHandler(chttp.AuthHandler))
+	r.PathPrefix("/admin/").HandlerFunc(chttp.MakeHandler(IndexHandler, chttp.AuthMiddleware))
 
 	statics := http.FileServer(http.Dir("statics"))
 	r.PathPrefix("/statics/").Handler(http.StripPrefix("/statics/", statics))
@@ -213,6 +199,8 @@ func bootstrap() error {
 			Q:        q,
 		})
 	})
+
+	chttp.InitCookieManager()
 
 	log.Println("listening on :8080")
 	err = http.ListenAndServe(":8080", r)
