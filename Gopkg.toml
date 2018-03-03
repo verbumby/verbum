@@ -26,3 +26,11 @@
 [[constraint]]
   name = "gopkg.in/russross/blackfriday.v2"
   version = "2.0.0"
+
+[[constraint]]
+  name = "github.com/spf13/viper"
+  version = "1.0.0"
+
+[[constraint]]
+  name = "github.com/spf13/pflag"
+  version = "1.0.0"

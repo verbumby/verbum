@@ -3,7 +3,6 @@ package main
 import (
 	"database/sql"
 	"encoding/json"
-	"flag"
 	"fmt"
 	"html/template"
 	"log"
@@ -15,6 +14,8 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/gorilla/mux"
 	"github.com/pkg/errors"
+	"github.com/spf13/pflag"
+	"github.com/spf13/viper"
 	"github.com/verbumby/verbum/backend/pkg/article"
 	"github.com/verbumby/verbum/backend/pkg/dict"
 	"github.com/verbumby/verbum/backend/pkg/fts"
@@ -24,12 +25,6 @@ import (
 var (
 	// DB reform database handler
 	DB *reform.DB
-
-	// Config global application config
-	Config struct {
-		DBHost     string
-		SphinxHost string
-	}
 )
 
 func main() {
@@ -40,18 +35,31 @@ func main() {
 }
 
 func bootstrap() error {
-	flag.StringVar(&Config.DBHost, "db-host", "localhost", "hostname of the database server")
-	flag.StringVar(&Config.SphinxHost, "sphinx-host", "localhost", "hostname of the sphinx server")
-	flag.Parse()
+	viper.SetDefault("db.host", "localhost")
+	viper.SetDefault("fts.host", "localhost")
+
+	pflag.String("db.host", "localhost", "hostname of the database server")
+	pflag.String("fts.host", "localhost", "hostname of the sphinx server")
+	pflag.Parse()
+	if err := viper.BindPFlags(pflag.CommandLine); err != nil {
+		log.Fatalf("bind pflags: %v", err)
+	}
+
+	viper.SetConfigName("config")
+	viper.AddConfigPath(".")
+
+	if err := viper.ReadInConfig(); err != nil {
+		log.Fatalf("Fatal error config file: %v\n", err)
+	}
 
 	// TODO: parametrize db connection
-	db, err := sql.Open("mysql", fmt.Sprintf("root@tcp(%s:3306)/verbum", Config.DBHost))
+	db, err := sql.Open("mysql", fmt.Sprintf("root@tcp(%s:3306)/verbum", viper.GetString("db.host")))
 	if err != nil {
 		return errors.Wrap(err, "open db")
 	}
 	DB = reform.NewDB(db, mysql.Dialect, reform.NewPrintfLogger(log.Printf))
 
-	sphinxConnString := fmt.Sprintf("tcp(%s:9306)/?interpolateParams=true", Config.SphinxHost)
+	sphinxConnString := fmt.Sprintf("tcp(%s:9306)/?interpolateParams=true", viper.GetString("fts.host"))
 	if err := fts.Initialize(sphinxConnString); err != nil {
 		return errors.Wrap(err, "fts initialize")
 	}
