@@ -66,6 +66,9 @@ func (h *RecordSaveHandler) ServeHTTP(w http.ResponseWriter, ctx *chttp.Context)
 		return nil
 	}
 
+	firstHeadword := hws[0].(*headword.Headword)
+	article.Title = firstHeadword.Headword
+
 	if record.HasPK() {
 		err = h.DB.Update(record)
 		if err == reform.ErrNoRows {

@@ -7,6 +7,7 @@ package article
 // reform:articles
 type Article struct {
 	ID      int32  `reform:"id,pk"`
+	Title   string `reform:"title"`
 	Content string `reform:"content"`
 	DictID  int32  `reform:"dict_id"`
 }

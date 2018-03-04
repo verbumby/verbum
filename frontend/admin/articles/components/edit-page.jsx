@@ -24,7 +24,7 @@ class EditPage extends React.Component {
         }
 
         return (<div>
-            <h1 className="title">Edit Article #{this.props.data.ID}</h1>
+            <h1 className="title">Edit #{this.props.data.ID} `{this.props.data.Title}`</h1>
             <Form
                 formData={this.props.data}
                 onSave={onSave}
