@@ -119,7 +119,18 @@ func AuthHandler(w http.ResponseWriter, ctx *Context) error {
 		return errors.Wrap(err, "userinfo request body read")
 	}
 
-	// TODO: whitelist users by emails
+	allowedEmails := viper.GetStringSlice("editorsWhitelist")
+	allow := false
+	for _, ae := range allowedEmails {
+		if ae == p.Email {
+			allow = true
+			break
+		}
+	}
+	if !allow {
+		http.Error(w, "", http.StatusUnauthorized)
+		return nil
+	}
 
 	cookie, err := encodeCookie(p)
 	if err != nil {
