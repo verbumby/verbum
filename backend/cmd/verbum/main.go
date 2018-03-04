@@ -115,11 +115,7 @@ func bootstrap() error {
 		chttp.AuthMiddleware,
 	)).Methods(http.MethodGet)
 	r.Handle("/admin/api/articles", chttp.MakeHandler(
-		(&RecordSaveHandler{
-			Table:     article.ArticleTable,
-			DB:        DB,
-			AfterSave: article.Index,
-		}).ServeHTTP,
+		(&article.RecordSaveHandler{DB: DB}).ServeHTTP,
 		chttp.AuthMiddleware,
 	)).Methods(http.MethodPost)
 	r.HandleFunc("/admin/api/articles/{ID}", chttp.MakeHandler(

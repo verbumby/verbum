@@ -1,10 +1,5 @@
 package article
 
-import (
-	"github.com/pkg/errors"
-	"gopkg.in/reform.v1"
-)
-
 //go:generate reform
 
 // Article represents an article
@@ -14,15 +9,4 @@ type Article struct {
 	ID      int32  `reform:"id,pk"`
 	Content string `reform:"content"`
 	DictID  int32  `reform:"dict_id"`
-}
-
-// Index updates sphinx index
-func Index(record reform.Struct) error {
-	p := parser{
-		a: record.(*Article),
-	}
-	if err := p.parse(); err != nil {
-		return errors.Wrap(err, "parse article")
-	}
-	return nil
 }

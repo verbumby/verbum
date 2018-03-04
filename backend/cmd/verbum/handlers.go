@@ -109,6 +109,7 @@ func parseIntID(str string) (int, error) {
 	return int(id64), nil
 }
 
+// IndexHandler serve admin index page
 func IndexHandler(w http.ResponseWriter, ctx *chttp.Context) error {
 	dicts, err := DB.SelectAllFrom(dict.DictTable, "")
 	if err != nil {

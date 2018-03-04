@@ -56,11 +56,6 @@ func (p *parser) parse() error {
 		return errors.Wrap(err, "update headwords")
 	}
 
-	content := ""
-	for _, t := range queue {
-		content += t.String()
-	}
-	a.Content = content
 	return nil
 }
 
