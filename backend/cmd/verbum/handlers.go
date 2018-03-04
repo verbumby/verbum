@@ -3,7 +3,6 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	"log"
 	"net/http"
 	"strconv"
 	"strings"
@@ -24,11 +23,11 @@ type RecordSaveHandler struct {
 	AfterSave func(reform.Struct) error
 }
 
-func (h *RecordSaveHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+func (h *RecordSaveHandler) ServeHTTP(w http.ResponseWriter, ctx *chttp.Context) error {
 	record := h.Table.NewRecord()
-	if err := json.NewDecoder(r.Body).Decode(record); err != nil {
+	if err := json.NewDecoder(ctx.R.Body).Decode(record); err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
-		return
+		return nil
 	}
 
 	var err error
@@ -42,18 +41,15 @@ func (h *RecordSaveHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if err != nil {
-		log.Printf("save record: %v", err)
-		http.Error(w, "", http.StatusInternalServerError)
-		return
+		return errors.Wrap(err, "save record")
 	}
 
 	if h.AfterSave != nil {
 		if err := h.AfterSave(record); err != nil {
-			log.Printf("save record: %v", err)
-			http.Error(w, "", http.StatusInternalServerError)
-			return
+			return errors.Wrap(err, "save record")
 		}
 	}
+	return nil
 }
 
 // RecordListHandler record list handler
@@ -62,14 +58,12 @@ type RecordListHandler struct {
 	DB    *reform.DB
 }
 
-func (h *RecordListHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+func (h *RecordListHandler) ServeHTTP(w http.ResponseWriter, ctx *chttp.Context) error {
 	query := "SELECT %s FROM %s"
 	query = fmt.Sprintf(query, strings.Join(h.Table.Columns(), ", "), h.Table.Name())
 	records, err := h.DB.SelectAllFrom(h.Table, "")
 	if err != nil {
-		log.Printf("list record: %v", err)
-		http.Error(w, "", http.StatusInternalServerError)
-		return
+		return errors.Wrap(err, "select from db")
 	}
 
 	json.NewEncoder(w).Encode(struct {
@@ -77,6 +71,7 @@ func (h *RecordListHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	}{
 		Data: records,
 	})
+	return nil
 }
 
 // RecordFetchHandler record fetch handler
@@ -85,18 +80,16 @@ type RecordFetchHandler struct {
 	DB    *reform.DB
 }
 
-func (h *RecordFetchHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	vars := mux.Vars(r)
+func (h *RecordFetchHandler) ServeHTTP(w http.ResponseWriter, ctx *chttp.Context) error {
+	vars := mux.Vars(ctx.R)
 	id, err := parseIntID(vars["ID"])
 	if err != nil {
 		http.Error(w, errors.Wrap(err, "parse ID param").Error(), http.StatusBadRequest)
-		return
+		return nil
 	}
 	record, err := h.DB.FindByPrimaryKeyFrom(h.Table, id)
 	if err != nil {
-		http.Error(w, "", http.StatusInternalServerError)
-		log.Println(errors.Wrap(err, "find by primary key"))
-		return
+		return errors.Wrap(err, "find by primary key")
 	}
 
 	json.NewEncoder(w).Encode(struct {
@@ -104,6 +97,7 @@ func (h *RecordFetchHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	}{
 		Data: record,
 	})
+	return nil
 }
 
 func parseIntID(str string) (int, error) {

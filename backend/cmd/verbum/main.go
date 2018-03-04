@@ -93,27 +93,42 @@ func bootstrap() error {
 	}
 
 	r := mux.NewRouter()
-	r.Handle("/admin/api/dictionaries", &RecordListHandler{
-		Table: dict.DictTable,
-		DB:    DB,
-	}).Methods(http.MethodGet)
-	r.Handle("/admin/api/dictionaries", &RecordSaveHandler{
-		Table: dict.DictTable,
-		DB:    DB,
-	}).Methods(http.MethodPost)
-	r.Handle("/admin/api/articles", &RecordListHandler{
-		Table: article.ArticleTable,
-		DB:    DB,
-	}).Methods(http.MethodGet)
-	r.Handle("/admin/api/articles", &RecordSaveHandler{
-		Table:     article.ArticleTable,
-		DB:        DB,
-		AfterSave: article.Index,
-	}).Methods(http.MethodPost)
-	r.HandleFunc("/admin/api/articles/{ID}", (&RecordFetchHandler{
-		Table: article.ArticleTable,
-		DB:    DB,
-	}).ServeHTTP).Methods(http.MethodGet)
+	r.Handle("/admin/api/dictionaries", chttp.MakeHandler(
+		(&RecordListHandler{
+			Table: dict.DictTable,
+			DB:    DB,
+		}).ServeHTTP,
+		chttp.AuthMiddleware,
+	)).Methods(http.MethodGet)
+	r.Handle("/admin/api/dictionaries", chttp.MakeHandler(
+		(&RecordSaveHandler{
+			Table: dict.DictTable,
+			DB:    DB,
+		}).ServeHTTP,
+		chttp.AuthMiddleware,
+	)).Methods(http.MethodPost)
+	r.Handle("/admin/api/articles", chttp.MakeHandler(
+		(&RecordListHandler{
+			Table: article.ArticleTable,
+			DB:    DB,
+		}).ServeHTTP,
+		chttp.AuthMiddleware,
+	)).Methods(http.MethodGet)
+	r.Handle("/admin/api/articles", chttp.MakeHandler(
+		(&RecordSaveHandler{
+			Table:     article.ArticleTable,
+			DB:        DB,
+			AfterSave: article.Index,
+		}).ServeHTTP,
+		chttp.AuthMiddleware,
+	)).Methods(http.MethodPost)
+	r.HandleFunc("/admin/api/articles/{ID}", chttp.MakeHandler(
+		(&RecordFetchHandler{
+			Table: article.ArticleTable,
+			DB:    DB,
+		}).ServeHTTP,
+		chttp.AuthMiddleware,
+	)).Methods(http.MethodGet)
 	r.HandleFunc("/admin/auth", chttp.MakeHandler(chttp.AuthHandler))
 	r.PathPrefix("/admin/").HandlerFunc(chttp.MakeHandler(IndexHandler, chttp.AuthMiddleware))
 
