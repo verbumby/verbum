@@ -116,9 +116,11 @@ func IndexHandler(w http.ResponseWriter, ctx *chttp.Context) error {
 	}
 
 	data := struct {
-		Dicts []reform.Struct
+		Dicts     []reform.Struct
+		Principal *chttp.Principal
 	}{
-		Dicts: dicts,
+		Dicts:     dicts,
+		Principal: ctx.P,
 	}
 	if err := tm.Render("admin", w, data); err != nil {
 		return errors.Wrap(err, "render admin")
