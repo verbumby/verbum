@@ -59,7 +59,6 @@ func AuthHandler(w http.ResponseWriter, ctx *Context) error {
 	}
 	stateCookie.MaxAge = -1
 	stateCookie.Path = "/admin/"
-	stateCookie.HttpOnly = true
 	http.SetCookie(w, stateCookie)
 
 	// exchange code for access token
@@ -71,7 +70,7 @@ func AuthHandler(w http.ResponseWriter, ctx *Context) error {
 	bodyValues.Set("client_id", viper.GetString("oauth.clientID"))
 	bodyValues.Set("client_secret", viper.GetString("oauth.clientSecret"))
 
-	req, err := http.NewRequest(http.MethodPost, viper.GetString("oauth.endpoint")+"/token", strings.NewReader(bodyValues.Encode()))
+	req, err := http.NewRequest(http.MethodPost, viper.GetString("oauth.endpointToken"), strings.NewReader(bodyValues.Encode()))
 	if err != nil {
 		return errors.Wrap(err, "token request create")
 	}
@@ -91,17 +90,15 @@ func AuthHandler(w http.ResponseWriter, ctx *Context) error {
 
 	respData := struct {
 		AccessToken string `json:"access_token"`
-		// IDToken     string `json:"id_token"`
 	}{}
 
 	if err := json.NewDecoder(resp.Body).Decode(&respData); err != nil {
 		return errors.Wrap(err, "token request: response decode")
 	}
 	accessToken := respData.AccessToken
-	// fmt.Println(respData.IDToken)
 
 	// get user info by the access token
-	req, err = http.NewRequest(http.MethodGet, "https://www.googleapis.com/oauth2/v3/userinfo", nil)
+	req, err = http.NewRequest(http.MethodGet, viper.GetString("oauth.endpointUserinfo"), nil)
 	if err != nil {
 		return errors.Wrap(err, "userinfo request create")
 	}
@@ -144,6 +141,7 @@ func encodeCookie(p Principal) (*http.Cookie, error) {
 		Name:     viper.GetString("cookie.name"),
 		Value:    encoded,
 		Path:     "/admin/",
+		MaxAge:   viper.GetInt("cookie.maxAge"),
 		HttpOnly: true,
 	}
 	return cookie, nil
@@ -171,7 +169,7 @@ func AuthMiddleware(f HandlerFunc) HandlerFunc {
 		query.Set("state", state)
 		query.Set("nonce", fmt.Sprintf("%d", rand.Int()))
 
-		oauthURL := viper.GetString("oauth.endpoint") + "/v2/auth?" + query.Encode()
+		oauthURL := viper.GetString("oauth.endpointAuth") + "?" + query.Encode()
 		http.SetCookie(w, &http.Cookie{
 			Name:     viper.GetString("cookie.nameState"),
 			Value:    state,
