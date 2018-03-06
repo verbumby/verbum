@@ -5,17 +5,13 @@
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <title>Verbum Admin Panel</title>
-        <link
-            rel="stylesheet"
-            href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.6.2/css/bulma.min.css"
-            integrity="sha256-2k1KVsNPRXxZOsXQ8aqcZ9GOOwmJTMoOB5o5Qp1d6/s="
-            crossorigin="anonymous"
-        />
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/latest/css/font-awesome.min.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.6.2/css/bulma.min.css" integrity="sha256-2k1KVsNPRXxZOsXQ8aqcZ9GOOwmJTMoOB5o5Qp1d6/s=" crossorigin="anonymous" />
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/simplemde/latest/simplemde.min.css">
         <style type="text/css">
             .notification { border-radius: 0; }
             .notification:not(:last-child) { margin-bottom: 0; }
         </style>
-        <script defer src="https://use.fontawesome.com/releases/v5.0.0/js/all.js"></script>
     </head>
     <body>
         <div id="root"></div>
@@ -26,6 +22,7 @@
         <script src="https://cdnjs.cloudflare.com/ajax/libs/react-redux/5.0.6/react-redux.min.js" integrity="sha256-8eU0LhHhnabf4Va66EQUxv2fkHer7yLgdQPgI5/hnRs=" crossorigin="anonymous"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/redux-thunk/2.2.0/redux-thunk.min.js" integrity="sha256-2xw5MpPcdu82/nmW2XQ6Ise9hKxziLWV2GupkS9knuw=" crossorigin="anonymous"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/react-router-dom/4.2.2/react-router-dom.min.js" integrity="sha256-jLCuf08f087TmqfJOoAIRiS+J81kiDT4hdxuxdmPyUQ=" crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/simplemde/latest/simplemde.min.js"></script>
         <script type="text/javascript">
             window.verbumInitData = {
                 user: {{.Principal}},

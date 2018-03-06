@@ -2,6 +2,8 @@ import React from 'react'
 import { connect } from 'react-redux'
 import { Link } from 'react-router-dom'
 
+import Textarea from './textarea'
+
 class Form extends React.Component {
     constructor(props) {
         super(props)
@@ -48,7 +50,7 @@ class Form extends React.Component {
             <div className="field">
                 <div className="control">
                     <label class="label">Content</label>
-                    <textarea
+                    <Textarea
                         className="textarea"
                         type="text"
                         name="Content"
