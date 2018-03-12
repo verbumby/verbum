@@ -7,7 +7,6 @@
 
 /verbum
 node_modules/
-statics/admin.js
 
 db/data/
 sphinx/data/
