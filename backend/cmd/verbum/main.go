@@ -14,7 +14,6 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/gorilla/mux"
 	"github.com/pkg/errors"
-	"github.com/spf13/pflag"
 	"github.com/spf13/viper"
 	"github.com/verbumby/verbum/backend/pkg/article"
 	"github.com/verbumby/verbum/backend/pkg/chttp"
@@ -39,12 +38,18 @@ func bootstrap() error {
 	viper.SetDefault("db.host", "localhost")
 	viper.SetDefault("fts.host", "localhost")
 
-	pflag.String("db.host", "localhost", "hostname of the database server")
-	pflag.String("fts.host", "localhost", "hostname of the sphinx server")
-	pflag.Parse()
-	if err := viper.BindPFlags(pflag.CommandLine); err != nil {
-		log.Fatalf("bind pflags: %v", err)
-	}
+	viper.SetDefault("https.addr", ":8443")
+	viper.SetDefault("https.certFile", "cert.pem")
+	viper.SetDefault("https.keyFile", "key.pem")
+	viper.SetDefault("https.canonicalAddr", "https://localhost:8443")
+
+	viper.SetDefault("cookie.name", "vadm")
+	viper.SetDefault("cookie.nameState", "vadm-state")
+	viper.SetDefault("cookie.maxAge", 604800)
+
+	viper.SetDefault("oauth.endpointToken", "https://www.googleapis.com/oauth2/v4/token")
+	viper.SetDefault("oauth.endpointUserinfo", "https://www.googleapis.com/oauth2/v3/userinfo")
+	viper.SetDefault("oauth.endpointAuth", "https://accounts.google.com/o/oauth2/v2/auth")
 
 	viper.SetConfigName("config")
 	viper.AddConfigPath(".")
@@ -213,8 +218,13 @@ func bootstrap() error {
 
 	chttp.InitCookieManager()
 
-	log.Println("listening on :8080")
-	err = http.ListenAndServe(":8080", r)
+	log.Printf("listening on %s", viper.GetString("https.addr"))
+	err = http.ListenAndServeTLS(
+		viper.GetString("https.addr"),
+		viper.GetString("https.certFile"),
+		viper.GetString("https.keyFile"),
+		r,
+	)
 	if err != nil {
 		return errors.Wrap(err, "listen and serve")
 	}

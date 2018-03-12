@@ -27,16 +27,38 @@ func (h *RecordSaveHandler) ServeHTTP(w http.ResponseWriter, ctx *chttp.Context)
 	}
 
 	article := record.(*Article)
-	tokens, err := parseArticle(article.Content)
+	tokenGroups, err := parseArticle(article.Content)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return nil
+	}
+	if len(tokenGroups) == 0 {
+		http.Error(w, fmt.Sprintf("no headwords, the article won't be searchable"), http.StatusBadRequest)
+		return nil
+	}
+
+	article.Title = ""
+	for _, t := range tokenGroups[0][1 : len(tokenGroups[0])-1] {
+		article.Title += t.Data
+	}
+
+	if record.HasPK() {
+		err = h.DB.Update(record)
+		if err == reform.ErrNoRows {
+			err = nil
+		}
+	} else {
+		err = h.DB.Insert(record)
+	}
+
+	if err != nil {
+		return errors.Wrap(err, "save record")
 	}
 
 	hws := []reform.Record{}
 	ths := []reform.Record{}
 
-	for i, tokens := range tokens {
+	for i, tokens := range tokenGroups {
 		if i >= 1<<4 {
 			http.Error(w, fmt.Sprintf("headword count exceeded allowed %d count", 1<<4), http.StatusBadRequest)
 			return nil
@@ -59,27 +81,6 @@ func (h *RecordSaveHandler) ServeHTTP(w http.ResponseWriter, ctx *chttp.Context)
 			Typeahead: content,
 			ArticleID: article.ID,
 		})
-	}
-
-	if len(hws) == 0 {
-		http.Error(w, fmt.Sprintf("no headwords, the article won't searchable"), http.StatusBadRequest)
-		return nil
-	}
-
-	firstHeadword := hws[0].(*headword.Headword)
-	article.Title = firstHeadword.Headword
-
-	if record.HasPK() {
-		err = h.DB.Update(record)
-		if err == reform.ErrNoRows {
-			err = nil
-		}
-	} else {
-		err = h.DB.Insert(record)
-	}
-
-	if err != nil {
-		return errors.Wrap(err, "save record")
 	}
 
 	if err := indexHeadwords(article.ID, hws); err != nil {

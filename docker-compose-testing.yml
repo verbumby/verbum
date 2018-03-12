@@ -12,9 +12,13 @@ services:
 
   http:
     build: .
-    command: /verbum/verbum -db-host db -sphinx-host sphinx
+    command: /verbum/verbum
     ports:
-      - "8080:8080"
+      - "8443:8443"
+    volumes:
+      - ./config-testing.yaml:/verbum/config.yaml
+      - ./cert.pem:/verbum/cert.pem
+      - ./key.pem:/verbum/key.pem
 
   sphinx:
     build: ./sphinx

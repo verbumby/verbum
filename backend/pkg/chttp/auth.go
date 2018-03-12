@@ -66,7 +66,7 @@ func AuthHandler(w http.ResponseWriter, ctx *Context) error {
 	bodyValues := url.Values{}
 	bodyValues.Set("grant_type", "authorization_code")
 	bodyValues.Set("code", code)
-	bodyValues.Set("redirect_uri", viper.GetString("canonicalHttpAddress")+"/admin/auth")
+	bodyValues.Set("redirect_uri", viper.GetString("https.canonicalAddr")+"/admin/auth")
 	bodyValues.Set("client_id", viper.GetString("oauth.clientID"))
 	bodyValues.Set("client_secret", viper.GetString("oauth.clientSecret"))
 
@@ -169,7 +169,7 @@ func AuthMiddleware(f HandlerFunc) HandlerFunc {
 			}
 		}
 
-		redirectURL := viper.GetString("canonicalHttpAddress") + "/admin/auth"
+		redirectURL := viper.GetString("https.canonicalAddr") + "/admin/auth"
 		query := url.Values{}
 		query.Set("response_mode", "form_post")
 		query.Set("response_type", "code")

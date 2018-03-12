@@ -13,4 +13,5 @@ db/data/
 sphinx/data/
 sphinx/logs/
 docker-compose.yml
-config.yaml
+config*.yaml
+*.pem

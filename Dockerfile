@@ -14,8 +14,10 @@ COPY frontend frontend/
 RUN npx webpack
 
 FROM debian:stretch
+RUN apt-get update && apt-get install -y ca-certificates
 WORKDIR /verbum
 COPY --from=backend /go/bin/verbum /verbum/verbum
 COPY --from=frontend /verbum/statics/admin.js /verbum/statics/admin.js
+COPY statics/favicon.png /verbum/statics/favicon.png
 COPY templates templates/
 CMD [ "/verbum/verbum" ]
