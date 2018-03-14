@@ -6,7 +6,7 @@ class TopNav extends React.Component {
     render() {
         return (<nav className="navbar is-link">
             <div className="navbar-brand">
-                <Link className="navbar-item has-text-weight-bold is-size-4" to="/">Verbum Admin</Link>
+                <Link className="navbar-item has-text-weight-bold is-size-4" to="/">Verbum</Link>
             </div>
             <div className="navbar-menu">
                 <div className="navbar-start">

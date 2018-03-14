@@ -465,7 +465,7 @@ class TopNav extends __WEBPACK_IMPORTED_MODULE_0_react___default.a.Component {
                 __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
                     __WEBPACK_IMPORTED_MODULE_2_react_router_dom__["Link"],
                     { className: 'navbar-item has-text-weight-bold is-size-4', to: '/' },
-                    'Verbum Admin'
+                    'Verbum'
                 )
             ),
             __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
@@ -1049,11 +1049,7 @@ class Textarea extends __WEBPACK_IMPORTED_MODULE_0_react___default.a.Component {
     setElement(element) {
         this.element = element;
         if (element) {
-            this.simplemde = new __WEBPACK_IMPORTED_MODULE_1_simplemde___default.a({
-                element,
-                autofocus: true,
-                spellChecker: false
-            });
+            this.simplemde = this.newSimpleMDE(element);
             this.simplemde.codemirror.on('change', () => {
                 this.props.onChange({
                     target: {
@@ -1067,10 +1063,50 @@ class Textarea extends __WEBPACK_IMPORTED_MODULE_0_react___default.a.Component {
             this.simplemde = null;
         }
     }
+
     render() {
         return __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('textarea', _extends({}, this.props, { ref: el => {
                 this.setElement(el);
             } }));
+    }
+
+    newSimpleMDE(element) {
+        return new __WEBPACK_IMPORTED_MODULE_1_simplemde___default.a({
+            element,
+            autofocus: true,
+            spellChecker: false,
+            toolbar: [{
+                name: "bold",
+                action: __WEBPACK_IMPORTED_MODULE_1_simplemde___default.a.toggleBold,
+                title: "Bold",
+                className: "fa fa-bold"
+            }, {
+                name: "italic",
+                action: __WEBPACK_IMPORTED_MODULE_1_simplemde___default.a.toggleItalic,
+                title: "Italic",
+                className: "fa fa-italic"
+            }, {
+                name: "strikethrough",
+                action: __WEBPACK_IMPORTED_MODULE_1_simplemde___default.a.toggleStrikethrough,
+                title: "Strikethrough",
+                className: "fa fa-strikethrough"
+            }, {
+                name: "quote",
+                action: __WEBPACK_IMPORTED_MODULE_1_simplemde___default.a.toggleBlockquote,
+                title: "Quote",
+                className: "fa fa-quote-left"
+            }, "|", {
+                name: "unordered-list",
+                action: __WEBPACK_IMPORTED_MODULE_1_simplemde___default.a.toggleUnorderedList,
+                title: "Generic List",
+                className: "fa fa-list-ul"
+            }, {
+                name: "ordered-list",
+                action: __WEBPACK_IMPORTED_MODULE_1_simplemde___default.a.toggleOrderedList,
+                title: "Numbered List",
+                className: "fa fa-list-ol"
+            }]
+        });
     }
 }
 /* harmony export (immutable) */ __webpack_exports__["a"] = Textarea;

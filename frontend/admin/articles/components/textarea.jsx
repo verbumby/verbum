@@ -9,11 +9,7 @@ export default class Textarea extends React.Component {
     setElement(element) {
         this.element = element
         if (element) {
-            this.simplemde = new SimpleMDE({
-                element,
-                autofocus: true,
-                spellChecker: false,
-            })
+            this.simplemde = this.newSimpleMDE(element)
             this.simplemde.codemirror.on('change', () => {
                 this.props.onChange({
                     target: {
@@ -27,7 +23,55 @@ export default class Textarea extends React.Component {
             this.simplemde = null
         }
     }
+
     render() {
         return <textarea {...this.props} ref={(el) => {this.setElement(el)}}/>
+    }
+
+    newSimpleMDE(element) {
+        return new SimpleMDE({
+            element,
+            autofocus: true,
+            spellChecker: false,
+            toolbar: [
+                {
+                    name: "bold",
+                    action: SimpleMDE.toggleBold,
+                    title: "Bold",
+                    className: "fa fa-bold",
+                },
+                {
+                    name: "italic",
+                    action: SimpleMDE.toggleItalic,
+                    title: "Italic",
+                    className: "fa fa-italic",
+                },
+                {
+                    name: "strikethrough",
+                    action: SimpleMDE.toggleStrikethrough,
+                    title: "Strikethrough",
+                    className: "fa fa-strikethrough",
+                },
+                {
+                    name: "quote",
+                    action: SimpleMDE.toggleBlockquote,
+                    title: "Quote",
+                    className: "fa fa-quote-left",
+                },
+                "|",
+                {
+                    name: "unordered-list",
+                    action: SimpleMDE.toggleUnorderedList,
+                    title: "Generic List",
+                    className: "fa fa-list-ul",
+                },
+                {
+                    name: "ordered-list",
+                    action: SimpleMDE.toggleOrderedList,
+                    title: "Numbered List",
+                    className: "fa fa-list-ol",
+                },
+            ],
+        })
     }
 }
