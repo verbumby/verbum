@@ -29,7 +29,7 @@ export default class Textarea extends React.Component {
     }
 
     newSimpleMDE(element) {
-        return new SimpleMDE({
+        const smde = new SimpleMDE({
             element,
             autofocus: true,
             spellChecker: false,
@@ -71,7 +71,23 @@ export default class Textarea extends React.Component {
                     title: "Numbered List",
                     className: "fa fa-list-ol",
                 },
+                "|",
+                {
+                    name: "headword",
+                    action: this.headwordAction,
+                    title: "Headword",
+                    className: "fa fa-header color-tag",
+                }
             ],
         })
+        smde.codemirror.addKeyMap({
+            'Shift-Alt-W': this.headwordAction,
+        }, true)
+        return smde
+    }
+
+    headwordAction(codemirror) {
+        const selection = codemirror.getSelection()
+        codemirror.replaceSelection(`<v-hw>${selection}</v-hw>`, 'around')
     }
 }

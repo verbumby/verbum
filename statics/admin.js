@@ -1071,7 +1071,7 @@ class Textarea extends __WEBPACK_IMPORTED_MODULE_0_react___default.a.Component {
     }
 
     newSimpleMDE(element) {
-        return new __WEBPACK_IMPORTED_MODULE_1_simplemde___default.a({
+        const smde = new __WEBPACK_IMPORTED_MODULE_1_simplemde___default.a({
             element,
             autofocus: true,
             spellChecker: false,
@@ -1105,8 +1105,22 @@ class Textarea extends __WEBPACK_IMPORTED_MODULE_0_react___default.a.Component {
                 action: __WEBPACK_IMPORTED_MODULE_1_simplemde___default.a.toggleOrderedList,
                 title: "Numbered List",
                 className: "fa fa-list-ol"
+            }, "|", {
+                name: "headword",
+                action: this.headwordAction,
+                title: "Headword",
+                className: "fa fa-header color-tag"
             }]
         });
+        smde.codemirror.addKeyMap({
+            'Shift-Alt-W': this.headwordAction
+        }, true);
+        return smde;
+    }
+
+    headwordAction(codemirror) {
+        const selection = codemirror.getSelection();
+        codemirror.replaceSelection(`<v-hw>${selection}</v-hw>`, 'around');
     }
 }
 /* harmony export (immutable) */ __webpack_exports__["a"] = Textarea;
