@@ -1107,7 +1107,9 @@ class Textarea extends __WEBPACK_IMPORTED_MODULE_0_react___default.a.Component {
                 className: "fa fa-list-ol"
             }, "|", {
                 name: "headword",
-                action: this.headwordAction,
+                action: ({ codemirror }) => {
+                    this.headwordAction(codemirror);
+                },
                 title: "Headword",
                 className: "fa fa-header color-tag"
             }]
@@ -1121,6 +1123,7 @@ class Textarea extends __WEBPACK_IMPORTED_MODULE_0_react___default.a.Component {
     headwordAction(codemirror) {
         const selection = codemirror.getSelection();
         codemirror.replaceSelection(`<v-hw>${selection}</v-hw>`, 'around');
+        codemirror.focus();
     }
 }
 /* harmony export (immutable) */ __webpack_exports__["a"] = Textarea;
