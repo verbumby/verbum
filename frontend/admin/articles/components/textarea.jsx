@@ -74,7 +74,7 @@ export default class Textarea extends React.Component {
                 "|",
                 {
                     name: "headword",
-                    action: this.headwordAction,
+                    action: ({ codemirror }) => { this.headwordAction(codemirror) },
                     title: "Headword",
                     className: "fa fa-header color-tag",
                 }
@@ -89,5 +89,6 @@ export default class Textarea extends React.Component {
     headwordAction(codemirror) {
         const selection = codemirror.getSelection()
         codemirror.replaceSelection(`<v-hw>${selection}</v-hw>`, 'around')
+        codemirror.focus()
     }
 }
