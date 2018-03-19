@@ -11,6 +11,7 @@ import (
 	"github.com/verbumby/verbum/backend/pkg/fts"
 	"github.com/verbumby/verbum/backend/pkg/headword"
 	"github.com/verbumby/verbum/backend/pkg/typeahead"
+	"golang.org/x/net/html"
 	reform "gopkg.in/reform.v1"
 )
 
@@ -32,13 +33,19 @@ func (h *RecordSaveHandler) ServeHTTP(w http.ResponseWriter, ctx *chttp.Context)
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return nil
 	}
-	if len(tokenGroups) == 0 {
-		http.Error(w, fmt.Sprintf("no headwords, the article won't be searchable"), http.StatusBadRequest)
+	headwordTokenGroups := [][]html.Token{}
+	for _, tokenGroup := range tokenGroups {
+		if tokenGroup[0].Data == "v-hw" {
+			headwordTokenGroups = append(headwordTokenGroups, tokenGroup)
+		}
+	}
+	if len(headwordTokenGroups) == 0 {
+		http.Error(w, fmt.Sprintf("no headwords found, the article won't be searchable"), http.StatusBadRequest)
 		return nil
 	}
 
 	article.Title = ""
-	for _, t := range tokenGroups[0][1 : len(tokenGroups[0])-1] {
+	for _, t := range headwordTokenGroups[0][1 : len(headwordTokenGroups[0])-1] {
 		article.Title += t.Data
 	}
 
@@ -58,7 +65,7 @@ func (h *RecordSaveHandler) ServeHTTP(w http.ResponseWriter, ctx *chttp.Context)
 	hws := []reform.Record{}
 	ths := []reform.Record{}
 
-	for i, tokens := range tokenGroups {
+	for i, tokens := range headwordTokenGroups {
 		if i >= 1<<4 {
 			http.Error(w, fmt.Sprintf("headword count exceeded allowed %d count", 1<<4), http.StatusBadRequest)
 			return nil
