@@ -10,6 +10,7 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/pkg/errors"
 	"github.com/verbumby/verbum/backend/pkg/chttp"
+	"github.com/verbumby/verbum/backend/pkg/db"
 	"github.com/verbumby/verbum/backend/pkg/dict"
 	"github.com/verbumby/verbum/backend/pkg/tm"
 
@@ -111,7 +112,7 @@ func parseIntID(str string) (int, error) {
 
 // IndexHandler serve admin index page
 func IndexHandler(w http.ResponseWriter, ctx *chttp.Context) error {
-	dicts, err := DB.SelectAllFrom(dict.DictTable, "")
+	dicts, err := db.DB.SelectAllFrom(dict.DictTable, "")
 	if err != nil {
 		return errors.Wrap(err, "select all dicts")
 	}

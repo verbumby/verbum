@@ -1,75 +1,36 @@
 package main
 
 import (
-	"database/sql"
 	"encoding/json"
-	"fmt"
 	"html/template"
 	"log"
 	"net/http"
 
 	"gopkg.in/reform.v1"
-	"gopkg.in/reform.v1/dialects/mysql"
 
-	_ "github.com/go-sql-driver/mysql"
 	"github.com/gorilla/mux"
 	"github.com/pkg/errors"
 	"github.com/spf13/viper"
+	"github.com/verbumby/verbum/backend/pkg/app"
 	"github.com/verbumby/verbum/backend/pkg/article"
 	"github.com/verbumby/verbum/backend/pkg/chttp"
+	"github.com/verbumby/verbum/backend/pkg/db"
 	"github.com/verbumby/verbum/backend/pkg/dict"
 	"github.com/verbumby/verbum/backend/pkg/fts"
 	"github.com/verbumby/verbum/backend/pkg/tm"
 )
 
-var (
-	// DB reform database handler
-	DB *reform.DB
-)
-
 func main() {
-	err := bootstrap()
-	if err != nil {
+	if err := app.Bootstrap(); err != nil {
+		log.Fatal(err)
+	}
+
+	if err := bootstrapServer(); err != nil {
 		log.Fatal(err)
 	}
 }
 
-func bootstrap() error {
-	viper.SetDefault("db.host", "localhost")
-	viper.SetDefault("fts.host", "localhost")
-
-	viper.SetDefault("https.addr", ":8443")
-	viper.SetDefault("https.certFile", "cert.pem")
-	viper.SetDefault("https.keyFile", "key.pem")
-	viper.SetDefault("https.canonicalAddr", "https://localhost:8443")
-
-	viper.SetDefault("cookie.name", "vadm")
-	viper.SetDefault("cookie.nameState", "vadm-state")
-	viper.SetDefault("cookie.maxAge", 604800)
-
-	viper.SetDefault("oauth.endpointToken", "https://www.googleapis.com/oauth2/v4/token")
-	viper.SetDefault("oauth.endpointUserinfo", "https://www.googleapis.com/oauth2/v3/userinfo")
-	viper.SetDefault("oauth.endpointAuth", "https://accounts.google.com/o/oauth2/v2/auth")
-
-	viper.SetConfigName("config")
-	viper.AddConfigPath(".")
-
-	if err := viper.ReadInConfig(); err != nil {
-		log.Fatalf("Fatal error config file: %v\n", err)
-	}
-
-	// TODO: parametrize db connection
-	db, err := sql.Open("mysql", fmt.Sprintf("root@tcp(%s:3306)/verbum", viper.GetString("db.host")))
-	if err != nil {
-		return errors.Wrap(err, "open db")
-	}
-	DB = reform.NewDB(db, mysql.Dialect, reform.NewPrintfLogger(log.Printf))
-
-	sphinxConnString := fmt.Sprintf("tcp(%s:9306)/?interpolateParams=true", viper.GetString("fts.host"))
-	if err := fts.Initialize(sphinxConnString); err != nil {
-		return errors.Wrap(err, "fts initialize")
-	}
-
+func bootstrapServer() error {
 	templates := []struct {
 		name    string
 		files   []string
@@ -85,7 +46,7 @@ func bootstrap() error {
 			files: []string{"./templates/index.html"},
 			funcMap: template.FuncMap{
 				"dictByPK": func(id int32) (reform.Record, error) {
-					return DB.FindByPrimaryKeyFrom(dict.DictTable, id)
+					return db.DB.FindByPrimaryKeyFrom(dict.DictTable, id)
 				},
 			},
 		},
@@ -101,32 +62,32 @@ func bootstrap() error {
 	r.Handle("/admin/api/dictionaries", chttp.MakeHandler(
 		(&RecordListHandler{
 			Table: dict.DictTable,
-			DB:    DB,
+			DB:    db.DB,
 		}).ServeHTTP,
 		chttp.AuthMiddleware,
 	)).Methods(http.MethodGet)
 	r.Handle("/admin/api/dictionaries", chttp.MakeHandler(
 		(&RecordSaveHandler{
 			Table: dict.DictTable,
-			DB:    DB,
+			DB:    db.DB,
 		}).ServeHTTP,
 		chttp.AuthMiddleware,
 	)).Methods(http.MethodPost)
 	r.Handle("/admin/api/articles", chttp.MakeHandler(
 		(&RecordListHandler{
 			Table: article.ArticleTable,
-			DB:    DB,
+			DB:    db.DB,
 		}).ServeHTTP,
 		chttp.AuthMiddleware,
 	)).Methods(http.MethodGet)
 	r.Handle("/admin/api/articles", chttp.MakeHandler(
-		(&article.RecordSaveHandler{DB: DB}).ServeHTTP,
+		(&article.RecordSaveHandler{DB: db.DB}).ServeHTTP,
 		chttp.AuthMiddleware,
 	)).Methods(http.MethodPost)
 	r.HandleFunc("/admin/api/articles/{ID}", chttp.MakeHandler(
 		(&RecordFetchHandler{
 			Table: article.ArticleTable,
-			DB:    DB,
+			DB:    db.DB,
 		}).ServeHTTP,
 		chttp.AuthMiddleware,
 	)).Methods(http.MethodGet)
@@ -168,6 +129,7 @@ func bootstrap() error {
 		q := r.URL.Query().Get("q")
 
 		var articles []article.Article
+		var err error
 		if q != "" {
 			articles, err = func() ([]article.Article, error) {
 				rows, err := fts.Sphinx.Query(
@@ -197,7 +159,7 @@ func bootstrap() error {
 
 				result := make([]article.Article, len(articleIDs))
 				for i, id := range articleIDs {
-					if err := DB.FindByPrimaryKeyTo(&result[i], id); err != nil {
+					if err := db.DB.FindByPrimaryKeyTo(&result[i], id); err != nil {
 						return nil, errors.Wrapf(err, "find article by pk %d", id)
 					}
 				}
@@ -219,7 +181,7 @@ func bootstrap() error {
 	chttp.InitCookieManager()
 
 	log.Printf("listening on %s", viper.GetString("https.addr"))
-	err = http.ListenAndServeTLS(
+	err := http.ListenAndServeTLS(
 		viper.GetString("https.addr"),
 		viper.GetString("https.certFile"),
 		viper.GetString("https.keyFile"),
