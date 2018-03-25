@@ -2,10 +2,8 @@ package main
 
 import (
 	"encoding/json"
-	"fmt"
 	"net/http"
 	"strconv"
-	"strings"
 
 	"github.com/gorilla/mux"
 	"github.com/pkg/errors"
@@ -60,9 +58,7 @@ type RecordListHandler struct {
 }
 
 func (h *RecordListHandler) ServeHTTP(w http.ResponseWriter, ctx *chttp.Context) error {
-	query := "SELECT %s FROM %s"
-	query = fmt.Sprintf(query, strings.Join(h.Table.Columns(), ", "), h.Table.Name())
-	records, err := h.DB.SelectAllFrom(h.Table, "")
+	records, err := h.DB.SelectAllFrom(h.Table, "LIMIT 1000")
 	if err != nil {
 		return errors.Wrap(err, "select from db")
 	}
