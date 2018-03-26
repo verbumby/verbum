@@ -137,7 +137,7 @@ const req = (url, { options, actionPrefix, errorMessagePrefix, successMessage })
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__utils__ = __webpack_require__(4);
 
 
-const fetchList = () => Object(__WEBPACK_IMPORTED_MODULE_0__utils__["b" /* req */])('/admin/api/articles', {
+const fetchList = () => Object(__WEBPACK_IMPORTED_MODULE_0__utils__["b" /* req */])('/admin/api/articles?limit=100', {
     actionPrefix: 'ARTICLES/LIST/FETCH',
     errorMessagePrefix: 'Failed to fetch Articles list'
 });

@@ -1,6 +1,6 @@
 import { req } from '../utils'
 
-export const fetchList = () => req('/admin/api/articles', {
+export const fetchList = () => req('/admin/api/articles?limit=100', {
     actionPrefix: 'ARTICLES/LIST/FETCH',
     errorMessagePrefix: 'Failed to fetch Articles list',
 })

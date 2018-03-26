@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"strconv"
 
@@ -58,7 +59,34 @@ type RecordListHandler struct {
 }
 
 func (h *RecordListHandler) ServeHTTP(w http.ResponseWriter, ctx *chttp.Context) error {
-	records, err := h.DB.SelectAllFrom(h.Table, "LIMIT 1000")
+	limit := 20
+	limitStr := ctx.R.URL.Query().Get("limit")
+	if limitStr != "" {
+		limit64, err := strconv.ParseInt(limitStr, 10, 32)
+		if err != nil {
+			http.Error(w, errors.Wrap(err, "parse limit query param").Error(), http.StatusBadRequest)
+			return nil
+		}
+		limit = int(limit64)
+	}
+
+	offset := 0
+	offsetStr := ctx.R.URL.Query().Get("offset")
+	if offsetStr != "" {
+		offset64, err := strconv.ParseInt(offsetStr, 10, 32)
+		if err != nil {
+			http.Error(w, errors.Wrap(err, "parse offset query param").Error(), http.StatusBadRequest)
+			return nil
+		}
+		offset = int(offset64)
+	}
+
+	queryTail := fmt.Sprintf(
+		"LIMIT %s OFFSET %s",
+		db.DB.Placeholder(1),
+		db.DB.Placeholder(2),
+	)
+	records, err := h.DB.SelectAllFrom(h.Table, queryTail, limit, offset)
 	if err != nil {
 		return errors.Wrap(err, "select from db")
 	}
@@ -79,7 +107,7 @@ type RecordFetchHandler struct {
 
 func (h *RecordFetchHandler) ServeHTTP(w http.ResponseWriter, ctx *chttp.Context) error {
 	vars := mux.Vars(ctx.R)
-	id, err := parseIntID(vars["ID"])
+	id, err := parseInt(vars["ID"])
 	if err != nil {
 		http.Error(w, errors.Wrap(err, "parse ID param").Error(), http.StatusBadRequest)
 		return nil
@@ -97,7 +125,7 @@ func (h *RecordFetchHandler) ServeHTTP(w http.ResponseWriter, ctx *chttp.Context
 	return nil
 }
 
-func parseIntID(str string) (int, error) {
+func parseInt(str string) (int, error) {
 	id64, err := strconv.ParseInt(str, 10, 32)
 	if err != nil {
 		return 0, errors.Wrap(err, "parse int")
