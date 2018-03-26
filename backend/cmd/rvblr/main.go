@@ -15,14 +15,17 @@ import (
 	"github.com/verbumby/verbum/backend/pkg/app"
 )
 
+// DictData dict data
 type DictData struct {
 	Items ItemsData `xml:"items"`
 }
 
+// ItemsData items data
 type ItemsData struct {
 	Item []ItemData `xml:"item"`
 }
 
+// ItemData item data
 type ItemData struct {
 	Title string `xml:"title"`
 	Meta  string `xml:"meta"`

@@ -1,6 +1,6 @@
-import { req } from '../utils'
+import { req, assembleURLQuery } from '../utils'
 
-export const fetchList = () => req('/admin/api/articles?limit=100', {
+export const fetchList = (urlQuery) => req(`/admin/api/articles${assembleURLQuery(urlQuery)}`, {
     actionPrefix: 'ARTICLES/LIST/FETCH',
     errorMessagePrefix: 'Failed to fetch Articles list',
 })

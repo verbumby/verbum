@@ -98,7 +98,7 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
 
 
 const ifOK = f => ok => ok ? f(ok) : false;
-/* harmony export (immutable) */ __webpack_exports__["a"] = ifOK;
+/* harmony export (immutable) */ __webpack_exports__["b"] = ifOK;
 
 
 const req = (url, { options, actionPrefix, errorMessagePrefix, successMessage }) => dispatch => {
@@ -126,7 +126,32 @@ const req = (url, { options, actionPrefix, errorMessagePrefix, successMessage })
         return false;
     });
 };
-/* harmony export (immutable) */ __webpack_exports__["b"] = req;
+/* harmony export (immutable) */ __webpack_exports__["c"] = req;
+
+
+const parseURLSearchParams = search => {
+    const u = new URLSearchParams(search);
+    let result = {};
+    for (var pair of u.entries()) {
+        result[pair[0]] = pair[1];
+    }
+    return result;
+};
+/* unused harmony export parseURLSearchParams */
+
+
+const assembleURLQuery = params => {
+    const u = new URLSearchParams();
+    for (let key of Object.keys(params)) {
+        u.set(key, params[key]);
+    }
+    let result = u.toString();
+    if (result.length > 0) {
+        result = `?${result}`;
+    }
+    return result;
+};
+/* harmony export (immutable) */ __webpack_exports__["a"] = assembleURLQuery;
 
 
 /***/ }),
@@ -137,7 +162,7 @@ const req = (url, { options, actionPrefix, errorMessagePrefix, successMessage })
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__utils__ = __webpack_require__(4);
 
 
-const fetchList = () => Object(__WEBPACK_IMPORTED_MODULE_0__utils__["b" /* req */])('/admin/api/articles?limit=100', {
+const fetchList = urlQuery => Object(__WEBPACK_IMPORTED_MODULE_0__utils__["c" /* req */])(`/admin/api/articles${Object(__WEBPACK_IMPORTED_MODULE_0__utils__["a" /* assembleURLQuery */])(urlQuery)}`, {
     actionPrefix: 'ARTICLES/LIST/FETCH',
     errorMessagePrefix: 'Failed to fetch Articles list'
 });
@@ -148,7 +173,7 @@ const leaveList = () => ({ type: 'ARTICLES/LIST/LEAVE' });
 /* harmony export (immutable) */ __webpack_exports__["d"] = leaveList;
 
 
-const createRecord = ({ formData }) => Object(__WEBPACK_IMPORTED_MODULE_0__utils__["b" /* req */])('/admin/api/articles', {
+const createRecord = ({ formData }) => Object(__WEBPACK_IMPORTED_MODULE_0__utils__["c" /* req */])('/admin/api/articles', {
     options: {
         method: 'post',
         body: JSON.stringify(formData)
@@ -164,14 +189,14 @@ const leaveRecord = () => ({ type: 'ARTICLES/RECORD/LEAVE' });
 /* harmony export (immutable) */ __webpack_exports__["e"] = leaveRecord;
 
 
-const fetchRecord = articleID => Object(__WEBPACK_IMPORTED_MODULE_0__utils__["b" /* req */])(`/admin/api/articles/${articleID}`, {
+const fetchRecord = articleID => Object(__WEBPACK_IMPORTED_MODULE_0__utils__["c" /* req */])(`/admin/api/articles/${articleID}`, {
     actionPrefix: 'ARTICLES/RECORD/FETCH',
     errorMessagePrefix: 'Failed to fetch article'
 });
 /* harmony export (immutable) */ __webpack_exports__["c"] = fetchRecord;
 
 
-const updateRecord = ({ formData }) => Object(__WEBPACK_IMPORTED_MODULE_0__utils__["b" /* req */])(`/admin/api/articles`, {
+const updateRecord = ({ formData }) => Object(__WEBPACK_IMPORTED_MODULE_0__utils__["c" /* req */])(`/admin/api/articles`, {
     options: {
         method: 'post',
         body: JSON.stringify(formData)
@@ -191,7 +216,7 @@ const updateRecord = ({ formData }) => Object(__WEBPACK_IMPORTED_MODULE_0__utils
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__utils__ = __webpack_require__(4);
 
 
-const fetchList = () => Object(__WEBPACK_IMPORTED_MODULE_0__utils__["b" /* req */])('/admin/api/dictionaries', {
+const fetchList = () => Object(__WEBPACK_IMPORTED_MODULE_0__utils__["c" /* req */])('/admin/api/dictionaries', {
     actionPrefix: 'DICTIONARIES/LIST/FETCH',
     errorMessagePrefix: 'Failed to fetch Dictionaries list'
 });
@@ -202,7 +227,7 @@ const leaveList = () => ({ type: 'DICTIONARIES/LIST/LEAVE' });
 /* harmony export (immutable) */ __webpack_exports__["c"] = leaveList;
 
 
-const createDictionary = ({ formData }) => Object(__WEBPACK_IMPORTED_MODULE_0__utils__["b" /* req */])('/admin/api/dictionaries', {
+const createDictionary = ({ formData }) => Object(__WEBPACK_IMPORTED_MODULE_0__utils__["c" /* req */])('/admin/api/dictionaries', {
     options: {
         method: 'post',
         body: JSON.stringify(formData)
@@ -710,7 +735,7 @@ const showPrimaryMessage = message => showMessage(message, 'primary');
 class NewPage extends __WEBPACK_IMPORTED_MODULE_0_react___default.a.Component {
     render() {
         const onSave = data => {
-            this.props.createDictionary(data).then(Object(__WEBPACK_IMPORTED_MODULE_5__utils__["a" /* ifOK */])(data => this.props.history.push('/dictionaries')));
+            this.props.createDictionary(data).then(Object(__WEBPACK_IMPORTED_MODULE_5__utils__["b" /* ifOK */])(data => this.props.history.push('/dictionaries')));
         };
         return __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
             'div',
@@ -871,6 +896,8 @@ class Index extends __WEBPACK_IMPORTED_MODULE_0_react___default.a.Component {
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_redux__ = __webpack_require__(2);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_redux___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_3_redux__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__actions__ = __webpack_require__(5);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__utils__ = __webpack_require__(4);
+
 
 
 
@@ -879,16 +906,45 @@ class Index extends __WEBPACK_IMPORTED_MODULE_0_react___default.a.Component {
 
 
 class ListPage extends __WEBPACK_IMPORTED_MODULE_0_react___default.a.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            offset: 0,
+            limit: 30
+        };
+    }
+
     componentWillMount() {
-        this.props.fetchList();
+        this.fetchList();
     }
 
     componentWillUnmount() {
         this.props.leaveList();
     }
 
+    fetchList() {
+        this.props.fetchList({
+            offset: this.state.offset,
+            limit: this.state.limit
+        });
+    }
+
     render() {
         const { url } = this.props.match;
+        const onPrevPageClick = () => {
+            const offset = Math.max(0, this.state.offset - this.state.limit);
+            this.setState({ offset }, () => {
+                this.fetchList();
+            });
+        };
+
+        const onNextPageClick = () => {
+            const offset = this.state.offset + this.state.limit;
+            this.setState({ offset }, () => {
+                this.fetchList();
+            });
+        };
+
         return __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
             'div',
             null,
@@ -924,53 +980,71 @@ class ListPage extends __WEBPACK_IMPORTED_MODULE_0_react___default.a.Component {
             ),
             __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('hr', null),
             this.props.data && __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-                'table',
-                { className: 'table is-hoverable is-fullwidth' },
+                'div',
+                null,
                 __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-                    'thead',
-                    null,
+                    'table',
+                    { className: 'table is-hoverable is-fullwidth' },
                     __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-                        'tr',
+                        'thead',
                         null,
                         __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-                            'th',
-                            { width: '1px' },
-                            'ID'
-                        ),
-                        __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-                            'th',
+                            'tr',
                             null,
-                            'Title'
-                        ),
-                        __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('th', { width: '1px' })
+                            __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                                'th',
+                                { width: '1px' },
+                                'ID'
+                            ),
+                            __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                                'th',
+                                null,
+                                'Title'
+                            ),
+                            __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('th', { width: '1px' })
+                        )
+                    ),
+                    __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                        'tbody',
+                        null,
+                        this.props.data.map(item => __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                            'tr',
+                            null,
+                            __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                                'td',
+                                null,
+                                item.ID
+                            ),
+                            __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                                'td',
+                                null,
+                                item.Title
+                            ),
+                            __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                                'td',
+                                null,
+                                __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                                    __WEBPACK_IMPORTED_MODULE_1_react_router_dom__["Link"],
+                                    { to: `${url}/${item.ID}/edit`, className: 'button' },
+                                    'Edit'
+                                )
+                            )
+                        ))
                     )
                 ),
                 __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-                    'tbody',
-                    null,
-                    this.props.data.map(item => __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-                        'tr',
-                        null,
-                        __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-                            'td',
-                            null,
-                            item.ID
-                        ),
-                        __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-                            'td',
-                            null,
-                            item.Title
-                        ),
-                        __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-                            'td',
-                            null,
-                            __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-                                __WEBPACK_IMPORTED_MODULE_1_react_router_dom__["Link"],
-                                { to: `${url}/${item.ID}/edit`, className: 'button' },
-                                'Edit'
-                            )
-                        )
-                    ))
+                    'nav',
+                    { 'class': 'pagination', role: 'navigation', 'aria-label': 'pagination' },
+                    __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                        'a',
+                        { 'class': 'pagination-previous', onClick: onPrevPageClick },
+                        'Previous'
+                    ),
+                    __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                        'a',
+                        { 'class': 'pagination-next', onClick: onNextPageClick },
+                        'Next page'
+                    )
                 )
             )
         );
@@ -1006,7 +1080,7 @@ class ListPage extends __WEBPACK_IMPORTED_MODULE_0_react___default.a.Component {
 class NewPage extends __WEBPACK_IMPORTED_MODULE_0_react___default.a.Component {
     render() {
         const onSave = data => {
-            this.props.createRecord(data).then(Object(__WEBPACK_IMPORTED_MODULE_5__utils__["a" /* ifOK */])(data => this.props.history.push('/articles')));
+            this.props.createRecord(data).then(Object(__WEBPACK_IMPORTED_MODULE_5__utils__["b" /* ifOK */])(data => this.props.history.push('/articles')));
         };
         return __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
             'div',

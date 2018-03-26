@@ -32,3 +32,24 @@ export const req = (url, { options, actionPrefix, errorMessagePrefix, successMes
             return false
         })
 }
+
+export const parseURLSearchParams = (search) => {
+    const u = new URLSearchParams(search)
+    let result = {}
+    for(var pair of u.entries()) {
+        result[pair[0]] = pair[1]
+    }
+    return result
+}
+
+export const assembleURLQuery = (params) => {
+    const u = new URLSearchParams()
+    for (let key of Object.keys(params)) {
+        u.set(key, params[key])
+    }
+    let result = u.toString()
+    if (result.length > 0) {
+        result = `?${result}`
+    }
+    return result
+}
