@@ -180,6 +180,15 @@ func bootstrapServer() error {
 
 	chttp.InitCookieManager()
 
+	if viper.IsSet("http.addr") {
+		go func() {
+			statics := http.FileServer(http.Dir(viper.GetString("http.acmeChallengeRoot")))
+			r := http.NewServeMux()
+			r.Handle("/.well-known/acme-challenge/", http.StripPrefix("/.well-known/acme-challenge/", statics))
+			http.ListenAndServe(viper.GetString("http.addr"), r)
+		}()
+	}
+
 	log.Printf("listening on %s", viper.GetString("https.addr"))
 	err := http.ListenAndServeTLS(
 		viper.GetString("https.addr"),
