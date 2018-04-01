@@ -185,6 +185,17 @@ func bootstrapServer() error {
 			statics := http.FileServer(http.Dir(viper.GetString("http.acmeChallengeRoot")))
 			r := http.NewServeMux()
 			r.Handle("/.well-known/acme-challenge/", http.StripPrefix("/.well-known/acme-challenge/", statics))
+			r.HandleFunc("/", func(w http.ResponseWriter, req *http.Request) {
+				if req.Method == http.MethodGet {
+					target := "https://" + req.Host + req.URL.Path
+					if len(req.URL.RawQuery) > 0 {
+						target += "?" + req.URL.RawQuery
+					}
+					http.Redirect(w, req, target, http.StatusTemporaryRedirect)
+				} else {
+					http.NotFound(w, req)
+				}
+			})
 			http.ListenAndServe(viper.GetString("http.addr"), r)
 		}()
 	}
