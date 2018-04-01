@@ -82,6 +82,7 @@ export default class Textarea extends React.Component {
         })
         smde.codemirror.addKeyMap({
             'Shift-Alt-W': this.headwordAction,
+            'Cmd-S': this.props.onSave,
         }, true)
         return smde
     }

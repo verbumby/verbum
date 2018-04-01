@@ -335,7 +335,10 @@ class Form extends __WEBPACK_IMPORTED_MODULE_0_react___default.a.Component {
                         name: 'Content',
                         rows: '15',
                         value: this.state.Content,
-                        onChange: this.handleInputChange
+                        onChange: this.handleInputChange,
+                        onSave: () => {
+                            this.submitButton.click();
+                        }
                     })
                 )
             ),
@@ -347,7 +350,8 @@ class Form extends __WEBPACK_IMPORTED_MODULE_0_react___default.a.Component {
                     { 'class': 'control' },
                     __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
                         'button',
-                        { className: 'button is-link', type: 'submit' },
+                        { className: 'button is-link', type: 'submit',
+                            ref: button => this.submitButton = button },
                         'Save'
                     )
                 ),
@@ -1189,7 +1193,8 @@ class Textarea extends __WEBPACK_IMPORTED_MODULE_0_react___default.a.Component {
             }]
         });
         smde.codemirror.addKeyMap({
-            'Shift-Alt-W': this.headwordAction
+            'Shift-Alt-W': this.headwordAction,
+            'Cmd-S': this.props.onSave
         }, true);
         return smde;
     }

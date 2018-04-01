@@ -57,12 +57,16 @@ class Form extends React.Component {
                         rows="15"
                         value={this.state.Content}
                         onChange={this.handleInputChange}
+                        onSave={() => { this.submitButton.click() }}
                     />
                 </div>
             </div>
             <div className="field is-grouped">
                 <p class="control">
-                    <button className="button is-link" type="submit">Save</button>
+                    <button className="button is-link" type="submit"
+                        ref={button => this.submitButton = button}>
+                        Save
+                    </button>
                 </p>
                 <p class="control">
                     <Link className="button" to={this.props.onCancelRedirectTo}>Cancel</Link>
