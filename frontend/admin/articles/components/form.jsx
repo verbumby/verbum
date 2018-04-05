@@ -11,6 +11,7 @@ class Form extends React.Component {
 
         this.handleInputChange = this.handleInputChange.bind(this)
         this.handleSubmit = this.handleSubmit.bind(this)
+        this.toggleTask = this.toggleTask.bind(this)
     }
 
     handleInputChange(event) {
@@ -29,6 +30,19 @@ class Form extends React.Component {
         })
     }
 
+    toggleTask(n) {
+        let task = this.state.Tasks[n]
+        task = {
+            ...task,
+            Status: task.Status == 'PENDING' ? 'DONE': 'PENDING',
+        }
+
+        const Tasks = [...this.state.Tasks]
+        Tasks[n] = task
+
+        this.setState({ Tasks })
+    }
+
     handleSubmit(event) {
         event.preventDefault()
         this.props.onSave({ formData: this.state })
@@ -36,14 +50,33 @@ class Form extends React.Component {
 
     render() {
         return <form onSubmit={this.handleSubmit}>
-            <div class="field">
-                <label class="label">Dictionary</label>
-                <div class="control">
-                    <div class="select">
-                        <select name="DictID" value={this.state.DictID} onChange={this.handleInputChange} required >
-                            <option />
-                            {this.props.dicts.map(d => <option value={d.ID}>{d.Title}</option>)}
-                        </select>
+            <div class="columns">
+                <div class="column">
+                    <div class="field">
+                        <label class="label">Dictionary</label>
+                        <div class="control">
+                            <div class="select">
+                                <select name="DictID" value={this.state.DictID} onChange={this.handleInputChange} required >
+                                    <option />
+                                    {this.props.dicts.map(d => <option value={d.ID}>{d.Title}</option>)}
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="column">
+                    <div class="field">
+                        <label class="label">Tasks</label>
+                        {this.state.Tasks.map((it, i) => {
+                            const style = it.Status == 'PENDING' ? 'is-info' : 'is-success'
+                            const icon = it.Status == 'PENDING'
+                                ? <i class="fa fa-circle-o" aria-hidden="true"></i>
+                                : <i class="fa fa-check" aria-hidden="true"></i>
+
+                            return <div>
+                                <a class={`button ${style}`} onClick={() => {this.toggleTask(i)}}>{icon}&nbsp;{it.Task.Title}</a>
+                            </div>
+                        })}
                     </div>
                 </div>
             </div>

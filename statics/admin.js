@@ -251,6 +251,8 @@ const createDictionary = ({ formData }) => Object(__WEBPACK_IMPORTED_MODULE_0__u
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_react_router_dom__ = __webpack_require__(3);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_react_router_dom___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2_react_router_dom__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__textarea__ = __webpack_require__(20);
+var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
 
 
 
@@ -264,6 +266,7 @@ class Form extends __WEBPACK_IMPORTED_MODULE_0_react___default.a.Component {
 
         this.handleInputChange = this.handleInputChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
+        this.toggleTask = this.toggleTask.bind(this);
     }
 
     handleInputChange(event) {
@@ -282,6 +285,18 @@ class Form extends __WEBPACK_IMPORTED_MODULE_0_react___default.a.Component {
         });
     }
 
+    toggleTask(n) {
+        let task = this.state.Tasks[n];
+        task = _extends({}, task, {
+            Status: task.Status == 'PENDING' ? 'DONE' : 'PENDING'
+        });
+
+        const Tasks = [...this.state.Tasks];
+        Tasks[n] = task;
+
+        this.setState({ Tasks });
+    }
+
     handleSubmit(event) {
         event.preventDefault();
         this.props.onSave({ formData: this.state });
@@ -293,28 +308,67 @@ class Form extends __WEBPACK_IMPORTED_MODULE_0_react___default.a.Component {
             { onSubmit: this.handleSubmit },
             __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
                 'div',
-                { 'class': 'field' },
+                { 'class': 'columns' },
                 __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-                    'label',
-                    { 'class': 'label' },
-                    'Dictionary'
+                    'div',
+                    { 'class': 'column' },
+                    __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                        'div',
+                        { 'class': 'field' },
+                        __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                            'label',
+                            { 'class': 'label' },
+                            'Dictionary'
+                        ),
+                        __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                            'div',
+                            { 'class': 'control' },
+                            __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                                'div',
+                                { 'class': 'select' },
+                                __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                                    'select',
+                                    { name: 'DictID', value: this.state.DictID, onChange: this.handleInputChange, required: true },
+                                    __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('option', null),
+                                    this.props.dicts.map(d => __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                                        'option',
+                                        { value: d.ID },
+                                        d.Title
+                                    ))
+                                )
+                            )
+                        )
+                    )
                 ),
                 __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
                     'div',
-                    { 'class': 'control' },
+                    { 'class': 'column' },
                     __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
                         'div',
-                        { 'class': 'select' },
+                        { 'class': 'field' },
                         __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-                            'select',
-                            { name: 'DictID', value: this.state.DictID, onChange: this.handleInputChange, required: true },
-                            __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('option', null),
-                            this.props.dicts.map(d => __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-                                'option',
-                                { value: d.ID },
-                                d.Title
-                            ))
-                        )
+                            'label',
+                            { 'class': 'label' },
+                            'Tasks'
+                        ),
+                        this.state.Tasks.map((it, i) => {
+                            const style = it.Status == 'PENDING' ? 'is-info' : 'is-success';
+                            const icon = it.Status == 'PENDING' ? __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('i', { 'class': 'fa fa-circle-o', 'aria-hidden': 'true' }) : __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('i', { 'class': 'fa fa-check', 'aria-hidden': 'true' });
+
+                            return __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                                'div',
+                                null,
+                                __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                                    'a',
+                                    { 'class': `button ${style}`, onClick: () => {
+                                            this.toggleTask(i);
+                                        } },
+                                    icon,
+                                    '\xA0',
+                                    it.Task.Title
+                                )
+                            );
+                        })
                     )
                 )
             ),
