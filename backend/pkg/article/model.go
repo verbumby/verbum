@@ -48,3 +48,14 @@ func (a *Article) LoadRelationships() error {
 	}
 	return nil
 }
+
+// UpdateRelationships implements app.Model interface
+func (a *Article) UpdateRelationships() error {
+	query := "UPDATE tasks_articles_rel SET status = ? WHERE task_id = ? AND article_id = ?"
+	for _, t := range a.Tasks {
+		if _, err := db.DB.Exec(query, t.Status, t.Task.ID, a.ID); err != nil {
+			return errors.Wrap(err, "update article task status")
+		}
+	}
+	return nil
+}

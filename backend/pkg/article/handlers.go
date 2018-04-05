@@ -6,6 +6,8 @@ import (
 	"net/http"
 	"strings"
 
+	"github.com/verbumby/verbum/backend/pkg/app"
+
 	"github.com/pkg/errors"
 	"github.com/verbumby/verbum/backend/pkg/chttp"
 	"github.com/verbumby/verbum/backend/pkg/fts"
@@ -17,11 +19,12 @@ import (
 
 // RecordSaveHandler record create handler
 type RecordSaveHandler struct {
-	DB *reform.DB
+	ModelMeta app.ModelMeta
+	DB        *reform.DB
 }
 
 func (h *RecordSaveHandler) ServeHTTP(w http.ResponseWriter, ctx *chttp.Context) error {
-	record := ArticleTable.NewRecord()
+	record := ArticleMeta.NewModel()
 	if err := json.NewDecoder(ctx.R.Body).Decode(record); err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return nil
@@ -60,6 +63,10 @@ func (h *RecordSaveHandler) ServeHTTP(w http.ResponseWriter, ctx *chttp.Context)
 
 	if err != nil {
 		return errors.Wrap(err, "save record")
+	}
+
+	if err := record.UpdateRelationships(); err != nil {
+		return errors.Wrap(err, "update relationships")
 	}
 
 	hws := []reform.Record{}
