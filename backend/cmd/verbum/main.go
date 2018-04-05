@@ -86,8 +86,8 @@ func bootstrapServer() error {
 	)).Methods(http.MethodPost)
 	r.HandleFunc("/admin/api/articles/{ID}", chttp.MakeHandler(
 		(&RecordFetchHandler{
-			Table: article.ArticleTable,
-			DB:    db.DB,
+			ModelMeta: article.ArticleMeta,
+			DB:        db.DB,
 		}).ServeHTTP,
 		chttp.AuthMiddleware,
 	)).Methods(http.MethodGet)

@@ -8,6 +8,7 @@ import (
 
 	"github.com/gorilla/mux"
 	"github.com/pkg/errors"
+	"github.com/verbumby/verbum/backend/pkg/app"
 	"github.com/verbumby/verbum/backend/pkg/chttp"
 	"github.com/verbumby/verbum/backend/pkg/db"
 	"github.com/verbumby/verbum/backend/pkg/dict"
@@ -101,8 +102,8 @@ func (h *RecordListHandler) ServeHTTP(w http.ResponseWriter, ctx *chttp.Context)
 
 // RecordFetchHandler record fetch handler
 type RecordFetchHandler struct {
-	Table reform.Table
-	DB    *reform.DB
+	ModelMeta app.ModelMeta
+	DB        *reform.DB
 }
 
 func (h *RecordFetchHandler) ServeHTTP(w http.ResponseWriter, ctx *chttp.Context) error {
@@ -112,9 +113,13 @@ func (h *RecordFetchHandler) ServeHTTP(w http.ResponseWriter, ctx *chttp.Context
 		http.Error(w, errors.Wrap(err, "parse ID param").Error(), http.StatusBadRequest)
 		return nil
 	}
-	record, err := h.DB.FindByPrimaryKeyFrom(h.Table, id)
-	if err != nil {
+
+	record := h.ModelMeta.NewModel()
+	if err := h.DB.FindByPrimaryKeyTo(record, id); err != nil {
 		return errors.Wrap(err, "find by primary key")
+	}
+	if err := record.LoadRelationships(); err != nil {
+		return errors.Wrap(err, "load relationships")
 	}
 
 	json.NewEncoder(w).Encode(struct {
