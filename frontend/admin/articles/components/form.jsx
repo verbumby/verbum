@@ -71,7 +71,7 @@ class Form extends React.Component {
                             const style = it.Status == 'PENDING' ? 'is-info' : 'is-success'
                             const icon = it.Status == 'PENDING'
                                 ? <i class="fa fa-circle-o" aria-hidden="true"></i>
-                                : <i class="fa fa-check" aria-hidden="true"></i>
+                                : <i class="fa fa-check-circle" aria-hidden="true"></i>
 
                             return <div>
                                 <a class={`button ${style}`} onClick={() => {this.toggleTask(i)}}>{icon}&nbsp;{it.Task.Title}</a>

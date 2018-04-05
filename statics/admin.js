@@ -353,7 +353,7 @@ class Form extends __WEBPACK_IMPORTED_MODULE_0_react___default.a.Component {
                         ),
                         this.state.Tasks.map((it, i) => {
                             const style = it.Status == 'PENDING' ? 'is-info' : 'is-success';
-                            const icon = it.Status == 'PENDING' ? __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('i', { 'class': 'fa fa-circle-o', 'aria-hidden': 'true' }) : __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('i', { 'class': 'fa fa-check', 'aria-hidden': 'true' });
+                            const icon = it.Status == 'PENDING' ? __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('i', { 'class': 'fa fa-circle-o', 'aria-hidden': 'true' }) : __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('i', { 'class': 'fa fa-check-circle', 'aria-hidden': 'true' });
 
                             return __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
                                 'div',
