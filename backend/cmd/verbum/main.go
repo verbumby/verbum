@@ -77,6 +77,10 @@ func bootstrapServer() error {
 		(&RecordListHandler{
 			Table: article.ArticleTable,
 			DB:    db.DB,
+			Filters: []app.Filter{
+				&article.FilterDictID{},
+				&article.FilterTitlePrefix{},
+			},
 		}).ServeHTTP,
 		chttp.AuthMiddleware,
 	)).Methods(http.MethodGet)

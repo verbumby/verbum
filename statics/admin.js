@@ -142,7 +142,12 @@ const parseURLSearchParams = search => {
 
 const assembleURLQuery = params => {
     const u = new URLSearchParams();
+    const defaults = params._defaults || {};
+    delete params._defaults;
     for (let key of Object.keys(params)) {
+        if (key in defaults && defaults[key] === params[key]) {
+            continue;
+        }
         u.set(key, params[key]);
     }
     let result = u.toString();
@@ -942,8 +947,10 @@ class Index extends __WEBPACK_IMPORTED_MODULE_0_react___default.a.Component {
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_react_redux___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2_react_redux__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_redux__ = __webpack_require__(2);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_redux___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_3_redux__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__actions__ = __webpack_require__(5);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__utils__ = __webpack_require__(4);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__list_page_filter_dictionary__ = __webpack_require__(29);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__actions__ = __webpack_require__(5);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__utils__ = __webpack_require__(4);
+
 
 
 
@@ -957,7 +964,9 @@ class ListPage extends __WEBPACK_IMPORTED_MODULE_0_react___default.a.Component {
         super(props);
         this.state = {
             offset: 0,
-            limit: 30
+            limit: 20,
+            filter$DictID: -1,
+            filter$TitlePrefix: ''
         };
     }
 
@@ -972,7 +981,21 @@ class ListPage extends __WEBPACK_IMPORTED_MODULE_0_react___default.a.Component {
     fetchList() {
         this.props.fetchList({
             offset: this.state.offset,
-            limit: this.state.limit
+            limit: this.state.limit,
+            filter$DictID: this.state.filter$DictID,
+            filter$TitlePrefix: this.state.filter$TitlePrefix,
+            _defaults: {
+                offset: 0,
+                limit: 20,
+                filter$DictID: -1,
+                filter$TitlePrefix: ''
+            }
+        });
+    }
+
+    setFilterState(state) {
+        this.setState(state, () => {
+            this.fetchList();
         });
     }
 
@@ -1026,6 +1049,25 @@ class ListPage extends __WEBPACK_IMPORTED_MODULE_0_react___default.a.Component {
                 )
             ),
             __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('hr', null),
+            __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                'div',
+                { 'class': 'field is-grouped' },
+                __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                    'p',
+                    { 'class': 'control' },
+                    __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('input', {
+                        'class': 'input',
+                        type: 'text',
+                        value: this.state.filter$TitlePrefix,
+                        onChange: ev => this.setFilterState({ filter$TitlePrefix: ev.target.value })
+                    })
+                ),
+                __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                    'p',
+                    { 'class': 'control' },
+                    __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_4__list_page_filter_dictionary__["a" /* default */], { value: this.state.filter$DictID, onChange: filter$DictID => this.setFilterState({ filter$DictID }) })
+                )
+            ),
             this.props.data && __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
                 'div',
                 null,
@@ -1078,20 +1120,20 @@ class ListPage extends __WEBPACK_IMPORTED_MODULE_0_react___default.a.Component {
                             )
                         ))
                     )
+                )
+            ),
+            __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                'nav',
+                { 'class': 'pagination', role: 'navigation', 'aria-label': 'pagination' },
+                __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                    'a',
+                    { 'class': 'pagination-previous', onClick: onPrevPageClick },
+                    'Previous'
                 ),
                 __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-                    'nav',
-                    { 'class': 'pagination', role: 'navigation', 'aria-label': 'pagination' },
-                    __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-                        'a',
-                        { 'class': 'pagination-previous', onClick: onPrevPageClick },
-                        'Previous'
-                    ),
-                    __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-                        'a',
-                        { 'class': 'pagination-next', onClick: onNextPageClick },
-                        'Next page'
-                    )
+                    'a',
+                    { 'class': 'pagination-next', onClick: onNextPageClick },
+                    'Next page'
                 )
             )
         );
@@ -1100,7 +1142,7 @@ class ListPage extends __WEBPACK_IMPORTED_MODULE_0_react___default.a.Component {
 
 /* harmony default export */ __webpack_exports__["a"] = (Object(__WEBPACK_IMPORTED_MODULE_2_react_redux__["connect"])(state => ({
     data: state.articles.list
-}), dispatch => Object(__WEBPACK_IMPORTED_MODULE_3_redux__["bindActionCreators"])({ fetchList: __WEBPACK_IMPORTED_MODULE_4__actions__["b" /* fetchList */], leaveList: __WEBPACK_IMPORTED_MODULE_4__actions__["d" /* leaveList */] }, dispatch))(ListPage));
+}), dispatch => Object(__WEBPACK_IMPORTED_MODULE_3_redux__["bindActionCreators"])({ fetchList: __WEBPACK_IMPORTED_MODULE_5__actions__["b" /* fetchList */], leaveList: __WEBPACK_IMPORTED_MODULE_5__actions__["d" /* leaveList */] }, dispatch))(ListPage));
 
 /***/ }),
 /* 19 */
@@ -1509,6 +1551,46 @@ class Task extends __WEBPACK_IMPORTED_MODULE_0_react___default.a.Component {
 }
 /* harmony export (immutable) */ __webpack_exports__["a"] = Task;
 
+
+/***/ }),
+/* 29 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_react__ = __webpack_require__(0);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_react___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_react__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_react_redux__ = __webpack_require__(1);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_react_redux___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_react_redux__);
+
+
+
+class FilterDictionary extends __WEBPACK_IMPORTED_MODULE_0_react___default.a.Component {
+    render() {
+        const { value, dicts, onChange } = this.props;
+        return __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+            'div',
+            { 'class': 'select' },
+            __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                'select',
+                { value: value, onChange: ev => onChange(parseInt(ev.target.value)) },
+                __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                    'option',
+                    { value: '-1' },
+                    '- Filter by Dictionary -'
+                ),
+                dicts.map(d => __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                    'option',
+                    { value: d.ID },
+                    d.Title
+                ))
+            )
+        );
+    }
+}
+
+/* harmony default export */ __webpack_exports__["a"] = (Object(__WEBPACK_IMPORTED_MODULE_1_react_redux__["connect"])(state => ({
+    dicts: state.config.Dicts
+}))(FilterDictionary));
 
 /***/ })
 /******/ ]);

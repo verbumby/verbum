@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 
+import FilterDictionary from './list-page/filter-dictionary'
 import { fetchList, leaveList } from '../actions'
 import { parseURLSearchParams, assembleURLQuery } from '../../utils'
 
@@ -11,7 +12,9 @@ class ListPage extends React.Component {
         super(props)
         this.state = {
             offset: 0,
-            limit: 30,
+            limit: 20,
+            filter$DictID: -1,
+            filter$TitlePrefix: '',
         }
     }
 
@@ -27,7 +30,19 @@ class ListPage extends React.Component {
         this.props.fetchList({
             offset: this.state.offset,
             limit: this.state.limit,
+            filter$DictID: this.state.filter$DictID,
+            filter$TitlePrefix: this.state.filter$TitlePrefix,
+            _defaults: {
+                offset: 0,
+                limit: 20,
+                filter$DictID: -1,
+                filter$TitlePrefix: '',
+            }
         })
+    }
+
+    setFilterState(state) {
+        this.setState(state, () => { this.fetchList() })
     }
 
     render() {
@@ -56,31 +71,47 @@ class ListPage extends React.Component {
                 </div>
             </div>
             <hr />
+            {/* filter */}
+            <div class="field is-grouped">
+                <p class="control">
+                    <input
+                        class="input"
+                        type="text"
+                        value={this.state.filter$TitlePrefix}
+                        onChange={ev => this.setFilterState({ filter$TitlePrefix: ev.target.value })}
+                    />
+                </p>
+                <p class="control">
+                    <FilterDictionary value={this.state.filter$DictID} onChange={filter$DictID => this.setFilterState({ filter$DictID })} />
+                </p>
+            </div>
+
             {this.props.data &&
-            <div>
-            <table className="table is-hoverable is-fullwidth">
-                <thead>
-                    <tr>
-                        <th width="1px">ID</th>
-                        <th>Title</th>
-                        <th width="1px"></th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {this.props.data.map(item => <tr>
-                        <td>{item.ID}</td>
-                        <td>{item.Title}</td>
-                        <td><Link to={`${url}/${item.ID}/edit`} className="button">Edit</Link>
-                        </td>
-                    </tr>)}
-                </tbody>
-            </table>
+                <div>
+                    {/* table */}
+                    <table className="table is-hoverable is-fullwidth">
+                        <thead>
+                            <tr>
+                                <th width="1px">ID</th>
+                                <th>Title</th>
+                                <th width="1px"></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {this.props.data.map(item => <tr>
+                                <td>{item.ID}</td>
+                                <td>{item.Title}</td>
+                                <td><Link to={`${url}/${item.ID}/edit`} className="button">Edit</Link>
+                                </td>
+                            </tr>)}
+                        </tbody>
+                    </table>
+                </div>
+            }
             <nav class="pagination" role="navigation" aria-label="pagination">
                 <a class="pagination-previous" onClick={onPrevPageClick}>Previous</a>
                 <a class="pagination-next" onClick={onNextPageClick}>Next page</a>
             </nav>
-            </div>
-            }
         </div>)
     }
 }

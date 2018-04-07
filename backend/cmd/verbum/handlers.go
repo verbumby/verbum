@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net/http"
 	"strconv"
+	"strings"
 
 	"github.com/gorilla/mux"
 	"github.com/pkg/errors"
@@ -55,11 +56,47 @@ func (h *RecordSaveHandler) ServeHTTP(w http.ResponseWriter, ctx *chttp.Context)
 
 // RecordListHandler record list handler
 type RecordListHandler struct {
-	Table reform.Table
-	DB    *reform.DB
+	Table   reform.Table
+	DB      *reform.DB
+	Filters []app.Filter
 }
 
 func (h *RecordListHandler) ServeHTTP(w http.ResponseWriter, ctx *chttp.Context) error {
+	ffroms := []string{}
+	fwheres := []string{}
+	ffromArgss := []interface{}{}
+	fwhereArgss := []interface{}{}
+	for _, fmeta := range h.Filters {
+		fgetname := "filter$" + fmeta.Name()
+		if _, ok := ctx.R.URL.Query()[fgetname]; !ok {
+			continue
+		}
+		ffrom, ffromArgs, fwhere, fwhereArgs, err := fmeta.ToSQL(ctx.R.URL.Query().Get(fgetname))
+		if err != nil {
+			http.Error(w, errors.Wrapf(err, "parse %s", fgetname).Error(), http.StatusBadRequest)
+			return nil
+		}
+		if ffrom != "" {
+			ffroms = append(ffroms, ffrom)
+			ffromArgss = append(ffromArgss, ffromArgs...)
+		}
+		if fwhere != "" {
+			fwheres = append(fwheres, fwhere)
+			fwhereArgss = append(fwhereArgss, fwhereArgs...)
+		}
+	}
+
+	queryTail := ""
+	args := []interface{}{}
+	if len(ffroms) > 0 {
+		queryTail += strings.Join(ffroms, " ") + " "
+		args = append(args, ffromArgss...)
+	}
+	if len(fwheres) > 0 {
+		queryTail += "WHERE " + strings.Join(fwheres, " AND ") + " "
+		args = append(args, fwhereArgss...)
+	}
+
 	limit := 20
 	limitStr := ctx.R.URL.Query().Get("limit")
 	if limitStr != "" {
@@ -70,6 +107,7 @@ func (h *RecordListHandler) ServeHTTP(w http.ResponseWriter, ctx *chttp.Context)
 		}
 		limit = int(limit64)
 	}
+	args = append(args, limit)
 
 	offset := 0
 	offsetStr := ctx.R.URL.Query().Get("offset")
@@ -81,13 +119,14 @@ func (h *RecordListHandler) ServeHTTP(w http.ResponseWriter, ctx *chttp.Context)
 		}
 		offset = int(offset64)
 	}
+	args = append(args, offset)
 
-	queryTail := fmt.Sprintf(
+	queryTail = queryTail + fmt.Sprintf(
 		"LIMIT %s OFFSET %s",
 		db.DB.Placeholder(1),
 		db.DB.Placeholder(2),
 	)
-	records, err := h.DB.SelectAllFrom(h.Table, queryTail, limit, offset)
+	records, err := h.DB.SelectAllFrom(h.Table, queryTail, args...)
 	if err != nil {
 		return errors.Wrap(err, "select from db")
 	}

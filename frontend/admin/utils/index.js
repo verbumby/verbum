@@ -44,7 +44,12 @@ export const parseURLSearchParams = (search) => {
 
 export const assembleURLQuery = (params) => {
     const u = new URLSearchParams()
+    const defaults = params._defaults || {}
+    delete params._defaults
     for (let key of Object.keys(params)) {
+        if (key in defaults && defaults[key] === params[key]) {
+            continue;
+        }
         u.set(key, params[key])
     }
     let result = u.toString()
