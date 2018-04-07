@@ -3,6 +3,7 @@ import { connect } from 'react-redux'
 import { Link } from 'react-router-dom'
 
 import Textarea from './textarea'
+import Task from './form/task'
 
 class Form extends React.Component {
     constructor(props) {
@@ -67,15 +68,8 @@ class Form extends React.Component {
                 <div class="column">
                     <div class="field">
                         <label class="label">Tasks</label>
-                        {this.state.Tasks.map((it, i) => {
-                            const style = it.Status == 'PENDING' ? 'is-info' : 'is-success'
-                            const icon = it.Status == 'PENDING'
-                                ? <i class="fa fa-circle-o" aria-hidden="true"></i>
-                                : <i class="fa fa-check-circle" aria-hidden="true"></i>
-
-                            return <div>
-                                <a class={`button ${style}`} onClick={() => {this.toggleTask(i)}}>{icon}&nbsp;{it.Task.Title}</a>
-                            </div>
+                        {this.state.Tasks.map((task, index) => {
+                            return <Task onToggle={() => {this.toggleTask(index)}} task={task} index={index+1} />
                         })}
                     </div>
                 </div>

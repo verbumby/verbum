@@ -251,7 +251,9 @@ const createDictionary = ({ formData }) => Object(__WEBPACK_IMPORTED_MODULE_0__u
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_react_router_dom__ = __webpack_require__(3);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_react_router_dom___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2_react_router_dom__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__textarea__ = __webpack_require__(20);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__form_task__ = __webpack_require__(28);
 var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
 
 
 
@@ -351,23 +353,10 @@ class Form extends __WEBPACK_IMPORTED_MODULE_0_react___default.a.Component {
                             { 'class': 'label' },
                             'Tasks'
                         ),
-                        this.state.Tasks.map((it, i) => {
-                            const style = it.Status == 'PENDING' ? 'is-info' : 'is-success';
-                            const icon = it.Status == 'PENDING' ? __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('i', { 'class': 'fa fa-circle-o', 'aria-hidden': 'true' }) : __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('i', { 'class': 'fa fa-check-circle', 'aria-hidden': 'true' });
-
-                            return __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-                                'div',
-                                null,
-                                __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-                                    'a',
-                                    { 'class': `button ${style}`, onClick: () => {
-                                            this.toggleTask(i);
-                                        } },
-                                    icon,
-                                    '\xA0',
-                                    it.Task.Title
-                                )
-                            );
+                        this.state.Tasks.map((task, index) => {
+                            return __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_4__form_task__["a" /* default */], { onToggle: () => {
+                                    this.toggleTask(index);
+                                }, task: task, index: index + 1 });
                         })
                     )
                 )
@@ -1465,6 +1454,61 @@ const record = (state = {}, action) => {
     list,
     record
 }));
+
+/***/ }),
+/* 28 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_react__ = __webpack_require__(0);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_react___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_react__);
+
+
+class Task extends __WEBPACK_IMPORTED_MODULE_0_react___default.a.Component {
+    constructor(props) {
+        super(props);
+        this.keyUpHandler = this.keyUpHandler.bind(this);
+    }
+
+    componentWillMount() {
+        document.addEventListener('keyup', this.keyUpHandler);
+    }
+
+    componentWillUnmount() {
+        document.removeEventListener('keyup', this.keyUpHandler);
+    }
+
+    keyUpHandler(e) {
+        const { index, onToggle } = this.props;
+        if (e.ctrlKey && e.keyCode - 48 == index) {
+            e.preventDefault();
+            e.stopPropagation();
+            onToggle();
+        }
+    }
+
+    render() {
+        const { onToggle, task: it, index: i } = this.props;
+
+        const style = it.Status == 'PENDING' ? 'is-info' : 'is-success';
+        const icon = it.Status == 'PENDING' ? __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('i', { 'class': 'fa fa-circle-o', 'aria-hidden': 'true' }) : __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('i', { 'class': 'fa fa-check-circle', 'aria-hidden': 'true' });
+        return __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+            'div',
+            null,
+            __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                'a',
+                { 'class': `button ${style}`, onClick: onToggle },
+                icon,
+                '\xA0(',
+                i,
+                ')\xA0',
+                it.Task.Title
+            )
+        );
+    }
+}
+/* harmony export (immutable) */ __webpack_exports__["a"] = Task;
+
 
 /***/ })
 /******/ ]);
