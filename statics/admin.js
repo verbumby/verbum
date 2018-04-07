@@ -948,8 +948,10 @@ class Index extends __WEBPACK_IMPORTED_MODULE_0_react___default.a.Component {
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_redux__ = __webpack_require__(2);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_redux___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_3_redux__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__list_page_filter_dictionary__ = __webpack_require__(29);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__actions__ = __webpack_require__(5);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__utils__ = __webpack_require__(4);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__list_page_filter_task__ = __webpack_require__(30);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__actions__ = __webpack_require__(5);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__utils__ = __webpack_require__(4);
+
 
 
 
@@ -966,7 +968,8 @@ class ListPage extends __WEBPACK_IMPORTED_MODULE_0_react___default.a.Component {
             offset: 0,
             limit: 20,
             filter$DictID: -1,
-            filter$TitlePrefix: ''
+            filter$TitlePrefix: '',
+            filter$TaskID: -1
         };
     }
 
@@ -984,11 +987,13 @@ class ListPage extends __WEBPACK_IMPORTED_MODULE_0_react___default.a.Component {
             limit: this.state.limit,
             filter$DictID: this.state.filter$DictID,
             filter$TitlePrefix: this.state.filter$TitlePrefix,
+            filter$TaskID: this.state.filter$TaskID,
             _defaults: {
                 offset: 0,
                 limit: 20,
                 filter$DictID: -1,
-                filter$TitlePrefix: ''
+                filter$TitlePrefix: '',
+                filter$TaskID: -1
             }
         });
     }
@@ -1066,6 +1071,11 @@ class ListPage extends __WEBPACK_IMPORTED_MODULE_0_react___default.a.Component {
                     'p',
                     { 'class': 'control' },
                     __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_4__list_page_filter_dictionary__["a" /* default */], { value: this.state.filter$DictID, onChange: filter$DictID => this.setFilterState({ filter$DictID }) })
+                ),
+                __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                    'p',
+                    { 'class': 'control' },
+                    __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_5__list_page_filter_task__["a" /* default */], { value: this.state.filter$TaskID, onChange: filter$TaskID => this.setFilterState({ filter$TaskID }) })
                 )
             ),
             this.props.data && __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
@@ -1142,7 +1152,7 @@ class ListPage extends __WEBPACK_IMPORTED_MODULE_0_react___default.a.Component {
 
 /* harmony default export */ __webpack_exports__["a"] = (Object(__WEBPACK_IMPORTED_MODULE_2_react_redux__["connect"])(state => ({
     data: state.articles.list
-}), dispatch => Object(__WEBPACK_IMPORTED_MODULE_3_redux__["bindActionCreators"])({ fetchList: __WEBPACK_IMPORTED_MODULE_5__actions__["b" /* fetchList */], leaveList: __WEBPACK_IMPORTED_MODULE_5__actions__["d" /* leaveList */] }, dispatch))(ListPage));
+}), dispatch => Object(__WEBPACK_IMPORTED_MODULE_3_redux__["bindActionCreators"])({ fetchList: __WEBPACK_IMPORTED_MODULE_6__actions__["b" /* fetchList */], leaveList: __WEBPACK_IMPORTED_MODULE_6__actions__["d" /* leaveList */] }, dispatch))(ListPage));
 
 /***/ }),
 /* 19 */
@@ -1591,6 +1601,82 @@ class FilterDictionary extends __WEBPACK_IMPORTED_MODULE_0_react___default.a.Com
 /* harmony default export */ __webpack_exports__["a"] = (Object(__WEBPACK_IMPORTED_MODULE_1_react_redux__["connect"])(state => ({
     dicts: state.config.Dicts
 }))(FilterDictionary));
+
+/***/ }),
+/* 30 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_react__ = __webpack_require__(0);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_react___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_react__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_react_redux__ = __webpack_require__(1);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_react_redux___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_react_redux__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_redux__ = __webpack_require__(2);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_redux___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2_redux__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__tasks_actions__ = __webpack_require__(31);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__utils__ = __webpack_require__(4);
+
+
+
+
+
+
+
+class FilterTask extends __WEBPACK_IMPORTED_MODULE_0_react___default.a.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            tasks: null
+        };
+    }
+    componentWillMount() {
+        this.props.fetchList({}).then(Object(__WEBPACK_IMPORTED_MODULE_4__utils__["b" /* ifOK */])(data => this.setState({ tasks: data.Data })));
+    }
+
+    render() {
+        if (!this.state.tasks) {
+            return null;
+        }
+
+        const { value, onChange } = this.props;
+        const tasks = this.state.tasks;
+        return __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+            'div',
+            { 'class': 'select' },
+            __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                'select',
+                { value: value, onChange: ev => onChange(parseInt(ev.target.value)) },
+                __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                    'option',
+                    { value: '-1' },
+                    '- Filter by Task -'
+                ),
+                tasks.map(d => __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                    'option',
+                    { value: d.ID },
+                    d.Title
+                ))
+            )
+        );
+    }
+}
+
+/* harmony default export */ __webpack_exports__["a"] = (Object(__WEBPACK_IMPORTED_MODULE_1_react_redux__["connect"])(state => ({}), dispatch => Object(__WEBPACK_IMPORTED_MODULE_2_redux__["bindActionCreators"])({ fetchList: __WEBPACK_IMPORTED_MODULE_3__tasks_actions__["a" /* fetchList */] }, dispatch))(FilterTask));
+
+/***/ }),
+/* 31 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__utils__ = __webpack_require__(4);
+
+
+const fetchList = urlQuery => Object(__WEBPACK_IMPORTED_MODULE_0__utils__["c" /* req */])(`/admin/api/tasks${Object(__WEBPACK_IMPORTED_MODULE_0__utils__["a" /* assembleURLQuery */])(urlQuery)}`, {
+    actionPrefix: 'TASKS/LIST/FETCH',
+    errorMessagePrefix: 'Failed to fetch Tasks list'
+});
+/* harmony export (immutable) */ __webpack_exports__["a"] = fetchList;
+
 
 /***/ })
 /******/ ]);

@@ -17,6 +17,7 @@ import (
 	"github.com/verbumby/verbum/backend/pkg/db"
 	"github.com/verbumby/verbum/backend/pkg/dict"
 	"github.com/verbumby/verbum/backend/pkg/fts"
+	"github.com/verbumby/verbum/backend/pkg/task"
 	"github.com/verbumby/verbum/backend/pkg/tm"
 )
 
@@ -80,6 +81,7 @@ func bootstrapServer() error {
 			Filters: []app.Filter{
 				&article.FilterDictID{},
 				&article.FilterTitlePrefix{},
+				&article.FilterTaks{},
 			},
 		}).ServeHTTP,
 		chttp.AuthMiddleware,
@@ -95,6 +97,13 @@ func bootstrapServer() error {
 		(&RecordFetchHandler{
 			ModelMeta: article.ArticleMeta,
 			DB:        db.DB,
+		}).ServeHTTP,
+		chttp.AuthMiddleware,
+	)).Methods(http.MethodGet)
+	r.Handle("/admin/api/tasks", chttp.MakeHandler(
+		(&RecordListHandler{
+			Table: task.TaskTable,
+			DB:    db.DB,
 		}).ServeHTTP,
 		chttp.AuthMiddleware,
 	)).Methods(http.MethodGet)

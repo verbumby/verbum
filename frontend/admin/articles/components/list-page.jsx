@@ -4,6 +4,7 @@ import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 
 import FilterDictionary from './list-page/filter-dictionary'
+import FilterTask from './list-page/filter-task'
 import { fetchList, leaveList } from '../actions'
 import { parseURLSearchParams, assembleURLQuery } from '../../utils'
 
@@ -15,6 +16,7 @@ class ListPage extends React.Component {
             limit: 20,
             filter$DictID: -1,
             filter$TitlePrefix: '',
+            filter$TaskID: -1,
         }
     }
 
@@ -32,11 +34,13 @@ class ListPage extends React.Component {
             limit: this.state.limit,
             filter$DictID: this.state.filter$DictID,
             filter$TitlePrefix: this.state.filter$TitlePrefix,
+            filter$TaskID: this.state.filter$TaskID,
             _defaults: {
                 offset: 0,
                 limit: 20,
                 filter$DictID: -1,
                 filter$TitlePrefix: '',
+                filter$TaskID: -1,
             }
         })
     }
@@ -83,6 +87,9 @@ class ListPage extends React.Component {
                 </p>
                 <p class="control">
                     <FilterDictionary value={this.state.filter$DictID} onChange={filter$DictID => this.setFilterState({ filter$DictID })} />
+                </p>
+                <p class="control">
+                    <FilterTask value={this.state.filter$TaskID} onChange={filter$TaskID => this.setFilterState({ filter$TaskID })} />
                 </p>
             </div>
 
