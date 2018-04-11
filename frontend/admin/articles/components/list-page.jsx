@@ -11,13 +11,18 @@ import { parseURLSearchParams, assembleURLQuery } from '../../utils'
 class ListPage extends React.Component {
     constructor(props) {
         super(props)
+
         this.state = {
-            offset: 0,
-            limit: 20,
-            filter$DictID: -1,
-            filter$TitlePrefix: '',
-            filter$TaskID: -1,
+            ...this.getDefaultState(),
+            ...JSON.parse(localStorage.getItem('articles.list-page-state') || '{}')
         }
+    }
+
+    setState(props, callback) {
+        return super.setState(props, () => {
+            localStorage.setItem('articles.list-page-state', JSON.stringify(this.state))
+            callback()
+        })
     }
 
     componentWillMount() {
@@ -35,14 +40,18 @@ class ListPage extends React.Component {
             filter$DictID: this.state.filter$DictID,
             filter$TitlePrefix: this.state.filter$TitlePrefix,
             filter$TaskID: this.state.filter$TaskID,
-            _defaults: {
-                offset: 0,
-                limit: 20,
-                filter$DictID: -1,
-                filter$TitlePrefix: '',
-                filter$TaskID: -1,
-            }
+            _defaults: this.getDefaultState(),
         })
+    }
+
+    getDefaultState() {
+        return {
+            offset: 0,
+            limit: 20,
+            filter$DictID: -1,
+            filter$TitlePrefix: '',
+            filter$TaskID: -1,
+        }
     }
 
     setFilterState(state) {
