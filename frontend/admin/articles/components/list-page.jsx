@@ -46,7 +46,7 @@ class ListPage extends React.Component {
     }
 
     setFilterState(state) {
-        this.setState(state, () => { this.fetchList() })
+        this.setState({ ...state, offset: 0 }, () => { this.fetchList() })
     }
 
     render() {
