@@ -27,12 +27,9 @@ export default class Task extends React.Component {
         const { onToggle, task: it, index: i } = this.props
 
         const style = it.Status == 'PENDING' ? 'is-info' : 'is-success'
-        const icon = it.Status == 'PENDING'
-            ? <i class="fa fa-circle-o" aria-hidden="true"></i>
-            : <i class="fa fa-check-circle" aria-hidden="true"></i>
         return (<div>
             <a class={`button ${style}`} onClick={onToggle}>
-                {icon}&nbsp;({i})&nbsp;{it.Task.Title}
+                ({i})&nbsp;{it.Task.Title}
             </a>
         </div>)
     }

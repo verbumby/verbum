@@ -33,12 +33,13 @@ export default class Textarea extends React.Component {
             element,
             autofocus: true,
             spellChecker: false,
+            autoDownloadFontAwesome: false,
             toolbar: [
                 {
                     name: "bold",
                     action: SimpleMDE.toggleBold,
                     title: "Bold",
-                    className: "fa fa-bold",
+                    className: "fas fa-bold",
                 },
                 {
                     name: "italic",
@@ -76,7 +77,7 @@ export default class Textarea extends React.Component {
                     name: "headword",
                     action: ({ codemirror }) => { this.headwordAction(codemirror) },
                     title: "Headword",
-                    className: "fa fa-header color-tag",
+                    className: "fas fa-heading color-tag",
                 }
             ],
         })
