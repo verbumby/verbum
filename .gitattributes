@@ -1,1 +1,1 @@
-/statics/admin.js -diff linguist-generated=true
+/statics/*.js* -diff linguist-generated=true
