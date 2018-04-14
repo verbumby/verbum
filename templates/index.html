@@ -6,8 +6,9 @@
     <title>Verbum - Анлайн Слоўнік Беларускай Мовы</title>
     <meta name="viewport" content="width=device-width">
     <link rel="icon" type="image/png" href="{{"/statics/favicon.png" | staticURL}}" />
-    <!-- <script defer src="https://use.fontawesome.com/releases/v5.0.6/js/all.js"></script> -->
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/latest/css/font-awesome.min.css">
+    <script defer src="https://use.fontawesome.com/releases/v5.0.10/js/all.js"
+      integrity="sha384-slN8GvtUJGnv6ca26v8EzVaR9DC58QEwsIk9q1QXdCU8Yu8ck/tL/5szYlBbqmS+"
+      crossorigin="anonymous"></script>
     <style media="screen">
       html {min-height: 100%;}
       body {margin: 0;}
@@ -28,7 +29,7 @@
       .search-input .button-search {color:white; background: red; margin: 0; padding:5px 10px;}
       .search-input .button-search:active {background: black;}
       .search-input .button-search-small {display:none; padding: 4px 10px; font-size: 21px;}
-      .search-input .button-clear {color:grey; padding: 3px 10px; font-size: 21px; line-height: 0;
+      .search-input .button-clear {color:grey; padding: 4px 10px; font-size: 21px; line-height: 0;
         border: 1px solid lightgrey; border-right: none; border-left: none;}
       .search-input .button-clear:active {color: red;}
 
@@ -60,11 +61,11 @@
           <div class="search-input">
             <input type="text" name="q" value="{{.Q}}" autocomplete="off" autofocus="autofocus"/>
             <span class="button button-clear">
-              <i class="fa fa-times" aria-hidden="true"></i>
+              <i class="fas fa-times" aria-hidden="true"></i>
             </span>
             <span class="button button-search button-search-wide">Шукаць</span>
             <span class="button button-search button-search-small">
-              <i class="fa fa-search" aria-hidden="true"></i>
+              <i class="fas fa-search" aria-hidden="true"></i>
             </span>
           </div>
           <ul class="suggestions" style="display:none;">
