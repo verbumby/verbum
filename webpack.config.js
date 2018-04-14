@@ -17,6 +17,7 @@ module.exports = {
   },
   target: 'web',
   mode: 'production',
+  devtool: 'source-map',
   externals: {
     'react': 'React',
     'react-dom': 'ReactDOM',
