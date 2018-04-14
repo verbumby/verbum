@@ -16,6 +16,7 @@ module.exports = {
     extensions: ['.js', '.json', '.jsx', '.css']
   },
   target: 'web',
+  mode: 'production',
   externals: {
     'react': 'React',
     'react-dom': 'ReactDOM',
