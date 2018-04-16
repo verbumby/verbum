@@ -34,6 +34,19 @@ export default class Textarea extends React.Component {
             autofocus: true,
             spellChecker: false,
             autoDownloadFontAwesome: false,
+            previewRender: function(plainText, preview) {
+                fetch('/admin/api/preview', {
+                    method: 'post',
+                    credentials: 'include',
+                    body: plainText,
+                }).then(response => {
+                    return response.text()
+                }).then(text => {
+                    preview.innerHTML = text
+                })
+
+                return 'Loading...';
+            },
             toolbar: [
                 {
                     name: "bold",
@@ -78,6 +91,14 @@ export default class Textarea extends React.Component {
                     action: ({ codemirror }) => { this.headwordAction(codemirror) },
                     title: "Headword",
                     className: "fas fa-heading color-tag",
+                },
+                "|",
+                {
+                    name: "preview",
+                    action: SimpleMDE.togglePreview,
+                    title: "Toggle Preview",
+                    noDisable: true,
+                    className: "fas fa-eye",
                 }
             ],
         })

@@ -43,6 +43,11 @@ func bootstrapServer() error {
 			funcMap: template.FuncMap{},
 		},
 		{
+			name:    "preview",
+			files:   []string{"./templates/admin/preview.html"},
+			funcMap: template.FuncMap{},
+		},
+		{
 			name:  "index",
 			files: []string{"./templates/index.html"},
 			funcMap: template.FuncMap{
@@ -107,6 +112,10 @@ func bootstrapServer() error {
 		}).ServeHTTP,
 		chttp.AuthMiddleware,
 	)).Methods(http.MethodGet)
+	r.Handle("/admin/api/preview", chttp.MakeHandler(
+		PreviewHandler,
+		chttp.AuthMiddleware,
+	)).Methods(http.MethodPost)
 	r.HandleFunc("/admin/auth", chttp.MakeHandler(chttp.AuthHandler))
 	r.PathPrefix("/admin/").HandlerFunc(chttp.MakeHandler(IndexHandler, chttp.AuthMiddleware))
 

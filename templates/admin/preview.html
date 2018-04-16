@@ -1,0 +1,23 @@
+{{define "layout" -}}
+<style>
+    .editor-preview-content p { margin: 1em 0 1em 0; }
+    .editor-preview-content :first-child { margin-top: 0; }
+    .editor-preview-content v-hw { font-weight: bold; }
+
+    .editor-preview-content ol {
+        list-style-type: decimal;
+        margin: 1em 0 1em 0;
+        padding-left: 40px;
+    }
+
+    .editor-preview-content ul {
+        list-style-type: circle;
+        margin: 1em 0 1em 0;
+        padding-left: 40px;
+    }
+</style>
+<div class="editor-preview-content">
+    {{ .Markdown | md }}
+</div>
+
+{{end}}

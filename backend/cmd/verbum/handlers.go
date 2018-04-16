@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"net/http"
 	"strconv"
 	"strings"
@@ -194,6 +195,24 @@ func IndexHandler(w http.ResponseWriter, ctx *chttp.Context) error {
 	}
 	if err := tm.Render("admin", w, data); err != nil {
 		return errors.Wrap(err, "render admin")
+	}
+	return nil
+}
+
+// PreviewHandler renders preview for article source markdown
+func PreviewHandler(w http.ResponseWriter, ctx *chttp.Context) error {
+	bytes, err := ioutil.ReadAll(ctx.R.Body)
+	if err != nil {
+		return errors.Wrap(err, "read body")
+	}
+
+	err = tm.Render("preview", w, struct {
+		Markdown string
+	}{
+		Markdown: string(bytes),
+	})
+	if err != nil {
+		return errors.Wrap(err, "render preview")
 	}
 	return nil
 }
