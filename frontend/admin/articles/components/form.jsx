@@ -52,25 +52,24 @@ class Form extends React.Component {
 
     render() {
         return <form onSubmit={this.handleSubmit}>
-            <div class="form-row">
-                <div class="form-group col-md-10">
-                    <Textarea
-                        className="textarea"
-                        type="text"
-                        name="Content"
-                        rows="15"
-                        value={this.state.Content}
-                        onChange={this.handleInputChange}
-                        onSave={() => { this.submitButton.click() }}
-                    />
-                </div>
-                <div class="form-group col-md-2">
-                    <label class="label">Tasks</label>
-                    {this.state.Tasks.map((task, index) => {
-                        return <Task onToggle={() => { this.toggleTask(index) }} task={task} index={index + 1} />
-                    })}
-                </div>
+            <div class="form-group">
+                <label class="label">Tasks</label>
+                {this.state.Tasks.map((task, index) => {
+                    return <Task onToggle={() => { this.toggleTask(index) }} task={task} index={index + 1} />
+                })}
             </div>
+            <div class="form-group">
+                <Textarea
+                    className="textarea"
+                    type="text"
+                    name="Content"
+                    rows="15"
+                    value={this.state.Content}
+                    onChange={this.handleInputChange}
+                    onSave={() => { this.submitButton.click() }}
+                />
+            </div>
+
             <div class="form-row">
                 <button
                     className="btn btn-primary"
