@@ -9,7 +9,7 @@ export const showMessage = (message, level = 'info') => (dispatch) => {
             type: 'MESSAGES/DISMISS',
             message: { id },
         })
-    }, 5000)
+    }, 1000)
 }
 
 export const showInfoMessage = message => showMessage(message, 'info')

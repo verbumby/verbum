@@ -15,3 +15,5 @@ docker-compose.yml
 config*.yaml
 *.pem
 rvblr
+
+.DS_Store

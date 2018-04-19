@@ -27,25 +27,19 @@ export default class Form extends React.Component {
 
     render() {
         return <form onSubmit={this.handleSubmit}>
-            <div class="field">
-                <label class="label">Title</label>
-                <div class="control">
-                    <input className="input"
-                        type="text"
-                        name="Title"
-                        value={this.state.Title}
-                        onChange={this.handleInputChange}
-                        required
-                    />
-                </div>
+            <div class="form-group">
+                <label>Title</label>
+                <input className="form-control"
+                    type="text"
+                    name="Title"
+                    value={this.state.Title}
+                    onChange={this.handleInputChange}
+                    required
+                />
             </div>
-            <div className="field is-grouped">
-                <p class="control">
-                    <button className="button is-link" type="submit">Save</button>
-                </p>
-                <p class="control">
-                    <Link className="button" to={this.props.onCancelRedirectTo}>Cancel</Link>
-                </p>
+            <div className="form-row">
+                <button className="btn btn-primary" type="submit">Save</button>
+                <Link className="btn" to={this.props.onCancelRedirectTo}>Cancel</Link>
             </div>
         </form>
     }

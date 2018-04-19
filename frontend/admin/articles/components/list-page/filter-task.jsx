@@ -23,12 +23,12 @@ class FilterTask extends React.Component {
 
         const { value, onChange } = this.props
         const tasks = this.state.tasks
-        return (<div class="select">
-            <select value={value} onChange={(ev) => onChange(parseInt(ev.target.value))}>
+        return (
+            <select className="form-control" value={value} onChange={(ev) => onChange(parseInt(ev.target.value))}>
                 <option value="-1">- Filter by Task -</option>
                 {tasks.map(d => <option value={d.ID}>{d.Title}</option>)}
             </select>
-        </div>)
+        )
     }
 }
 

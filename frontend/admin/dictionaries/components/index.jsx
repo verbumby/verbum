@@ -8,7 +8,7 @@ export default class Index extends React.Component {
     render() {
         const { path } = this.props.match
         return (
-            <div className="container is-fluid">
+            <div className="container">
                 <Switch>
                     <Route exact path={path} component={ListPage} />
                     <Route path={`${path}/new`} component={NewPage} />

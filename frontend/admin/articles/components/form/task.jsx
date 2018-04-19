@@ -16,7 +16,7 @@ export default class Task extends React.Component {
 
     keyUpHandler(e) {
         const { index, onToggle } = this.props
-        if (e.ctrlKey && e.keyCode - 48 == index ) {
+        if (e.ctrlKey && e.keyCode - 48 == index) {
             e.preventDefault()
             e.stopPropagation()
             onToggle()
@@ -26,11 +26,12 @@ export default class Task extends React.Component {
     render() {
         const { onToggle, task: it, index: i } = this.props
 
-        const style = it.Status == 'PENDING' ? 'is-info' : 'is-success'
+        const style = it.Status == 'PENDING' ? '' : 'text-success'
         return (<div>
-            <a class={`button ${style}`} onClick={onToggle}>
+            <input type="checkbox" checked={it.Status == 'DONE'} onClick={onToggle} />&nbsp;
+                <span className={style}>
                 ({i})&nbsp;{it.Task.Title}
-            </a>
+            </span>
         </div>)
     }
 }

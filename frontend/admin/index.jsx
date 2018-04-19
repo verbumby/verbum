@@ -1,3 +1,6 @@
+import 'bootstrap'
+import 'bootstrap/dist/css/bootstrap.min.css'
+
 import React from 'react'
 import ReactDOM from 'react-dom'
 import { Provider } from 'react-redux'
@@ -35,7 +38,7 @@ ReactDOM.render(
     <Provider store={store}>
         <Router basename="/admin">
             <div>
-                <div>
+                <div className="sticky-top">
                     <TopNav />
                     <Messages />
                 </div>

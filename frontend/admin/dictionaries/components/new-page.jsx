@@ -13,7 +13,7 @@ class NewPage extends React.Component {
                 .then(ifOK((data) => this.props.history.push('/dictionaries')))
         }
         return (<div>
-            <h1 className="title">Create New Dictionary</h1>
+            <h1 className="mt-2">Create New Dictionary</h1>
             <Form
                 formData={{}}
                 onSave={onSave}

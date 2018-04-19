@@ -2,6 +2,7 @@ import React from 'react'
 import { connect } from 'react-redux'
 import { Link } from 'react-router-dom'
 
+import './form.css'
 import Textarea from './textarea'
 import Task from './form/task'
 
@@ -35,7 +36,7 @@ class Form extends React.Component {
         let task = this.state.Tasks[n]
         task = {
             ...task,
-            Status: task.Status == 'PENDING' ? 'DONE': 'PENDING',
+            Status: task.Status == 'PENDING' ? 'DONE' : 'PENDING',
         }
 
         const Tasks = [...this.state.Tasks]
@@ -51,32 +52,8 @@ class Form extends React.Component {
 
     render() {
         return <form onSubmit={this.handleSubmit}>
-            <div class="columns">
-                <div class="column">
-                    <div class="field">
-                        <label class="label">Dictionary</label>
-                        <div class="control">
-                            <div class="select">
-                                <select name="DictID" value={this.state.DictID} onChange={this.handleInputChange} required >
-                                    <option />
-                                    {this.props.dicts.map(d => <option value={d.ID}>{d.Title}</option>)}
-                                </select>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="column">
-                    <div class="field">
-                        <label class="label">Tasks</label>
-                        {this.state.Tasks.map((task, index) => {
-                            return <Task onToggle={() => {this.toggleTask(index)}} task={task} index={index+1} />
-                        })}
-                    </div>
-                </div>
-            </div>
-            <div className="field">
-                <div className="control">
-                    <label class="label">Content</label>
+            <div class="form-row">
+                <div class="form-group col-md-10">
                     <Textarea
                         className="textarea"
                         type="text"
@@ -87,17 +64,22 @@ class Form extends React.Component {
                         onSave={() => { this.submitButton.click() }}
                     />
                 </div>
+                <div class="form-group col-md-2">
+                    <label class="label">Tasks</label>
+                    {this.state.Tasks.map((task, index) => {
+                        return <Task onToggle={() => { this.toggleTask(index) }} task={task} index={index + 1} />
+                    })}
+                </div>
             </div>
-            <div className="field is-grouped">
-                <p class="control">
-                    <button className="button is-link" type="submit"
-                        ref={button => this.submitButton = button}>
-                        Save
-                    </button>
-                </p>
-                <p class="control">
-                    <Link className="button" to={this.props.onCancelRedirectTo}>Cancel</Link>
-                </p>
+            <div class="form-row">
+                <button
+                    className="btn btn-primary"
+                    type="submit"
+                    ref={button => this.submitButton = button}
+                >
+                    Save
+                </button>
+                <Link className="btn btn-link" to={this.props.onCancelRedirectTo}>Cancel</Link>
             </div>
         </form>
     }

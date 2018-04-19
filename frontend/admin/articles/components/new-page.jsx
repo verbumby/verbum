@@ -12,8 +12,8 @@ class NewPage extends React.Component {
             this.props.createRecord(data)
                 .then(ifOK((data) => this.props.history.push('/articles')))
         }
-        return (<div>
-            <h1 className="title">Create New Article</h1>
+        return (<div className="container">
+            <h1 className="mt-2">Create New Article</h1>
             <Form
                 formData={{}}
                 onSave={onSave}

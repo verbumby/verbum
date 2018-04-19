@@ -70,42 +70,38 @@ class ListPage extends React.Component {
             this.setState({ offset }, () => { this.fetchList() })
         }
 
-        return (<div>
-            <div className="level">
-                <div className="level-left">
-                    <h1 className="level-item title">Articles</h1>
-                </div>
-                <div className="level-right">
-                    <div className="field is-grouped level-item">
-                        <p class="control">
-                            <Link to={`${url}/new`} className="button is-link">New Article</Link>
-                        </p>
-                    </div>
-                </div>
-            </div>
-            <hr />
+        return (<div className="container mt-2">
+            <h1 className="d-inline-block mr-2 align-middle">Articles</h1>
+            <Link to={`${url}/new`} className="btn btn-light align-middle">New Article</Link>
             {/* filter */}
-            <div class="field is-grouped">
-                <p class="control">
+            <form class="form-inline">
+                <div class="form-group mr-2 mb-3">
                     <input
-                        class="input"
+                        class="form-control"
                         type="text"
                         value={this.state.filter$TitlePrefix}
                         onChange={ev => this.setFilterState({ filter$TitlePrefix: ev.target.value })}
+                        placeholder="Prefix"
                     />
-                </p>
-                <p class="control">
-                    <FilterDictionary value={this.state.filter$DictID} onChange={filter$DictID => this.setFilterState({ filter$DictID })} />
-                </p>
-                <p class="control">
-                    <FilterTask value={this.state.filter$TaskID} onChange={filter$TaskID => this.setFilterState({ filter$TaskID })} />
-                </p>
-            </div>
+                </div>
+                <div class="form-group mr-2 mb-3">
+                    <FilterDictionary
+                        value={this.state.filter$DictID}
+                        onChange={filter$DictID => this.setFilterState({ filter$DictID })}
+                    />
+                </div>
+                <div class="form-group mb-3">
+                    <FilterTask
+                        value={this.state.filter$TaskID}
+                        onChange={filter$TaskID => this.setFilterState({ filter$TaskID })}
+                    />
+                </div>
+            </form>
 
             {this.props.data &&
                 <div>
                     {/* table */}
-                    <table className="table is-hoverable is-fullwidth">
+                    <table className="table">
                         <thead>
                             <tr>
                                 <th width="1px">ID</th>
@@ -117,16 +113,22 @@ class ListPage extends React.Component {
                             {this.props.data.map(item => <tr>
                                 <td>{item.ID}</td>
                                 <td>{item.Title}</td>
-                                <td><Link to={`${url}/${item.ID}/edit`} className="button">Edit</Link>
+                                <td><Link to={`${url}/${item.ID}/edit`} className="btn">Edit</Link>
                                 </td>
                             </tr>)}
                         </tbody>
                     </table>
                 </div>
             }
-            <nav class="pagination" role="navigation" aria-label="pagination">
-                <a class="pagination-previous" onClick={onPrevPageClick}>Previous</a>
-                <a class="pagination-next" onClick={onNextPageClick}>Next page</a>
+            <nav>
+                <ul className="pagination justify-content-center">
+                    <li className="page-item" onClick={onPrevPageClick}>
+                        <a className="page-link">Previous</a>
+                    </li>
+                    <li className="page-item" onClick={onNextPageClick}>
+                        <a className="page-link">Next page</a>
+                    </li>
+                </ul>
             </nav>
         </div>)
     }

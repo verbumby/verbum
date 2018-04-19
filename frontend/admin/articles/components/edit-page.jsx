@@ -23,8 +23,8 @@ class EditPage extends React.Component {
             this.props.updateRecord(data)
         }
 
-        return (<div>
-            <h1 className="title">Edit #{this.props.data.ID} `{this.props.data.Title}`</h1>
+        return (<div class="container-fluid pb-2">
+            <h1 className="mt-2">Edit #{this.props.data.ID} `{this.props.data.Title}`</h1>
             <Form
                 formData={this.props.data}
                 onSave={onSave}
