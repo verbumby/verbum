@@ -34,3 +34,7 @@
 [[constraint]]
   name = "github.com/gorilla/securecookie"
   version = "1.1.1"
+
+[[constraint]]
+  name = "github.com/spf13/cobra"
+  version = "0.0.2"
