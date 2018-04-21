@@ -158,7 +158,7 @@ func bootstrapServer() error {
 		var articles []article.Article
 		var err error
 		if q != "" {
-			pageTitle = q + " - Пошук - " + pageTitle
+			pageTitle = q + " - Пошук"
 			articles, err = func() ([]article.Article, error) {
 				rows, err := fts.Sphinx.Query(
 					"SELECT article_id, MAX(WEIGHT()) mw "+
