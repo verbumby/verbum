@@ -61,6 +61,12 @@
 
 [[projects]]
   branch = "master"
+  name = "github.com/microcosm-cc/bluemonday"
+  packages = ["."]
+  revision = "995366fdf961d03629cd17361bddd32745718e2c"
+
+[[projects]]
+  branch = "master"
   name = "github.com/mitchellh/mapstructure"
   packages = ["."]
   revision = "00c29f56e2386353d58c599509e8dc3801b0d716"
@@ -175,6 +181,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "04f762c78252efa1dff394a9bde7c2f88a1cf99569409f5b3f6cba2e80707608"
+  inputs-digest = "209c1b550c07a9b4d00d763cbbb7ff77340df4921beea2e88960eab958412acd"
   solver-name = "gps-cdcl"
   solver-version = 1

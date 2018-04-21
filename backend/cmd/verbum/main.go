@@ -151,11 +151,14 @@ func bootstrapServer() error {
 		}
 	})
 	r.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+		pageTitle := "Verbum - Анлайн Слоўнік Беларускай Мовы"
+		pageDescription := pageTitle
 		q := r.URL.Query().Get("q")
 
 		var articles []article.Article
 		var err error
 		if q != "" {
+			pageTitle = q + " - Пошук - " + pageTitle
 			articles, err = func() ([]article.Article, error) {
 				rows, err := fts.Sphinx.Query(
 					"SELECT article_id, MAX(WEIGHT()) mw "+
@@ -194,13 +197,24 @@ func bootstrapServer() error {
 				log.Println(err)
 			}
 		}
-		tm.Render("index", w, struct {
-			Articles []article.Article
-			Q        string
+
+		if len(articles) > 0 {
+			pageDescription = articles[0].Content
+		}
+		err = tm.Render("index", w, struct {
+			Articles        []article.Article
+			Q               string
+			PageTitle       string
+			PageDescription string
 		}{
-			Articles: articles,
-			Q:        q,
+			Articles:        articles,
+			Q:               q,
+			PageTitle:       pageTitle,
+			PageDescription: pageDescription,
 		})
+		if err != nil {
+			log.Println(err)
+		}
 	})
 
 	chttp.InitCookieManager()

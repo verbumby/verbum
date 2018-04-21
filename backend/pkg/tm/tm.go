@@ -8,6 +8,7 @@ import (
 	"os"
 	"strconv"
 
+	"github.com/microcosm-cc/bluemonday"
 	"github.com/pkg/errors"
 	blackfriday "gopkg.in/russross/blackfriday.v2"
 )
@@ -18,6 +19,7 @@ var templates = map[string]*template.Template{}
 func Compile(name string, files []string, funcMap template.FuncMap) error {
 	funcMap["staticURL"] = staticURL
 	funcMap["md"] = md
+	funcMap["stripTags"] = stripTags
 	t, err := template.New(name).Funcs(funcMap).ParseFiles(files...)
 	if err != nil {
 		return errors.Wrap(err, "parse files")
@@ -50,4 +52,10 @@ func staticURL(file string) string {
 
 func md(input string) template.HTML {
 	return template.HTML(blackfriday.Run([]byte(input)))
+}
+
+func stripTags(input template.HTML) string {
+	bytes := []byte(input)
+	bytes = bluemonday.StrictPolicy().SanitizeBytes(bytes)
+	return string(bytes)
 }

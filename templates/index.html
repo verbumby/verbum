@@ -1,9 +1,13 @@
 {{define "layout" -}}
 <!DOCTYPE html>
-<html>
+<html prefix="og: http://ogp.me/ns#">
   <head>
     <meta charset="utf-8">
-    <title>Verbum - Анлайн Слоўнік Беларускай Мовы</title>
+    <title>{{ .PageTitle }}</title>
+    <meta name="description" content="{{ .PageDescription | md | stripTags }}" />
+    <meta property="og:title" content="{{ .PageTitle }}" />
+    <meta property="og:description" content="{{ .PageDescription | md | stripTags }}" />
+    <meta property="og:image" content="{{"/statics/favicon.png" | staticURL}}" />
     <meta name="viewport" content="width=device-width">
     <link rel="icon" type="image/png" href="{{"/statics/favicon.png" | staticURL}}" />
     <script defer src="https://use.fontawesome.com/releases/v5.0.10/js/all.js"
