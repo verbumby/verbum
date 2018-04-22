@@ -7,11 +7,11 @@ export default class Task extends React.Component {
     }
 
     componentWillMount() {
-        document.addEventListener('keyup', this.keyUpHandler)
+        document.addEventListener('keydown', this.keyUpHandler)
     }
 
     componentWillUnmount() {
-        document.removeEventListener('keyup', this.keyUpHandler)
+        document.removeEventListener('keydown', this.keyUpHandler)
     }
 
     keyUpHandler(e) {
