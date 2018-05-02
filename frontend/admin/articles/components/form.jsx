@@ -70,7 +70,7 @@ class Form extends React.Component {
                 />
             </div>
 
-            <div class="form-row">
+            <div className="form-row">
                 <button
                     className="btn btn-primary"
                     type="submit"
@@ -78,7 +78,6 @@ class Form extends React.Component {
                 >
                     Save
                 </button>
-                <Link className="btn btn-link" to={this.props.onCancelRedirectTo}>Cancel</Link>
             </div>
         </form>
     }
