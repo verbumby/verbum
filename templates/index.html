@@ -99,20 +99,20 @@
               switch(ev.code) {
                 case "Escape":
                   ev.preventDefault()
-                  this.resetActiveSuggestion()
+                  this.resetActiveSuggestion(true)
                   this.hideSuggestions()
                   break;
                 case "ArrowDown":
                   if (this.activeSuggestion) {
                     if (this.activeSuggestion.nextSibling) {
-                      this.activateSuggestion(this.activeSuggestion.nextSibling)
+                      this.activateSuggestion(this.activeSuggestion.nextSibling, true)
                     } else {
-                      this.resetActiveSuggestion()
+                      this.resetActiveSuggestion(true)
                     }
                   } else {
                     let li = this.suggestions.querySelector('li:first-child')
                     if (li) {
-                      this.activateSuggestion(li)
+                      this.activateSuggestion(li, true)
                     }
                   }
                   ev.preventDefault()
@@ -120,14 +120,14 @@
                 case "ArrowUp":
                   if (this.activeSuggestion) {
                     if (this.activeSuggestion.previousSibling) {
-                      this.activateSuggestion(this.activeSuggestion.previousSibling)
+                      this.activateSuggestion(this.activeSuggestion.previousSibling, true)
                     } else {
-                      this.resetActiveSuggestion()
+                      this.resetActiveSuggestion(true)
                     }
                   } else {
                     let li = this.suggestions.querySelector('li:last-child')
                     if (li) {
-                      this.activateSuggestion(li)
+                      this.activateSuggestion(li, true)
                     }
                   }
                   ev.preventDefault()
@@ -148,22 +148,24 @@
               if (ev.target == this.suggestions) {
                 return
               }
-              this.activateSuggestion(ev.target)
+              this.activateSuggestion(ev.target, false)
             })
 
             this.suggestions.addEventListener('mouseleave', () => {
-              this.resetActiveSuggestion()
+              this.resetActiveSuggestion(false)
             })
 
             this.suggestions.addEventListener('click', (ev) => {
               if (this.activeSuggestion) {
+                this.input.value = this.activeSuggestion.innerText
                 this.form.submit()
               }
             })
           }
 
           onValueChange() {
-            this.resetActiveSuggestion()
+            this.backupInputValue = ''
+
             this.updateClearButton()
             if (!this.input.value) {
               this.hideSuggestions()
@@ -198,11 +200,9 @@
             if (suggestions.length == 0) {
               this.hideSuggestions()
               return
-            } else {
-              this.suggestions.innerHTML = ''
             }
 
-
+            this.suggestions.innerHTML = ''
             for (let suggestion of suggestions) {
               let li = document.createElement('li')
               li.innerText = suggestion
@@ -212,24 +212,30 @@
             this.showSuggestions()
           }
 
-          activateSuggestion(li) {
-            if (!this.activeSuggestion) {
-              this.backupInputValue = this.input.value
-            } else {
+          activateSuggestion(li, updateValue) {
+            if (this.activeSuggestion) {
               this.activeSuggestion.classList.remove('active')
             }
-
             this.activeSuggestion = li
             li.classList.add('active')
-            this.input.value = li.innerText
+
+            if (updateValue) {
+              if (!this.backupInputValue) {
+                this.backupInputValue = this.input.value
+              }
+              this.input.value = li.innerText
+            }
           }
 
-          resetActiveSuggestion() {
+          resetActiveSuggestion(resetValue) {
             if (this.activeSuggestion) {
-              this.input.value = this.backupInputValue
-              this.backupInputValue = ''
               this.activeSuggestion.classList.remove('active')
               this.activeSuggestion = null
+            }
+
+            if (resetValue && this.backupInputValue) {
+              this.input.value = this.backupInputValue
+              this.backupInputValue = ''
             }
           }
 
