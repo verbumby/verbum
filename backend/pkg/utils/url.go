@@ -2,7 +2,37 @@ package utils
 
 import (
 	"strings"
+	"unicode"
 )
+
+// Slugify returns slugged version of the string
+func Slugify(s string) string {
+	b := &strings.Builder{}
+
+	s = Latinize(s)
+	for _, r := range s {
+		if unicode.IsUpper(r) {
+			r = unicode.ToLower(r)
+		}
+
+		if unicode.Is(unicode.Latin, r) {
+			b.WriteRune(r)
+			continue
+		}
+
+		if unicode.IsDigit(r) {
+			b.WriteRune(r)
+			continue
+		}
+		if r == '(' || r == ')' || r == '-' || r == '.' || r == '\'' || r == ',' {
+			b.WriteRune(r)
+			continue
+		}
+
+		b.WriteRune('-')
+	}
+	return b.String()
+}
 
 var latinizeMap = map[rune]string{
 	'І': "I",
@@ -11,8 +41,8 @@ var latinizeMap = map[rune]string{
 	'ў': "u",
 	'Ё': "YO",
 	'ё': "yo",
-	'A': "A",
-	'a': "a",
+	'А': "A",
+	'а': "a",
 	'Б': "B",
 	'б': "b",
 	'В': "V",
@@ -62,7 +92,7 @@ var latinizeMap = map[rune]string{
 	'Ш': "SH",
 	'ш': "sh",
 	'Щ': "SHCH",
-	'щ': "SHCH",
+	'щ': "shch",
 	'Ъ': "''",
 	'ъ': "''",
 	'Ы': "Y",
