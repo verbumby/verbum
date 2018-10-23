@@ -250,6 +250,13 @@
 
         new SearchControl(document.getElementById('search'))
       </script>
+
+      <ul>
+      {{range .Dicts}}
+        <li data-id="{{.ID}}">{{.Title}}</li>
+      {{end}}
+      </ul>
+
       {{range .Articles}}
       <div class="article">
         {{ .Content | md }}

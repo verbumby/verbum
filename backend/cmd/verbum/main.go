@@ -91,8 +91,16 @@ func bootstrapServer() error {
 		q := r.URL.Query().Get("q")
 
 		var articles []article.Article
+		var dicts []reform.Struct
 		var err error
-		if q != "" {
+		if q == "" {
+			dicts, err = db.DB.SelectAllFrom(dict.DictTable, "")
+			if err != nil {
+				http.Error(w, "", http.StatusInternalServerError)
+				log.Println(errors.Wrap(err, "find all dicts"))
+				return
+			}
+		} else {
 			pageTitle = q + " - Пошук"
 			articles, err = func() ([]article.Article, error) {
 				rows, err := fts.Sphinx.Query(
@@ -141,11 +149,13 @@ func bootstrapServer() error {
 			Q               string
 			PageTitle       string
 			PageDescription string
+			Dicts           []reform.Struct
 		}{
 			Articles:        articles,
 			Q:               q,
 			PageTitle:       pageTitle,
 			PageDescription: pageDescription,
+			Dicts:           dicts,
 		})
 		if err != nil {
 			log.Println(err)
