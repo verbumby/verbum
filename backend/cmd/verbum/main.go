@@ -17,7 +17,6 @@ import (
 	"github.com/verbumby/verbum/backend/pkg/db"
 	"github.com/verbumby/verbum/backend/pkg/dict"
 	"github.com/verbumby/verbum/backend/pkg/fts"
-	"github.com/verbumby/verbum/backend/pkg/task"
 	"github.com/verbumby/verbum/backend/pkg/tm"
 )
 
@@ -38,16 +37,6 @@ func bootstrapServer() error {
 		funcMap template.FuncMap
 	}{
 		{
-			name:    "admin",
-			files:   []string{"./templates/admin/layout.html"},
-			funcMap: template.FuncMap{},
-		},
-		{
-			name:    "preview",
-			files:   []string{"./templates/admin/preview.html"},
-			funcMap: template.FuncMap{},
-		},
-		{
 			name:  "index",
 			files: []string{"./templates/index.html"},
 			funcMap: template.FuncMap{
@@ -65,60 +54,6 @@ func bootstrapServer() error {
 	}
 
 	r := mux.NewRouter()
-	r.Handle("/admin/api/dictionaries", chttp.MakeHandler(
-		(&RecordListHandler{
-			Table: dict.DictTable,
-			DB:    db.DB,
-		}).ServeHTTP,
-		chttp.AuthMiddleware,
-	)).Methods(http.MethodGet)
-	r.Handle("/admin/api/dictionaries", chttp.MakeHandler(
-		(&RecordSaveHandler{
-			Table: dict.DictTable,
-			DB:    db.DB,
-		}).ServeHTTP,
-		chttp.AuthMiddleware,
-	)).Methods(http.MethodPost)
-	r.Handle("/admin/api/articles", chttp.MakeHandler(
-		(&RecordListHandler{
-			Table: article.ArticleTable,
-			DB:    db.DB,
-			Filters: []app.Filter{
-				&article.FilterDictID{},
-				&article.FilterTitlePrefix{},
-				&article.FilterTaks{},
-			},
-		}).ServeHTTP,
-		chttp.AuthMiddleware,
-	)).Methods(http.MethodGet)
-	r.Handle("/admin/api/articles", chttp.MakeHandler(
-		(&article.RecordSaveHandler{
-			ModelMeta: article.ArticleMeta,
-			DB:        db.DB,
-		}).ServeHTTP,
-		chttp.AuthMiddleware,
-	)).Methods(http.MethodPost)
-	r.HandleFunc("/admin/api/articles/{ID}", chttp.MakeHandler(
-		(&RecordFetchHandler{
-			ModelMeta: article.ArticleMeta,
-			DB:        db.DB,
-		}).ServeHTTP,
-		chttp.AuthMiddleware,
-	)).Methods(http.MethodGet)
-	r.Handle("/admin/api/tasks", chttp.MakeHandler(
-		(&RecordListHandler{
-			Table: task.TaskTable,
-			DB:    db.DB,
-		}).ServeHTTP,
-		chttp.AuthMiddleware,
-	)).Methods(http.MethodGet)
-	r.Handle("/admin/api/preview", chttp.MakeHandler(
-		PreviewHandler,
-		chttp.AuthMiddleware,
-	)).Methods(http.MethodPost)
-	r.HandleFunc("/admin/auth", chttp.MakeHandler(chttp.AuthHandler))
-	r.PathPrefix("/admin/").HandlerFunc(chttp.MakeHandler(IndexHandler, chttp.AuthMiddleware))
-
 	statics := http.FileServer(http.Dir("statics"))
 	r.PathPrefix("/statics/").Handler(http.StripPrefix("/statics/", statics))
 	r.HandleFunc("/_suggest", func(w http.ResponseWriter, r *http.Request) {
