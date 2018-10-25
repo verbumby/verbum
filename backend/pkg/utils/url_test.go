@@ -36,17 +36,17 @@ func TestSlugify(t *testing.T) {
 		want string
 	}{
 		{name: "case1", args: args{s: "слоўнік"}, want: "slounik"},
-		{name: "case2", args: args{s: "абвгдеёжзіийклмнопрстуўфхцчшщъыьэюя"}, want: "abvgdyeyozhziiyklmnoprstuufkhtschshshch''y'eyuya"},
-		{name: "case3", args: args{s: "АБВГДЕЁЖЗІИЙКЛМНОПРСТУЎФХЦЧШЩЪЫЬЭЮЯ"}, want: "abvgdyeyozhziiyklmnoprstuufkhtschshshch''y'eyuya"},
+		{name: "case2", args: args{s: "абвгдеёжзіийклмнопрстуўфхцчшщъыьэюя"}, want: "abvgdyeyozhziiyklmnoprstuufkhtschshshchjyeyuya"},
+		{name: "case3", args: args{s: "АБВГДЕЁЖЗІИЙКЛМНОПРСТУЎФХЦЧШЩЪЫЬЭЮЯ"}, want: "abvgdyeyozhziiyklmnoprstuufkhtschshshchjyeyuya"},
 		{
 			name: "case4",
 			args: args{s: "Тлумачальны слоўнік беларускай мовы (rv-blr.com)"},
-			want: "tlumachal'ny-slounik-byelaruskay-movy-(rv-blr.com)",
+			want: "tlumachalny-slounik-byelaruskay-movy-rv-blr-com",
 		},
 		{
 			name: "case5",
 			args: args{s: "Тлумачальны Слоўнік па Інфарматыцы, М. І. Савіцкі, 2014"},
-			want: "tlumachal'ny-slounik-pa-infarmatytsy,-m.-i.-savitski,-2014",
+			want: "tlumachalny-slounik-pa-infarmatytsy-m-i-savitski-2014",
 		},
 	}
 	for _, tt := range tests {

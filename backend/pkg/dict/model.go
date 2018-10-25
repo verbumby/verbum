@@ -8,4 +8,5 @@ package dict
 type Dict struct {
 	ID    int32  `reform:"id,pk"`
 	Title string `reform:"title"`
+	Slug  string `reform:"slug"`
 }

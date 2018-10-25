@@ -10,26 +10,26 @@ func Slugify(s string) string {
 	b := &strings.Builder{}
 
 	s = Latinize(s)
-	for _, r := range s {
+	prevIsDash := false
+	for i, r := range s {
 		if unicode.IsUpper(r) {
 			r = unicode.ToLower(r)
 		}
 
-		if unicode.Is(unicode.Latin, r) {
+		if unicode.Is(unicode.Latin, r) || unicode.IsDigit(r) {
+			prevIsDash = false
 			b.WriteRune(r)
 			continue
 		}
 
-		if unicode.IsDigit(r) {
-			b.WriteRune(r)
-			continue
-		}
-		if r == '(' || r == ')' || r == '-' || r == '.' || r == '\'' || r == ',' {
-			b.WriteRune(r)
+		if r == '\'' {
 			continue
 		}
 
-		b.WriteRune('-')
+		if i != 0 && i != len(s)-1 && !prevIsDash {
+			b.WriteRune('-')
+			prevIsDash = true
+		}
 	}
 	return b.String()
 }
@@ -93,12 +93,12 @@ var latinizeMap = map[rune]string{
 	'ш': "sh",
 	'Щ': "SHCH",
 	'щ': "shch",
-	'Ъ': "''",
-	'ъ': "''",
+	'Ъ': "J",
+	'ъ': "j",
 	'Ы': "Y",
 	'ы': "y",
-	'Ь': "'",
-	'ь': "'",
+	'Ь': "",
+	'ь': "",
 	'Э': "E",
 	'э': "e",
 	'Ю': "YU",

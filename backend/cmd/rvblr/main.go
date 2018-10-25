@@ -35,7 +35,12 @@ func main() {
 		Short: "rvblr short",
 		Long:  "rvblr long",
 	}
-	rootCmd.AddCommand(rvblrImportCmd, rvblrNumlistsFixCmd, regexReplaceCmd)
+	rootCmd.AddCommand(
+		rvblrImportCmd,
+		rvblrNumlistsFixCmd,
+		regexReplaceCmd,
+		fixSlugCmd,
+	)
 	if err := rootCmd.Execute(); err != nil {
 		log.Fatal(err)
 	}
