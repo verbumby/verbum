@@ -1,4 +1,4 @@
-FROM golang:1.9 as backend
+FROM golang:1.11 as backend
 
 WORKDIR $GOPATH/src/github.com/verbumby/verbum
 COPY vendor vendor/
