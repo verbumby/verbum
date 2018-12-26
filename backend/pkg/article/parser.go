@@ -67,3 +67,45 @@ func validateTagTokens(tokens []html.Token) error {
 
 	return nil
 }
+
+// RvblrParse returns rvblr article headwords struct
+func RvblrParse(content string) (hws []string, hwsalt []string, err error) {
+	parse := func(content string) ([]string, error) {
+		tokenGroups, err := parseArticle(content)
+		if err != nil {
+			return nil, errors.Wrap(err, "get html tokens")
+		}
+
+		headwordTokenGroups := [][]html.Token{}
+		for _, tokenGroup := range tokenGroups {
+			if tokenGroup[0].Data == "v-hw" {
+				headwordTokenGroups = append(headwordTokenGroups, tokenGroup)
+			}
+		}
+
+		result := []string{}
+		for _, tokens := range headwordTokenGroups {
+			hw := ""
+			for _, t := range tokens[1 : len(tokens)-1] {
+				hw += t.Data
+			}
+			result = append(result, hw)
+		}
+
+		return result, nil
+	}
+	contents := strings.SplitN(content, "\n", 2)
+	fmt.Println(contents[1])
+
+	hws, err = parse(contents[0])
+	if err != nil {
+		err = errors.Wrap(err, "parse headwords")
+	}
+
+	hwsalt, err = parse(contents[1])
+	if err != nil {
+		err = errors.Wrap(err, "parse alt headwords")
+	}
+
+	return
+}

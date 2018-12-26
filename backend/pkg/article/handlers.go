@@ -116,7 +116,7 @@ func indexHeadwords(articleID int32, records []reform.Record) error {
 	table := records[0].Table()
 	if err := replaceInto(records, tx); err != nil {
 		tx.Rollback()
-		return errors.Wrapf(err, "replace $s of article %d", table.Name(), articleID)
+		return errors.Wrapf(err, "replace %s of article %d", table.Name(), articleID)
 	}
 
 	firstRecord := records[0].PKValue()
