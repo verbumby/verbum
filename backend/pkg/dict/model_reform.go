@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"strings"
 
-	"gopkg.in/reform.v1"
+	reform "gopkg.in/reform.v1"
 	"gopkg.in/reform.v1/parse"
 )
 
@@ -27,7 +27,7 @@ func (v *dictTableType) Name() string {
 
 // Columns returns a new slice of column names for that view or table in SQL database.
 func (v *dictTableType) Columns() []string {
-	return []string{"id", "title", "slug"}
+	return []string{"id", "title"}
 }
 
 // NewStruct makes a new struct for that view or table.
@@ -47,16 +47,15 @@ func (v *dictTableType) PKColumnIndex() uint {
 
 // DictTable represents dicts view or table in SQL database.
 var DictTable = &dictTableType{
-	s: parse.StructInfo{Type: "Dict", SQLSchema: "", SQLName: "dicts", Fields: []parse.FieldInfo{{Name: "ID", Type: "int32", Column: "id"}, {Name: "Title", Type: "string", Column: "title"}, {Name: "Slug", Type: "string", Column: "slug"}}, PKFieldIndex: 0},
+	s: parse.StructInfo{Type: "Dict", SQLSchema: "", SQLName: "dicts", Fields: []parse.FieldInfo{{Name: "ID", Type: "int32", Column: "id"}, {Name: "Title", Type: "string", Column: "title"}}, PKFieldIndex: 0},
 	z: new(Dict).Values(),
 }
 
 // String returns a string representation of this struct or record.
 func (s Dict) String() string {
-	res := make([]string, 3)
+	res := make([]string, 2)
 	res[0] = "ID: " + reform.Inspect(s.ID, true)
 	res[1] = "Title: " + reform.Inspect(s.Title, true)
-	res[2] = "Slug: " + reform.Inspect(s.Slug, true)
 	return strings.Join(res, ", ")
 }
 
@@ -66,7 +65,6 @@ func (s *Dict) Values() []interface{} {
 	return []interface{}{
 		s.ID,
 		s.Title,
-		s.Slug,
 	}
 }
 
@@ -76,7 +74,6 @@ func (s *Dict) Pointers() []interface{} {
 	return []interface{}{
 		&s.ID,
 		&s.Title,
-		&s.Slug,
 	}
 }
 
