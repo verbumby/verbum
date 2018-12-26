@@ -6,6 +6,7 @@ import (
 	"github.com/spf13/cobra"
 
 	"github.com/verbumby/verbum/backend/pkg/app"
+	"github.com/verbumby/verbum/backend/pkg/cmd/esmigrate"
 )
 
 // DictData dict data
@@ -40,9 +41,9 @@ func main() {
 		rvblrNumlistsFixCmd,
 		regexReplaceCmd,
 		fixSlugCmd,
+		esmigrate.GetCmd(),
 	)
 	if err := rootCmd.Execute(); err != nil {
 		log.Fatal(err)
 	}
-
 }

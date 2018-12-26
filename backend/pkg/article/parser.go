@@ -95,7 +95,6 @@ func RvblrParse(content string) (hws []string, hwsalt []string, err error) {
 		return result, nil
 	}
 	contents := strings.SplitN(content, "\n", 2)
-	fmt.Println(contents[1])
 
 	hws, err = parse(contents[0])
 	if err != nil {
