@@ -19,3 +19,15 @@ services:
     volumes:
       - ./sphinx/data:/var/data
       - ./sphinx/logs:/var/log
+
+  elastic:
+    build: ./elastic
+    environment:
+      - cluster.name=docker-cluster
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+      - xpack.monitoring.enabled=false
+      - xpack.security.enabled=false
+    ports:
+      - "9200:9200"
+    volumes:
+      - ./elastic/data:/usr/share/elasticsearch/data

@@ -28,6 +28,8 @@ func Bootstrap() error {
 	viper.SetDefault("oauth.endpointUserinfo", "https://www.googleapis.com/oauth2/v3/userinfo")
 	viper.SetDefault("oauth.endpointAuth", "https://accounts.google.com/o/oauth2/v2/auth")
 
+	viper.SetDefault("elastic.addr", "http://localhost:9200")
+
 	viper.SetConfigName("config")
 	viper.AddConfigPath(".")
 
