@@ -168,6 +168,7 @@ func indexRvblr() error {
 				Headword:    []string{},
 				HeadwordAlt: []string{},
 				Suggest:     []suggestinputt{},
+				Content:     a.Content,
 			}
 
 			hws, hwalts, err := article.RvblrParse(a.Content)

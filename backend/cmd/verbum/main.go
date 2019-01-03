@@ -2,21 +2,22 @@ package main
 
 import (
 	"encoding/json"
+	"fmt"
 	"html/template"
+	"io/ioutil"
 	"log"
 	"net/http"
+	"strings"
 
-	"gopkg.in/reform.v1"
+	reform "gopkg.in/reform.v1"
 
 	"github.com/gorilla/mux"
 	"github.com/pkg/errors"
 	"github.com/spf13/viper"
 	"github.com/verbumby/verbum/backend/pkg/app"
-	"github.com/verbumby/verbum/backend/pkg/article"
 	"github.com/verbumby/verbum/backend/pkg/chttp"
 	"github.com/verbumby/verbum/backend/pkg/db"
 	"github.com/verbumby/verbum/backend/pkg/dict"
-	"github.com/verbumby/verbum/backend/pkg/fts"
 	"github.com/verbumby/verbum/backend/pkg/tm"
 )
 
@@ -58,27 +59,59 @@ func bootstrapServer() error {
 	r.PathPrefix("/statics/").Handler(http.StripPrefix("/statics/", statics))
 	r.HandleFunc("/_suggest", func(w http.ResponseWriter, r *http.Request) {
 		q := r.URL.Query().Get("q")
-		query := "SELECT typeahead, MAX(WEIGHT()) mwt " +
-			"FROM typeaheads " +
-			"WHERE MATCH(?) " +
-			"GROUP BY typeahead " +
-			"ORDER BY mwt DESC " +
-			"LIMIT 10 " +
-			"OPTION ranker=sph04 "
 
-		rows, err := fts.Sphinx.Query(query, q)
+		qbytes, err := json.Marshal(q)
 		if err != nil {
-			log.Println(errors.Wrap(err, "find typeaheads"))
+			log.Println(errors.Wrap(err, "marshal q"))
+			return
 		}
-		data := []string{}
-		for rows.Next() {
-			var th string
-			var mwt int32
-			if err := rows.Scan(&th, &mwt); err != nil {
-				log.Println(errors.Wrap(err, "scan typeaheads"))
+		query := `{
+			"_source": false,
+			"suggest": {
+				"HeadwordSuggest": {
+					"prefix": ` + string(qbytes) + `,
+					"completion": {
+						"field": "Suggest",
+						"skip_duplicates": true,
+						"size": 10
+					}
+				}
 			}
+		}`
 
-			data = append(data, th)
+		url := viper.GetString("elastic.addr") + "/dict-*/_search"
+		resp, err := http.Post(url, "application/json", strings.NewReader(query))
+		if err != nil {
+			log.Println(errors.Wrap(err, "query elastic"))
+			return
+		}
+		defer resp.Body.Close()
+
+		if resp.StatusCode != http.StatusOK {
+			respbytes, _ := ioutil.ReadAll(resp.Body)
+			log.Println(fmt.Errorf("query elastic: expected %d, got %d: %s", http.StatusOK, resp.StatusCode, string(respbytes)))
+			return
+		}
+
+		respdata := struct {
+			Suggest struct {
+				HeadwordSuggest []struct {
+					Options []struct {
+						Text string `json:"text"`
+					} `json:"options"`
+				}
+			} `json:"suggest"`
+		}{}
+		if err := json.NewDecoder(resp.Body).Decode(&respdata); err != nil {
+			log.Println(errors.Wrap(err, "unmarshal elastic resp"))
+			return
+		}
+
+		data := []string{}
+		for _, hws := range respdata.Suggest.HeadwordSuggest {
+			for _, opt := range hws.Options {
+				data = append(data, opt.Text)
+			}
 		}
 
 		if err := json.NewEncoder(w).Encode(data); err != nil {
@@ -90,72 +123,76 @@ func bootstrapServer() error {
 		pageDescription := pageTitle
 		q := r.URL.Query().Get("q")
 
-		var articles []article.Article
-		var dicts []reform.Struct
+		var articles []string
 		var err error
-		if q == "" {
-			dicts, err = db.DB.SelectAllFrom(dict.DictTable, "")
+		if q != "" {
+			pageTitle = q + " - Пошук"
+			qbytes, err := json.Marshal(q)
 			if err != nil {
-				http.Error(w, "", http.StatusInternalServerError)
-				log.Println(errors.Wrap(err, "find all dicts"))
+				log.Println(errors.Wrap(err, "marshal q"))
 				return
 			}
-		} else {
-			pageTitle = q + " - Пошук"
-			articles, err = func() ([]article.Article, error) {
-				rows, err := fts.Sphinx.Query(
-					"SELECT article_id, MAX(WEIGHT()) mw "+
-						"FROM headwords "+
-						"WHERE MATCH(?) "+
-						"GROUP BY article_id "+
-						"ORDER BY mw DESC "+
-						"LIMIT 20 "+
-						"OPTION ranker=sph04",
-					q,
-				)
-				if err != nil {
-					return nil, errors.Wrap(err, "query sphinx")
-				}
-				defer rows.Close()
 
-				articleIDs := []int32{}
-				for rows.Next() {
-					var articleID int32
-					var maxWeight float32
-					if err := rows.Scan(&articleID, &maxWeight); err != nil {
-						return nil, errors.Wrap(err, "sphinx rows scan")
-					}
-					articleIDs = append(articleIDs, articleID)
-				}
-
-				result := make([]article.Article, len(articleIDs))
-				for i, id := range articleIDs {
-					if err := db.DB.FindByPrimaryKeyTo(&result[i], id); err != nil {
-						return nil, errors.Wrapf(err, "find article by pk %d", id)
+			query := `{
+				"query": {
+					"multi_match": {
+						"query": ` + string(qbytes) + `,
+						"fields": [
+							"Headword^4",
+							"Headword.Smaller^3",
+							"HeadwordAlt^2",
+							"HeadwordAlt.Smaller^1"
+						]
 					}
 				}
-				return result, nil
-			}()
+			}`
+
+			url := viper.GetString("elastic.addr") + "/dict-*/_search"
+			resp, err := http.Post(url, "application/json", strings.NewReader(query))
 			if err != nil {
-				log.Println(err)
+				log.Println(errors.Wrap(err, "query elastic"))
+				return
+			}
+			defer resp.Body.Close()
+
+			if resp.StatusCode != http.StatusOK {
+				respbytes, _ := ioutil.ReadAll(resp.Body)
+				log.Println(fmt.Errorf("query elastic: expected %d, got %d: %s", http.StatusOK, resp.StatusCode, string(respbytes)))
+				return
+			}
+
+			respdata := struct {
+				Hits struct {
+					Hits []struct {
+						Source struct {
+							Content string
+						} `json:"_source"`
+					} `json:"hits"`
+				} `json:"hits"`
+			}{}
+			if err := json.NewDecoder(resp.Body).Decode(&respdata); err != nil {
+				log.Println(errors.Wrap(err, "decode elastic resp"))
+				return
+			}
+
+			for _, hit := range respdata.Hits.Hits {
+				articles = append(articles, hit.Source.Content)
 			}
 		}
 
 		if len(articles) > 0 {
-			pageDescription = articles[0].Content
+			pageDescription = articles[0]
 		}
 		err = tm.Render("index", w, struct {
-			Articles        []article.Article
+			Articles        []string
 			Q               string
 			PageTitle       string
 			PageDescription string
-			Dicts           []reform.Struct
 		}{
 			Articles:        articles,
 			Q:               q,
 			PageTitle:       pageTitle,
 			PageDescription: pageDescription,
-			Dicts:           dicts,
 		})
 		if err != nil {
 			log.Println(err)

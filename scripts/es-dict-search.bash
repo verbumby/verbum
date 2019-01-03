@@ -21,4 +21,5 @@ resp=$(curl -XPOST -s -H 'Content-Type: application/json' "$esaddr/dict-*/_searc
     }
 }')
 
-echo "$resp" | jq '.hits.hits[] | (._score | tostring )+ " -- " + ._index + " -- " + (._source.Headword | join(", ")) + " -- " + (._source.HeadwordAlt? | join(", ")) '
+echo "$resp" | jq '.'
+# echo "$resp" | jq '.hits.hits[] | (._score | tostring )+ " -- " + ._index + " -- " + (._source.Headword | join(", ")) + " -- " + (._source.HeadwordAlt? | join(", ")) '

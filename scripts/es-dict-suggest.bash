@@ -21,4 +21,5 @@ resp=$(curl -XPOST -s -H 'Content-Type: application/json' "$esaddr/dict-*/_searc
     }
 }')
 
-echo "$resp" | jq '.suggest.HeadwordSuggest[].options[].text'
+echo "$resp" | jq '.'
+# echo "$resp" | jq '.suggest.HeadwordSuggest[].options[].text'
