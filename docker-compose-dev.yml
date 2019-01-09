@@ -31,3 +31,4 @@ services:
       - "9200:9200"
     volumes:
       - ./elastic/data:/usr/share/elasticsearch/data
+      - ./elastic/backup:/usr/share/elasticsearch/backups/backup

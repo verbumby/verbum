@@ -35,6 +35,7 @@ services:
       - xpack.security.enabled=false
     volumes:
       - ./elastic/data:/usr/share/elasticsearch/data
+      - ./elastic/backup:/usr/share/elasticsearch/backups/backup
 
 volumes:
   db:
