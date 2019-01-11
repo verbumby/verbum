@@ -1,15 +1,5 @@
 version: '3.4'
 services:
-  db:
-    image: mariadb:10.2
-    environment:
-      - MYSQL_ALLOW_EMPTY_PASSWORD=true
-      - MYSQL_DATABASE=verbum
-    volumes:
-      - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql
-      - ./db/config.cnf:/etc/mysql/conf.d/config.cnf
-      - db:/var/lib/mysql
-
   http:
     build: .
     command: /verbum/verbum
@@ -19,12 +9,6 @@ services:
       - ./config-testing.yaml:/verbum/config.yaml
       - ./cert.pem:/verbum/cert.pem
       - ./key.pem:/verbum/key.pem
-
-  sphinx:
-    build: ./sphinx
-    volumes:
-      - sphinx:/var/data
-      - sphinx-logs:/var/log
 
   elastic:
     build: ./elastic
@@ -36,8 +20,3 @@ services:
     volumes:
       - ./elastic/data:/usr/share/elasticsearch/data
       - ./elastic/backup:/usr/share/elasticsearch/backups/backup
-
-volumes:
-  db:
-  sphinx:
-  sphinx-logs:

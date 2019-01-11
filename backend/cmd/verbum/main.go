@@ -9,15 +9,11 @@ import (
 	"net/http"
 	"strings"
 
-	reform "gopkg.in/reform.v1"
-
 	"github.com/gorilla/mux"
 	"github.com/pkg/errors"
 	"github.com/spf13/viper"
 	"github.com/verbumby/verbum/backend/pkg/app"
 	"github.com/verbumby/verbum/backend/pkg/chttp"
-	"github.com/verbumby/verbum/backend/pkg/db"
-	"github.com/verbumby/verbum/backend/pkg/dict"
 	"github.com/verbumby/verbum/backend/pkg/tm"
 )
 
@@ -38,13 +34,9 @@ func bootstrapServer() error {
 		funcMap template.FuncMap
 	}{
 		{
-			name:  "index",
-			files: []string{"./templates/index.html"},
-			funcMap: template.FuncMap{
-				"dictByPK": func(id int32) (reform.Record, error) {
-					return db.DB.FindByPrimaryKeyFrom(dict.DictTable, id)
-				},
-			},
+			name:    "index",
+			files:   []string{"./templates/index.html"},
+			funcMap: template.FuncMap{},
 		},
 	}
 

@@ -6,25 +6,7 @@ import (
 	"github.com/spf13/cobra"
 
 	"github.com/verbumby/verbum/backend/pkg/app"
-	"github.com/verbumby/verbum/backend/pkg/cmd/esmigrate"
 )
-
-// DictData dict data
-type DictData struct {
-	Items ItemsData `xml:"items"`
-}
-
-// ItemsData items data
-type ItemsData struct {
-	Item []ItemData `xml:"item"`
-}
-
-// ItemData item data
-type ItemData struct {
-	Title string `xml:"title"`
-	Meta  string `xml:"meta"`
-	Def   string `xml:"definition"`
-}
 
 func main() {
 	if err := app.Bootstrap(); err != nil {
@@ -36,12 +18,7 @@ func main() {
 		Short: "rvblr short",
 		Long:  "rvblr long",
 	}
-	rootCmd.AddCommand(
-		rvblrImportCmd,
-		rvblrNumlistsFixCmd,
-		regexReplaceCmd,
-		esmigrate.GetCmd(),
-	)
+	rootCmd.AddCommand()
 	if err := rootCmd.Execute(); err != nil {
 		log.Fatal(err)
 	}

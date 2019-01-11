@@ -1,20 +1,12 @@
 package app
 
 import (
-	"fmt"
-
-	_ "github.com/go-sql-driver/mysql"
 	"github.com/pkg/errors"
 	"github.com/spf13/viper"
-	"github.com/verbumby/verbum/backend/pkg/db"
-	"github.com/verbumby/verbum/backend/pkg/fts"
 )
 
 // Bootstrap bootstraps the application
 func Bootstrap() error {
-	viper.SetDefault("db.host", "localhost")
-	viper.SetDefault("fts.host", "localhost")
-
 	viper.SetDefault("https.addr", ":8443")
 	viper.SetDefault("https.certFile", "cert.pem")
 	viper.SetDefault("https.keyFile", "key.pem")
@@ -35,17 +27,6 @@ func Bootstrap() error {
 
 	if err := viper.ReadInConfig(); err != nil {
 		return errors.Wrap(err, "read in config")
-	}
-
-	// TODO: parametrize db connection
-	dbConnString := fmt.Sprintf("root@tcp(%s:3306)/verbum", viper.GetString("db.host"))
-	if err := db.Initialize(dbConnString); err != nil {
-		return errors.Wrap(err, "db initalize")
-	}
-
-	sphinxConnString := fmt.Sprintf("tcp(%s:9306)/?interpolateParams=true", viper.GetString("fts.host"))
-	if err := fts.Initialize(sphinxConnString); err != nil {
-		return errors.Wrap(err, "fts initialize")
 	}
 
 	return nil
