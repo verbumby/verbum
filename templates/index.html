@@ -253,7 +253,10 @@
 
       {{range .Articles}}
       <div class="article">
-        {{ . | md }}
+        {{ .Content | md }}
+        <div class="source">
+          {{ .DictTitle }}
+        </div>
       </div>
       {{end}}
     </div>

@@ -115,7 +115,11 @@ func bootstrapServer() error {
 		pageDescription := pageTitle
 		q := r.URL.Query().Get("q")
 
-		var articles []string
+		type articleView struct {
+			DictTitle string
+			Content   string
+		}
+		var articles []articleView
 		var err error
 		if q != "" {
 			pageTitle = q + " - Пошук"
@@ -159,6 +163,7 @@ func bootstrapServer() error {
 						Source struct {
 							Content string
 						} `json:"_source"`
+						Index string `json:"_index"`
 					} `json:"hits"`
 				} `json:"hits"`
 			}{}
@@ -167,16 +172,48 @@ func bootstrapServer() error {
 				return
 			}
 
+			dicts := map[string]string{}
 			for _, hit := range respdata.Hits.Hits {
-				articles = append(articles, hit.Source.Content)
+				dictID := strings.TrimPrefix(hit.Index, "dict-")
+				if _, ok := dicts[dictID]; !ok {
+					url := viper.GetString("elastic.addr") + "/dicts/_doc/" + dictID
+					resp, err := http.Get(url)
+					if err != nil {
+						log.Println(errors.Wrapf(err, "query dict %s: new request", dictID))
+						return
+					}
+					defer resp.Body.Close()
+
+					if resp.StatusCode != http.StatusOK {
+						respbytes, _ := ioutil.ReadAll(resp.Body)
+						log.Println(fmt.Errorf("query dict %s: expected %d, got %d: %s", dictID, http.StatusOK, resp.StatusCode, string(respbytes)))
+						return
+					}
+
+					respdata := struct {
+						Source struct {
+							Title string
+						} `json:"_source"`
+					}{}
+					if err := json.NewDecoder(resp.Body).Decode(&respdata); err != nil {
+						log.Println(errors.Wrapf(err, "query dict %s: decode elastic resp", dictID))
+					}
+
+					dicts[dictID] = respdata.Source.Title
+				}
+
+				articles = append(articles, articleView{
+					DictTitle: dicts[dictID],
+					Content:   hit.Source.Content,
+				})
 			}
 		}
 
 		if len(articles) > 0 {
-			pageDescription = articles[0]
+			pageDescription = articles[0].Content
 		}
 		err = tm.Render("index", w, struct {
-			Articles        []string
+			Articles        []articleView
 			Q               string
 			PageTitle       string
 			PageDescription string
