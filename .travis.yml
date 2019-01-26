@@ -3,4 +3,8 @@ go:
 - "1.11"
 
 install: true
-script: go test -v ./...
+script:
+- go test -v ./...
+- go build -o verbumsrvr github.com/verbumby/verbum/backend/cmd/verbum
+- go build -o verbumctl github.com/verbumby/verbum/backend/cmd/rvblr
+- scripts/deb.bash
