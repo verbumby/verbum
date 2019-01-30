@@ -7,4 +7,11 @@ script:
 - go test -v ./...
 - go build -o verbumsrvr github.com/verbumby/verbum/backend/cmd/verbum
 - go build -o verbumctl github.com/verbumby/verbum/backend/cmd/rvblr
-- scripts/deb.bash
+- deploy/deb.bash
+
+deploy:
+  provider: script
+  skip_cleanup: true
+  script: deploy/deploy.bash
+  on:
+    branch: master
