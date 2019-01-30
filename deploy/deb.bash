@@ -31,6 +31,6 @@ Installed-Size:
 Description: Verbum - Online Platform Dictionary.
 EOF
 
-dpkg -b $root verbum_${v}_amd64.deb
+dpkg -b $root deploy/verbum.deb
 
 rm -r $root
