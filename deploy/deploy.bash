@@ -1,5 +1,5 @@
 #!/bin/bash
-set -e
+set -xe
 cd deploy
 openssl aes-256-cbc -K $encrypted_861f9db00f37_key -iv $encrypted_861f9db00f37_iv -in id_ed25519.enc -out id_ed25519 -d
 chmod 600 id_ed25519

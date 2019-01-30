@@ -12,6 +12,6 @@ script:
 deploy:
   provider: script
   skip_cleanup: true
-  script: deploy/deploy.bash
+  script: bash deploy/deploy.bash
   on:
     branch: master
