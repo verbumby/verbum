@@ -1,14 +1,14 @@
 language: go
 go:
-- "1.11"
-
+- '1.11'
+before_install:
+- openssl aes-256-cbc -K $encrypted_861f9db00f37_key -iv $encrypted_861f9db00f37_iv -in id_ed25519.enc -out id_ed25519 -d
 install: true
 script:
 - go test -v ./...
 - go build -o verbumsrvr github.com/verbumby/verbum/backend/cmd/verbum
 - go build -o verbumctl github.com/verbumby/verbum/backend/cmd/rvblr
 - deploy/deb.bash
-
 deploy:
   provider: script
   skip_cleanup: true
