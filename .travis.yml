@@ -15,4 +15,4 @@ deploy:
     branch: master
 before_install:
 - openssl aes-256-cbc -K $encrypted_a25db77e2a26_key -iv $encrypted_a25db77e2a26_iv
-  -in id_ed25519.enc -out deploy/id_ed25519 -d
+  -in deploy/id_ed25519.enc -out deploy/id_ed25519 -d
