@@ -5,4 +5,8 @@ openssl aes-256-cbc -K $encrypted_a25db77e2a26_key -iv $encrypted_a25db77e2a26_i
 chmod 600 id_ed25519
 sha256sum verbum.deb > verbum.deb.sha256
 ssh-keyscan -H 165.227.129.101 >> ~/.ssh/known_hosts
-scp -i id_ed25519 verbum.deb verbum.deb.sha256 deploy@165.227.129.101:~/
+sftp -i id_ed25519 deploy@165.227.129.101 <<EOF
+cd debdelivery
+put verbum.deb
+put verbum.deb.sha256
+EOF
