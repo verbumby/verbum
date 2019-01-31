@@ -24,6 +24,7 @@ func Bootstrap() error {
 
 	viper.SetConfigName("config")
 	viper.AddConfigPath(".")
+	viper.AddConfigPath("/usr/local/share/verbum")
 
 	if err := viper.ReadInConfig(); err != nil {
 		return errors.Wrap(err, "read in config")
