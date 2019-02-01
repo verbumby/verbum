@@ -10,6 +10,9 @@ cp verbumsrvr verbumctl $root/usr/local/bin
 mkdir -p $root/usr/local/share/verbum
 cp -R statics templates $root/usr/local/share/verbum
 
+mkdir -p $root/usr/lib/systemd/system
+cp deploy/verbum.service $root/usr/lib/systemd/system/
+
 v="$TRAVIS_BUILD_NUMBER"
 if [ -z "$v" ]; then
     t=$(date +"%Y%m%d-%H%M%S")
@@ -18,6 +21,7 @@ if [ -z "$v" ]; then
 fi
 
 mkdir -p $root/DEBIAN
+cp deploy/postinst $root/DEBIAN/postinst
 cat > $root/DEBIAN/control <<EOF
 Package: verbum
 Version: ${v}

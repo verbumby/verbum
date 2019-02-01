@@ -1,0 +1,15 @@
+[Unit]
+Description=Verbum.by
+
+[Service]
+User=nobody
+Group=nobody
+ExecStart=/usr/local/bin/verbumsrvr
+CapabilityBoundingSet=CAP_NET_BIND_SERVICE
+WorkingDirectory=/usr/local/share/verbum
+StandardOutput=journal
+StandardError=journal
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target
