@@ -1,5 +1,15 @@
 #!/bin/bash
 
+set -e
+
+if ! id verbum > /dev/null 2>&1; then
+    useradd --system \
+        --no-create-home \
+        --home-dir /usr/local/share/verbum \
+        --shell /usr/sbin/nologin \
+        verbum
+fi
+
 systemctl daemon-reload
 systemctl enable verbum.service
 systemctl restart verbum.service
