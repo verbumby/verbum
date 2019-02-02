@@ -2,8 +2,8 @@
 Description=Verbum.by
 
 [Service]
-User=nobody
-Group=nobody
+User=verbum
+Group=verbum
 ExecStart=/usr/local/bin/verbumsrvr
 CapabilityBoundingSet=CAP_NET_BIND_SERVICE
 WorkingDirectory=/usr/local/share/verbum
