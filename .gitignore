@@ -5,15 +5,12 @@
 *.test
 *.out
 
-/verbum
 node_modules/
 
-db/data/
-sphinx/data/
-sphinx/logs/
 docker-compose.yml
 config*.yaml
 *.pem
-/rvblr
+/verbumsrvr
+/verbumctl
 
 .DS_Store
