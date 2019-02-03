@@ -2,7 +2,7 @@ version: '3.4'
 services:
   http:
     build: .
-    command: /verbum/verbum
+    command: /verbum/verbumsrvr
     ports:
       - "8443:8443"
     volumes:
