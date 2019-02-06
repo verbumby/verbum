@@ -46,8 +46,8 @@ func bootstrapServer() error {
 	r := mux.NewRouter()
 	statics := http.FileServer(http.Dir("statics"))
 	r.PathPrefix("/statics/").Handler(http.StripPrefix("/statics/", statics))
-	r.HandleFunc("/_suggest", handlers.Suggest)
-	r.HandleFunc("/", handlers.Index)
+	r.HandleFunc("/_suggest", chttp.MakeHandler(handlers.Suggest))
+	r.HandleFunc("/", chttp.MakeHandler(handlers.Index))
 
 	chttp.InitCookieManager()
 
