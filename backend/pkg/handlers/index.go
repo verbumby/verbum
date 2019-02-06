@@ -4,20 +4,20 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
-	"log"
 	"net/http"
 	"strings"
 
 	"github.com/pkg/errors"
 	"github.com/spf13/viper"
+	"github.com/verbumby/verbum/backend/pkg/chttp"
 	"github.com/verbumby/verbum/backend/pkg/tm"
 )
 
 // Index handles / request
-func Index(w http.ResponseWriter, r *http.Request) {
+func Index(w http.ResponseWriter, rctx *chttp.Context) error {
 	pageTitle := "Verbum - Анлайн Слоўнік Беларускай Мовы"
 	pageDescription := pageTitle
-	q := r.URL.Query().Get("q")
+	q := rctx.R.URL.Query().Get("q")
 
 	type articleView struct {
 		DictTitle string
@@ -29,8 +29,7 @@ func Index(w http.ResponseWriter, r *http.Request) {
 		pageTitle = q + " - Пошук"
 		qbytes, err := json.Marshal(q)
 		if err != nil {
-			log.Println(errors.Wrap(err, "marshal q"))
-			return
+			return errors.Wrap(err, "marshal q")
 		}
 
 		query := `{
@@ -50,15 +49,18 @@ func Index(w http.ResponseWriter, r *http.Request) {
 		url := viper.GetString("elastic.addr") + "/dict-*/_search"
 		resp, err := http.Post(url, "application/json", strings.NewReader(query))
 		if err != nil {
-			log.Println(errors.Wrap(err, "query elastic"))
-			return
+			return errors.Wrap(err, "query elastic")
 		}
 		defer resp.Body.Close()
 
 		if resp.StatusCode != http.StatusOK {
 			respbytes, _ := ioutil.ReadAll(resp.Body)
-			log.Println(fmt.Errorf("query elastic: expected %d, got %d: %s", http.StatusOK, resp.StatusCode, string(respbytes)))
-			return
+			return fmt.Errorf(
+				"query elastic: expected %d, got %d: %s",
+				http.StatusOK,
+				resp.StatusCode,
+				string(respbytes),
+			)
 		}
 
 		respdata := struct {
@@ -72,8 +74,7 @@ func Index(w http.ResponseWriter, r *http.Request) {
 			} `json:"hits"`
 		}{}
 		if err := json.NewDecoder(resp.Body).Decode(&respdata); err != nil {
-			log.Println(errors.Wrap(err, "decode elastic resp"))
-			return
+			return errors.Wrap(err, "decode elastic resp")
 		}
 
 		dicts := map[string]string{}
@@ -83,15 +84,19 @@ func Index(w http.ResponseWriter, r *http.Request) {
 				url := viper.GetString("elastic.addr") + "/dicts/_doc/" + dictID
 				resp, err := http.Get(url)
 				if err != nil {
-					log.Println(errors.Wrapf(err, "query dict %s: new request", dictID))
-					return
+					return errors.Wrapf(err, "query dict %s: new request", dictID)
 				}
 				defer resp.Body.Close()
 
 				if resp.StatusCode != http.StatusOK {
 					respbytes, _ := ioutil.ReadAll(resp.Body)
-					log.Println(fmt.Errorf("query dict %s: expected %d, got %d: %s", dictID, http.StatusOK, resp.StatusCode, string(respbytes)))
-					return
+					return fmt.Errorf(
+						"query dict %s: expected %d, got %d: %s",
+						dictID,
+						http.StatusOK,
+						resp.StatusCode,
+						string(respbytes),
+					)
 				}
 
 				respdata := struct {
@@ -100,7 +105,7 @@ func Index(w http.ResponseWriter, r *http.Request) {
 					} `json:"_source"`
 				}{}
 				if err := json.NewDecoder(resp.Body).Decode(&respdata); err != nil {
-					log.Println(errors.Wrapf(err, "query dict %s: decode elastic resp", dictID))
+					return errors.Wrapf(err, "query dict %s: decode elastic resp", dictID)
 				}
 
 				dicts[dictID] = respdata.Source.Title
@@ -128,6 +133,7 @@ func Index(w http.ResponseWriter, r *http.Request) {
 		PageDescription: pageDescription,
 	})
 	if err != nil {
-		log.Println(err)
+		return errors.Wrap(err, "render html")
 	}
+	return nil
 }
