@@ -1,0 +1,67 @@
+{{define "layout" -}}
+<!DOCTYPE html>
+<html prefix="og: http://ogp.me/ns#">
+  <head>
+    <meta charset="utf-8">
+    <title>{{ .PageTitle }}</title>
+    <meta name="description" content="{{ .PageDescription | md | stripTags }}" />
+    <meta property="og:title" content="{{ .PageTitle }}" />
+    <meta property="og:description" content="{{ .PageDescription | md | stripTags }}" />
+    <meta property="og:image" content="{{"/statics/favicon.png" | staticURL}}" />
+    <meta name="viewport" content="width=device-width">
+    <link rel="icon" type="image/png" href="{{"/statics/favicon.png" | staticURL}}" />
+    <script defer src="https://use.fontawesome.com/releases/v5.0.10/js/all.js"
+      integrity="sha384-slN8GvtUJGnv6ca26v8EzVaR9DC58QEwsIk9q1QXdCU8Yu8ck/tL/5szYlBbqmS+"
+      crossorigin="anonymous"></script>
+    <style media="screen">
+      html {min-height: 100%;}
+      body {margin: 0;}
+
+      textarea, input[type="text"], input[type="button"], input[type="submit"] {
+        -webkit-appearance: none; border-radius: 0; outline: none; }
+
+      .content {max-width: 800px; margin: 0 auto; padding: 5px;}
+
+      #search {position:relative;}
+      .search-input {margin: 0 0 0 0; display: flex; align-items: stretch; height: 30px}
+
+      .search-input input[type=text] {flex: 2; margin: 0; padding: 0 0 0 5px; width:100%;
+        border: 1px solid lightgrey; border-right:none;}
+
+      #search, .search-input input {font-size: 1.1em; font-family: Helvetica, sans-serif}
+      .search-input .button {border: none; cursor:pointer; font-family: Helvetica, sans-serif}
+      .search-input .button-search {color:white; background: red; margin: 0; padding:5px 10px;}
+      .search-input .button-search:active {background: black;}
+      .search-input .button-search-small {display:none; padding: 4px 10px; font-size: 21px;}
+      .search-input .button-clear {color:grey; padding: 4px 10px; font-size: 21px; line-height: 0;
+        border: 1px solid lightgrey; border-right: none; border-left: none;}
+      .search-input .button-clear:active {color: red;}
+
+      .suggestions {position: absolute; width: 100%; box-sizing: border-box;
+        background: white; padding: 0; margin: 0; list-style: none;
+        border: 1px solid lightgrey; border-top: none; box-shadow: 0 2px 4px rgba(0,0,0,0.1)}
+      .suggestions li {padding: 5px;}
+      .suggestions li.active {background-color: #e3e3e3; cursor: pointer;}
+
+      .article {padding: 6px; border-bottom: 1px solid lightgrey;}
+      .article:last-child {border-bottom: none;}
+      .article v-hw {font-weight: bold}
+      .article .source {text-align: right; color: darkgrey; font-size: 0.9em;}
+
+      .logo {color:darkgrey; padding: 6px;}
+      .logo a {color:red; font-size: xx-large;text-decoration: none}
+
+      @media only screen and (max-width: 400px) {
+        .search-input .button-search-small {display: inherit;}
+        .search-input .button-search-wide {display: none;}
+      }
+    </style>
+  </head>
+  <body>
+    <div class="content">
+      <div class="logo"><a href="/">Verbum</a> анлайн слоўнік</div>
+        {{template "body" .}}
+    </div>
+  </body>
+</html>
+{{end}}

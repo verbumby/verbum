@@ -32,7 +32,12 @@ func bootstrapServer() error {
 	}{
 		{
 			name:    "index",
-			files:   []string{"./templates/index.html"},
+			files:   []string{"./templates/layout.html", "./templates/index.html"},
+			funcMap: template.FuncMap{},
+		},
+		{
+			name:    "dictionary",
+			files:   []string{"./templates/layout.html", "./templates/dictionary.html"},
 			funcMap: template.FuncMap{},
 		},
 	}
@@ -47,6 +52,7 @@ func bootstrapServer() error {
 	statics := http.FileServer(http.Dir("statics"))
 	r.PathPrefix("/statics/").Handler(http.StripPrefix("/statics/", statics))
 	r.HandleFunc("/_suggest", chttp.MakeHandler(handlers.Suggest))
+	r.HandleFunc("/show/{dictionary}", chttp.MakeHandler(handlers.Dictionary))
 	r.HandleFunc("/", chttp.MakeHandler(handlers.Index))
 
 	chttp.InitCookieManager()
