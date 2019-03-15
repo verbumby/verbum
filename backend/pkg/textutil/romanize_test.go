@@ -31,7 +31,7 @@ func TestSlugify(t *testing.T) {
 		s    string
 		want string
 	}{
-		{s: "some___url *** !@#!@#//slug", want: "some-url-slug"},
+		{s: "some___url *** !@#!@#//slug-", want: "some-url-slug"},
 		{s: "Tlumachalny slounik bielaruskaj movy", want: "tlumachalny-slounik-bielaruskaj-movy"},
 	}
 	for _, tt := range tests {

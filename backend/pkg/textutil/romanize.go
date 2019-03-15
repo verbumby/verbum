@@ -136,5 +136,6 @@ func Slugify(s string) string {
 		s = strings.Replace(s, "--", "-", -1)
 	}
 
+	s = strings.Trim(s, "-")
 	return s
 }
