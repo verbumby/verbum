@@ -48,6 +48,9 @@ func Query(method, path string, reqbody, respbody interface{}) error {
 		)
 	}
 
+	if respbody == nil {
+		respbody = &map[string]interface{}{}
+	}
 	if err := json.NewDecoder(resp.Body).Decode(respbody); err != nil {
 		return errors.Wrap(err, "unmarshal response")
 	}
@@ -62,4 +65,9 @@ func Get(path string, respbody interface{}) error {
 // Post request to storage
 func Post(path string, reqbody, respbody interface{}) error {
 	return Query(http.MethodPost, path, reqbody, respbody)
+}
+
+// Delete request to storage
+func Delete(path string, reqbody, respbody interface{}) error {
+	return Query(http.MethodDelete, path, reqbody, respbody)
 }

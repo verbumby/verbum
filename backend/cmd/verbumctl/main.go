@@ -6,6 +6,7 @@ import (
 	"github.com/spf13/cobra"
 
 	"github.com/verbumby/verbum/backend/pkg/app"
+	"github.com/verbumby/verbum/backend/pkg/ctl"
 )
 
 func main() {
@@ -14,11 +15,11 @@ func main() {
 	}
 
 	rootCmd := &cobra.Command{
-		Use:   "rvblr",
-		Short: "rvblr short",
-		Long:  "rvblr long",
+		Use:   "verbumctl",
+		Short: "verbumctl short",
+		Long:  "verbumctl long",
 	}
-	rootCmd.AddCommand()
+	rootCmd.AddCommand(ctl.Slugs())
 	if err := rootCmd.Execute(); err != nil {
 		log.Fatal(err)
 	}
