@@ -31,8 +31,21 @@ func bootstrapServer() error {
 		funcMap template.FuncMap
 	}{
 		{
-			name:    "index",
-			files:   []string{"./templates/layout.html", "./templates/index.html"},
+			name: "index",
+			files: []string{
+				"./templates/layout.html",
+				"./templates/index.html",
+				"./templates/search-control.html",
+			},
+			funcMap: template.FuncMap{},
+		},
+		{
+			name: "search-results",
+			files: []string{
+				"./templates/layout.html",
+				"./templates/search-results.html",
+				"./templates/search-control.html",
+			},
 			funcMap: template.FuncMap{},
 		},
 		{

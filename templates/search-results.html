@@ -1,0 +1,11 @@
+{{define "body" -}}
+{{template "search-control" .}}
+{{range .Articles}}
+<div class="article">
+    {{ .Content | md }}
+    <div class="source">
+        {{ .DictTitle }}
+    </div>
+</div>
+{{end}}
+{{end}}
