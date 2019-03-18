@@ -6,6 +6,7 @@ import (
 
 	"github.com/pkg/errors"
 	"github.com/verbumby/verbum/backend/pkg/chttp"
+	"github.com/verbumby/verbum/backend/pkg/dictionary"
 	"github.com/verbumby/verbum/backend/pkg/storage"
 	"github.com/verbumby/verbum/backend/pkg/tm"
 )
@@ -83,9 +84,7 @@ func search(w http.ResponseWriter, rctx *chttp.Context) error {
 		dictID := strings.TrimPrefix(hit.Index, "dict-")
 		if _, ok := dicts[dictID]; !ok {
 			respbody := struct {
-				Source struct {
-					Title string
-				} `json:"_source"`
+				Source dictionary.Dictionary `json:"_source"`
 			}{}
 
 			if err := storage.Get("/dicts/_doc/"+dictID, &respbody); err != nil {
