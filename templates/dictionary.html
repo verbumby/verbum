@@ -1,3 +1,11 @@
 {{define "body" -}}
 <h2>{{.Dictionary.Title}}</h2>
+{{range .Articles}}
+<div class="article">
+    {{ .Content | md }}
+    <div class="source">
+        {{ .Dictionary.Title }}
+    </div>
+</div>
+{{end}}
 {{end}}
