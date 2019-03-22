@@ -10,9 +10,16 @@
     <meta property="og:image" content="{{"/statics/favicon.png" | staticURL}}" />
     <meta name="viewport" content="width=device-width">
     <link rel="icon" type="image/png" href="{{"/statics/favicon.png" | staticURL}}" />
-    <script defer src="https://use.fontawesome.com/releases/v5.0.10/js/all.js"
-      integrity="sha384-slN8GvtUJGnv6ca26v8EzVaR9DC58QEwsIk9q1QXdCU8Yu8ck/tL/5szYlBbqmS+"
-      crossorigin="anonymous"></script>
+    <link rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+      integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
+      crossorigin="anonymous"
+    >
+    <link rel="stylesheet"
+      href="https://use.fontawesome.com/releases/v5.8.1/css/all.css"
+      integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf"
+      crossorigin="anonymous"
+    >
 
     <style media="screen">
       html {min-height: 100%;}
@@ -25,15 +32,12 @@
 
       #search {position:relative;}
       .search-input {margin: 0 0 0 0; display: flex; align-items: stretch; height: 30px}
-
-      .search-input input[type=text] {flex: 2; margin: 0; padding: 0 0 0 5px; width:100%;
-        border: 1px solid lightgrey; border-right:none;}
-
-      #search, .search-input input {font-size: 1.1em; font-family: Helvetica, sans-serif}
-      .search-input .button {border: none; cursor:pointer; font-family: Helvetica, sans-serif}
-      .search-input .button-search {color:white; background: red; margin: 0; padding:5px 10px;}
+      .search-input input[type=text] {flex: 2; margin: 0; padding: 0 0 0 5px; width: 100%;
+        border: 1px solid lightgrey; border-right: none;}
+      .search-input .btn {border: none; border-radius: 0; cursor: pointer; }
+      .search-input .button-search {color:white; background: red; margin: 0; padding:3px 10px;}
       .search-input .button-search:active {background: black;}
-      .search-input .button-search-small {display:none; padding: 4px 10px; font-size: 21px;}
+      .search-input .button-search-small {display:none; padding: 5px 10px; font-size: 21px;}
       .search-input .button-clear {color:grey; padding: 4px 10px; font-size: 21px; line-height: 0;
         border: 1px solid lightgrey; border-right: none; border-left: none;}
       .search-input .button-clear:active {color: red;}
@@ -44,13 +48,15 @@
       .suggestions li {padding: 5px;}
       .suggestions li.active {background-color: #e3e3e3; cursor: pointer;}
 
-      .article {padding: 6px 0; border-bottom: 1px solid lightgrey;}
+      .article {padding: 6px; border-bottom: 1px solid lightgrey;}
       .article:last-child {border-bottom: none;}
-      .article v-hw {font-weight: bold}
+      .article v-hw {font-weight: bold;}
       .article .source {text-align: right; color: darkgrey; font-size: 0.9em;}
+      .article p {margin: 0.5rem 0;}
 
       .logo {color:darkgrey; padding: 6px 0;}
-      .logo a {color:red; font-size: xx-large;text-decoration: none}
+      .logo h1 {display: inline;}
+      .logo a {color:red; text-decoration: none; }
 
       @media only screen and (max-width: 400px) {
         .search-input .button-search-small {display: inherit;}
@@ -60,7 +66,7 @@
   </head>
   <body>
     <div class="content">
-      <div class="logo"><a href="/">Verbum</a> анлайн слоўнік</div>
+      <div class="logo"><h1><a href="/">Verbum</a></h1> анлайн слоўнік</div>
         {{template "body" .}}
     </div>
   </body>
