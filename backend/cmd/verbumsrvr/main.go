@@ -65,7 +65,7 @@ func bootstrapServer() error {
 	statics := http.FileServer(http.Dir("statics"))
 	r.PathPrefix("/statics/").Handler(http.StripPrefix("/statics/", statics))
 	r.HandleFunc("/_suggest", chttp.MakeHandler(handlers.Suggest))
-	r.HandleFunc("/show/{dictionary}", chttp.MakeHandler(handlers.Dictionary))
+	r.HandleFunc("/show/{dictionary:[a-z]+}", chttp.MakeHandler(handlers.Dictionary))
 	r.HandleFunc("/", chttp.MakeHandler(handlers.Index))
 
 	chttp.InitCookieManager()
