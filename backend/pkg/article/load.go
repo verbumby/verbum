@@ -1,6 +1,7 @@
 package article
 
 import (
+	"fmt"
 	"strings"
 
 	"github.com/pkg/errors"
@@ -19,7 +20,7 @@ func Query(path string, reqbody interface{}) ([]Article, error) {
 		} `json:"hits"`
 	}{}
 
-	if err := storage.Post("/dict-*/_search", reqbody, &respbody); err != nil {
+	if err := storage.Post(path, reqbody, &respbody); err != nil {
 		return nil, errors.Wrap(err, "query elastic")
 	}
 
@@ -45,4 +46,27 @@ func Query(path string, reqbody interface{}) ([]Article, error) {
 	}
 
 	return result, nil
+}
+
+// Get gets one article from the storage
+func Get(dictionaryID, articleID string) (Article, error) {
+	respbody := struct {
+		Source Article `json:"_source"`
+		Index  string  `json:"_index"`
+	}{}
+
+	path := fmt.Sprintf("/dict-%s/_doc/%s", dictionaryID, articleID)
+	if err := storage.Get(path, &respbody); err != nil {
+		return Article{}, errors.Wrap(err, "storage get")
+	}
+
+	dict, err := dictionary.Get(dictionaryID)
+	if err != nil {
+		return Article{}, errors.Wrapf(err, "dictionary get %s", dictionaryID)
+	}
+
+	article := respbody.Source
+	article.Dictionary = dict
+
+	return article, nil
 }

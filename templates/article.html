@@ -1,0 +1,10 @@
+{{define "body" -}}
+{{with .Article}}
+<div class="article">
+    {{ .Content | md }}
+    <div class="source">
+        {{ .Dictionary.Title }}
+    </div>
+</div>
+{{end}}
+{{end}}
