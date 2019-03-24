@@ -15,7 +15,14 @@ import (
 // Query queries the storage
 func Query(method, path string, reqbody, respbody interface{}) error {
 	var reqbodystream io.Reader
-	if reqbody != nil {
+	switch reqbody := reqbody.(type) {
+	case io.Reader:
+		reqbodystream = reqbody
+	case string:
+		reqbodystream = strings.NewReader(reqbody)
+	case nil:
+		// do nothing
+	default:
 		reqbodybytes, err := json.Marshal(reqbody)
 		if err != nil {
 			return errors.Wrap(err, "marshal request body")
