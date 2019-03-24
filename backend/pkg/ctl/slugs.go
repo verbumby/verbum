@@ -1,8 +1,10 @@
 package ctl
 
 import (
+	"encoding/json"
 	"log"
 
+	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 	"github.com/verbumby/verbum/backend/pkg/storage"
 	"github.com/verbumby/verbum/backend/pkg/textutil"
@@ -26,57 +28,32 @@ func Slugs() *cobra.Command {
 				log.Fatalf("failed to add slug field: %v", err)
 			}
 
-			reqbody := map[string]interface{}{
-				"sort": []string{"_doc"},
-				"size": 100,
-			}
-
-			type scrollbodyt struct {
-				ScrollID string `json:"_scroll_id"`
-				Hits     struct {
-					Total int `json:"total"`
-					Hits  []struct {
-						Index  string `json:"_index"`
-						Type   string `json:"_type"`
+			err = storage.Scroll("dicts", nil, func(rawhits []json.RawMessage) error {
+				for _, rawhit := range rawhits {
+					hit := &struct {
 						ID     string `json:"_id"`
 						Source struct {
 							Title string
 						} `json:"_source"`
+					}{}
+					if err := json.Unmarshal(rawhit, hit); err != nil {
+						return errors.Wrap(err, "json unmarshal of a rawhit")
 					}
-				} `json:"hits"`
-			}
-			respbody := &scrollbodyt{}
-			if err := storage.Post("/dicts/_search?scroll=1m", reqbody, respbody); err != nil {
-				log.Fatalf("failed to scroll over dicts: %v", err)
-			}
-			for len(respbody.Hits.Hits) > 0 {
-				for _, hit := range respbody.Hits.Hits {
 					slug := textutil.Slugify(textutil.RomanizeBelarusian(hit.Source.Title))
 
-					if err := storage.Post("/dicts/_doc/"+hit.ID+"/_update", map[string]interface{}{
+					reqbody := map[string]interface{}{
 						"doc": map[string]interface{}{
 							"Slug": slug,
 						},
-					}, nil); err != nil {
-						log.Fatalf("failed up update record: %v", err)
+					}
+					if err := storage.Post("/dicts/_doc/"+hit.ID+"/_update", reqbody, nil); err != nil {
+						return errors.Wrapf(err, "update record %s", hit.ID)
 					}
 				}
-
-				reqbody := map[string]interface{}{
-					"scroll":    "1m",
-					"scroll_id": respbody.ScrollID,
-				}
-
-				respbody = &scrollbodyt{}
-				if err := storage.Post("/_search/scroll", reqbody, respbody); err != nil {
-					log.Fatalf("failed to advance scroll over dicts: %v", err)
-				}
-			}
-
-			if err := storage.Delete("/_search/scroll", map[string]interface{}{
-				"scroll_id": respbody.ScrollID,
-			}, nil); err != nil {
-				log.Fatalf("failed to delete scroll id: %v", err)
+				return nil
+			})
+			if err != nil {
+				log.Fatalf("failed to update slugs of dictionaries: %v", err)
 			}
 		},
 	}

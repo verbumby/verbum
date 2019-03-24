@@ -3,6 +3,7 @@ package app
 import (
 	"github.com/pkg/errors"
 	"github.com/spf13/viper"
+	"github.com/verbumby/verbum/backend/pkg/article"
 )
 
 // Bootstrap bootstraps the application
@@ -28,6 +29,10 @@ func Bootstrap() error {
 
 	if err := viper.ReadInConfig(); err != nil {
 		return errors.Wrap(err, "read in config")
+	}
+
+	if err := article.Migrate(); err != nil {
+		return errors.Wrap(err, "article migrate")
 	}
 
 	return nil

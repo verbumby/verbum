@@ -49,8 +49,19 @@ func bootstrapServer() error {
 			funcMap: template.FuncMap{},
 		},
 		{
-			name:    "dictionary",
-			files:   []string{"./templates/layout.html", "./templates/dictionary.html"},
+			name: "dictionary",
+			files: []string{
+				"./templates/layout.html",
+				"./templates/dictionary.html",
+			},
+			funcMap: template.FuncMap{},
+		},
+		{
+			name: "article",
+			files: []string{
+				"./templates/layout.html",
+				"./templates/article.html",
+			},
 			funcMap: template.FuncMap{},
 		},
 	}
@@ -65,7 +76,8 @@ func bootstrapServer() error {
 	statics := http.FileServer(http.Dir("statics"))
 	r.PathPrefix("/statics/").Handler(http.StripPrefix("/statics/", statics))
 	r.HandleFunc("/_suggest", chttp.MakeHandler(handlers.Suggest))
-	r.HandleFunc("/show/{dictionary:[a-z]+}", chttp.MakeHandler(handlers.Dictionary))
+	r.HandleFunc("/{dictionary:[a-z]+}", chttp.MakeHandler(handlers.Dictionary))
+	r.HandleFunc("/{dictionary:[a-z-]+}/{article:[a-zA-Z0-9-]+}", chttp.MakeHandler(handlers.Article))
 	r.HandleFunc("/", chttp.MakeHandler(handlers.Index))
 
 	chttp.InitCookieManager()
