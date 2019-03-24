@@ -26,8 +26,8 @@ func Article(w http.ResponseWriter, rctx *chttp.Context) error {
 		PageDescription string
 		Article         article.Article
 	}{
-		PageTitle:       "Article Title",
-		PageDescription: "Article Description",
+		PageTitle:       a.Title + " - " + a.Dictionary.Title,
+		PageDescription: a.Title + " - " + a.Dictionary.Title,
 		Article:         a,
 	})
 	if err != nil {
