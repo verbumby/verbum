@@ -16,6 +16,7 @@ func Query(path string, reqbody interface{}) ([]Article, error) {
 			Hits []struct {
 				Source Article `json:"_source"`
 				Index  string  `json:"_index"`
+				ID     string  `json:"_id"`
 			} `json:"hits"`
 		} `json:"hits"`
 	}{}
@@ -29,18 +30,16 @@ func Query(path string, reqbody interface{}) ([]Article, error) {
 	for _, hit := range respbody.Hits.Hits {
 		dictID := strings.TrimPrefix(hit.Index, "dict-")
 		if _, ok := dicts[dictID]; !ok {
-			respbody := struct {
-				Source dictionary.Dictionary `json:"_source"`
-			}{}
-
-			if err := storage.Get("/dicts/_doc/"+dictID, &respbody); err != nil {
-				return nil, errors.Wrapf(err, "query dict %s", dictID)
+			dict, err := dictionary.Get(dictID)
+			if err != nil {
+				return nil, errors.Wrapf(err, "dictionary get %s", dictID)
 			}
 
-			dicts[dictID] = respbody.Source
+			dicts[dictID] = dict
 		}
 
 		article := hit.Source
+		article.ID = hit.ID
 		article.Dictionary = dicts[dictID]
 		result = append(result, article)
 	}
@@ -53,6 +52,7 @@ func Get(dictionaryID, articleID string) (Article, error) {
 	respbody := struct {
 		Source Article `json:"_source"`
 		Index  string  `json:"_index"`
+		ID     string  `json:"_id"`
 	}{}
 
 	path := fmt.Sprintf("/dict-%s/_doc/%s", dictionaryID, articleID)
@@ -67,6 +67,7 @@ func Get(dictionaryID, articleID string) (Article, error) {
 
 	article := respbody.Source
 	article.Dictionary = dict
+	article.ID = respbody.ID
 
 	return article, nil
 }

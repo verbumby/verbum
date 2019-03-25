@@ -1,0 +1,6 @@
+{{define "body" -}}
+<h2>{{.Dictionary.Title}}</h2>
+{{range .Articles}}
+{{template "article" .}}
+{{end}}
+{{end}}

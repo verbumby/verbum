@@ -1,10 +1,13 @@
-{{define "body" -}}
-{{with .Article}}
+{{define "article" -}}
 <div class="article">
+    <div class="float-right mt-2">
+        <a href="/{{ .Dictionary.ID }}/{{ .ID }}" target="_blank" style="color: darkgray;" >
+            <i class="fas fa-link"></i>
+        </a>
+    </div>
     {{ .Content | md }}
     <div class="source">
         {{ .Dictionary.Title }}
     </div>
 </div>
-{{end}}
 {{end}}

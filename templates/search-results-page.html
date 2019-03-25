@@ -1,0 +1,6 @@
+{{define "body" -}}
+{{template "search-control" .}}
+{{range .Articles}}
+{{template "article" .}}
+{{end}}
+{{end}}

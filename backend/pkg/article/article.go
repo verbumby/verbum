@@ -6,6 +6,7 @@ import (
 
 // Article represents an article entity
 type Article struct {
+	ID          string                `json:"-"`
 	Dictionary  dictionary.Dictionary `json:"-"`
 	Title       string
 	Content     string
