@@ -15,6 +15,7 @@ func TestRomanizeBelarusian(t *testing.T) {
 		{s: "Бабаедава", want: "Babajedava"},
 		{s: "Лепель", want: "Liepiel"},
 		{s: "Тлумачальны слоўнік беларускай мовы", want: "Tlumachalny slounik bielaruskaj movy"},
+		{s: "коп'епадобны", want: "kopjepadobny"},
 	}
 	for i, tt := range tests {
 		t.Run(fmt.Sprintf("case%d", i), func(t *testing.T) {

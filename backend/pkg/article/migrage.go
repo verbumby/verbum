@@ -85,7 +85,7 @@ func Migrate() error {
 			if respbody.Errors {
 				return fmt.Errorf("some error in one of bulk action: %s", respbody.Items)
 			}
-			fmt.Println(" ok")
+			fmt.Printf(" ok %d\n", n)
 
 			return nil
 		})
