@@ -34,7 +34,7 @@ func bootstrapServer() error {
 			name: "index",
 			files: []string{
 				"./templates/layout.html",
-				"./templates/index.html",
+				"./templates/index-page.html",
 				"./templates/search-control.html",
 			},
 			funcMap: template.FuncMap{},
@@ -43,8 +43,9 @@ func bootstrapServer() error {
 			name: "search-results",
 			files: []string{
 				"./templates/layout.html",
-				"./templates/search-results.html",
+				"./templates/search-results-page.html",
 				"./templates/search-control.html",
+				"./templates/article.html",
 			},
 			funcMap: template.FuncMap{},
 		},
@@ -52,7 +53,8 @@ func bootstrapServer() error {
 			name: "dictionary",
 			files: []string{
 				"./templates/layout.html",
-				"./templates/dictionary.html",
+				"./templates/dictionary-page.html",
+				"./templates/article.html",
 			},
 			funcMap: template.FuncMap{},
 		},
@@ -60,6 +62,7 @@ func bootstrapServer() error {
 			name: "article",
 			files: []string{
 				"./templates/layout.html",
+				"./templates/article-page.html",
 				"./templates/article.html",
 			},
 			funcMap: template.FuncMap{},
