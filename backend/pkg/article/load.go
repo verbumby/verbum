@@ -10,10 +10,11 @@ import (
 )
 
 // Query queries articles in the storage
-func Query(path string, reqbody interface{}) ([]Article, error) {
+func Query(path string, reqbody interface{}) ([]Article, int, error) {
 	respbody := struct {
 		Hits struct {
-			Hits []struct {
+			Total int
+			Hits  []struct {
 				Source Article `json:"_source"`
 				Index  string  `json:"_index"`
 				ID     string  `json:"_id"`
@@ -22,7 +23,7 @@ func Query(path string, reqbody interface{}) ([]Article, error) {
 	}{}
 
 	if err := storage.Post(path, reqbody, &respbody); err != nil {
-		return nil, errors.Wrap(err, "query elastic")
+		return nil, 0, errors.Wrap(err, "query elastic")
 	}
 
 	result := []Article{}
@@ -32,7 +33,7 @@ func Query(path string, reqbody interface{}) ([]Article, error) {
 		if _, ok := dicts[dictID]; !ok {
 			dict, err := dictionary.Get(dictID)
 			if err != nil {
-				return nil, errors.Wrapf(err, "dictionary get %s", dictID)
+				return nil, 0, errors.Wrapf(err, "dictionary get %s", dictID)
 			}
 
 			dicts[dictID] = dict
@@ -44,7 +45,7 @@ func Query(path string, reqbody interface{}) ([]Article, error) {
 		result = append(result, article)
 	}
 
-	return result, nil
+	return result, respbody.Hits.Total, nil
 }
 
 // Get gets one article from the storage

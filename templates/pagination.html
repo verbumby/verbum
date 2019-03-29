@@ -1,0 +1,13 @@
+{{define "pagination" -}}
+{{with .Pagination.Links}}
+<nav aria-label="Page navigation example">
+    <ul class="pagination">
+        {{range .}}
+        <li class="page-item {{if .Active}}active{{end}}">
+            <a class="page-link" href="{{.URL}}">{{.PageN}}</a>
+        </li>
+        {{end}}
+    </ul>
+</nav>
+{{end}}
+{{end}}

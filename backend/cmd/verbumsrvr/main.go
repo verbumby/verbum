@@ -55,6 +55,7 @@ func bootstrapServer() error {
 				"./templates/layout.html",
 				"./templates/dictionary-page.html",
 				"./templates/article.html",
+				"./templates/pagination.html",
 			},
 			funcMap: template.FuncMap{},
 		},
