@@ -1,17 +1,16 @@
 package htmlui
 
 import (
-	"fmt"
 	"net/url"
 	"strconv"
 )
 
-// URLQuery url query
-type URLQuery []URLQueryParam
+// Query url query
+type Query []QueryParam
 
 // Clone clones url query params
-func (ps URLQuery) Clone() URLQuery {
-	result := make([]URLQueryParam, len(ps))
+func (ps Query) Clone() Query {
+	result := make([]QueryParam, len(ps))
 	for i, p := range ps {
 		result[i] = p.Clone()
 	}
@@ -19,31 +18,14 @@ func (ps URLQuery) Clone() URLQuery {
 }
 
 // From loads url query param value from the specified url.Values
-func (ps URLQuery) From(values url.Values) URLQuery {
-	result := ps.Clone()
-
-	for _, p := range result {
+func (ps Query) From(values url.Values) {
+	for _, p := range ps {
 		p.Decode(values.Get(p.Name()))
 	}
-
-	return result
-}
-
-// With sets name param to the specified value
-func (ps URLQuery) With(name, value string) URLQuery {
-	result := ps.Clone()
-
-	p := result.Get(name)
-	if p == nil {
-		panic(fmt.Errorf("failed to find %s url query param", name))
-	}
-	p.Decode(value)
-
-	return result
 }
 
 // Get returns a query param by it's name
-func (ps URLQuery) Get(name string) URLQueryParam {
+func (ps Query) Get(name string) QueryParam {
 	for _, p := range ps {
 		if p.Name() == name {
 			return p
@@ -53,7 +35,7 @@ func (ps URLQuery) Get(name string) URLQueryParam {
 }
 
 // Encode encodes url query
-func (ps URLQuery) Encode() string {
+func (ps Query) Encode() string {
 	v := url.Values{}
 	for _, p := range ps {
 		v.Set(p.Name(), p.Encode())
@@ -61,24 +43,24 @@ func (ps URLQuery) Encode() string {
 	return v.Encode()
 }
 
-// URLQueryParam url query param
-type URLQueryParam interface {
+// QueryParam url query param
+type QueryParam interface {
 	Name() string
 	Decode(value string)
 	Encode() string
-	Clone() URLQueryParam
+	Clone() QueryParam
 }
 
-// StringURLQueryParam string url query param
-type StringURLQueryParam struct {
+// StringQueryParam string url query param
+type StringQueryParam struct {
 	name  string
 	value string
 	def   string
 }
 
-// NewStringURLQueryParam creates new StringURLQueryParam
-func NewStringURLQueryParam(name, defaultValue string) *StringURLQueryParam {
-	return &StringURLQueryParam{
+// NewStringQueryParam creates new StringURLQueryParam
+func NewStringQueryParam(name, defaultValue string) *StringQueryParam {
+	return &StringQueryParam{
 		name:  name,
 		value: defaultValue,
 		def:   defaultValue,
@@ -86,41 +68,46 @@ func NewStringURLQueryParam(name, defaultValue string) *StringURLQueryParam {
 }
 
 // Name implements interface URLQueryParam
-func (p *StringURLQueryParam) Name() string {
+func (p *StringQueryParam) Name() string {
 	return p.name
 }
 
 // Value returns param value
-func (p *StringURLQueryParam) Value() string {
+func (p *StringQueryParam) Value() string {
 	return p.value
 }
 
+// SetValue set's value
+func (p *StringQueryParam) SetValue(v string) {
+	p.value = v
+}
+
 // Decode implements interface URLQueryParam
-func (p *StringURLQueryParam) Decode(value string) {
+func (p *StringQueryParam) Decode(value string) {
 	p.value = value
 }
 
 // Encode implements interface URLQueryParam
-func (p *StringURLQueryParam) Encode() string {
+func (p *StringQueryParam) Encode() string {
 	return p.value
 }
 
 // Clone implements interface URLQueryParam
-func (p *StringURLQueryParam) Clone() URLQueryParam {
+func (p *StringQueryParam) Clone() QueryParam {
 	result := *p
 	return &result
 }
 
-// IntegerURLQueryParam integer url query param
-type IntegerURLQueryParam struct {
+// IntegerQueryParam integer url query param
+type IntegerQueryParam struct {
 	name  string
 	value int
 	def   int
 }
 
-// NewIntegerURLQueryParam creates new IntegerURLQueryParam
-func NewIntegerURLQueryParam(name string, defaultValue int) *IntegerURLQueryParam {
-	return &IntegerURLQueryParam{
+// NewIntegerQueryParam creates new IntegerURLQueryParam
+func NewIntegerQueryParam(name string, defaultValue int) *IntegerQueryParam {
+	return &IntegerQueryParam{
 		name:  name,
 		value: defaultValue,
 		def:   defaultValue,
@@ -128,17 +115,22 @@ func NewIntegerURLQueryParam(name string, defaultValue int) *IntegerURLQueryPara
 }
 
 // Name implements interface URLQueryParam
-func (p *IntegerURLQueryParam) Name() string {
+func (p *IntegerQueryParam) Name() string {
 	return p.name
 }
 
 // Value returns param value
-func (p *IntegerURLQueryParam) Value() int {
+func (p *IntegerQueryParam) Value() int {
 	return p.value
 }
 
+// SetValue set's value
+func (p *IntegerQueryParam) SetValue(v int) {
+	p.value = v
+}
+
 // Decode implements interface URLQueryParam
-func (p *IntegerURLQueryParam) Decode(value string) {
+func (p *IntegerQueryParam) Decode(value string) {
 	v, err := strconv.ParseInt(value, 10, 32)
 	if err == nil {
 		p.value = int(v)
@@ -148,12 +140,12 @@ func (p *IntegerURLQueryParam) Decode(value string) {
 }
 
 // Encode implements interface URLQueryParam
-func (p *IntegerURLQueryParam) Encode() string {
+func (p *IntegerQueryParam) Encode() string {
 	return strconv.FormatInt(int64(p.value), 10)
 }
 
 // Clone implements interface URLQueryParam
-func (p *IntegerURLQueryParam) Clone() URLQueryParam {
+func (p *IntegerQueryParam) Clone() QueryParam {
 	result := *p
 	return &result
 }

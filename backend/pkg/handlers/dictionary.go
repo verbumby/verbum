@@ -3,7 +3,6 @@ package handlers
 import (
 	"math"
 	"net/http"
-	"strconv"
 
 	"github.com/gorilla/mux"
 	"github.com/pkg/errors"
@@ -24,12 +23,13 @@ func Dictionary(w http.ResponseWriter, rctx *chttp.Context) error {
 		return errors.Wrapf(err, "dictionary get %s", dictID)
 	}
 
-	urlQuery := htmlui.URLQuery([]htmlui.URLQueryParam{
-		htmlui.NewIntegerURLQueryParam("page", 1),
-	}).From(rctx.R.URL.Query())
+	urlQuery := htmlui.Query([]htmlui.QueryParam{
+		htmlui.NewIntegerQueryParam("page", 1),
+	})
+	urlQuery.From(rctx.R.URL.Query())
 
 	articles, total, err := article.Query("/dict-"+dictID+"/_search", map[string]interface{}{
-		"from": (urlQuery.Get("page").(*htmlui.IntegerURLQueryParam).Value() - 1) * 10,
+		"from": (urlQuery.Get("page").(*htmlui.IntegerQueryParam).Value() - 1) * 10,
 		"size": 10,
 		"sort": []interface{}{
 			"Title",
@@ -51,13 +51,14 @@ func Dictionary(w http.ResponseWriter, rctx *chttp.Context) error {
 		Dictionary:      dict,
 		Articles:        articles,
 		Pagination: htmlui.Pagination{
-			Current: urlQuery.Get("page").(*htmlui.IntegerURLQueryParam).Value(),
+			Current: urlQuery.Get("page").(*htmlui.IntegerQueryParam).Value(),
 			Total:   int(math.Ceil(float64(total) / 10)),
 			PageToURL: func(n int) string {
-				return "?" + urlQuery.With("page", strconv.FormatInt(int64(n), 10)).Encode()
+				urlQuery := urlQuery.Clone()
+				urlQuery.Get("page").(*htmlui.IntegerQueryParam).SetValue(n)
+				return "?" + urlQuery.Encode()
 			},
 		},
-		// PaginationPages: calcPages(12,),
 	})
 	if err != nil {
 		return errors.Wrap(err, "render html")
