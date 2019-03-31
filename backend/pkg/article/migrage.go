@@ -95,5 +95,22 @@ func Migrate() error {
 		fmt.Println("migrated", n, "records")
 	}
 
+	a, err := Get("rvblr", "snieh")
+	if err != nil {
+		return errors.Wrap(err, "fix rvblr/snieh record: get")
+	}
+
+	if strings.HasPrefix(a.Title, " ") {
+		fixedTitle := strings.TrimSpace(a.Title)
+		err := storage.Post("/dict-rvblr/_doc/snieh/_update", map[string]interface{}{
+			"doc": map[string]interface{}{
+				"Title": fixedTitle,
+			},
+		}, nil)
+		if err != nil {
+			return errors.Wrap(err, "fix rvblr/snieh record: post")
+		}
+	}
+
 	return nil
 }
