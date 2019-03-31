@@ -28,9 +28,10 @@ func Dictionary(w http.ResponseWriter, rctx *chttp.Context) error {
 	})
 	urlQuery.From(rctx.R.URL.Query())
 
+	const pageSize = 10
 	articles, total, err := article.Query("/dict-"+dictID+"/_search", map[string]interface{}{
-		"from": (urlQuery.Get("page").(*htmlui.IntegerQueryParam).Value() - 1) * 10,
-		"size": 10,
+		"from": (urlQuery.Get("page").(*htmlui.IntegerQueryParam).Value() - 1) * pageSize,
+		"size": pageSize,
 		"sort": []interface{}{
 			"Title",
 		},
@@ -52,7 +53,7 @@ func Dictionary(w http.ResponseWriter, rctx *chttp.Context) error {
 		Articles:        articles,
 		Pagination: htmlui.Pagination{
 			Current: urlQuery.Get("page").(*htmlui.IntegerQueryParam).Value(),
-			Total:   int(math.Ceil(float64(total) / 10)),
+			Total:   int(math.Ceil(float64(total) / pageSize)),
 			PageToURL: func(n int) string {
 				urlQuery := urlQuery.Clone()
 				urlQuery.Get("page").(*htmlui.IntegerQueryParam).SetValue(n)
