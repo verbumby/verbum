@@ -1,5 +1,7 @@
 package htmlui
 
+import "strconv"
+
 // Pagination pagination
 type Pagination struct {
 	Current   int
@@ -9,9 +11,10 @@ type Pagination struct {
 
 // PaginationLink pagination link
 type PaginationLink struct {
-	URL    string
-	PageN  int
-	Active bool
+	URL      string
+	Text     string
+	Active   bool
+	Disabled bool
 }
 
 // Links returns pagination links
@@ -32,23 +35,54 @@ func (p Pagination) Links() []PaginationLink {
 		return b
 	}
 
-	for i := max(p.Current-5, 1); i < p.Current; i++ {
+	const d = 2
+	if max(p.Current-d, 1) > 1 {
 		result = append(result, PaginationLink{
-			URL:   p.PageToURL(i),
-			PageN: i,
+			URL:  p.PageToURL(1),
+			Text: strconv.FormatInt(1, 10),
+		})
+	}
+
+	if max(p.Current-d, 1) > 2 {
+		result = append(result, PaginationLink{
+			URL:      "",
+			Disabled: true,
+			Text:     "...",
+		})
+	}
+
+	for i := max(p.Current-d, 1); i < p.Current; i++ {
+		result = append(result, PaginationLink{
+			URL:  p.PageToURL(i),
+			Text: strconv.FormatInt(int64(i), 10),
 		})
 	}
 
 	result = append(result, PaginationLink{
 		URL:    p.PageToURL(p.Current),
-		PageN:  p.Current,
+		Text:   strconv.FormatInt(int64(p.Current), 10),
 		Active: true,
 	})
 
-	for i := p.Current + 1; i <= min(p.Current+5, p.Total); i++ {
+	for i := p.Current + 1; i <= min(p.Current+d, p.Total); i++ {
 		result = append(result, PaginationLink{
-			URL:   p.PageToURL(i),
-			PageN: i,
+			URL:  p.PageToURL(i),
+			Text: strconv.FormatInt(int64(i), 10),
+		})
+	}
+
+	if min(p.Current+d, p.Total) < p.Total-1 {
+		result = append(result, PaginationLink{
+			URL:      "",
+			Disabled: true,
+			Text:     "...",
+		})
+	}
+
+	if min(p.Current+d, p.Total) < p.Total {
+		result = append(result, PaginationLink{
+			URL:  p.PageToURL(p.Total),
+			Text: strconv.FormatInt(int64(p.Total), 10),
 		})
 	}
 

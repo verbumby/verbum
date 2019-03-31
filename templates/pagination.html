@@ -1,10 +1,11 @@
 {{define "pagination" -}}
 {{with .Pagination.Links}}
-<nav aria-label="Page navigation example">
-    <ul class="pagination">
+<p />
+<nav aria-label="pagination" >
+    <ul class="pagination pagination-sm justify-content-center">
         {{range .}}
-        <li class="page-item {{if .Active}}active{{end}}">
-            <a class="page-link" href="{{.URL}}">{{.PageN}}</a>
+        <li class="page-item {{if .Active}}active{{end}} {{if .Disabled}}disabled{{end}}">
+            <a class="page-link" href="{{.URL}}">{{.Text}}</a>
         </li>
         {{end}}
     </ul>
