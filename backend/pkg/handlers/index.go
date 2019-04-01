@@ -58,7 +58,7 @@ func search(w http.ResponseWriter, rctx *chttp.Context) error {
 		},
 	}
 
-	articles, err := article.Query("/dict-*/_search", reqbody)
+	articles, _, err := article.Query("/dict-*/_search", reqbody)
 	if err != nil {
 		return errors.Wrap(err, "query articles")
 	}

@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"math"
 	"net/http"
 
 	"github.com/gorilla/mux"
@@ -8,6 +9,7 @@ import (
 	"github.com/verbumby/verbum/backend/pkg/article"
 	"github.com/verbumby/verbum/backend/pkg/chttp"
 	"github.com/verbumby/verbum/backend/pkg/dictionary"
+	"github.com/verbumby/verbum/backend/pkg/htmlui"
 	"github.com/verbumby/verbum/backend/pkg/tm"
 )
 
@@ -21,8 +23,18 @@ func Dictionary(w http.ResponseWriter, rctx *chttp.Context) error {
 		return errors.Wrapf(err, "dictionary get %s", dictID)
 	}
 
-	articles, err := article.Query("/dict-"+dictID+"/_search", map[string]interface{}{
-		"size": 20,
+	urlQuery := htmlui.Query([]htmlui.QueryParam{
+		htmlui.NewIntegerQueryParam("page", 1),
+	})
+	urlQuery.From(rctx.R.URL.Query())
+
+	const pageSize = 10
+	articles, total, err := article.Query("/dict-"+dictID+"/_search", map[string]interface{}{
+		"from": (urlQuery.Get("page").(*htmlui.IntegerQueryParam).Value() - 1) * pageSize,
+		"size": pageSize,
+		"sort": []interface{}{
+			"Title",
+		},
 	})
 	if err != nil {
 		return errors.Wrap(err, "query articles")
@@ -33,15 +45,31 @@ func Dictionary(w http.ResponseWriter, rctx *chttp.Context) error {
 		PageDescription string
 		Dictionary      dictionary.Dictionary
 		Articles        []article.Article
+		Pagination      htmlui.Pagination
 	}{
 		PageTitle:       dict.Title,
 		PageDescription: dict.Title,
 		Dictionary:      dict,
 		Articles:        articles,
+		Pagination: htmlui.Pagination{
+			Current: urlQuery.Get("page").(*htmlui.IntegerQueryParam).Value(),
+			Total:   int(math.Ceil(float64(total) / pageSize)),
+			PageToURL: func(n int) string {
+				urlQuery := urlQuery.Clone()
+				urlQuery.Get("page").(*htmlui.IntegerQueryParam).SetValue(n)
+				return "?" + urlQuery.Encode()
+			},
+		},
 	})
 	if err != nil {
 		return errors.Wrap(err, "render html")
 	}
 
 	return nil
+}
+
+func calcPages(c, total int) []int {
+	result := []int{}
+
+	return result
 }

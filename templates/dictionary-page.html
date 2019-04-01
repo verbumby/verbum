@@ -1,6 +1,9 @@
 {{define "body" -}}
 <h2>{{.Dictionary.Title}}</h2>
-{{range .Articles}}
-{{template "article" .}}
-{{end}}
+<div>
+    {{range .Articles}}
+    {{template "article" .}}
+    {{end}}
+</div>
+{{template "pagination" .}}
 {{end}}
