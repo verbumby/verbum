@@ -12,8 +12,19 @@ type Article struct {
 	Content     string
 	Headword    []string
 	HeadwordAlt []string
-	Suggest     []struct {
-		Input  string `json:"input"`
-		Weight int    `json:"weight"`
-	}
+	Suggest     []Suggest
+	Prefix      []Prefix
+}
+
+// Suggest article suggests
+type Suggest struct {
+	Input  string `json:"input"`
+	Weight int    `json:"weight"`
+}
+
+// Prefix article prefix struct
+type Prefix struct {
+	Letter1 string
+	Letter2 string
+	Letter3 string
 }
