@@ -19,7 +19,7 @@ func main() {
 		Short: "verbumctl short",
 		Long:  "verbumctl long",
 	}
-	rootCmd.AddCommand(ctl.Slugs())
+	rootCmd.AddCommand(ctl.Slugs(), ctl.RvblrWrongHeadwords())
 	if err := rootCmd.Execute(); err != nil {
 		log.Fatal(err)
 	}
