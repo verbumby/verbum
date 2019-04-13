@@ -1,5 +1,20 @@
 {{define "body" -}}
 <h2>{{.Dictionary.Title}}</h2>
+<div class="letter-filter">
+    {{with .LetterFilter.Links}}
+    {{range .}}
+    <div class="letter-filter-level mt-1 mb-1">
+        {{range . -}}
+        <a
+            class="btn ml-1 mb-1 btn-sm btn-light {{if .Active}}active{{end}}"
+            href="{{.URL}}"
+            title="{{.Title}}"
+        >{{.Text}}</a>
+        {{- end}}
+    </div>
+    {{end}}
+    {{end}}
+</div>
 <div>
     {{range .Articles}}
     {{template "article" .}}
