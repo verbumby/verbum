@@ -49,6 +49,7 @@ type QueryParam interface {
 	Decode(value string)
 	Encode() string
 	Clone() QueryParam
+	Reset()
 }
 
 // StringQueryParam string url query param
@@ -96,6 +97,11 @@ func (p *StringQueryParam) Encode() string {
 func (p *StringQueryParam) Clone() QueryParam {
 	result := *p
 	return &result
+}
+
+// Reset implements interface URLQueryParam
+func (p *StringQueryParam) Reset() {
+	p.value = p.def
 }
 
 // IntegerQueryParam integer url query param
@@ -148,4 +154,9 @@ func (p *IntegerQueryParam) Encode() string {
 func (p *IntegerQueryParam) Clone() QueryParam {
 	result := *p
 	return &result
+}
+
+// Reset implements interface URLQueryParam
+func (p *IntegerQueryParam) Reset() {
+	p.value = p.def
 }

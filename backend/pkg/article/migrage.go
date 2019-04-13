@@ -14,20 +14,27 @@ import (
 
 // Migrate migrates article storage
 func Migrate() error {
-	respbody := struct {
-		DictRvblr struct {
-			Mappings struct {
-				Doc struct {
-					Properties map[string]interface{} `json:"properties"`
-				} `json:"_doc"`
-			} `json:"mappings"`
-		} `json:"dict-rvblr"`
-	}{}
-	if err := storage.Get("/dict-rvblr/_mappings", &respbody); err != nil {
-		return errors.Wrap(err, "get dict-rvblr mappings")
+	var rvblrMapping map[string]interface{}
+	{
+		respbody := struct {
+			DictRvblr struct {
+				Mappings struct {
+					Doc struct {
+						Properties map[string]interface{} `json:"properties"`
+					} `json:"_doc"`
+				} `json:"mappings"`
+			} `json:"dict-rvblr"`
+		}{}
+		if err := storage.Get("/dict-rvblr/_mappings", &respbody); err != nil {
+			return errors.Wrap(err, "get dict-rvblr mappings")
+		}
+		rvblrMapping = respbody.DictRvblr.Mappings.Doc.Properties
 	}
 
-	if _, ok := respbody.DictRvblr.Mappings.Doc.Properties["Title"]; !ok {
+	rvblrAddTitleMigration := func() error {
+		if _, ok := rvblrMapping["Title"]; ok {
+			return nil
+		}
 		err := storage.Post("/dict-rvblr/_mapping/_doc", map[string]interface{}{
 			"properties": map[string]interface{}{
 				"Title": map[string]interface{}{
@@ -93,105 +100,142 @@ func Migrate() error {
 			return errors.Wrap(err, "migrate dict-rvblr")
 		}
 		fmt.Println("migrated", n, "records")
+		return nil
 	}
 
-	a, err := Get("rvblr", "snieh")
-	if err != nil {
-		return errors.Wrap(err, "fix rvblr/snieh record: get")
+	rvblrFixSniehTitle := func() error {
+		a, err := Get("rvblr", "snieh")
+		if err != nil {
+			return errors.Wrap(err, "get")
+		}
+
+		if strings.HasPrefix(a.Title, " ") {
+			fixedTitle := strings.TrimSpace(a.Title)
+			err := storage.Post("/dict-rvblr/_doc/snieh/_update", map[string]interface{}{
+				"doc": map[string]interface{}{
+					"Title": fixedTitle,
+				},
+			}, nil)
+			if err != nil {
+				return errors.Wrap(err, "post")
+			}
+		}
+		return nil
 	}
 
-	if strings.HasPrefix(a.Title, " ") {
-		fixedTitle := strings.TrimSpace(a.Title)
-		err := storage.Post("/dict-rvblr/_doc/snieh/_update", map[string]interface{}{
-			"doc": map[string]interface{}{
-				"Title": fixedTitle,
+	rvblrPrefix := func() error {
+		if _, ok := rvblrMapping["Prefix"]; ok {
+			return nil
+		}
+		err := storage.Post("/dict-rvblr/_mapping/_doc", map[string]interface{}{
+			"properties": map[string]interface{}{
+				"Prefix": map[string]interface{}{
+					"type": "nested",
+					"properties": map[string]interface{}{
+						"Letter1": map[string]interface{}{"type": "keyword"},
+						"Letter2": map[string]interface{}{"type": "keyword"},
+						"Letter3": map[string]interface{}{"type": "keyword"},
+					},
+				},
 			},
 		}, nil)
 		if err != nil {
-			return errors.Wrap(err, "fix rvblr/snieh record: post")
+			return errors.Wrap(err, "add Prefix nested field to dict-rvblr")
 		}
+
+		n := 0
+		err = storage.Scroll("dict-rvblr", nil, func(rawhits []json.RawMessage) error {
+			buf := &bytes.Buffer{}
+			for _, rawhit := range rawhits {
+				n++
+				hit := struct {
+					ID     string  `json:"_id"`
+					Source Article `json:"_source"`
+				}{}
+				if err := json.Unmarshal(rawhit, &hit); err != nil {
+					return errors.Wrap(err, "unmarshal raw hit")
+				}
+
+				a := hit.Source
+				seen := map[string]bool{}
+				for _, hw := range a.Headword {
+					rhw := []rune(hw)
+
+					if _, ok := seen[string(rhw[:3])]; ok {
+						continue
+					}
+					seen[string(rhw[:3])] = true
+
+					p := Prefix{}
+					if len(rhw) > 0 {
+						p.Letter1 = string(rhw[0])
+					}
+					if len(rhw) > 1 {
+						p.Letter2 = string(rhw[1])
+					}
+					if len(rhw) > 2 {
+						p.Letter3 = string(rhw[2])
+					}
+					a.Prefix = append(a.Prefix, p)
+				}
+
+				buf.WriteString(fmt.Sprintf(`{"update":{"_index":"dict-rvblr", "_type":"_doc", "_id":"%s"}}`, hit.ID))
+				buf.WriteString("\n")
+				if err := json.NewEncoder(buf).Encode(map[string]interface{}{
+					"doc": map[string]interface{}{
+						"Prefix": a.Prefix,
+					},
+				}); err != nil {
+					return errors.Wrap(err, "encode article")
+				}
+
+				fmt.Print(".")
+			}
+
+			respbody := struct {
+				Errors bool            `json:"errors"`
+				Items  json.RawMessage `json:"items"`
+			}{}
+			if err := storage.Post("/_bulk", buf, &respbody); err != nil {
+				return errors.Wrap(err, "bulk")
+			}
+			if respbody.Errors {
+				return fmt.Errorf("some error in one of bulk action: %s", respbody.Items)
+			}
+			fmt.Printf(" ok %d\n", n)
+
+			return nil
+		})
+		if err != nil {
+			return errors.Wrap(err, "migrate dict-rvblr")
+		}
+		fmt.Println("migrated", n, "records")
+		return nil
 	}
 
-	// if _, ok := respbody.DictRvblr.Mappings.Doc.Properties["Prefix1"]; !ok {
-	// 	err := storage.Post("/dict-rvblr/_mapping/_doc", map[string]interface{}{
-	// 		"properties": map[string]interface{}{
-	// 			"Prefix1": map[string]interface{}{"type": "keyword"},
-	// 			"Prefix2": map[string]interface{}{"type": "keyword"},
-	// 			"Prefix3": map[string]interface{}{"type": "keyword"},
-	// 		},
-	// 	}, nil)
-	// 	if err != nil {
-	// 		return errors.Wrap(err, "add Prefix1-3 fields to dict-rvblr")
-	// 	}
+	migrations := []struct {
+		name string
+		f    func() error
+	}{
+		{
+			name: "rvblr add title field",
+			f:    rvblrAddTitleMigration,
+		},
+		{
+			name: "rvblr fix snieh record title",
+			f:    rvblrFixSniehTitle,
+		},
+		{
+			name: "rvblr add prefix fields and data",
+			f:    rvblrPrefix,
+		},
+	}
 
-	// n := 0
-	// err = storage.Scroll("dict-rvblr", nil, func(rawhits []json.RawMessage) error {
-	// buf := &bytes.Buffer{}
-	// for _, rawhit := range rawhits {
-	// 	n++
-	// 	hit := struct {
-	// 		ID     string  `json:"_id"`
-	// 		Source Article `json:"_source"`
-	// 	}{}
-	// 	if err := json.Unmarshal(rawhit, &hit); err != nil {
-	// 		return errors.Wrap(err, "unmarshal raw hit")
-	// 	}
-
-	// 	article := hit.Source
-	// 	for _, hw := range article.Headword {
-	// 		if strings.ContainsAny(hw, " ()") {
-	// 			fmt.Println(hit.ID, fmt.Sprintf("'%s'", hw))
-	// 		}
-	// 		rhw := []rune(hw)
-	// 		p := Prefix{}
-	// 		if len(rhw) > 0 {
-	// 			p.Letter1 = string(rhw[0])
-	// 		}
-	// 		if len(rhw) > 1 {
-	// 			p.Letter2 = string(rhw[1])
-	// 		}
-	// 		if len(rhw) > 2 {
-	// 			p.Letter3 = string(rhw[2])
-	// 		}
-	// 		article.Prefix = append(article.Prefix, p)
-
-	// 	}
-
-	// 	for _, hw := range article.HeadwordAlt {
-	// 		if strings.ContainsAny(hw, " ()") {
-	// 			fmt.Println(hit.ID, hw, "HWA!")
-	// 		}
-	// 	}
-	// fmt.Println(article.Title, "-", article.Prefix)
-
-	// buf.WriteString(fmt.Sprintf(`{"index":{"_index":"dict-rvblr", "_type":"_doc", "_id":"%s"}}`, id))
-	// buf.WriteString("\n")
-	// if err := json.NewEncoder(buf).Encode(article); err != nil {
-	// 	return errors.Wrap(err, "encode article")
-	// }
-
-	// fmt.Print(".")
-	// }
-
-	// respbody := struct {
-	// 	Errors bool            `json:"errors"`
-	// 	Items  json.RawMessage `json:"items"`
-	// }{}
-	// if err := storage.Post("/_bulk", buf, &respbody); err != nil {
-	// 	return errors.Wrap(err, "bulk")
-	// }
-	// if respbody.Errors {
-	// 	return fmt.Errorf("some error in one of bulk action: %s", respbody.Items)
-	// }
-	// fmt.Printf(" ok %d\n", n)
-
-	// 	return nil
-	// })
-	// if err != nil {
-	// 	return errors.Wrap(err, "migrate dict-rvblr")
-	// }
-	// fmt.Println("migrated", n, "records")
-	// }
+	for _, m := range migrations {
+		if err := m.f(); err != nil {
+			return errors.Wrapf(err, m.name)
+		}
+	}
 
 	return nil
 }
