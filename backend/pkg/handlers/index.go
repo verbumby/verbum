@@ -3,6 +3,8 @@ package handlers
 import (
 	"net/http"
 
+	"github.com/verbumby/verbum/backend/pkg/dictionary"
+
 	"github.com/pkg/errors"
 	"github.com/verbumby/verbum/backend/pkg/article"
 	"github.com/verbumby/verbum/backend/pkg/chttp"
@@ -24,16 +26,23 @@ func index(w http.ResponseWriter, rctx *chttp.Context) error {
 	pageTitle := "Verbum - Анлайн Слоўнік Беларускай Мовы"
 	pageDescription := pageTitle
 
-	err := tm.Render("index", w, struct {
+	dicts, err := dictionary.GetAll()
+	if err != nil {
+		return errors.Wrap(err, "dictionaries get all")
+	}
+
+	err = tm.Render("index", w, struct {
 		Q               string
 		PageTitle       string
 		PageDescription string
 		MetaRobotsTag   htmlui.MetaRobotsTag
+		Dictionaries    []dictionary.Dictionary
 	}{
 		Q:               "",
 		PageTitle:       pageTitle,
 		PageDescription: pageDescription,
 		MetaRobotsTag:   htmlui.MetaRobotsTag{Index: true, Follow: true},
+		Dictionaries:    dicts,
 	})
 	if err != nil {
 		return errors.Wrap(err, "render html")
