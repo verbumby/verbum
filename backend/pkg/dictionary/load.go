@@ -18,3 +18,27 @@ func Get(dictionaryID string) (Dictionary, error) {
 	respbody.Source.ID = respbody.ID
 	return respbody.Source, nil
 }
+
+// GetAll gets all dictionary from storage
+func GetAll() ([]Dictionary, error) {
+	respbody := struct {
+		Hits struct {
+			Hits []struct {
+				ID     string     `json:"_id"`
+				Source Dictionary `json:"_source"`
+			} `json:"hits"`
+		} `json:"hits"`
+	}{}
+
+	if err := storage.Post("/dicts/_doc/_search", map[string]interface{}{"size": 100}, &respbody); err != nil {
+		return nil, errors.Wrap(err, "storage post")
+	}
+
+	result := []Dictionary{}
+	for _, hit := range respbody.Hits.Hits {
+		hit.Source.ID = hit.ID
+		result = append(result, hit.Source)
+	}
+
+	return result, nil
+}

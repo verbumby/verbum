@@ -3,6 +3,8 @@ package handlers
 import (
 	"net/http"
 
+	"github.com/verbumby/verbum/backend/pkg/htmlui"
+
 	"github.com/gorilla/mux"
 	"github.com/pkg/errors"
 	"github.com/verbumby/verbum/backend/pkg/article"
@@ -24,10 +26,12 @@ func Article(w http.ResponseWriter, rctx *chttp.Context) error {
 	err = tm.Render("article", w, struct {
 		PageTitle       string
 		PageDescription string
+		MetaRobotsTag   htmlui.MetaRobotsTag
 		Article         article.Article
 	}{
 		PageTitle:       a.Title + " - " + a.Dictionary.Title,
 		PageDescription: a.Title + " - " + a.Dictionary.Title,
+		MetaRobotsTag:   htmlui.MetaRobotsTag{Index: true, Follow: false},
 		Article:         a,
 	})
 	if err != nil {

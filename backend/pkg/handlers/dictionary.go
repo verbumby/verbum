@@ -144,6 +144,7 @@ func Dictionary(w http.ResponseWriter, rctx *chttp.Context) error {
 	err = tm.Render("dictionary", w, struct {
 		PageTitle       string
 		PageDescription string
+		MetaRobotsTag   htmlui.MetaRobotsTag
 		Dictionary      dictionary.Dictionary
 		Articles        []article.Article
 		Pagination      htmlui.Pagination
@@ -151,6 +152,7 @@ func Dictionary(w http.ResponseWriter, rctx *chttp.Context) error {
 	}{
 		PageTitle:       dict.Title,
 		PageDescription: dict.Title,
+		MetaRobotsTag:   htmlui.MetaRobotsTag{Index: false, Follow: true},
 		Dictionary:      dict,
 		Articles:        articles,
 		LetterFilter:    letterFilter,
