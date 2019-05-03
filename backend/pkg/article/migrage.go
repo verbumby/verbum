@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"net/http"
 	"regexp"
 	"strings"
 
@@ -29,6 +30,24 @@ func Migrate() error {
 			return errors.Wrap(err, "get dict-rvblr mappings")
 		}
 		rvblrMapping = respbody.DictRvblr.Mappings.Doc.Properties
+	}
+
+	type indexSettingsType struct {
+		MaxResultWindow int `json:"max_result_window"`
+	}
+	var rvblrSettings indexSettingsType
+	{
+		respbody := struct {
+			DictRvblr struct {
+				Settings struct {
+					Index indexSettingsType `json:"index"`
+				} `json:"settings"`
+			} `json:"dict-rvblr"`
+		}{}
+		if err := storage.Get("/dict-rvblr/_settings", &respbody); err != nil {
+			return errors.Wrap(err, "get dict-rvblr settings")
+		}
+		rvblrSettings = respbody.DictRvblr.Settings.Index
 	}
 
 	rvblrAddTitleMigration := func() error {
@@ -213,6 +232,21 @@ func Migrate() error {
 		return nil
 	}
 
+	rvblrMaxResultWindow := func() error {
+		if rvblrSettings.MaxResultWindow == 40000 {
+			return nil
+		}
+
+		if err := storage.Query(http.MethodPut, "/dict-rvblr/_settings", map[string]interface{}{
+			"index": map[string]interface{}{
+				"max_result_window": 40000,
+			},
+		}, nil); err != nil {
+			return errors.Wrap(err, "post settings")
+		}
+		return nil
+	}
+
 	migrations := []struct {
 		name string
 		f    func() error
@@ -228,6 +262,10 @@ func Migrate() error {
 		{
 			name: "rvblr add prefix fields and data",
 			f:    rvblrPrefix,
+		},
+		{
+			name: "update max result window index setting",
+			f:    rvblrMaxResultWindow,
 		},
 	}
 
