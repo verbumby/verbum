@@ -6,6 +6,7 @@ import (
 	"github.com/pkg/errors"
 	"github.com/verbumby/verbum/backend/pkg/article"
 	"github.com/verbumby/verbum/backend/pkg/chttp"
+	"github.com/verbumby/verbum/backend/pkg/htmlui"
 	"github.com/verbumby/verbum/backend/pkg/tm"
 )
 
@@ -27,10 +28,12 @@ func index(w http.ResponseWriter, rctx *chttp.Context) error {
 		Q               string
 		PageTitle       string
 		PageDescription string
+		MetaRobotsTag   htmlui.MetaRobotsTag
 	}{
 		Q:               "",
 		PageTitle:       pageTitle,
 		PageDescription: pageDescription,
+		MetaRobotsTag:   htmlui.MetaRobotsTag{Index: true, Follow: true},
 	})
 	if err != nil {
 		return errors.Wrap(err, "render html")
@@ -71,11 +74,13 @@ func search(w http.ResponseWriter, rctx *chttp.Context) error {
 		Q               string
 		PageTitle       string
 		PageDescription string
+		MetaRobotsTag   htmlui.MetaRobotsTag
 	}{
 		Articles:        articles,
 		Q:               q,
 		PageTitle:       pageTitle,
 		PageDescription: pageDescription,
+		MetaRobotsTag:   htmlui.MetaRobotsTag{Index: false, Follow: false},
 	})
 	if err != nil {
 		return errors.Wrap(err, "render html")

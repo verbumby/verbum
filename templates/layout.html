@@ -9,6 +9,9 @@
     <meta property="og:description" content="{{ .PageDescription | md | stripTags }}" />
     <meta property="og:image" content="{{"/statics/favicon.png" | staticURL}}" />
     <meta name="viewport" content="width=device-width">
+    {{ with .MetaRobotsTag -}}
+    <meta name="robots" content="{{ if not .Index }}no{{ end }}index, {{ if not .Follow }}no{{ end }}follow" />
+    {{ end -}}
     <link rel="icon" type="image/png" href="{{"/statics/favicon.png" | staticURL}}" />
     <link rel="stylesheet"
       href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
