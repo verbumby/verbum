@@ -33,7 +33,7 @@ func Migrate() error {
 	}
 
 	type indexSettingsType struct {
-		MaxResultWindow int `json:"max_result_window"`
+		MaxResultWindow string `json:"max_result_window"`
 	}
 	var rvblrSettings indexSettingsType
 	{
@@ -233,13 +233,13 @@ func Migrate() error {
 	}
 
 	rvblrMaxResultWindow := func() error {
-		if rvblrSettings.MaxResultWindow == 40000 {
+		if rvblrSettings.MaxResultWindow == "40000" {
 			return nil
 		}
 
 		if err := storage.Query(http.MethodPut, "/dict-rvblr/_settings", map[string]interface{}{
 			"index": map[string]interface{}{
-				"max_result_window": 40000,
+				"max_result_window": "40000",
 			},
 		}, nil); err != nil {
 			return errors.Wrap(err, "post settings")
