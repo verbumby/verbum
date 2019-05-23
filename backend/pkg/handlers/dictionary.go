@@ -100,7 +100,11 @@ func Dictionary(w http.ResponseWriter, rctx *chttp.Context) error {
 			urlQuery := urlQuery.Clone()
 			urlQuery.Get("page").Reset()
 			urlQuery.Get("prefix").(*htmlui.StringQueryParam).SetValue(prefix)
-			return "?" + urlQuery.Encode()
+			result := urlQuery.Encode()
+			if result != "" {
+				result = "?" + result
+			}
+			return rctx.R.URL.Path + result
 		},
 	}
 	letterFilter.AddLevel(aggsrespbody.Aggregations.Prefix.Letter1.Buckets)
@@ -162,7 +166,11 @@ func Dictionary(w http.ResponseWriter, rctx *chttp.Context) error {
 			PageToURL: func(n int) string {
 				urlQuery := urlQuery.Clone()
 				urlQuery.Get("page").(*htmlui.IntegerQueryParam).SetValue(n)
-				return "?" + urlQuery.Encode()
+				result := urlQuery.Encode()
+				if result != "" {
+					result = "?" + result
+				}
+				return rctx.R.URL.Path + result
 			},
 		},
 	})

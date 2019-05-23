@@ -38,7 +38,9 @@ func (ps Query) Get(name string) QueryParam {
 func (ps Query) Encode() string {
 	v := url.Values{}
 	for _, p := range ps {
-		v.Set(p.Name(), p.Encode())
+		if !p.ValueEqualsDefault() {
+			v.Set(p.Name(), p.Encode())
+		}
 	}
 	return v.Encode()
 }
@@ -50,6 +52,7 @@ type QueryParam interface {
 	Encode() string
 	Clone() QueryParam
 	Reset()
+	ValueEqualsDefault() bool
 }
 
 // StringQueryParam string url query param
@@ -102,6 +105,11 @@ func (p *StringQueryParam) Clone() QueryParam {
 // Reset implements interface URLQueryParam
 func (p *StringQueryParam) Reset() {
 	p.value = p.def
+}
+
+// ValueEqualsDefault implements interface URLQueryParam
+func (p *StringQueryParam) ValueEqualsDefault() bool {
+	return p.def == p.value
 }
 
 // IntegerQueryParam integer url query param
@@ -159,4 +167,9 @@ func (p *IntegerQueryParam) Clone() QueryParam {
 // Reset implements interface URLQueryParam
 func (p *IntegerQueryParam) Reset() {
 	p.value = p.def
+}
+
+// ValueEqualsDefault implements interface URLQueryParam
+func (p *IntegerQueryParam) ValueEqualsDefault() bool {
+	return p.def == p.value
 }
