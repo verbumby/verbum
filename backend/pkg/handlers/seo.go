@@ -28,10 +28,7 @@ Sitemap: %s/sitemap-index.xml
 
 // SitemapIndex handles sitemap index request
 func SitemapIndex(w http.ResponseWriter, rctx *chttp.Context) error {
-	dicts, err := dictionary.GetAll()
-	if err != nil {
-		return errors.Wrap(err, "get all dictionaries")
-	}
+	dicts := dictionary.GetAll()
 
 	type Sitemap struct {
 		Loc string `xml:"loc"`
@@ -50,14 +47,14 @@ func SitemapIndex(w http.ResponseWriter, rctx *chttp.Context) error {
 		countresp := struct {
 			Count uint64 `json:"count"`
 		}{}
-		url := fmt.Sprintf("/dict-%s/_count", d.ID)
+		url := fmt.Sprintf("/dict-%s/_count", d.ID())
 		if err := storage.Get(url, &countresp); err != nil {
-			return errors.Wrapf(err, "storage get %s docs count", d.ID)
+			return errors.Wrapf(err, "storage get %s docs count", d.ID())
 		}
 
 		for i := uint64(0); i <= countresp.Count/10000; i++ {
 			result.Sitemap = append(result.Sitemap, Sitemap{
-				Loc: fmt.Sprintf("%s/%s/sitemap-%d.xml", viper.GetString("https.canonicalAddr"), d.ID, i),
+				Loc: fmt.Sprintf("%s/%s/sitemap-%d.xml", viper.GetString("https.canonicalAddr"), d.ID(), i),
 			})
 		}
 		// fmt.Println(d.ID)

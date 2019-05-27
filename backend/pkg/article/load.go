@@ -31,9 +31,9 @@ func Query(path string, reqbody interface{}) ([]Article, int, error) {
 	for _, hit := range respbody.Hits.Hits {
 		dictID := strings.TrimPrefix(hit.Index, "dict-")
 		if _, ok := dicts[dictID]; !ok {
-			dict, err := dictionary.Get(dictID)
-			if err != nil {
-				return nil, 0, errors.Wrapf(err, "dictionary get %s", dictID)
+			dict := dictionary.Get(dictID)
+			if dict == nil {
+				return nil, 0, fmt.Errorf("dictionary get %s: not found", dictID)
 			}
 
 			dicts[dictID] = dict
@@ -61,9 +61,9 @@ func Get(dictionaryID, articleID string) (Article, error) {
 		return Article{}, errors.Wrap(err, "storage get")
 	}
 
-	dict, err := dictionary.Get(dictionaryID)
-	if err != nil {
-		return Article{}, errors.Wrapf(err, "dictionary get %s", dictionaryID)
+	dict := dictionary.Get(dictionaryID)
+	if dict == nil {
+		return Article{}, fmt.Errorf("dictionary get %s: not found", dictionaryID)
 	}
 
 	article := respbody.Source

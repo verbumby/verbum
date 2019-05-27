@@ -26,12 +26,9 @@ func index(w http.ResponseWriter, rctx *chttp.Context) error {
 	pageTitle := "Verbum - Анлайн Слоўнік Беларускай Мовы"
 	pageDescription := pageTitle
 
-	dicts, err := dictionary.GetAll()
-	if err != nil {
-		return errors.Wrap(err, "dictionaries get all")
-	}
+	dicts := dictionary.GetAll()
 
-	err = tm.Render("index", w, struct {
+	err := tm.Render("index", w, struct {
 		Q               string
 		PageTitle       string
 		PageDescription string

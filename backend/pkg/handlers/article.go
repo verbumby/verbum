@@ -29,8 +29,8 @@ func Article(w http.ResponseWriter, rctx *chttp.Context) error {
 		MetaRobotsTag   htmlui.MetaRobotsTag
 		Article         article.Article
 	}{
-		PageTitle:       a.Title + " - " + a.Dictionary.Title,
-		PageDescription: a.Title + " - " + a.Dictionary.Title,
+		PageTitle:       a.Title + " - " + a.Dictionary.Title(),
+		PageDescription: a.Title + " - " + a.Dictionary.Title(),
 		MetaRobotsTag:   htmlui.MetaRobotsTag{Index: true, Follow: false},
 		Article:         a,
 	})
