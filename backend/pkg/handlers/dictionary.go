@@ -20,9 +20,9 @@ func Dictionary(w http.ResponseWriter, rctx *chttp.Context) error {
 	vars := mux.Vars(rctx.R)
 	dictID := vars["dictionary"]
 
-	dict, err := dictionary.Get(dictID)
-	if err != nil {
-		return errors.Wrapf(err, "dictionary get %s", dictID)
+	dict := dictionary.Get(dictID)
+	if dict == nil {
+		return fmt.Errorf("dictionary get %s: not found", dictID)
 	}
 
 	urlQuery := htmlui.Query([]htmlui.QueryParam{
@@ -154,8 +154,8 @@ func Dictionary(w http.ResponseWriter, rctx *chttp.Context) error {
 		Pagination      htmlui.Pagination
 		LetterFilter    htmlui.LetterFilter
 	}{
-		PageTitle:       dict.Title,
-		PageDescription: dict.Title,
+		PageTitle:       dict.Title(),
+		PageDescription: dict.Title(),
 		MetaRobotsTag:   htmlui.MetaRobotsTag{Index: false, Follow: true},
 		Dictionary:      dict,
 		Articles:        articles,
