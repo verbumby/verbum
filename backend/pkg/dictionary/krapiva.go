@@ -2,33 +2,31 @@ package dictionary
 
 import (
 	"html/template"
-
-	"gopkg.in/russross/blackfriday.v2"
 )
 
-// Dictionary dictionary
-type Rvblr struct {
+// Krapiva dictionary
+type Krapiva struct {
 	id    string
 	title string
 	slug  string
 }
 
 // ID implements Dictionary interface
-func (d Rvblr) ID() string {
+func (d Krapiva) ID() string {
 	return d.id
 }
 
 // Title implements Dictionary interface
-func (d Rvblr) Title() string {
+func (d Krapiva) Title() string {
 	return d.title
 }
 
 // Slug implements Dictionary interface
-func (d Rvblr) Slug() string {
+func (d Krapiva) Slug() string {
 	return d.slug
 }
 
 // ToHTML implements Dictionary interface
-func (d Rvblr) ToHTML(content string) template.HTML {
-	return template.HTML(blackfriday.Run([]byte(content)))
+func (d Krapiva) ToHTML(content string) template.HTML {
+	return template.HTML(content)
 }

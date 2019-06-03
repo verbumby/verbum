@@ -4,9 +4,9 @@
   <head>
     <meta charset="utf-8">
     <title>{{ .PageTitle }}</title>
-    <meta name="description" content="{{ .PageDescription | md | stripTags }}" />
+    <meta name="description" content="{{ .PageDescription }}" />
     <meta property="og:title" content="{{ .PageTitle }}" />
-    <meta property="og:description" content="{{ .PageDescription | md | stripTags }}" />
+    <meta property="og:description" content="{{ .PageDescription }}" />
     <meta property="og:image" content="{{"/statics/favicon.png" | staticURL}}" />
     <meta name="viewport" content="width=device-width">
     {{ with .MetaRobotsTag -}}
