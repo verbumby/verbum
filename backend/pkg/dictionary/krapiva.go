@@ -2,6 +2,8 @@ package dictionary
 
 import (
 	"html/template"
+
+	"github.com/verbumby/verbum/backend/pkg/dictionary/krapivaparser"
 )
 
 // Krapiva dictionary
@@ -28,5 +30,9 @@ func (d Krapiva) Slug() string {
 
 // ToHTML implements Dictionary interface
 func (d Krapiva) ToHTML(content string) template.HTML {
-	return template.HTML(content)
+	htmlv, err := krapivaparser.KrapivaParser(content)
+	if err != nil {
+		panic(err)
+	}
+	return template.HTML(htmlv)
 }
