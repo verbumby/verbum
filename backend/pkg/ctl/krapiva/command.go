@@ -209,7 +209,7 @@ func indexArticle(a ParsedArticle, idcache map[string]int) error {
 	}
 
 	if err := storage.Put("/dict-krapiva/_doc/"+id, map[string]interface{}{
-		"Title":       strings.Join(hws, ","),
+		"Title":       strings.Join(hws, ", "),
 		"Headword":    hws,
 		"HeadwordAlt": hwsalt,
 		"Suggest":     suggests,
