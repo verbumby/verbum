@@ -1,0 +1,99 @@
+{// generated from grammar.peg
+package krapivaparser
+}
+All ⟵ b:Body EOF {
+    return b.(string), nil
+}
+
+Body ⟵ ps:Part+ {
+    var result strings.Builder
+    for _, pitf := range ps.([]interface{}) {
+        result.WriteString(pitf.(string))
+    }
+    return result.String(), nil
+}
+
+Part ⟵ EscapeSequence / Accent / OpenTag / CloseTag / Newline / Anything
+
+EscapeSequence ⟵ '\\' ch:('[' / ']') {
+    return string(ch.([]byte)), nil
+}
+
+Accent ⟵ "[']" ch:. "[/']" {
+    // fmt.Printf("--- %T %v ---\n", ch,ch)
+    buff := norm.NFD.Bytes(ch.([]byte))
+    buff = norm.NFD.AppendString(buff, "\u0301")
+    return fmt.Sprintf(`<span style="color: brown;">%s</span>`, buff), nil
+}
+
+OpenTag ⟵ '[' tnitf:Tagname targ:Tagarg? ']' {
+    tn := tnitf.(string)
+    switch tn {
+    case "c":
+        return fmt.Sprintf(`<span style="color: %s">`, targ), nil
+    case "m1":
+        return `<p class="ml-0">`, nil
+    case "m2":
+        return `<p class="ml-2">`, nil
+    case "m3":
+        return `<p class="ml-4">`, nil
+    case "b":
+        return `<strong>`, nil
+    case "sup":
+        return `<sup>`, nil
+    case "p":
+        return ``, nil
+    case "ex":
+        return `<v-ex>`, nil
+    case "lang":
+        return ``, nil
+    case "i":
+        return `<i>`, nil
+    default:
+        return "unknowntag:"+tn, nil
+    }
+}
+
+CloseTag ⟵ "[/" tnitf:Tagname ']' {
+    tn := tnitf.(string)
+    switch tn {
+    case "c":
+        return `</span>`, nil
+    case "b":
+        return `</strong>`, nil
+    case "sup":
+        return `</sup>`, nil
+    case "p":
+        return ``, nil
+    case "ex":
+        return `</v-ex>`, nil
+    case "lang":
+        return ``, nil
+    case "i":
+        return `</i>`, nil
+    default:
+        return "unknowntag:"+tn, nil
+    }
+}
+
+Tagname ⟵ n:("m1" / "m2" / "m3" / "b" / "c" / "'" / "sup" / "p" / "ex" / "lang" / "i") {
+    return string(n.([]byte)), nil
+}
+
+Tagarg ⟵ ' ' v:[a-z0-9=]+ {
+    var result strings.Builder
+    for _, vitf := range v.([]interface{}) {
+        result.Write(vitf.([]byte))
+    }
+    return result.String(), nil
+}
+
+Newline ⟵ "\n" {
+    return `</p>`, nil
+}
+
+Anything ⟵ ch:. {
+    return string(ch.([]byte)), nil
+}
+
+EOF ⟵ !.

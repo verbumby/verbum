@@ -7,6 +7,7 @@ import (
 
 	"github.com/verbumby/verbum/backend/pkg/app"
 	"github.com/verbumby/verbum/backend/pkg/ctl"
+	"github.com/verbumby/verbum/backend/pkg/ctl/krapiva"
 )
 
 func main() {
@@ -19,7 +20,11 @@ func main() {
 		Short: "verbumctl short",
 		Long:  "verbumctl long",
 	}
-	rootCmd.AddCommand(ctl.Slugs(), ctl.RvblrWrongHeadwords())
+	rootCmd.AddCommand(
+		ctl.Slugs(),
+		ctl.RvblrWrongHeadwords(),
+		krapiva.Command(),
+	)
 	if err := rootCmd.Execute(); err != nil {
 		log.Fatal(err)
 	}

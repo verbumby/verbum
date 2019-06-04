@@ -74,6 +74,11 @@ func Post(path string, reqbody, respbody interface{}) error {
 	return Query(http.MethodPost, path, reqbody, respbody)
 }
 
+// Put request to storage
+func Put(path string, reqbody, respbody interface{}) error {
+	return Query(http.MethodPut, path, reqbody, respbody)
+}
+
 // Delete request to storage
 func Delete(path string, reqbody, respbody interface{}) error {
 	return Query(http.MethodDelete, path, reqbody, respbody)

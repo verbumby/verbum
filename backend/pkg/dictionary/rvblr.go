@@ -1,5 +1,11 @@
 package dictionary
 
+import (
+	"html/template"
+
+	"gopkg.in/russross/blackfriday.v2"
+)
+
 // Rvblr dictionary
 type Rvblr struct {
 	id    string
@@ -20,4 +26,9 @@ func (d Rvblr) Title() string {
 // Slug implements Dictionary interface
 func (d Rvblr) Slug() string {
 	return d.slug
+}
+
+// ToHTML implements Dictionary interface
+func (d Rvblr) ToHTML(content string) template.HTML {
+	return template.HTML(blackfriday.Run([]byte(content)))
 }

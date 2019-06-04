@@ -72,9 +72,6 @@ func search(w http.ResponseWriter, rctx *chttp.Context) error {
 		return errors.Wrap(err, "query articles")
 	}
 
-	if len(articles) > 0 {
-		pageDescription = articles[0].Content
-	}
 	err = tm.Render("search-results", w, struct {
 		Articles        []article.Article
 		Q               string
