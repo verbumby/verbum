@@ -16,9 +16,9 @@ var dictionaries = []Dictionary{
 		title: "Тлумачальны слоўнік беларускай мовы (rv-blr.com)",
 		slug:  "tlumachalny-slounik-bielaruskaj-movy-rv-blr-com",
 	},
-	// Krapiva{
-	// 	id:    "krapiva",
-	// 	title: "Тлумачальны слоўнік беларускай мовы (Крапіва, 1977–1984)",
-	// 	slug:  "tlumachalny-slounik-bielaruskaj-movy-krapiva-1977–1984",
-	// },
+	Krapiva{
+		id:    "krapiva",
+		title: "Тлумачальны слоўнік беларускай мовы (Крапіва, 1977–1984)",
+		slug:  "tlumachalny-slounik-bielaruskaj-movy-krapiva-1977–1984",
+	},
 }
