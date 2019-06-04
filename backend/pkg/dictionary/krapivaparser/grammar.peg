@@ -13,10 +13,17 @@ Body ⟵ ps:Part+ {
     return result.String(), nil
 }
 
-Part ⟵ EscapeSequence / OpenTag / CloseTag / Newline / Anything
+Part ⟵ EscapeSequence / Accent / OpenTag / CloseTag / Newline / Anything
 
 EscapeSequence ⟵ '\\' ch:('[' / ']') {
     return string(ch.([]byte)), nil
+}
+
+Accent ⟵ "[']" ch:. "[/']" {
+    // fmt.Printf("--- %T %v ---\n", ch,ch)
+    buff := norm.NFD.Bytes(ch.([]byte))
+    buff = norm.NFD.AppendString(buff, "\u0301")
+    return fmt.Sprintf(`<span style="color: brown;">%s</span>`, buff), nil
 }
 
 OpenTag ⟵ '[' tnitf:Tagname targ:Tagarg? ']' {
@@ -32,8 +39,6 @@ OpenTag ⟵ '[' tnitf:Tagname targ:Tagarg? ']' {
         return `<p class="ml-4">`, nil
     case "b":
         return `<strong>`, nil
-    case "'":
-        return ``, nil
     case "sup":
         return `<sup>`, nil
     case "p":
@@ -56,8 +61,6 @@ CloseTag ⟵ "[/" tnitf:Tagname ']' {
         return `</span>`, nil
     case "b":
         return `</strong>`, nil
-    case "'":
-        return ``, nil
     case "sup":
         return `</sup>`, nil
     case "p":

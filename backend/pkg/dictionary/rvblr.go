@@ -6,7 +6,7 @@ import (
 	"gopkg.in/russross/blackfriday.v2"
 )
 
-// Dictionary dictionary
+// Rvblr dictionary
 type Rvblr struct {
 	id    string
 	title string
