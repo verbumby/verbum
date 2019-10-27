@@ -1,0 +1,57 @@
+# github.com/fsnotify/fsnotify v1.4.7
+github.com/fsnotify/fsnotify
+# github.com/gorilla/context v0.0.0-20160226214623-1ea25387ff6f
+github.com/gorilla/context
+# github.com/gorilla/mux v1.6.1
+github.com/gorilla/mux
+# github.com/gorilla/securecookie v1.1.1
+github.com/gorilla/securecookie
+# github.com/hashicorp/hcl v0.0.0-20171017181929-23c074d0eceb
+github.com/hashicorp/hcl
+github.com/hashicorp/hcl/hcl/ast
+github.com/hashicorp/hcl/hcl/parser
+github.com/hashicorp/hcl/hcl/token
+github.com/hashicorp/hcl/json/parser
+github.com/hashicorp/hcl/hcl/scanner
+github.com/hashicorp/hcl/hcl/strconv
+github.com/hashicorp/hcl/json/scanner
+github.com/hashicorp/hcl/json/token
+# github.com/inconshreveable/mousetrap v1.0.0
+github.com/inconshreveable/mousetrap
+# github.com/magiconair/properties v1.7.6
+github.com/magiconair/properties
+# github.com/microcosm-cc/bluemonday v0.0.0-20180327211928-995366fdf961
+github.com/microcosm-cc/bluemonday
+# github.com/mitchellh/mapstructure v0.0.0-20180220230111-00c29f56e238
+github.com/mitchellh/mapstructure
+# github.com/pelletier/go-toml v1.1.0
+github.com/pelletier/go-toml
+# github.com/pkg/errors v0.8.0
+github.com/pkg/errors
+# github.com/shurcooL/sanitized_anchor_name v0.0.0-20170918181015-86672fcb3f95
+github.com/shurcooL/sanitized_anchor_name
+# github.com/spf13/afero v1.0.2
+github.com/spf13/afero
+github.com/spf13/afero/mem
+# github.com/spf13/cast v1.2.0
+github.com/spf13/cast
+# github.com/spf13/cobra v0.0.2
+github.com/spf13/cobra
+# github.com/spf13/jwalterweatherman v0.0.0-20180109140146-7c0cea34c8ec
+github.com/spf13/jwalterweatherman
+# github.com/spf13/pflag v1.0.0
+github.com/spf13/pflag
+# github.com/spf13/viper v1.0.0
+github.com/spf13/viper
+# golang.org/x/net v0.0.0-20180208041118-f5dfe339be1d
+golang.org/x/net/html
+golang.org/x/net/html/atom
+# golang.org/x/sys v0.0.0-20180302081741-dd2ff4accc09
+golang.org/x/sys/unix
+# golang.org/x/text v0.3.0
+golang.org/x/text/unicode/norm
+golang.org/x/text/transform
+# gopkg.in/russross/blackfriday.v2 v2.0.0
+gopkg.in/russross/blackfriday.v2
+# gopkg.in/yaml.v2 v2.2.2
+gopkg.in/yaml.v2
