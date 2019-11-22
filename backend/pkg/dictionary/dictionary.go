@@ -21,4 +21,9 @@ var dictionaries = []Dictionary{
 		title: "Тлумачальны слоўнік беларускай мовы (Крапіва, 1977–1984)",
 		slug:  "tlumachalny-slounik-bielaruskaj-movy-krapiva-1977–1984",
 	},
+	BelRus{
+		id:    "bel-rus",
+		title: "Беларуска-расійскі слоўнік",
+		slug:  "bielaruska-rasijski-slounik",
+	},
 }

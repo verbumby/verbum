@@ -7,6 +7,7 @@ import (
 
 	"github.com/verbumby/verbum/backend/pkg/app"
 	"github.com/verbumby/verbum/backend/pkg/ctl"
+	"github.com/verbumby/verbum/backend/pkg/ctl/belrus"
 	"github.com/verbumby/verbum/backend/pkg/ctl/krapiva"
 )
 
@@ -24,6 +25,7 @@ func main() {
 		ctl.Slugs(),
 		ctl.RvblrWrongHeadwords(),
 		krapiva.Command(),
+		belrus.Command(),
 	)
 	if err := rootCmd.Execute(); err != nil {
 		log.Fatal(err)

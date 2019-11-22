@@ -45,7 +45,7 @@ func Query(method, path string, reqbody, respbody interface{}) error {
 	}
 	defer resp.Body.Close()
 
-	if resp.StatusCode != http.StatusOK {
+	if resp.StatusCode != http.StatusOK && resp.StatusCode != http.StatusCreated {
 		respbytes, _ := ioutil.ReadAll(resp.Body)
 		return fmt.Errorf(
 			"invalid response code: expected %d, got %d: %s",
