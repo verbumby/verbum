@@ -26,4 +26,9 @@ var dictionaries = []Dictionary{
 		title: "Беларуска-расійскі слоўнік",
 		slug:  "bielaruska-rasijski-slounik",
 	},
+	RusBel{
+		id:    "rus-bel",
+		title: "Расійска-беларускі універсальны слоўнік",
+		slug:  "rasijska-bielaruski-universalny-slounik",
+	},
 }
