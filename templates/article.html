@@ -5,7 +5,7 @@
             <i class="fas fa-external-link-alt"></i>
         </a>
     </div>
-    {{ .Content | .Dictionary.ToHTML }}
+    {{ .Dictionary.ToHTML .Content .Title }}
     <div class="source">
         {{ .Dictionary.Title }}
     </div>

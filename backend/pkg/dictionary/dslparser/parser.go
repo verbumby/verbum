@@ -1,11 +1,11 @@
-package krapivaparser
+package dslparser
 
 import (
 	"github.com/pkg/errors"
 )
 
-// KrapivaParser krapiva parser
-func KrapivaParser(content string) (string, error) {
+// DSLParser krapiva parser
+func DSLParser(content string) (string, error) {
 	result, err := Parse("article", []byte(content))
 	return result.(string), errors.Wrap(err, "parse article")
 }
