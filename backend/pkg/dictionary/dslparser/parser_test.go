@@ -1,4 +1,4 @@
-package krapivaparser
+package dslparser
 
 import "testing"
 
@@ -24,7 +24,7 @@ func TestKrapivaParser(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got, err := KrapivaParser(tt.content)
+			got, err := DSLParser(tt.content)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("KrapivaParser() error = %v, wantErr %v", err, tt.wantErr)
 				return

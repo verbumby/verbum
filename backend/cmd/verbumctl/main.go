@@ -3,18 +3,17 @@ package main
 import (
 	"log"
 
+	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 
 	"github.com/verbumby/verbum/backend/pkg/app"
 	"github.com/verbumby/verbum/backend/pkg/ctl"
-	"github.com/verbumby/verbum/backend/pkg/ctl/belrus"
-	"github.com/verbumby/verbum/backend/pkg/ctl/krapiva"
-	"github.com/verbumby/verbum/backend/pkg/ctl/rusbel"
+	"github.com/verbumby/verbum/backend/pkg/ctl/dictimport"
 )
 
 func main() {
 	if err := app.Bootstrap(); err != nil {
-		log.Fatal(err)
+		log.Fatal(errors.Wrap(err, "app bootstrap"))
 	}
 
 	rootCmd := &cobra.Command{
@@ -25,9 +24,7 @@ func main() {
 	rootCmd.AddCommand(
 		ctl.Slugs(),
 		ctl.RvblrWrongHeadwords(),
-		krapiva.Command(),
-		belrus.Command(),
-		rusbel.Command(),
+		dictimport.Command(),
 	)
 	if err := rootCmd.Execute(); err != nil {
 		log.Fatal(err)

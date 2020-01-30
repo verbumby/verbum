@@ -1,5 +1,19 @@
 {// generated from grammar.peg
-package krapivaparser
+package dslparser
+
+import (
+	"bytes"
+	"fmt"
+	"io"
+	"io/ioutil"
+	"os"
+	"strings"
+	"unicode"
+	"unicode/utf8"
+
+	"github.com/pkg/errors"
+	"golang.org/x/text/unicode/norm"
+)
 }
 All ⟵ b:Body EOF {
     return b.(string), nil
@@ -20,9 +34,9 @@ EscapeSequence ⟵ '\\' ch:('[' / ']') {
 }
 
 Accent ⟵ "[']" ch:. "[/']" {
-    // fmt.Printf("--- %T %v ---\n", ch,ch)
     buff := norm.NFD.Bytes(ch.([]byte))
     buff = norm.NFD.AppendString(buff, "\u0301")
+    buff = norm.NFC.Bytes(buff)
     return fmt.Sprintf(`<span style="color: brown;">%s</span>`, buff), nil
 }
 
@@ -30,6 +44,9 @@ OpenTag ⟵ '[' tnitf:Tagname targ:Tagarg? ']' {
     tn := tnitf.(string)
     switch tn {
     case "c":
+        if targ == nil {
+            targ = "darkgreen"
+        }
         return fmt.Sprintf(`<span style="color: %s">`, targ), nil
     case "m1":
         return `<p class="ml-0">`, nil
@@ -49,6 +66,16 @@ OpenTag ⟵ '[' tnitf:Tagname targ:Tagarg? ']' {
         return ``, nil
     case "i":
         return `<i>`, nil
+    case "com":
+        return `<span style="color: darkgreen">`, nil
+    case "trn":
+        return ``, nil
+    case "*":
+        return ``, nil
+    case "ref":
+        return ``, nil
+    case "t":
+        return ``, nil
     default:
         return "unknowntag:"+tn, nil
     }
@@ -71,12 +98,24 @@ CloseTag ⟵ "[/" tnitf:Tagname ']' {
         return ``, nil
     case "i":
         return `</i>`, nil
+    case "com":
+        return `</span>`, nil
+    case "trn":
+        return ``, nil
+    case "m":
+        return ``, nil
+    case "*":
+        return ``, nil
+    case "ref":
+        return ``, nil
+    case "t":
+        return ``, nil
     default:
         return "unknowntag:"+tn, nil
     }
 }
 
-Tagname ⟵ n:("m1" / "m2" / "m3" / "b" / "c" / "'" / "sup" / "p" / "ex" / "lang" / "i") {
+Tagname ⟵ n:("m1" / "m2" / "m3" / "m" / "b" / "com" / "c" / "'" / "sup" / "p" / "ex" / "lang" / "i" / "trn" / "t" / "*" / "ref") {
     return string(n.([]byte)), nil
 }
 

@@ -1,33 +1,48 @@
 {// generated from grammar.peg
-package krapiva
+package dsl
+
+import (
+	"bytes"
+	"errors"
+	"fmt"
+	"io"
+	"io/ioutil"
+	"os"
+	"strings"
+	"unicode"
+	"unicode/utf8"
+
+	"github.com/verbumby/verbum/backend/pkg/ctl/dictimport/dictparser"
+)
+
 }
 All ⟵ Preamble "\n" as:Articles EOF {
-	return ParsedKrapiva {
-		Articles: as.([]ParsedArticle),
+	return dictparser.Dictionary {
+		Articles: as.([]dictparser.Article),
 	}, nil
 }
 
-Preamble ⟵ PreambleEntry+ [\n]
+Preamble ⟵ PreambleEntry+
 PreambleEntry ⟵ '#' k:PreambleEntryKey [\t] '"' v:PreambleEntryValue '"' "\n" {
-	return ParsedPreamble{Key: k.(string), Value: v.(string)}, nil
+	return dictparser.MetaEntry{Key: k.(string), Value: v.(string)}, nil
 }
 PreambleEntryKey ⟵ [A-Z_]+ { return string(c.text), nil }
 PreambleEntryValue ⟵ [\p{Latin}\p{Cyrillic}\p{Pd}\pN)(, ]+ { return string(c.text), nil }
 
 Articles ⟵ asitf:Article* {
-	as := make([]ParsedArticle, len(asitf.([]interface{})))
+	as := make([]dictparser.Article, len(asitf.([]interface{})))
 	for i, aitf := range asitf.([]interface{}) {
-		as[i] = aitf.(ParsedArticle)
+		as[i] = aitf.(dictparser.Article)
 	}
 	return as, nil
 }
 
-Article ⟵ hwsitf:Headword+ body:Body "\n" {
+Article ⟵ hwsitf:Headword+ body:Body "\n"? {
 	hws := make([]string, len(hwsitf.([]interface{})))
 	for i, hwitf := range hwsitf.([]interface{}) {
 		hws[i] = hwitf.(string)
 	}
-	result := ParsedArticle{
+	result := dictparser.Article{
 		Headwords: hws,
 		Body: body.(string),
 	}
