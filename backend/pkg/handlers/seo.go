@@ -93,7 +93,8 @@ func SitemapOfDictionary(w http.ResponseWriter, rctx *chttp.Context) error {
 	}
 
 	type urlt struct {
-		Loc string `xml:"loc"`
+		Loc        string `xml:"loc"`
+		Changefreq string `xml:"changefreq"`
 	}
 	type urlset struct {
 		XMLNS string `xml:"xmlns,attr"`
@@ -107,7 +108,8 @@ func SitemapOfDictionary(w http.ResponseWriter, rctx *chttp.Context) error {
 
 	for _, a := range respbody.Hits.Hits {
 		result.URL = append(result.URL, urlt{
-			Loc: fmt.Sprintf("%s/%s/%s", viper.GetString("https.canonicalAddr"), dictID, a.ID),
+			Loc:        fmt.Sprintf("%s/%s/%s", viper.GetString("https.canonicalAddr"), dictID, a.ID),
+			Changefreq: "yearly",
 		})
 	}
 
