@@ -1,9 +1,12 @@
 package app
 
 import (
+	"net/http"
+
 	"github.com/pkg/errors"
 	"github.com/spf13/viper"
 	"github.com/verbumby/verbum/backend/pkg/article"
+	"github.com/verbumby/verbum/backend/pkg/storage"
 )
 
 // Bootstrap bootstraps the application
@@ -35,5 +38,36 @@ func Bootstrap() error {
 		return errors.Wrap(err, "article migrate")
 	}
 
+	if err := elasticIndexTemplatesMigrate(); err != nil {
+		return errors.Wrap(err, "elastic index templates migrate")
+	}
+
 	return nil
+}
+
+func elasticIndexTemplatesMigrate() error {
+	err := storage.Query(http.MethodHead, "/_template/access-log", nil, nil)
+	if err == nil {
+		return nil
+	}
+
+	err = storage.Put("/_template/access-log", map[string]interface{}{
+		"index_patterns": []string{"access-log-*"},
+		"settings": map[string]interface{}{
+			"number_of_shards": 1,
+		},
+		"mappings": map[string]interface{}{
+			"_doc": map[string]interface{}{
+				"properties": map[string]interface{}{
+					"TS":        map[string]interface{}{"type": "date"},
+					"Path":      map[string]interface{}{"type": "keyword"},
+					"Query":     map[string]interface{}{"type": "keyword"},
+					"IP":        map[string]interface{}{"type": "keyword"},
+					"UserAgent": map[string]interface{}{"type": "keyword"},
+					"Referer":   map[string]interface{}{"type": "keyword"},
+				},
+			},
+		},
+	}, nil)
+	return errors.Wrap(err, "create access log index template")
 }
