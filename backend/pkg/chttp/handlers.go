@@ -10,6 +10,7 @@ type HandlerFunc func(http.ResponseWriter, *Context) error
 
 // MakeHandler creates http.HandlerFunc of chttp.handlerFunc and specified middlewares
 func MakeHandler(f HandlerFunc, middlewares ...middlewareFunc) http.HandlerFunc {
+	f = elasticAccessLogMiddleware(f)
 	for _, m := range middlewares {
 		f = m(f)
 	}

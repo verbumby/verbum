@@ -88,6 +88,7 @@ func bootstrapServer() error {
 	r.HandleFunc("/", chttp.MakeHandler(handlers.Index))
 
 	chttp.InitCookieManager()
+	chttp.InitAccessLog()
 
 	if viper.IsSet("http.addr") {
 		go func() {
