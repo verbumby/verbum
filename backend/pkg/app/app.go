@@ -1,8 +1,6 @@
 package app
 
 import (
-	"net/http"
-
 	"github.com/pkg/errors"
 	"github.com/spf13/viper"
 	"github.com/verbumby/verbum/backend/pkg/article"
@@ -46,28 +44,36 @@ func Bootstrap() error {
 }
 
 func elasticIndexTemplatesMigrate() error {
-	err := storage.Query(http.MethodHead, "/_template/access-log", nil, nil)
-	if err == nil {
-		return nil
-	}
+	respbody := &struct {
+		AccessLog struct {
+			Version int
+		} `json:"access-log"`
+	}{}
+	err := storage.Get("/_template/access-log?filter_path=*.version", respbody)
 
-	err = storage.Put("/_template/access-log", map[string]interface{}{
-		"index_patterns": []string{"access-log-*"},
-		"settings": map[string]interface{}{
-			"number_of_shards": 1,
-		},
-		"mappings": map[string]interface{}{
-			"_doc": map[string]interface{}{
-				"properties": map[string]interface{}{
-					"TS":        map[string]interface{}{"type": "date"},
-					"Path":      map[string]interface{}{"type": "keyword"},
-					"Query":     map[string]interface{}{"type": "keyword"},
-					"IP":        map[string]interface{}{"type": "keyword"},
-					"UserAgent": map[string]interface{}{"type": "keyword"},
-					"Referer":   map[string]interface{}{"type": "keyword"},
+	if err != nil || respbody.AccessLog.Version != 1 {
+		err = storage.Put("/_template/access-log", map[string]interface{}{
+			"version":        1,
+			"index_patterns": []string{"access-log-*"},
+			"settings": map[string]interface{}{
+				"number_of_shards":   1,
+				"number_of_replicas": 0,
+			},
+			"mappings": map[string]interface{}{
+				"_doc": map[string]interface{}{
+					"properties": map[string]interface{}{
+						"TS":        map[string]interface{}{"type": "date"},
+						"Path":      map[string]interface{}{"type": "keyword"},
+						"Query":     map[string]interface{}{"type": "keyword"},
+						"IP":        map[string]interface{}{"type": "keyword"},
+						"UserAgent": map[string]interface{}{"type": "keyword"},
+						"Referer":   map[string]interface{}{"type": "keyword"},
+					},
 				},
 			},
-		},
-	}, nil)
-	return errors.Wrap(err, "create access log index template")
+		}, nil)
+		return errors.Wrap(err, "create access log index template")
+	}
+
+	return nil
 }
