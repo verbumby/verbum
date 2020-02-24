@@ -79,8 +79,9 @@ func (c *commandController) run() error {
 func (c *commandController) createIndex(maxResultWindow int) error {
 	err := storage.Put("/dict-"+c.indexID, map[string]interface{}{
 		"settings": map[string]interface{}{
-			"number_of_shards":  1,
-			"max_result_window": maxResultWindow,
+			"number_of_shards":   1,
+			"number_of_replicas": 0,
+			"max_result_window":  maxResultWindow,
 			"analysis": map[string]interface{}{
 				"analyzer": map[string]interface{}{
 					"hw": map[string]interface{}{
