@@ -14,6 +14,28 @@ import (
 	"github.com/pkg/errors"
 	"golang.org/x/text/unicode/norm"
 )
+
+var transcriptionMap = map[rune]string{
+    'Ћ': "Ө",
+    'Ђ': "i:",
+    '\'': "ˈ",
+    'э': "ɪ",
+    'Ѓ': "ɑ:",
+    '†': "ə",
+    '‡': "æ",
+    '…': "ʌ",
+    'Њ': "ŋ",
+    'ю': "ɜ:",
+    '‚': "ɔ",
+    'ѓ': "u:",
+    '¶': "ʊ",
+    '€': "ɔ",
+    '‹': "dʒ",
+    'Џ': "ʃ",
+    ' ': "tʃ", // ʧ
+    '‰': "ð",
+    'Љ': "ʒ",
+}
 }
 All ⟵ b:Body EOF {
     return b.(string), nil
@@ -27,7 +49,7 @@ Body ⟵ ps:Part+ {
     return result.String(), nil
 }
 
-Part ⟵ EscapeSequence / Accent / OpenTag / CloseTag / Newline / Anything
+Part ⟵ EscapeSequence / Accent / Transcription / OpenTag / CloseTag / Newline / Anything
 
 EscapeSequence ⟵ '\\' ch:('[' / ']') {
     return string(ch.([]byte)), nil
@@ -38,6 +60,31 @@ Accent ⟵ "[']" ch:. "[/']" {
     buff = norm.NFD.AppendString(buff, "\u0301")
     buff = norm.NFC.Bytes(buff)
     return fmt.Sprintf(`<span style="color: brown;">%s</span>`, buff), nil
+}
+
+Transcription ⟵ "[t]" ps:( EscapeSequence / [^[] )+ "[/t]" {
+    var result strings.Builder
+    result.WriteString(`<span class="text-monospace source">`)
+    for _, pitf := range ps.([]interface{}) {
+        switch p := pitf.(type) {
+        case string:
+            result.WriteString(p)
+        case []byte:
+            r, _ := utf8.DecodeRune(p)
+            if r == utf8.RuneError {
+                return nil, fmt.Errorf("decode rune from %v", p)
+            }
+            if rm, ok := transcriptionMap[r]; ok {
+                result.WriteString(rm)
+            } else {
+                result.WriteRune(r)
+            }
+        default:
+            return nil, fmt.Errorf("unknown transcription type %T of %v", p, p)
+        }
+    }
+    result.WriteString(`</span>`)
+    return result.String(), nil
 }
 
 OpenTag ⟵ '[' tnitf:Tagname targ:Tagarg? ']' {
@@ -74,8 +121,6 @@ OpenTag ⟵ '[' tnitf:Tagname targ:Tagarg? ']' {
         return ``, nil
     case "ref":
         return ``, nil
-    case "t":
-        return ``, nil
     default:
         return "unknowntag:"+tn, nil
     }
@@ -108,14 +153,12 @@ CloseTag ⟵ "[/" tnitf:Tagname ']' {
         return ``, nil
     case "ref":
         return ``, nil
-    case "t":
-        return ``, nil
     default:
         return "unknowntag:"+tn, nil
     }
 }
 
-Tagname ⟵ n:("m1" / "m2" / "m3" / "m" / "b" / "com" / "c" / "'" / "sup" / "p" / "ex" / "lang" / "i" / "trn" / "t" / "*" / "ref") {
+Tagname ⟵ n:("m1" / "m2" / "m3" / "m" / "b" / "com" / "c" / "'" / "sup" / "p" / "ex" / "lang" / "i" / "trn" / "*" / "ref") {
     return string(n.([]byte)), nil
 }
 
