@@ -59,7 +59,7 @@ Accent ⟵ "[']" ch:. "[/']" {
     buff := norm.NFD.Bytes(ch.([]byte))
     buff = norm.NFD.AppendString(buff, "\u0301")
     buff = norm.NFC.Bytes(buff)
-    return fmt.Sprintf(`<span style="color: brown;">%s</span>`, buff), nil
+    return fmt.Sprintf(`<v-accent>%s</v-accent>`, buff), nil
 }
 
 Transcription ⟵ "[t]" ps:( EscapeSequence / [^[] )+ "[/t]" {
