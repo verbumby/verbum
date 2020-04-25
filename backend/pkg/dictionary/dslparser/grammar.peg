@@ -59,12 +59,12 @@ Accent ⟵ "[']" ch:. "[/']" {
     buff := norm.NFD.Bytes(ch.([]byte))
     buff = norm.NFD.AppendString(buff, "\u0301")
     buff = norm.NFC.Bytes(buff)
-    return fmt.Sprintf(`<span style="color: brown;">%s</span>`, buff), nil
+    return fmt.Sprintf(`<v-accent>%s</v-accent>`, buff), nil
 }
 
 Transcription ⟵ "[t]" ps:( EscapeSequence / [^[] )+ "[/t]" {
     var result strings.Builder
-    result.WriteString(`<span class="text-monospace source">`)
+    result.WriteString(`<v-trx>`)
     for _, pitf := range ps.([]interface{}) {
         switch p := pitf.(type) {
         case string:
@@ -83,7 +83,7 @@ Transcription ⟵ "[t]" ps:( EscapeSequence / [^[] )+ "[/t]" {
             return nil, fmt.Errorf("unknown transcription type %T of %v", p, p)
         }
     }
-    result.WriteString(`</span>`)
+    result.WriteString(`</v-trx>`)
     return result.String(), nil
 }
 
