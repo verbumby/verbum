@@ -11,6 +11,7 @@ import (
 	"github.com/verbumby/verbum/backend/pkg/app"
 	"github.com/verbumby/verbum/backend/pkg/chttp"
 	"github.com/verbumby/verbum/backend/pkg/handlers"
+	"github.com/verbumby/verbum/backend/pkg/storage"
 	"github.com/verbumby/verbum/backend/pkg/tm"
 )
 
@@ -89,6 +90,7 @@ func bootstrapServer() error {
 
 	chttp.InitCookieManager()
 	chttp.InitAccessLog()
+	go storage.PruneOldBackups()
 
 	if viper.IsSet("http.addr") {
 		go func() {
