@@ -20,16 +20,14 @@ func Migrate() error {
 		respbody := struct {
 			DictRvblr struct {
 				Mappings struct {
-					Doc struct {
-						Properties map[string]interface{} `json:"properties"`
-					} `json:"_doc"`
+					Properties map[string]interface{} `json:"properties"`
 				} `json:"mappings"`
 			} `json:"dict-rvblr"`
 		}{}
 		if err := storage.Get("/dict-rvblr/_mappings", &respbody); err != nil {
 			return errors.Wrap(err, "get dict-rvblr mappings")
 		}
-		rvblrMapping = respbody.DictRvblr.Mappings.Doc.Properties
+		rvblrMapping = respbody.DictRvblr.Mappings.Properties
 	}
 
 	type indexSettingsType struct {

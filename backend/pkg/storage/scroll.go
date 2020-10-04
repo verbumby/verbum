@@ -28,8 +28,10 @@ func Scroll(index string, reqbody map[string]interface{}, cb ScrollCallback) err
 	type scrollbodyt struct {
 		ScrollID string `json:"_scroll_id"`
 		Hits     struct {
-			Total int               `json:"total"`
-			Hits  []json.RawMessage `json:"hits"`
+			Total struct {
+				Value int `json:"value"`
+			} `json:"total"`
+			Hits []json.RawMessage `json:"hits"`
 		} `json:"hits"`
 	}
 

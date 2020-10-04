@@ -13,8 +13,10 @@ import (
 func Query(path string, reqbody interface{}) ([]Article, int, error) {
 	respbody := struct {
 		Hits struct {
-			Total int
-			Hits  []struct {
+			Total struct {
+				Value int `json:"value"`
+			} `json:"total"`
+			Hits []struct {
 				Source Article `json:"_source"`
 				Index  string  `json:"_index"`
 				ID     string  `json:"_id"`
@@ -45,7 +47,7 @@ func Query(path string, reqbody interface{}) ([]Article, int, error) {
 		result = append(result, article)
 	}
 
-	return result, respbody.Hits.Total, nil
+	return result, respbody.Hits.Total.Value, nil
 }
 
 // Get gets one article from the storage
