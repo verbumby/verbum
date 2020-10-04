@@ -9,7 +9,6 @@ import (
 	"strconv"
 
 	"github.com/microcosm-cc/bluemonday"
-	"github.com/pkg/errors"
 	blackfriday "gopkg.in/russross/blackfriday.v2"
 )
 
@@ -22,7 +21,7 @@ func Compile(name string, files []string, funcMap template.FuncMap) error {
 	funcMap["stripTags"] = stripTags
 	t, err := template.New(name).Funcs(funcMap).ParseFiles(files...)
 	if err != nil {
-		return errors.Wrap(err, "parse files")
+		return fmt.Errorf("parse files: %w", err)
 	}
 
 	templates[name] = t
@@ -36,7 +35,7 @@ func Render(name string, w io.Writer, data interface{}) error {
 		return fmt.Errorf("no such template with %s name", name)
 	}
 	if err := t.ExecuteTemplate(w, "layout", data); err != nil {
-		return errors.Wrap(err, "execute template")
+		return fmt.Errorf("execute template: %w", err)
 	}
 
 	return nil

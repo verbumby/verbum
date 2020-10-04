@@ -5,7 +5,6 @@ import (
 	"io"
 	"strings"
 
-	"github.com/pkg/errors"
 	"golang.org/x/net/html"
 )
 
@@ -18,7 +17,7 @@ func parseArticle(content string) ([][]html.Token, error) {
 		if tt == html.ErrorToken {
 			err := z.Err()
 			if err != io.EOF {
-				return nil, errors.Wrap(err, "tokenize html")
+				return nil, fmt.Errorf("tokenize html: %w", err)
 			}
 			break
 		}
@@ -34,7 +33,7 @@ func parseArticle(content string) ([][]html.Token, error) {
 				return nil, fmt.Errorf("no starting tag found for closing tag %s", t.Type)
 			}
 			if err := validateTagTokens(queue[startingTagIDX:]); err != nil {
-				return nil, errors.Wrap(err, "processing tags sequence")
+				return nil, fmt.Errorf("processing tags sequence: %w", err)
 			}
 
 			result = append(result, queue[startingTagIDX:])
@@ -73,7 +72,7 @@ func RvblrParse(content string) (hws []string, hwsalt []string, err error) {
 	parse := func(content string) ([]string, error) {
 		tokenGroups, err := parseArticle(content)
 		if err != nil {
-			return nil, errors.Wrap(err, "get html tokens")
+			return nil, fmt.Errorf("get html tokens: %w", err)
 		}
 
 		headwordTokenGroups := [][]html.Token{}
@@ -98,12 +97,12 @@ func RvblrParse(content string) (hws []string, hwsalt []string, err error) {
 
 	hws, err = parse(contents[0])
 	if err != nil {
-		err = errors.Wrap(err, "parse headwords")
+		err = fmt.Errorf("parse headwords: %w", err)
 	}
 
 	hwsalt, err = parse(contents[1])
 	if err != nil {
-		err = errors.Wrap(err, "parse alt headwords")
+		err = fmt.Errorf("parse alt headwords: %w", err)
 	}
 
 	return

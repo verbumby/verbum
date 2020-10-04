@@ -1,12 +1,12 @@
 package main
 
 import (
+	"fmt"
 	"html/template"
 	"log"
 	"net/http"
 
 	"github.com/gorilla/mux"
-	"github.com/pkg/errors"
 	"github.com/spf13/viper"
 	"github.com/verbumby/verbum/backend/pkg/app"
 	"github.com/verbumby/verbum/backend/pkg/chttp"
@@ -73,7 +73,7 @@ func bootstrapServer() error {
 
 	for _, t := range templates {
 		if err := tm.Compile(t.name, t.files, t.funcMap); err != nil {
-			return errors.Wrapf(err, "compile %s template", t.name)
+			return fmt.Errorf("compile %s template: %w", t.name, err)
 		}
 	}
 
@@ -110,7 +110,7 @@ func bootstrapServer() error {
 		r,
 	)
 	if err != nil {
-		return errors.Wrap(err, "listen and serve")
+		return fmt.Errorf("listen and serve: %w", err)
 	}
 
 	return nil

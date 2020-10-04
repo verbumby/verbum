@@ -1,7 +1,8 @@
 package app
 
 import (
-	"github.com/pkg/errors"
+	"fmt"
+
 	"github.com/spf13/viper"
 	"github.com/verbumby/verbum/backend/pkg/article"
 	"github.com/verbumby/verbum/backend/pkg/storage"
@@ -29,15 +30,15 @@ func Bootstrap() error {
 	viper.AddConfigPath("/usr/local/share/verbum")
 
 	if err := viper.ReadInConfig(); err != nil {
-		return errors.Wrap(err, "read in config")
+		return fmt.Errorf("read in config: %w", err)
 	}
 
 	if err := article.Migrate(); err != nil {
-		return errors.Wrap(err, "article migrate")
+		return fmt.Errorf("article migrate: %w", err)
 	}
 
 	if err := elasticIndexTemplatesMigrate(); err != nil {
-		return errors.Wrap(err, "elastic index templates migrate")
+		return fmt.Errorf("elastic index templates migrate: %w", err)
 	}
 
 	return nil
@@ -72,7 +73,9 @@ func elasticIndexTemplatesMigrate() error {
 				},
 			},
 		}, nil)
-		return errors.Wrap(err, "create access log index template")
+		if err != nil {
+			return fmt.Errorf("create access log index template: %w", err)
+		}
 	}
 
 	return nil

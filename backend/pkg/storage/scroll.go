@@ -4,8 +4,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
-
-	"github.com/pkg/errors"
 )
 
 // ScrollCallback callback type to be called while scrolling an index
@@ -38,7 +36,7 @@ func Scroll(index string, reqbody map[string]interface{}, cb ScrollCallback) err
 	respbody := &scrollbodyt{}
 	path := fmt.Sprintf("/%s/_search?scroll=1m", index)
 	if err := Post(path, reqbody, respbody); err != nil {
-		return errors.Wrap(err, "start scroll")
+		return fmt.Errorf("start scroll: %w", err)
 	}
 	var pscrollID *string
 	pscrollID = &respbody.ScrollID
@@ -52,7 +50,7 @@ func Scroll(index string, reqbody map[string]interface{}, cb ScrollCallback) err
 
 	for len(respbody.Hits.Hits) > 0 {
 		if err := cb(respbody.Hits.Hits); err != nil {
-			return errors.Wrap(err, "callback error")
+			return fmt.Errorf("callback error: %w", err)
 		}
 
 		reqbody := map[string]interface{}{
@@ -61,7 +59,7 @@ func Scroll(index string, reqbody map[string]interface{}, cb ScrollCallback) err
 		}
 		respbody = &scrollbodyt{}
 		if err := Post("/_search/scroll", reqbody, respbody); err != nil {
-			return errors.Wrap(err, "advance scroll")
+			return fmt.Errorf("advance scroll: %w", err)
 		}
 		pscrollID = &respbody.ScrollID
 	}

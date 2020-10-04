@@ -4,6 +4,7 @@ package dslparser
 import (
 	"bytes"
 	"fmt"
+        "errors"
 	"io"
 	"io/ioutil"
 	"os"
@@ -11,7 +12,6 @@ import (
 	"unicode"
 	"unicode/utf8"
 
-	"github.com/pkg/errors"
 	"golang.org/x/text/unicode/norm"
 )
 

@@ -1,11 +1,12 @@
 package dslparser
 
-import (
-	"github.com/pkg/errors"
-)
+import "fmt"
 
 // DSLParser krapiva parser
 func DSLParser(content string) (string, error) {
 	result, err := Parse("article", []byte(content))
-	return result.(string), errors.Wrap(err, "parse article")
+	if err != nil {
+		return "", fmt.Errorf("parse article: %w", err)
+	}
+	return result.(string), nil
 }

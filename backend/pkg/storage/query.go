@@ -8,7 +8,6 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/pkg/errors"
 	"github.com/spf13/viper"
 )
 
@@ -25,7 +24,7 @@ func Query(method, path string, reqbody, respbody interface{}) error {
 	default:
 		reqbodybytes, err := json.Marshal(reqbody)
 		if err != nil {
-			return errors.Wrap(err, "marshal request body")
+			return fmt.Errorf("marshal request body: %w", err)
 		}
 		reqbodystream = strings.NewReader(string(reqbodybytes))
 	}
@@ -33,7 +32,7 @@ func Query(method, path string, reqbody, respbody interface{}) error {
 	url := viper.GetString("elastic.addr") + path
 	req, err := http.NewRequest(method, url, reqbodystream)
 	if err != nil {
-		return errors.Wrap(err, "new request")
+		return fmt.Errorf("new request: %w", err)
 	}
 	if reqbodystream != nil {
 		req.Header.Add("Content-Type", "application/json")
@@ -41,7 +40,7 @@ func Query(method, path string, reqbody, respbody interface{}) error {
 
 	resp, err := http.DefaultClient.Do(req)
 	if err != nil {
-		return errors.Wrap(err, "request")
+		return fmt.Errorf("request: %w", err)
 	}
 	defer resp.Body.Close()
 
@@ -59,7 +58,7 @@ func Query(method, path string, reqbody, respbody interface{}) error {
 		respbody = &map[string]interface{}{}
 	}
 	if err := json.NewDecoder(resp.Body).Decode(respbody); err != nil {
-		return errors.Wrap(err, "unmarshal response")
+		return fmt.Errorf("unmarshal response: %w", err)
 	}
 	return nil
 }

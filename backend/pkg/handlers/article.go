@@ -1,12 +1,12 @@
 package handlers
 
 import (
+	"fmt"
 	"net/http"
 
 	"github.com/verbumby/verbum/backend/pkg/htmlui"
 
 	"github.com/gorilla/mux"
-	"github.com/pkg/errors"
 	"github.com/verbumby/verbum/backend/pkg/article"
 	"github.com/verbumby/verbum/backend/pkg/chttp"
 	"github.com/verbumby/verbum/backend/pkg/tm"
@@ -20,7 +20,7 @@ func Article(w http.ResponseWriter, rctx *chttp.Context) error {
 
 	a, err := article.Get(dID, aID)
 	if err != nil {
-		return errors.Wrap(err, "get article")
+		return fmt.Errorf("get article: %w", err)
 	}
 
 	err = tm.Render("article", w, struct {
@@ -35,7 +35,7 @@ func Article(w http.ResponseWriter, rctx *chttp.Context) error {
 		Article:         a,
 	})
 	if err != nil {
-		return errors.Wrap(err, "render html")
+		return fmt.Errorf("render html: %w", err)
 	}
 
 	return nil

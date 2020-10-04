@@ -6,7 +6,6 @@ import (
 	"net/http"
 
 	"github.com/gorilla/mux"
-	"github.com/pkg/errors"
 	"github.com/verbumby/verbum/backend/pkg/article"
 	"github.com/verbumby/verbum/backend/pkg/chttp"
 	"github.com/verbumby/verbum/backend/pkg/dictionary"
@@ -92,7 +91,7 @@ func Dictionary(w http.ResponseWriter, rctx *chttp.Context) error {
 		} `json:"aggregations"`
 	}{}
 	if err := storage.Post("/dict-"+dictID+"/_search", aggsreqbody, &aggsrespbody); err != nil {
-		return errors.Wrap(err, "aggs query")
+		return fmt.Errorf("aggs query: %w", err)
 	}
 	letterFilter := htmlui.LetterFilter{
 		Prefix: prefix,
@@ -142,7 +141,7 @@ func Dictionary(w http.ResponseWriter, rctx *chttp.Context) error {
 		},
 	})
 	if err != nil {
-		return errors.Wrap(err, "query articles")
+		return fmt.Errorf("query articles: %w", err)
 	}
 
 	err = tm.Render("dictionary", w, struct {
@@ -175,7 +174,7 @@ func Dictionary(w http.ResponseWriter, rctx *chttp.Context) error {
 		},
 	})
 	if err != nil {
-		return errors.Wrap(err, "render html")
+		return fmt.Errorf("render html: %w", err)
 	}
 
 	return nil

@@ -9,7 +9,6 @@ import (
 	"net/url"
 	"time"
 
-	"github.com/pkg/errors"
 	"github.com/verbumby/verbum/backend/pkg/storage"
 )
 
@@ -57,7 +56,7 @@ func elasticAccessLogWriter() {
 			accessLog.buff = append(accessLog.buff, m)
 			if len(accessLog.buff) > 100 {
 				if err := elasticAccessLogWriterFlush(); err != nil {
-					log.Println(errors.Wrap(err, "flush access log buffer"))
+					log.Println(fmt.Errorf("flush access log buffer: %w", err))
 				} else {
 					accessLog.buff = make([]accessLogMsg, 0, 100)
 				}
@@ -65,7 +64,7 @@ func elasticAccessLogWriter() {
 		case <-time.After(5 * time.Second):
 			if len(accessLog.buff) > 0 {
 				if err := elasticAccessLogWriterFlush(); err != nil {
-					log.Println(errors.Wrap(err, "flush access log buffer"))
+					log.Println(fmt.Errorf("flush access log buffer: %w", err))
 				} else {
 					accessLog.buff = make([]accessLogMsg, 0, 100)
 				}
@@ -83,15 +82,16 @@ func elasticAccessLogWriterFlush() error {
 		if err := enc.Encode(map[string]interface{}{
 			"index": map[string]interface{}{"_index": index, "_type": "_doc"},
 		}); err != nil {
-			return errors.Wrap(err, "encode action and meta data to json")
+			return fmt.Errorf("encode action and meta data to json: %w", err)
 		}
 
 		if err := enc.Encode(doc); err != nil {
-			return errors.Wrap(err, "encode doc to json")
+			return fmt.Errorf("encode doc to json: %w", err)
 		}
 	}
 
-	err := storage.Post("/_bulk", buff, nil)
-
-	return errors.Wrap(err, "bulk post to storage")
+	if err := storage.Post("/_bulk", buff, nil); err != nil {
+		return fmt.Errorf("bulk post to storage: %w", err)
+	}
+	return nil
 }
