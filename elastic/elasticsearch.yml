@@ -1,4 +1,7 @@
-cluster.name: "docker-cluster"
+cluster.name: docker-cluster
+node.name: master-node-a
+cluster.initial_master_nodes:
+  - master-node-a
 network.host: 0.0.0.0
 
 # minimum_master_nodes need to be explicitly set when bound on a public IP
