@@ -11,7 +11,6 @@ import (
 	"github.com/verbumby/verbum/backend/pkg/dictionary"
 	"github.com/verbumby/verbum/backend/pkg/storage"
 
-	"github.com/pkg/errors"
 	"github.com/verbumby/verbum/backend/pkg/chttp"
 )
 
@@ -22,8 +21,10 @@ Sitemap: %s/sitemap-index.xml
 `
 	body := fmt.Sprintf(tmpl, viper.GetString("https.canonicalAddr"))
 	w.Header().Set("Content-Type", "text/plain")
-	_, err := w.Write([]byte(body))
-	return errors.Wrap(err, "write response body")
+	if _, err := w.Write([]byte(body)); err != nil {
+		return fmt.Errorf("write response body: %w", err)
+	}
+	return nil
 }
 
 // SitemapIndex handles sitemap index request
@@ -49,7 +50,7 @@ func SitemapIndex(w http.ResponseWriter, rctx *chttp.Context) error {
 		}{}
 		url := fmt.Sprintf("/dict-%s/_count", d.ID())
 		if err := storage.Get(url, &countresp); err != nil {
-			return errors.Wrapf(err, "storage get %s docs count", d.ID())
+			return fmt.Errorf("storage get %s docs count: %w", d.ID(), err)
 		}
 
 		for i := uint64(0); i <= countresp.Count/10000; i++ {
@@ -62,9 +63,13 @@ func SitemapIndex(w http.ResponseWriter, rctx *chttp.Context) error {
 
 	w.Header().Set("Content-Type", "text/xml")
 	if _, err := w.Write([]byte(xml.Header)); err != nil {
-		return errors.Wrap(err, "write xml header")
+		return fmt.Errorf("write xml header: %w", err)
 	}
-	return errors.Wrap(xml.NewEncoder(w).Encode(result), "encode response")
+
+	if err := xml.NewEncoder(w).Encode(result); err != nil {
+		return fmt.Errorf("encode response: %w", err)
+	}
+	return nil
 }
 
 // SitemapOfDictionary handles dictionary sitemap request
@@ -89,7 +94,7 @@ func SitemapOfDictionary(w http.ResponseWriter, rctx *chttp.Context) error {
 	}{}
 	url := fmt.Sprintf("/dict-%s/_search", dictID)
 	if err := storage.Post(url, reqbody, &respbody); err != nil {
-		return errors.Wrap(err, "sotrage post")
+		return fmt.Errorf("sotrage post: %w", err)
 	}
 
 	type urlt struct {
@@ -115,7 +120,10 @@ func SitemapOfDictionary(w http.ResponseWriter, rctx *chttp.Context) error {
 
 	w.Header().Set("Content-Type", "text/xml")
 	if _, err := w.Write([]byte(xml.Header)); err != nil {
-		return errors.Wrap(err, "write xml header")
+		return fmt.Errorf("write xml header: %w", err)
 	}
-	return errors.Wrap(xml.NewEncoder(w).Encode(result), "encode response")
+	if err := xml.NewEncoder(w).Encode(result); err != nil {
+		return fmt.Errorf("encode response: %w", err)
+	}
+	return nil
 }

@@ -2,9 +2,9 @@ package handlers
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 
-	"github.com/pkg/errors"
 	"github.com/verbumby/verbum/backend/pkg/chttp"
 	"github.com/verbumby/verbum/backend/pkg/storage"
 )
@@ -38,7 +38,7 @@ func Suggest(w http.ResponseWriter, rctx *chttp.Context) error {
 	}{}
 
 	if err := storage.Post("/dict-*/_search", reqbody, &respbody); err != nil {
-		return errors.Wrap(err, "query elastic")
+		return fmt.Errorf("query elastic: %w", err)
 	}
 
 	data := []string{}
@@ -49,7 +49,7 @@ func Suggest(w http.ResponseWriter, rctx *chttp.Context) error {
 	}
 
 	if err := json.NewEncoder(w).Encode(data); err != nil {
-		return errors.Wrap(err, "encode response")
+		return fmt.Errorf("encode response: %w", err)
 	}
 
 	return nil

@@ -8,7 +8,6 @@ import (
 	"os"
 	"strings"
 
-	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 	"github.com/verbumby/verbum/backend/pkg/ctl/dictimport/dictparser"
 	"github.com/verbumby/verbum/backend/pkg/ctl/dictimport/dictparser/dsl"
@@ -48,7 +47,7 @@ func (c *commandController) Run(cmd *cobra.Command, args []string) {
 func (c *commandController) run() error {
 	f, err := os.Open(c.filename)
 	if err != nil {
-		return errors.Wrapf(err, "open %s file", c.filename)
+		return fmt.Errorf("open %s file: %w", c.filename, err)
 	}
 	defer f.Close()
 
@@ -60,17 +59,17 @@ func (c *commandController) run() error {
 		err = fmt.Errorf("unsupported format %s", c.format)
 	}
 	if err != nil {
-		return errors.Wrap(err, "parse dictionary")
+		return fmt.Errorf("parse dictionary: %w", err)
 	}
 
 	log.Printf("found %d articles in the dictionary", len(d.Articles))
 
 	if err := c.createIndex(len(d.Articles)); err != nil {
-		return errors.Wrap(err, "create index")
+		return fmt.Errorf("create index: %w", err)
 	}
 
 	if err := c.indexArticles(d); err != nil {
-		return errors.Wrap(err, "index articles")
+		return fmt.Errorf("index articles: %w", err)
 	}
 
 	return nil
@@ -153,7 +152,7 @@ func (c *commandController) createIndex(maxResultWindow int) error {
 		},
 	}, nil)
 	if err != nil {
-		return errors.Wrap(err, "storage put")
+		return fmt.Errorf("storage put: %w", err)
 	}
 	return nil
 }
@@ -210,16 +209,16 @@ func (c *commandController) indexArticles(d dictparser.Dictionary) error {
 		if err := json.NewEncoder(buff).Encode(map[string]interface{}{
 			"index": map[string]interface{}{"_id": id},
 		}); err != nil {
-			return errors.Wrapf(err, "encode bulk insert meta for id %s", id)
+			return fmt.Errorf("encode bulk insert meta for id %s: %w", id, err)
 		}
 
 		if err := json.NewEncoder(buff).Encode(doc); err != nil {
-			return errors.Wrapf(err, "encode %s doc", id)
+			return fmt.Errorf("encode %s doc: %w", id, err)
 		}
 
 		if (i+1)%100 == 0 {
 			if err := c.flushBuffer(buff); err != nil {
-				return errors.Wrap(err, "flush buffer")
+				return fmt.Errorf("flush buffer: %w", err)
 
 			}
 			log.Printf("%d articles indexed", i)
@@ -228,7 +227,7 @@ func (c *commandController) indexArticles(d dictparser.Dictionary) error {
 	}
 
 	if err := c.flushBuffer(buff); err != nil {
-		return errors.Wrap(err, "flush buffer")
+		return fmt.Errorf("flush buffer: %w", err)
 	}
 	log.Println("all articles indexed")
 
@@ -246,6 +245,8 @@ func (c *commandController) assembleID(hws []string) string {
 }
 
 func (c *commandController) flushBuffer(buff *bytes.Buffer) error {
-	err := storage.Post("/dict-"+c.indexID+"/_doc/_bulk", buff, nil)
-	return errors.Wrap(err, "bulk post to storage")
+	if err := storage.Post("/dict-"+c.indexID+"/_doc/_bulk", buff, nil); err != nil {
+		return fmt.Errorf("bulk post to storage: %w", err)
+	}
+	return nil
 }

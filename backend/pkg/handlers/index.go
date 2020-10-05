@@ -1,11 +1,11 @@
 package handlers
 
 import (
+	"fmt"
 	"net/http"
 
 	"github.com/verbumby/verbum/backend/pkg/dictionary"
 
-	"github.com/pkg/errors"
 	"github.com/verbumby/verbum/backend/pkg/article"
 	"github.com/verbumby/verbum/backend/pkg/chttp"
 	"github.com/verbumby/verbum/backend/pkg/htmlui"
@@ -42,7 +42,7 @@ func index(w http.ResponseWriter, rctx *chttp.Context) error {
 		Dictionaries:    dicts,
 	})
 	if err != nil {
-		return errors.Wrap(err, "render html")
+		return fmt.Errorf("render html: %w", err)
 	}
 	return nil
 }
@@ -69,7 +69,7 @@ func search(w http.ResponseWriter, rctx *chttp.Context) error {
 
 	articles, _, err := article.Query("/dict-*/_search", reqbody)
 	if err != nil {
-		return errors.Wrap(err, "query articles")
+		return fmt.Errorf("query articles: %w", err)
 	}
 
 	err = tm.Render("search-results", w, struct {
@@ -86,7 +86,7 @@ func search(w http.ResponseWriter, rctx *chttp.Context) error {
 		MetaRobotsTag:   htmlui.MetaRobotsTag{Index: false, Follow: false},
 	})
 	if err != nil {
-		return errors.Wrap(err, "render html")
+		return fmt.Errorf("render html: %w", err)
 	}
 	return nil
 }

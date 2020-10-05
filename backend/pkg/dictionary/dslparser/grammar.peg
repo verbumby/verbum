@@ -5,13 +5,13 @@ import (
 	"bytes"
 	"fmt"
 	"io"
+	"errors"
 	"io/ioutil"
 	"os"
 	"strings"
 	"unicode"
 	"unicode/utf8"
 
-	"github.com/pkg/errors"
 	"golang.org/x/text/unicode/norm"
 )
 

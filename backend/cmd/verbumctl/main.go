@@ -1,9 +1,9 @@
 package main
 
 import (
+	"fmt"
 	"log"
 
-	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 
 	"github.com/verbumby/verbum/backend/pkg/app"
@@ -13,7 +13,7 @@ import (
 
 func main() {
 	if err := app.Bootstrap(); err != nil {
-		log.Fatal(errors.Wrap(err, "app bootstrap"))
+		log.Fatal(fmt.Errorf("app bootstrap: %w", err))
 	}
 
 	rootCmd := &cobra.Command{

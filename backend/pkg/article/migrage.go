@@ -8,7 +8,6 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/pkg/errors"
 	"github.com/verbumby/verbum/backend/pkg/storage"
 	"github.com/verbumby/verbum/backend/pkg/textutil"
 )
@@ -25,7 +24,7 @@ func Migrate() error {
 			} `json:"dict-rvblr"`
 		}{}
 		if err := storage.Get("/dict-rvblr/_mappings", &respbody); err != nil {
-			return errors.Wrap(err, "get dict-rvblr mappings")
+			return fmt.Errorf("get dict-rvblr mappings: %w", err)
 		}
 		rvblrMapping = respbody.DictRvblr.Mappings.Properties
 	}
@@ -43,7 +42,7 @@ func Migrate() error {
 			} `json:"dict-rvblr"`
 		}{}
 		if err := storage.Get("/dict-rvblr/_settings", &respbody); err != nil {
-			return errors.Wrap(err, "get dict-rvblr settings")
+			return fmt.Errorf("get dict-rvblr settings: %w", err)
 		}
 		rvblrSettings = respbody.DictRvblr.Settings.Index
 	}
@@ -60,7 +59,7 @@ func Migrate() error {
 			},
 		}, nil)
 		if err != nil {
-			return errors.Wrap(err, "add Title field to dict-rvblr")
+			return fmt.Errorf("add Title field to dict-rvblr: %w", err)
 		}
 
 		re := regexp.MustCompile(`<\/?v-hw>`)
@@ -75,7 +74,7 @@ func Migrate() error {
 					Source Article `json:"_source"`
 				}{}
 				if err := json.Unmarshal(rawhit, &hit); err != nil {
-					return errors.Wrap(err, "unmarshal raw hit")
+					return fmt.Errorf("unmarshal raw hit: %w", err)
 				}
 
 				article := hit.Source
@@ -91,7 +90,7 @@ func Migrate() error {
 				buf.WriteString(fmt.Sprintf(`{"index":{"_index":"dict-rvblr", "_type":"_doc", "_id":"%s"}}`, id))
 				buf.WriteString("\n")
 				if err := json.NewEncoder(buf).Encode(article); err != nil {
-					return errors.Wrap(err, "encode article")
+					return fmt.Errorf("encode article: %w", err)
 				}
 
 				buf.WriteString(fmt.Sprintf(`{"delete":{"_index":"dict-rvblr", "_type":"_doc", "_id":"%s"}}`, hit.ID))
@@ -104,7 +103,7 @@ func Migrate() error {
 				Items  json.RawMessage `json:"items"`
 			}{}
 			if err := storage.Post("/_bulk", buf, &respbody); err != nil {
-				return errors.Wrap(err, "bulk")
+				return fmt.Errorf("bulk: %w", err)
 			}
 			if respbody.Errors {
 				return fmt.Errorf("some error in one of bulk action: %s", respbody.Items)
@@ -114,7 +113,7 @@ func Migrate() error {
 			return nil
 		})
 		if err != nil {
-			return errors.Wrap(err, "migrate dict-rvblr")
+			return fmt.Errorf("migrate dict-rvblr: %w", err)
 		}
 		fmt.Println("migrated", n, "records")
 		return nil
@@ -123,7 +122,7 @@ func Migrate() error {
 	rvblrFixSniehTitle := func() error {
 		a, err := Get("rvblr", "snieh")
 		if err != nil {
-			return errors.Wrap(err, "get")
+			return fmt.Errorf("get: %w", err)
 		}
 
 		if strings.HasPrefix(a.Title, " ") {
@@ -134,7 +133,7 @@ func Migrate() error {
 				},
 			}, nil)
 			if err != nil {
-				return errors.Wrap(err, "post")
+				return fmt.Errorf("post: %w", err)
 			}
 		}
 		return nil
@@ -157,7 +156,7 @@ func Migrate() error {
 			},
 		}, nil)
 		if err != nil {
-			return errors.Wrap(err, "add Prefix nested field to dict-rvblr")
+			return fmt.Errorf("add Prefix nested field to dict-rvblr: %w", err)
 		}
 
 		n := 0
@@ -170,7 +169,7 @@ func Migrate() error {
 					Source Article `json:"_source"`
 				}{}
 				if err := json.Unmarshal(rawhit, &hit); err != nil {
-					return errors.Wrap(err, "unmarshal raw hit")
+					return fmt.Errorf("unmarshal raw hit: %w", err)
 				}
 
 				a := hit.Source
@@ -203,7 +202,7 @@ func Migrate() error {
 						"Prefix": a.Prefix,
 					},
 				}); err != nil {
-					return errors.Wrap(err, "encode article")
+					return fmt.Errorf("encode article: %w", err)
 				}
 
 				fmt.Print(".")
@@ -214,7 +213,7 @@ func Migrate() error {
 				Items  json.RawMessage `json:"items"`
 			}{}
 			if err := storage.Post("/_bulk", buf, &respbody); err != nil {
-				return errors.Wrap(err, "bulk")
+				return fmt.Errorf("bulk: %w", err)
 			}
 			if respbody.Errors {
 				return fmt.Errorf("some error in one of bulk action: %s", respbody.Items)
@@ -224,7 +223,7 @@ func Migrate() error {
 			return nil
 		})
 		if err != nil {
-			return errors.Wrap(err, "migrate dict-rvblr")
+			return fmt.Errorf("migrate dict-rvblr: %w", err)
 		}
 		fmt.Println("migrated", n, "records")
 		return nil
@@ -240,7 +239,7 @@ func Migrate() error {
 				"max_result_window": "40000",
 			},
 		}, nil); err != nil {
-			return errors.Wrap(err, "post settings")
+			return fmt.Errorf("post settings: %w", err)
 		}
 		return nil
 	}
@@ -269,7 +268,7 @@ func Migrate() error {
 
 	for _, m := range migrations {
 		if err := m.f(); err != nil {
-			return errors.Wrapf(err, m.name)
+			return fmt.Errorf("migration %s: %w", m.name, err)
 		}
 	}
 

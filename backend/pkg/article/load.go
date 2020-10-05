@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/pkg/errors"
 	"github.com/verbumby/verbum/backend/pkg/dictionary"
 	"github.com/verbumby/verbum/backend/pkg/storage"
 )
@@ -25,7 +24,7 @@ func Query(path string, reqbody interface{}) ([]Article, int, error) {
 	}{}
 
 	if err := storage.Post(path, reqbody, &respbody); err != nil {
-		return nil, 0, errors.Wrap(err, "query elastic")
+		return nil, 0, fmt.Errorf("query elastic: %w", err)
 	}
 
 	result := []Article{}
@@ -60,7 +59,7 @@ func Get(dictionaryID, articleID string) (Article, error) {
 
 	path := fmt.Sprintf("/dict-%s/_doc/%s", dictionaryID, articleID)
 	if err := storage.Get(path, &respbody); err != nil {
-		return Article{}, errors.Wrap(err, "storage get")
+		return Article{}, fmt.Errorf("storage get: %w", err)
 	}
 
 	dict := dictionary.Get(dictionaryID)

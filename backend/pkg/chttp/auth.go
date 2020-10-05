@@ -11,8 +11,6 @@ import (
 
 	"github.com/gorilla/securecookie"
 	"github.com/spf13/viper"
-
-	"github.com/pkg/errors"
 )
 
 // Principal represents current user
@@ -44,7 +42,7 @@ func AuthHandler(w http.ResponseWriter, ctx *Context) error {
 	defer ctx.R.Body.Close()
 
 	if err := ctx.R.ParseForm(); err != nil {
-		http.Error(w, errors.Wrap(err, "parse form").Error(), http.StatusBadRequest)
+		http.Error(w, fmt.Errorf("parse form: %w", err).Error(), http.StatusBadRequest)
 		return nil
 	}
 
@@ -72,7 +70,7 @@ func AuthHandler(w http.ResponseWriter, ctx *Context) error {
 
 	req, err := http.NewRequest(http.MethodPost, viper.GetString("oauth.endpointToken"), strings.NewReader(bodyValues.Encode()))
 	if err != nil {
-		return errors.Wrap(err, "token request create")
+		return fmt.Errorf("token request create: %w", err)
 	}
 	req.Header.Set("Accept", "application/json")
 	req.Header.Set("Cache-Control", "no-cache")
@@ -80,7 +78,7 @@ func AuthHandler(w http.ResponseWriter, ctx *Context) error {
 
 	resp, err := http.DefaultClient.Do(req)
 	if err != nil {
-		return errors.Wrap(err, "token request")
+		return fmt.Errorf("token request: %w", err)
 	}
 	defer resp.Body.Close()
 	if resp.StatusCode != http.StatusOK {
@@ -93,19 +91,19 @@ func AuthHandler(w http.ResponseWriter, ctx *Context) error {
 	}{}
 
 	if err := json.NewDecoder(resp.Body).Decode(&respData); err != nil {
-		return errors.Wrap(err, "token request: response decode")
+		return fmt.Errorf("token request: response decode: %w", err)
 	}
 	accessToken := respData.AccessToken
 
 	// get user info by the access token
 	req, err = http.NewRequest(http.MethodGet, viper.GetString("oauth.endpointUserinfo"), nil)
 	if err != nil {
-		return errors.Wrap(err, "userinfo request create")
+		return fmt.Errorf("userinfo request create: %w", err)
 	}
 	req.Header.Add("Authorization", "Bearer "+accessToken)
 	resp, err = http.DefaultClient.Do(req)
 	if err != nil {
-		return errors.Wrap(err, "userinfo request")
+		return fmt.Errorf("userinfo request: %w", err)
 	}
 	defer resp.Body.Close()
 
@@ -116,7 +114,7 @@ func AuthHandler(w http.ResponseWriter, ctx *Context) error {
 
 	p := Principal{}
 	if err := json.NewDecoder(resp.Body).Decode(&p); err != nil {
-		return errors.Wrap(err, "userinfo request body read")
+		return fmt.Errorf("userinfo request body read: %w", err)
 	}
 
 	allowedEmails := viper.GetStringSlice("editorsWhitelist")
@@ -134,7 +132,7 @@ func AuthHandler(w http.ResponseWriter, ctx *Context) error {
 
 	cookie, err := encodeCookie(p)
 	if err != nil {
-		return errors.Wrap(err, "auth set cookie")
+		return fmt.Errorf("auth set cookie: %w", err)
 	}
 
 	http.SetCookie(w, cookie)
@@ -145,7 +143,7 @@ func AuthHandler(w http.ResponseWriter, ctx *Context) error {
 func encodeCookie(p Principal) (*http.Cookie, error) {
 	encoded, err := cookieManager.Encode(viper.GetString("cookie.name"), p)
 	if err != nil {
-		return nil, errors.Wrap(err, "encode cookie")
+		return nil, fmt.Errorf("encode cookie: %w", err)
 	}
 
 	cookie := &http.Cookie{

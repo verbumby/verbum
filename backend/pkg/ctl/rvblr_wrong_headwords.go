@@ -7,7 +7,6 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 	"github.com/verbumby/verbum/backend/pkg/article"
 	"github.com/verbumby/verbum/backend/pkg/storage"
@@ -27,7 +26,7 @@ func RvblrWrongHeadwords() *cobra.Command {
 						Source article.Article `json:"_source"`
 					}{}
 					if err := json.Unmarshal(rawhit, &hit); err != nil {
-						return errors.Wrap(err, "unmarshal raw hit")
+						return fmt.Errorf("unmarshal raw hit: %w", err)
 					}
 
 					a := hit.Source
@@ -53,7 +52,7 @@ func RvblrWrongHeadwords() *cobra.Command {
 
 						hws, hwsalt, err := article.RvblrParse(content)
 						if err != nil {
-							return errors.Wrapf(err, "couldnt parse %s new content", hit.ID)
+							return fmt.Errorf("couldnt parse %s new content: %w", hit.ID, err)
 						}
 
 						suggests := make([]article.Suggest, 0, len(hws)+len(hwsalt))
@@ -80,7 +79,7 @@ func RvblrWrongHeadwords() *cobra.Command {
 								"Suggest":     suggests,
 							},
 						}, &respbody); err != nil {
-							return errors.Wrapf(err, "update fixed record %s", hit.ID)
+							return fmt.Errorf("update fixed record %s: %w", hit.ID, err)
 						}
 
 						fmt.Println("Fixed!")

@@ -2,9 +2,9 @@ package ctl
 
 import (
 	"encoding/json"
+	"fmt"
 	"log"
 
-	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 	"github.com/verbumby/verbum/backend/pkg/storage"
 	"github.com/verbumby/verbum/backend/pkg/textutil"
@@ -37,7 +37,7 @@ func Slugs() *cobra.Command {
 						} `json:"_source"`
 					}{}
 					if err := json.Unmarshal(rawhit, hit); err != nil {
-						return errors.Wrap(err, "json unmarshal of a rawhit")
+						return fmt.Errorf("json unmarshal of a rawhit: %w", err)
 					}
 					slug := textutil.Slugify(textutil.RomanizeBelarusian(hit.Source.Title))
 
@@ -47,7 +47,7 @@ func Slugs() *cobra.Command {
 						},
 					}
 					if err := storage.Post("/dicts/_doc/"+hit.ID+"/_update", reqbody, nil); err != nil {
-						return errors.Wrapf(err, "update record %s", hit.ID)
+						return fmt.Errorf("update record %s: %w", hit.ID, err)
 					}
 				}
 				return nil
