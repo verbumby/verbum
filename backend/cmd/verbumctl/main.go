@@ -25,6 +25,7 @@ func main() {
 		ctl.Slugs(),
 		ctl.RvblrWrongHeadwords(),
 		dictimport.Command(),
+		ctl.StardictFixPrefixCase(),
 	)
 	if err := rootCmd.Execute(); err != nil {
 		log.Fatal(err)
