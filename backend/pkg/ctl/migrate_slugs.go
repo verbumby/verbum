@@ -10,10 +10,10 @@ import (
 	"github.com/verbumby/verbum/backend/pkg/textutil"
 )
 
-// Slugs updates slugs
-func Slugs() *cobra.Command {
+// MigrateSlugs updates slugs
+func MigrateSlugs() *cobra.Command {
 	return &cobra.Command{
-		Use:   "slugs-update",
+		Use:   "migrate-slugs-update",
 		Short: "Updates slugs in dictionaries",
 		Long:  "Updates slugs in dictionaries",
 		Run: func(cmd *cobra.Command, args []string) {

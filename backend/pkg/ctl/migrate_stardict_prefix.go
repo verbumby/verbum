@@ -13,9 +13,9 @@ import (
 	"github.com/verbumby/verbum/backend/pkg/storage"
 )
 
-func StardictFixPrefixCase() *cobra.Command {
+func MigrateStardictFixPrefixCase() *cobra.Command {
 	return &cobra.Command{
-		Use:   "stardict-prefix-fix",
+		Use:   "migrate-stardict-prefix-fix",
 		Short: "Fix prefix case of stardict dictionaries",
 		Long:  "Fix prefix case of stardict dictionaries",
 		Run: func(cmd *cobra.Command, args []string) {
