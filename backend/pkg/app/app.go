@@ -5,6 +5,7 @@ import (
 
 	"github.com/spf13/viper"
 	"github.com/verbumby/verbum/backend/pkg/article"
+	"github.com/verbumby/verbum/backend/pkg/dictionary"
 	"github.com/verbumby/verbum/backend/pkg/storage"
 )
 
@@ -41,6 +42,10 @@ func Bootstrap() error {
 		return fmt.Errorf("elastic index templates migrate: %w", err)
 	}
 
+	if err := timestampFieldMigrate(); err != nil {
+		return fmt.Errorf("timestamp field migration: %w", err)
+	}
+
 	return nil
 }
 
@@ -75,6 +80,40 @@ func elasticIndexTemplatesMigrate() error {
 		}, nil)
 		if err != nil {
 			return fmt.Errorf("create access log index template: %w", err)
+		}
+	}
+
+	return nil
+}
+
+func timestampFieldMigrate() error {
+	dicts := dictionary.GetAll()
+
+	respbody := map[string]struct {
+		Mappings map[string]map[string]interface{} `json:"mappings"`
+	}{}
+	if err := storage.Get("/dict-"+dicts[0].ID()+"/_mapping", &respbody); err != nil {
+		return fmt.Errorf("get mappings: %w", err)
+	}
+
+	if _, ok := respbody["dict-"+dicts[0].ID()].Mappings["ModifiedAt"]; ok {
+		return nil
+	}
+
+	for _, d := range dicts {
+		err := storage.Put(
+			"/dict-"+d.ID()+"/_mapping",
+			map[string]interface{}{
+				"properties": map[string]interface{}{
+					"ModifiedAt": map[string]interface{}{
+						"type": "date",
+					},
+				},
+			},
+			nil,
+		)
+		if err != nil {
+			return fmt.Errorf("migrate %s dict: %w", d.ID(), err)
 		}
 	}
 

@@ -18,14 +18,15 @@ func main() {
 
 	rootCmd := &cobra.Command{
 		Use:   "verbumctl",
-		Short: "verbumctl short",
-		Long:  "verbumctl long",
+		Short: "verbumctl",
+		Long:  "verbumctl",
 	}
 	rootCmd.AddCommand(
-		ctl.Slugs(),
-		ctl.RvblrWrongHeadwords(),
 		dictimport.Command(),
-		ctl.StardictFixPrefixCase(),
+		ctl.MigrateSlugs(),
+		ctl.MigrateRvblrWrongHeadwords(),
+		ctl.MigrateStardictFixPrefixCase(),
+		ctl.MigrateModifiedAt(),
 	)
 	if err := rootCmd.Execute(); err != nil {
 		log.Fatal(err)

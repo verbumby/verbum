@@ -12,12 +12,12 @@ import (
 	"github.com/verbumby/verbum/backend/pkg/storage"
 )
 
-// RvblrWrongHeadwords fix up rvblr wrong headwords
-func RvblrWrongHeadwords() *cobra.Command {
+// MigrateRvblrWrongHeadwords fix up rvblr wrong headwords
+func MigrateRvblrWrongHeadwords() *cobra.Command {
 	return &cobra.Command{
-		Use:   "rvblr-wrong-headwords",
-		Short: "fix up rvblr wrong headwords",
-		Long:  "fix up rvblr wrong headwords",
+		Use:   "migrate-rvblr-wrong-headwords",
+		Short: "Fix up rvblr wrong headwords",
+		Long:  "Fix up rvblr wrong headwords",
 		Run: func(cmd *cobra.Command, args []string) {
 			err := storage.Scroll("dict-rvblr", nil, func(rawhits []json.RawMessage) error {
 				for _, rawhit := range rawhits {
