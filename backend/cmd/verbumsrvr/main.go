@@ -6,6 +6,7 @@ import (
 	"log"
 	"net/http"
 
+	gorillahandlers "github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
 	"github.com/spf13/viper"
 	"github.com/verbumby/verbum/backend/pkg/app"
@@ -107,7 +108,9 @@ func bootstrapServer() error {
 		viper.GetString("https.addr"),
 		viper.GetString("https.certFile"),
 		viper.GetString("https.keyFile"),
-		r,
+		gorillahandlers.RecoveryHandler()(
+			gorillahandlers.CompressHandler(r),
+		),
 	)
 	if err != nil {
 		return fmt.Errorf("listen and serve: %w", err)
