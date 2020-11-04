@@ -9,3 +9,11 @@ run: build
 .PHONY: build-ctl
 build-ctl:
 	go build -v github.com/verbumby/verbum/backend/cmd/verbumctl
+
+.PHONY: fe-build-watch
+fe-build-watch:
+	npx webpack --watch --progress
+
+.PHONY: fe-build-prod
+fe-build-prod:
+	NODE_ENV=production npx webpack
