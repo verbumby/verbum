@@ -13,6 +13,7 @@ const resolve = { extensions: ['.ts', '.tsx', '.js'] }
 
 const server = {
     name: 'server',
+    target: 'node15.0',
     mode,
     entry: {
         server: './frontend/server.tsx',
@@ -21,13 +22,28 @@ const server = {
     resolve,
     module: {
         rules: [
-            { test: /\.tsx?$/, use: ['ts-loader'], exclude: /node_modules/ },
+            {
+                test: /\.tsx?$/,
+                exclude: /node_modules/,
+                use: [
+                    {
+                        loader: 'ts-loader',
+                        options: {
+                            compilerOptions: {
+                                moduleResolution: 'node',
+                            },
+                        },
+                    },
+                ],
+            },
         ],
     },
+    devtool: 'source-map',
 }
 
 const browser = {
     name: 'browser',
+    target: 'browserslist:> 1%, last 2 versions, Firefox ESR, not dead',
     mode,
     entry: {
         browser: './frontend/browser.tsx',
@@ -39,6 +55,7 @@ const browser = {
             { test: /\.tsx?$/, use: ['ts-loader'], exclude: /node_modules/ },
         ],
     },
+    devtool: 'source-map',
 }
 
 module.exports = [server, browser]

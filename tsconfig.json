@@ -1,6 +1,8 @@
 {
     "compilerOptions": {
         "sourceMap": true,
-        "jsx": "react"
+        "jsx": "react",
+        "target": "ES2019",
+        "allowSyntheticDefaultImports": true
     }
 }
