@@ -3,6 +3,7 @@
         "sourceMap": true,
         "jsx": "react",
         "target": "ES2019",
-        "allowSyntheticDefaultImports": true
+        "allowSyntheticDefaultImports": true,
+        "noImplicitAny": true
     }
 }

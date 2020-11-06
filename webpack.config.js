@@ -1,13 +1,10 @@
 const path = require('path')
+const { CleanWebpackPlugin } = require('clean-webpack-plugin')
+const CopyPlugin = require('copy-webpack-plugin')
 
 const prod = process.env.NODE_ENV === 'production'
 const mode = prod ? 'production' : 'development'
 console.log(`BUILD MODE: ${mode}`)
-
-const output = {
-    path: path.resolve(__dirname, 'frontend', 'dist'),
-    filename: '[name].bundle.js',
-}
 
 const resolve = { extensions: ['.ts', '.tsx', '.js'] }
 
@@ -18,7 +15,10 @@ const server = {
     entry: {
         server: './frontend/server.tsx',
     },
-    output,
+    output: {
+        path: path.resolve(__dirname, 'frontend', 'dist'),
+        filename: '[name].bundle.js',
+    },
     resolve,
     module: {
         rules: [
@@ -39,6 +39,11 @@ const server = {
         ],
     },
     devtool: 'source-map',
+    plugins: [
+        new CleanWebpackPlugin({
+            cleanOnceBeforeBuildPatterns: ['*.js', '*.map'],
+        }),
+    ],
 }
 
 const browser = {
@@ -48,7 +53,10 @@ const browser = {
     entry: {
         browser: './frontend/browser.tsx',
     },
-    output,
+    output: {
+        path: path.resolve(__dirname, 'frontend', 'dist', 'public'),
+        filename: '[name].bundle.js',
+    },
     resolve,
     module: {
         rules: [
@@ -56,6 +64,10 @@ const browser = {
         ],
     },
     devtool: 'source-map',
+    plugins: [
+        new CleanWebpackPlugin(),
+        new CopyPlugin({patterns: ['frontend/favicon.png']}),
+    ],
 }
 
 module.exports = [server, browser]

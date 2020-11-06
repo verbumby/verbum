@@ -17,3 +17,7 @@ fe-build-watch:
 .PHONY: fe-build-prod
 fe-build-prod:
 	NODE_ENV=production npx webpack
+
+.PHONY: fe-run
+fe-run:
+	cd frontend/dist && node server.bundle.js

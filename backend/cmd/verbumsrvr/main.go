@@ -5,6 +5,8 @@ import (
 	"html/template"
 	"log"
 	"net/http"
+	"net/http/httputil"
+	"net/url"
 
 	gorillahandlers "github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
@@ -79,15 +81,18 @@ func bootstrapServer() error {
 	}
 
 	r := mux.NewRouter()
-	statics := http.FileServer(http.Dir("statics"))
+	// statics := http.FileServer(http.Dir("statics"))
 	r.HandleFunc("/robots.txt", chttp.MakeHandler(handlers.RobotsTXT))
 	r.HandleFunc("/sitemap-index.xml", chttp.MakeHandler(handlers.SitemapIndex))
-	r.PathPrefix("/statics/").Handler(http.StripPrefix("/statics/", statics))
+	// r.PathPrefix("/statics/").Handler(http.StripPrefix("/statics/", statics))
 	r.HandleFunc("/_suggest", chttp.MakeHandler(handlers.Suggest))
-	r.HandleFunc("/{dictionary:[a-z-]+}", chttp.MakeHandler(handlers.Dictionary))
+	// r.HandleFunc("/{dictionary:[a-z-]+}", chttp.MakeHandler(handlers.Dictionary))
 	r.HandleFunc("/{dictionary:[a-z-]+}/sitemap-{n:[0-9]+}.xml", chttp.MakeHandler(handlers.SitemapOfDictionary))
-	r.HandleFunc("/{dictionary:[a-z-]+}/{article:[a-zA-Z0-9-]+}", chttp.MakeHandler(handlers.Article))
-	r.HandleFunc("/", chttp.MakeHandler(handlers.Index))
+	// r.HandleFunc("/{dictionary:[a-z-]+}/{article:[a-zA-Z0-9-]+}", chttp.MakeHandler(handlers.Article))
+	// r.HandleFunc("/", chttp.MakeHandler(handlers.Index))
+	rpurl := url.URL{Scheme: "http", Host: "localhost:8079"}
+	rp := httputil.NewSingleHostReverseProxy(&rpurl)
+	r.PathPrefix("/").Handler(rp)
 
 	chttp.InitCookieManager()
 	chttp.InitAccessLog()
