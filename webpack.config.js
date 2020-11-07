@@ -74,6 +74,7 @@ const browser = {
     plugins: [
         new CleanWebpackPlugin(),
         new HtmlWebpackPlugin({
+            template: './frontend/index.html',
             filename: '../index.html',
             publicPath: '/statics',
             hash: true,
