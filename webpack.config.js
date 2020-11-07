@@ -2,6 +2,7 @@ const path = require('path')
 const { CleanWebpackPlugin } = require('clean-webpack-plugin')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 const FaviconsWebpackPlugin = require('favicons-webpack-plugin')
+const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer')
 
 const prod = process.env.NODE_ENV === 'production'
 const mode = prod ? 'production' : 'development'
@@ -44,6 +45,11 @@ const server = {
         new CleanWebpackPlugin({
             cleanOnceBeforeBuildPatterns: ['*.js', '*.map'],
         }),
+        new BundleAnalyzerPlugin({
+            analyzerMode: 'static',
+            reportFilename: 'server_report.html',
+            openAnalyzer: false,
+        }),
     ],
 }
 
@@ -77,6 +83,11 @@ const browser = {
             prefix: '',
             publicPath: '/statics',
             inject: true,
+        }),
+        new BundleAnalyzerPlugin({
+            analyzerMode: 'static',
+            reportFilename: '../browser_report.html',
+            openAnalyzer: false,
         }),
     ],
 }
