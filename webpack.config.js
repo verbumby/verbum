@@ -1,6 +1,7 @@
 const path = require('path')
 const { CleanWebpackPlugin } = require('clean-webpack-plugin')
-const CopyPlugin = require('copy-webpack-plugin')
+const HtmlWebpackPlugin = require('html-webpack-plugin')
+const FaviconsWebpackPlugin = require('favicons-webpack-plugin')
 
 const prod = process.env.NODE_ENV === 'production'
 const mode = prod ? 'production' : 'development'
@@ -66,7 +67,17 @@ const browser = {
     devtool: 'source-map',
     plugins: [
         new CleanWebpackPlugin(),
-        new CopyPlugin({patterns: ['frontend/favicon.png']}),
+        new HtmlWebpackPlugin({
+            filename: '../index.html',
+            publicPath: '/statics',
+            hash: true,
+        }),
+        new FaviconsWebpackPlugin({
+            logo: './frontend/favicon.png',
+            prefix: '',
+            publicPath: '/statics',
+            inject: true,
+        }),
     ],
 }
 
