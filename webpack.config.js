@@ -3,6 +3,7 @@ const { CleanWebpackPlugin } = require('clean-webpack-plugin')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 const FaviconsWebpackPlugin = require('favicons-webpack-plugin')
 const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer')
+const MiniCssExtractPlugin = require('mini-css-extract-plugin')
 
 const prod = process.env.NODE_ENV === 'production'
 const mode = prod ? 'production' : 'development'
@@ -38,6 +39,7 @@ const server = {
                     },
                 ],
             },
+            { test: /\.css$/, use: 'null-loader'},
         ],
     },
     devtool: 'source-map',
@@ -68,6 +70,7 @@ const browser = {
     module: {
         rules: [
             { test: /\.tsx?$/, use: ['ts-loader'], exclude: /node_modules/ },
+            { test: /\.css$/, use: [MiniCssExtractPlugin.loader, 'css-loader']},
         ],
     },
     devtool: 'source-map',
@@ -90,6 +93,7 @@ const browser = {
             reportFilename: '../browser_report.html',
             openAnalyzer: false,
         }),
+        new MiniCssExtractPlugin(),
     ],
 }
 

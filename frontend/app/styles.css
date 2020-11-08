@@ -1,0 +1,53 @@
+html, body {height: 100%;}
+body {margin: 0;font-family: Arial, Helvetica, sans-serif;}
+
+textarea, input[type="text"], input[type="button"], input[type="submit"] {
+  -webkit-appearance: none; border-radius: 0; outline: none; }
+
+.content {max-width: 800px; margin: 0 auto; padding: 5px; display: flex; flex-direction: column; min-height: 100%;}
+
+#search {position:relative;}
+.search-input {margin: 0 0 0 0; display: flex; align-items: stretch; height: 30px}
+.search-input input[type=text] {flex: 2; margin: 0; padding: 0 0 0 5px; width: 100%;
+  border: 1px solid lightgrey; border-right: none;}
+.search-input .btn {border: none; border-radius: 0; cursor: pointer; }
+.search-input .button-search {color:white; background: red; margin: 0; padding:3px 10px;}
+.search-input .button-search:active {background: black;}
+.search-input .button-search-small {display:none; padding: 5px 10px; font-size: 21px;}
+.search-input .button-clear {color:grey; padding: 4px 10px; font-size: 21px; line-height: 0;
+  border: 1px solid lightgrey; border-right: none; border-left: none;}
+.search-input .button-clear:active {color: red;}
+
+.suggestions {position: absolute; width: 100%; box-sizing: border-box;
+  background: white; padding: 0; margin: 0; list-style: none;
+  border: 1px solid lightgrey; border-top: none; box-shadow: 0 2px 4px rgba(0,0,0,0.1)}
+.suggestions li {padding: 5px;}
+.suggestions li.active {background-color: #e3e3e3; cursor: pointer;}
+
+.article {padding: 6px; border-bottom: 1px solid lightgrey;}
+.article:last-child {border-bottom: none;}
+.article v-hw {font-weight: bold;}
+.article v-ex {color: darkgrey;}
+.article v-trx {
+  color: darkgrey;
+  font-size: 0.8em;
+  font-weight:lighter;
+  font-family: SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace !important;
+}
+.article v-accent {color: brown;}
+.article v-ex v-accent {color: rgba(165, 42, 42, 0.5);}
+.article .source {text-align: right; color: darkgrey; font-size: 0.9em;}
+.article p {margin: 0;}
+.article.rvblr p {margin: 0.5rem 0;}
+
+.logo {color:darkgrey; padding: 6px 0; font-weight: bold;}
+.logo h1 {display: inline; font-weight: bold;}
+.logo a {color:red; text-decoration: none; }
+
+@media only screen and (max-width: 400px) {
+  .search-input .button-search-small {display: inherit;}
+  .search-input .button-search-wide {display: none;}
+}
+
+.letter-filter-level {border-bottom: 1px solid lightgray;}
+.letter-filter-level:last-child {border-bottom:none;}
