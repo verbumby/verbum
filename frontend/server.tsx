@@ -12,7 +12,13 @@ import { App } from './app/App'
 const indexhtml = readFileSync('index.html', 'utf-8')
 
 const kstatics = new Koa()
-kstatics.use(koaStatic('public'))
+kstatics.use(koaStatic(
+    'public',
+    {
+        maxage: 1E3 * 60 * 60 * 24 * 30,
+        immutable: true,
+    },
+))
 
 const k = new Koa()
 k.use(koaMount('/statics', kstatics))

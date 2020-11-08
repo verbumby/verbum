@@ -4,6 +4,7 @@ const HtmlWebpackPlugin = require('html-webpack-plugin')
 const FaviconsWebpackPlugin = require('favicons-webpack-plugin')
 const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer')
 const MiniCssExtractPlugin = require('mini-css-extract-plugin')
+const CssMinimizerPlugin = require('css-minimizer-webpack-plugin')
 
 const prod = process.env.NODE_ENV === 'production'
 const mode = prod ? 'production' : 'development'
@@ -64,7 +65,7 @@ const browser = {
     },
     output: {
         path: path.resolve(__dirname, 'frontend', 'dist', 'public'),
-        filename: '[name].bundle.js',
+        filename: '[name].[contenthash].bundle.js',
     },
     resolve,
     module: {
@@ -80,11 +81,10 @@ const browser = {
             template: './frontend/index.html',
             filename: '../index.html',
             publicPath: '/statics',
-            hash: true,
         }),
         new FaviconsWebpackPlugin({
             logo: './frontend/favicon.png',
-            prefix: '',
+            prefix: 'favicon-[contenthash]',
             publicPath: '/statics',
             inject: true,
         }),
@@ -93,8 +93,16 @@ const browser = {
             reportFilename: '../browser_report.html',
             openAnalyzer: false,
         }),
-        new MiniCssExtractPlugin(),
+        new MiniCssExtractPlugin({
+            filename: '[name].[contenthash].bundle.css'
+        }),
     ],
+    optimization: {
+        minimizer: [
+            `...`,
+            new CssMinimizerPlugin(),
+        ],
+    },
 }
 
 module.exports = [server, browser]
