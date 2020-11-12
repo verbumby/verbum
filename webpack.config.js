@@ -84,7 +84,7 @@ const browser = {
         }),
         new FaviconsWebpackPlugin({
             logo: './frontend/favicon.png',
-            prefix: 'favicon-[contenthash]',
+            prefix: prod ? 'favicon-[contenthash]' : 'favicon',
             publicPath: '/statics',
             inject: true,
         }),
