@@ -1,24 +1,25 @@
 import * as React from 'react'
 import { hydrate } from 'react-dom'
 import { BrowserRouter } from 'react-router-dom'
-import { createStore } from 'redux'
+import { configureStore } from '@reduxjs/toolkit'
 import { Provider } from 'react-redux'
-import { devToolsEnhancer } from 'redux-devtools-extension'
 
 import { App } from './app/App'
-import { rootReducer, RootState } from './reducers'
+import { rootReducer } from './reducers'
 
 declare global {
     interface Window {
-        __PRELOADED_STATE__: RootState
-        f1: string
+        __PRELOADED_STATE__: object
     }
 }
 
 const preloadedState = window.__PRELOADED_STATE__
 delete window.__PRELOADED_STATE__
 
-const store = createStore(rootReducer, preloadedState, devToolsEnhancer({}))
+const store = configureStore({
+    reducer: rootReducer,
+    preloadedState: preloadedState,
+})
 
 hydrate(
     (

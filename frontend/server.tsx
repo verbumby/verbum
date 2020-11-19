@@ -7,12 +7,11 @@ import Koa from 'koa'
 import koaStatic from 'koa-static'
 import koaMount from 'koa-mount'
 import { StaticRouter, StaticRouterContext } from 'react-router'
-import { createStore, Reducer } from 'redux'
+import { configureStore } from '@reduxjs/toolkit'
 import { Provider } from 'react-redux'
-import { devToolsEnhancer } from 'redux-devtools-extension'
 
 import { App } from './app/App'
-import { rootReducer, RootState } from './reducers'
+import { rootReducer } from './reducers'
 
 const indexhtml = readFileSync('index.html', 'utf-8')
 
@@ -28,7 +27,9 @@ kstatics.use(koaStatic(
 const k = new Koa()
 k.use(koaMount('/statics', kstatics))
 k.use(async ctx => {
-    const stateStore = createStore(rootReducer, devToolsEnhancer({}))
+    const stateStore = configureStore({
+        reducer: rootReducer,
+    })
     const routerContext: StaticRouterContext = {}
     const reactRendered = renderToString(
         <Provider store={stateStore}>

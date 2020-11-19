@@ -1,11 +1,12 @@
 import { combineReducers } from 'redux'
+import { useSelector as useSelectorParent } from 'react-redux'
 
 type Dictionary = {
     ID: string
     Name: string
 }
 
-type DictionariesListState = Dictionary[]
+export type DictionariesListState = Dictionary[]
 
 const DICTIONARIES_LIST_SET = 'DICTIONARIES_LIST/SET'
 
@@ -37,3 +38,10 @@ export const rootReducer = combineReducers({
 })
 
 export type RootState = ReturnType<typeof rootReducer>
+
+export function useSelector<TSelected = unknown>(
+    selector: (state: RootState) => TSelected,
+    equalityFn?: (left: TSelected, right: TSelected) => boolean
+): TSelected {
+    return useSelectorParent<RootState,TSelected>(selector, equalityFn)
+}
