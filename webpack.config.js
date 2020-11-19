@@ -29,16 +29,7 @@ const server = {
             {
                 test: /\.tsx?$/,
                 exclude: /node_modules/,
-                use: [
-                    {
-                        loader: 'ts-loader',
-                        options: {
-                            compilerOptions: {
-                                moduleResolution: 'node',
-                            },
-                        },
-                    },
-                ],
+                use: [{ loader: 'ts-loader' }],
             },
             { test: /\.css$/, use: 'null-loader'},
         ],

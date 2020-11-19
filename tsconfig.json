@@ -4,6 +4,7 @@
         "jsx": "react",
         "target": "ES2019",
         "allowSyntheticDefaultImports": true,
-        "noImplicitAny": true
+        "noImplicitAny": true,
+        "moduleResolution": "node"
     }
 }
