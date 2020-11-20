@@ -1,5 +1,11 @@
 import 'source-map-support/register'
 
+// TODO: define this only on dev builds or avoid using it at all
+process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
+
+import * as fetch from 'node-fetch'
+global.fetch = (fetch as any)
+
 import { readFileSync } from 'fs'
 import * as React from 'react'
 import { renderToString } from 'react-dom/server'
@@ -11,7 +17,7 @@ import { configureStore } from '@reduxjs/toolkit'
 import { Provider } from 'react-redux'
 
 import { App } from './app/App'
-import { rootReducer } from './reducers'
+import { dictionariesListFetch, rootReducer } from './reducers'
 
 const indexhtml = readFileSync('index.html', 'utf-8')
 
@@ -30,11 +36,14 @@ k.use(async ctx => {
     const stateStore = configureStore({
         reducer: rootReducer,
     })
+    await stateStore.dispatch(dictionariesListFetch())
+    const preloadedState = stateStore.getState()
+
     const routerContext: StaticRouterContext = {}
     const reactRendered = renderToString(
         <Provider store={stateStore}>
             <StaticRouter location={ctx.url} context={routerContext}>
-                <App message="ololo" />
+                <App />
             </StaticRouter>
         </Provider>
     )
@@ -44,7 +53,6 @@ k.use(async ctx => {
         return
     }
 
-    const preloadedState = stateStore.getState()
 
     let body = indexhtml
     body = body.replace('HEAD_TITLE_PLACEHOLDER', 'Some TItle ololo')

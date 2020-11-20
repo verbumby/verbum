@@ -25,7 +25,7 @@ hydrate(
     (
         <Provider store={store}>
             <BrowserRouter>
-                <App message="ololo" />
+                <App />
             </BrowserRouter>
         </Provider>
     ),

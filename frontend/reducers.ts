@@ -1,9 +1,9 @@
-import { combineReducers } from 'redux'
+import { combineReducers, Dispatch } from 'redux'
 import { useSelector as useSelectorParent } from 'react-redux'
 
 type Dictionary = {
     ID: string
-    Name: string
+    Title: string
 }
 
 export type DictionariesListState = Dictionary[]
@@ -44,4 +44,17 @@ export function useSelector<TSelected = unknown>(
     equalityFn?: (left: TSelected, right: TSelected) => boolean
 ): TSelected {
     return useSelectorParent<RootState,TSelected>(selector, equalityFn)
+}
+
+export const dictionariesListFetch = () => {
+    return async (dispatch: Dispatch) => {
+        try {
+            // TODO: make the host-port configurable
+            const resp = await fetch('https://localhost:8443/api/dictionaries')
+            dispatch(dictionariesListSet(await resp.json()))
+        } catch (err) {
+            console.log("ERROR: ", err)
+            throw err
+        }
+    }
 }
