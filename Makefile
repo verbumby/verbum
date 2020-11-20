@@ -24,7 +24,7 @@ fe-run:
 
 .PHONY: es-sync-backup
 es-sync:
-	aws --profile verbum s3 sync s3://verbumby-backup elastic/backup
+	aws --profile verbum s3 sync s3://verbumby-backup elastic/backup --delete
 
 .PHONY: es-restore-last
 es-restore-last:
