@@ -1,7 +1,7 @@
 import { combineReducers, Dispatch } from 'redux'
 import { useSelector as useSelectorParent } from 'react-redux'
 
-type Dictionary = {
+export type Dictionary = {
     ID: string
     Title: string
 }
@@ -33,11 +33,15 @@ function dictionariesListReducer(state:DictionariesListState = [], action:Dictio
     }
 }
 
-export const rootReducer = combineReducers({
+type AllActions = DictionariesListActions
+
+export type RootState = {
+    dictionaries: DictionariesListState
+}
+
+export const rootReducer = combineReducers<RootState, AllActions>({
     dictionaries: dictionariesListReducer,
 })
-
-export type RootState = ReturnType<typeof rootReducer>
 
 export function useSelector<TSelected = unknown>(
     selector: (state: RootState) => TSelected,
@@ -49,9 +53,7 @@ export function useSelector<TSelected = unknown>(
 export const dictionariesListFetch = () => {
     return async (dispatch: Dispatch) => {
         try {
-            // TODO: make the host-port configurable
-            const resp = await fetch('https://localhost:8443/api/dictionaries')
-            dispatch(dictionariesListSet(await resp.json()))
+            dispatch(dictionariesListSet(await verbumClient.getDictionaries()))
         } catch (err) {
             console.log("ERROR: ", err)
             throw err

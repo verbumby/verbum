@@ -6,6 +6,9 @@ import { Provider } from 'react-redux'
 
 import { App } from './app/App'
 import { rootReducer } from './reducers'
+import { VerbumAPIClientBrowser } from './verbum/browser'
+
+window.verbumClient = new VerbumAPIClientBrowser()
 
 declare global {
     interface Window {

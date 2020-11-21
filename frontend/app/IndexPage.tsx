@@ -12,9 +12,9 @@ export const IndexPage: React.VFC = () => {
         }
     })
 
-    return (<p>
+    return (
         <ul>
             {dicts.map(d => <li key={d.ID}><a href={`/${d.ID}`}>{d.Title}</a></li>)}
         </ul>
-    </p>)
+    )
 }

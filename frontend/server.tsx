@@ -3,9 +3,6 @@ import 'source-map-support/register'
 // TODO: define this only on dev builds or avoid using it at all
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
 
-import * as fetch from 'node-fetch'
-global.fetch = (fetch as any)
-
 import { readFileSync } from 'fs'
 import * as React from 'react'
 import { renderToString } from 'react-dom/server'
@@ -18,6 +15,9 @@ import { Provider } from 'react-redux'
 
 import { App } from './app/App'
 import { dictionariesListFetch, rootReducer } from './reducers'
+import { VerbumAPIClientServer } from './verbum/server';
+
+global.verbumClient = new VerbumAPIClientServer({host: 'https://localhost:8443'})
 
 const indexhtml = readFileSync('index.html', 'utf-8')
 
