@@ -1,8 +1,5 @@
 import 'source-map-support/register'
 
-// TODO: define this only on dev builds or avoid using it at all
-process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0'
-
 import { readFileSync } from 'fs'
 import * as React from 'react'
 import { renderToString } from 'react-dom/server'
@@ -21,6 +18,9 @@ let verbumAPIURL = 'https://localhost:8443'
 for (const v of process.argv) {
     if (v.startsWith('--verbum-api-url')) {
         verbumAPIURL = v.split('=')[1]
+    }
+    if (v === '--insecure-ignore-cert-unauthorized-error') {
+        process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0'
     }
 }
 
