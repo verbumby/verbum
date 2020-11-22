@@ -14,7 +14,7 @@ textarea, input[type="text"], input[type="button"], input[type="submit"] {
 .search-input .button-search {color:white; background: red; margin: 0; padding:3px 10px;}
 .search-input .button-search:active {background: black;}
 .search-input .button-search-small {display:none; padding: 5px 10px; font-size: 21px;}
-.search-input .button-clear {color:grey; padding: 4px 10px; font-size: 21px; line-height: 0;
+.search-input .button-clear {color:grey; padding: 4px 7px; font-size: 21px; line-height: 0;
   border: 1px solid lightgrey; border-right: none; border-left: none;}
 .search-input .button-clear:active {color: red;}
 
@@ -44,7 +44,7 @@ textarea, input[type="text"], input[type="button"], input[type="submit"] {
 .logo h1 {display: inline; font-weight: bold;}
 .logo a {color:red; text-decoration: none; }
 
-@media only screen and (max-width: 400px) {
+@media only screen and (max-width: 500px) {
   .search-input .button-search-small {display: inherit;}
   .search-input .button-search-wide {display: none;}
 }

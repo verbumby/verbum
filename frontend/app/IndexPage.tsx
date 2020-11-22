@@ -2,6 +2,7 @@ import * as React from 'react'
 import { useEffect } from 'react'
 import { useDispatch } from 'react-redux'
 import { DictionariesListState, useSelector, dictionariesListFetch } from '../reducers'
+import { SearchControl } from './SearchControl'
 
 export const IndexPage: React.VFC = () => {
     const dicts = useSelector<DictionariesListState>(state => state.dictionaries)
@@ -13,8 +14,12 @@ export const IndexPage: React.VFC = () => {
     })
 
     return (
-        <ul>
-            {dicts.map(d => <li key={d.ID}><a href={`/${d.ID}`}>{d.Title}</a></li>)}
-        </ul>
+        <>
+            <SearchControl />
+            <p />
+            <ul>
+                {dicts.map(d => <li key={d.ID}><a href={`/${d.ID}`}>{d.Title}</a></li>)}
+            </ul>
+        </>
     )
 }
