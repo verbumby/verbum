@@ -2,19 +2,19 @@ import { VerbumAPIClientImpl } from './client'
 import fetch from 'node-fetch'
 
 type VerbumAPIClientServerOptions = {
-    host: string
+    apiURL: string
 }
 
 export class VerbumAPIClientServer extends VerbumAPIClientImpl {
-    private host: string
+    private apiURL: string
 
     constructor(options: VerbumAPIClientServerOptions) {
         super()
-        this.host = options.host
+        this.apiURL = options.apiURL
     }
 
     async call<T>(path: string): Promise<T> {
-        const resp = await fetch(this.host + path)
+        const resp = await fetch(this.apiURL + path)
         return resp.json() as Promise<T>
     }
 }

@@ -1,7 +1,7 @@
 import 'source-map-support/register'
 
 // TODO: define this only on dev builds or avoid using it at all
-process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
+process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0'
 
 import { readFileSync } from 'fs'
 import * as React from 'react'
@@ -15,9 +15,16 @@ import { Provider } from 'react-redux'
 
 import { App } from './app/App'
 import { dictionariesListFetch, rootReducer } from './reducers'
-import { VerbumAPIClientServer } from './verbum/server';
+import { VerbumAPIClientServer } from './verbum/server'
 
-global.verbumClient = new VerbumAPIClientServer({host: 'https://localhost:8443'})
+let verbumAPIURL = 'https://localhost:8443'
+for (const v of process.argv) {
+    if (v.startsWith('--verbum-api-url')) {
+        verbumAPIURL = v.split('=')[1]
+    }
+}
+
+global.verbumClient = new VerbumAPIClientServer({apiURL: verbumAPIURL})
 
 const indexhtml = readFileSync('index.html', 'utf-8')
 
