@@ -12,9 +12,13 @@ export const SearchControl: React.VFC = () => {
         qEl.current.focus()
     }
 
+    const triggerSearch = () => {
+        
+    }
+
     return (
         <div id="search">
-            <form action="/" method="get">
+            <form action="/" method="get" onSubmit={e => { e.preventDefault(); triggerSearch() } } >
                 <div className="search-input">
                     <input
                         ref={qEl}
@@ -28,10 +32,10 @@ export const SearchControl: React.VFC = () => {
                     {q && (<span className="btn button-clear" onClick={onClearClick}>
                         <IconBackspace />
                     </span>)}
-                    <span className="btn button-search button-search-wide">Шукаць</span>
-                    <span className="btn button-search button-search-small">
+                    <button type="submit" className="btn button-search button-search-wide">Шукаць</button>
+                    <button type="submit" className="btn button-search button-search-small">
                         <IconSearch />
-                    </span>
+                    </button>
                 </div>
                 <ul className="suggestions" style={{ display: 'none' }}>
                 </ul>
