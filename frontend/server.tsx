@@ -10,7 +10,7 @@ import { StaticRouter, StaticRouterContext } from 'react-router'
 import { configureStore } from '@reduxjs/toolkit'
 import { Provider } from 'react-redux'
 
-import { App } from './app/App'
+import { App } from './App'
 import { dictionariesListFetch, rootReducer } from './reducers'
 import { VerbumAPIClientServer } from './verbum/server'
 

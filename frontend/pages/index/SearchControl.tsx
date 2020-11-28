@@ -1,11 +1,19 @@
 import * as React from 'react'
+import { useEffect } from 'react'
+import { useHistory } from 'react-router-dom'
+import { useLocation } from 'react-router-dom'
 
-import { IconBackspace } from './IconBackspace'
-import { IconSearch } from './IconSearch'
+import { IconBackspace, IconSearch } from '../../icons'
 
 export const SearchControl: React.VFC = () => {
-    const [q, setQ] = React.useState<string>('')
+    const history = useHistory()
+    const urlQ = useURLSearchQuery().get('q') || ''
+    const [q, setQ] = React.useState<string>(urlQ)
     const qEl = React.useRef<HTMLInputElement>(null)
+
+    useEffect(() => {
+        qEl.current.setSelectionRange(0, qEl.current.value.length)
+    }, [urlQ])
 
     const onClearClick = () => {
         setQ('')
@@ -13,7 +21,7 @@ export const SearchControl: React.VFC = () => {
     }
 
     const triggerSearch = () => {
-        
+        history.push('/?q=' + encodeURIComponent(q))
     }
 
     return (
@@ -42,4 +50,9 @@ export const SearchControl: React.VFC = () => {
             </form>
         </div>
     )
+}
+
+// TODO: deduplicate this and move to some utils
+function useURLSearchQuery(): URLSearchParams {
+    return new URLSearchParams(useLocation().search)
 }

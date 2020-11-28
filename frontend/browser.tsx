@@ -4,7 +4,7 @@ import { BrowserRouter } from 'react-router-dom'
 import { configureStore } from '@reduxjs/toolkit'
 import { Provider } from 'react-redux'
 
-import { App } from './app/App'
+import { App } from './App'
 import { rootReducer, RootState } from './reducers'
 import { VerbumAPIClientBrowser } from './verbum/browser'
 
