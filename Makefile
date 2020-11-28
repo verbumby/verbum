@@ -20,9 +20,7 @@ fe-build-prod:
 
 .PHONY: fe-run
 fe-run:
-	cd frontend/dist && node server.bundle.js \
-		--verbum-api-url=https://localhost:8443 \
-		--insecure-ignore-cert-unauthorized-error
+	cd frontend/dist && node server.bundle.js
 
 .PHONY: es-sync-backup
 es-sync:

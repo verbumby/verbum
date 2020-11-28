@@ -14,17 +14,7 @@ import { App } from './app/App'
 import { dictionariesListFetch, rootReducer } from './reducers'
 import { VerbumAPIClientServer } from './verbum/server'
 
-let verbumAPIURL = 'https://localhost:8443'
-for (const v of process.argv) {
-    if (v.startsWith('--verbum-api-url')) {
-        verbumAPIURL = v.split('=')[1]
-    }
-    if (v === '--insecure-ignore-cert-unauthorized-error') {
-        process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0'
-    }
-}
-
-global.verbumClient = new VerbumAPIClientServer({apiURL: verbumAPIURL})
+global.verbumClient = new VerbumAPIClientServer({apiURL: 'http://localhost:8080'})
 
 const indexhtml = readFileSync('index.html', 'utf-8')
 
