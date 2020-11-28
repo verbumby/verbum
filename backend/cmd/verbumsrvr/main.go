@@ -88,6 +88,7 @@ func bootstrapServer() error {
 	r := mux.NewRouter()
 	// statics := http.FileServer(http.Dir("statics"))
 	r.HandleFunc("/api/dictionaries", chttp.MakeHandler(handlers.APIDictionariesList, chttp.ContentTypeJSONMiddleware))
+	r.HandleFunc("/api/search", chttp.MakeHandler(handlers.APISearch, chttp.ContentTypeJSONMiddleware))
 	r.HandleFunc("/robots.txt", chttp.MakeHandler(handlers.RobotsTXT))
 	r.HandleFunc("/sitemap-index.xml", chttp.MakeHandler(handlers.SitemapIndex))
 	// r.PathPrefix("/statics/").Handler(http.StripPrefix("/statics/", statics))

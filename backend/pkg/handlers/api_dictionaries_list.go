@@ -9,6 +9,7 @@ import (
 	"github.com/verbumby/verbum/backend/pkg/dictionary"
 )
 
+// APIDictionariesList dictionaries list endpoint
 func APIDictionariesList(w http.ResponseWriter, rctx *chttp.Context) error {
 	type dictview struct {
 		ID    string
