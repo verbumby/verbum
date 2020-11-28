@@ -16,6 +16,8 @@ func Bootstrap() error {
 	viper.SetDefault("https.keyFile", "key.pem")
 	viper.SetDefault("https.canonicalAddr", "https://localhost:8443")
 
+	viper.SetDefault("http.private.addr", "127.0.0.1:8080")
+
 	viper.SetDefault("cookie.name", "vadm")
 	viper.SetDefault("cookie.nameState", "vadm-state")
 	viper.SetDefault("cookie.maxAge", 604800)
