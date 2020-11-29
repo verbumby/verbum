@@ -2,6 +2,7 @@ import { combineReducers } from 'redux'
 import { useSelector as useSelectorParent } from 'react-redux'
 import { SearchActions, SearchState, searchReducer } from './pages/index/index'
 import { DictsActions, DictsState, dictsReducer } from './common'
+import { ThunkAction } from '@reduxjs/toolkit'
 
 type AllActions = DictsActions | SearchActions
 
@@ -29,3 +30,5 @@ export function useDicts(): DictsState {
 export function useSearchState(): SearchState {
     return useSelector<SearchState>(state => state.search)
 }
+
+export type AppThunkAction<ReturnType = void> = ThunkAction<Promise<ReturnType>, RootState, unknown, AllActions>

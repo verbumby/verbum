@@ -13,6 +13,7 @@ import { Provider } from 'react-redux'
 import { App } from './App'
 import { rootReducer } from './store'
 import { dictsFetch } from './common'
+import { search } from './pages/index'
 import { VerbumAPIClientServer } from './verbum/server'
 
 global.verbumClient = new VerbumAPIClientServer({apiURL: 'http://localhost:8080'})
@@ -31,15 +32,18 @@ kstatics.use(koaStatic(
 const k = new Koa()
 k.use(koaMount('/statics', kstatics))
 k.use(async ctx => {
-    const stateStore = configureStore({
+    const store = configureStore({
         reducer: rootReducer,
     })
-    await stateStore.dispatch(dictsFetch())
-    const preloadedState = stateStore.getState()
+    await Promise.all([
+        store.dispatch(dictsFetch(ctx.URL.searchParams)),
+        store.dispatch(search(ctx.URL.searchParams)),
+    ])
+    const preloadedState = store.getState()
 
     const routerContext: StaticRouterContext = {}
     const reactRendered = renderToString(
-        <Provider store={stateStore}>
+        <Provider store={store}>
             <StaticRouter location={ctx.url} context={routerContext}>
                 <App />
             </StaticRouter>

@@ -17,10 +17,7 @@ export const IndexPage: React.VFC = () => {
 
     const dispatch = useDispatch()
     useEffect(() => {
-        if (!q) {
-            return
-        }
-        dispatch(search(q))
+        dispatch(search(urlSearch))
         return () => dispatch(searchReset())
     }, [q])
 

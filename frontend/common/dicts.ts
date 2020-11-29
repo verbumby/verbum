@@ -1,4 +1,4 @@
-import { Dispatch } from 'redux'
+import { AppThunkAction } from '../store'
 import { Dict } from './dict'
 
 export type DictsState = Dict[]
@@ -23,8 +23,8 @@ export function dictsReducer(state:DictsState = [], a:DictsActions): DictsState 
     }
 }
 
-export const dictsFetch = () => {
-    return async (dispatch: Dispatch) => {
+export const dictsFetch = (urlSearch: URLSearchParams): AppThunkAction => {
+    return async (dispatch) => {
         try {
             dispatch(dictsSet(await verbumClient.getDictionaries()))
         } catch (err) {

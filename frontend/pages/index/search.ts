@@ -1,5 +1,5 @@
-import { Dispatch } from 'redux'
 import { Article } from '../../common/article'
+import { AppThunkAction } from '../../store'
 
 export type SearchState = {
     q: string
@@ -62,9 +62,17 @@ export function searchReducer(state: SearchState = {q: '', hits: []}, a: SearchA
     }
 }
 
-export const search = (q: string) => {
-    return async (dispatch: Dispatch) => {
+export const search = (urlSearch: URLSearchParams): AppThunkAction => {
+    return async (dispatch, getState): Promise<void> => {
         try {
+            const q = urlSearch.get('q')
+            if (!q) {
+                return
+            }
+            if (q === getState().search.q) {
+                return
+            }
+
             dispatch(searchKickOff(q))
             dispatch(searchSetHits(await verbumClient.search(q)))
         } catch (err) {
