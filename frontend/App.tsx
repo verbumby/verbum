@@ -1,9 +1,8 @@
 import * as React from "react"
 import './styles.css'
 
-import { Logo } from './common/Logo'
-import { Footer } from './common/Footer'
-import { IndexPage } from './pages/index/IndexPage'
+import { Footer, Logo } from './common'
+import { IndexPage } from './pages/index'
 
 const App: React.VFC = () => (
     <>

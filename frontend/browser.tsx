@@ -5,7 +5,7 @@ import { configureStore } from '@reduxjs/toolkit'
 import { Provider } from 'react-redux'
 
 import { App } from './App'
-import { rootReducer, RootState } from './reducers'
+import { rootReducer, RootState } from './store'
 import { VerbumAPIClientBrowser } from './verbum/browser'
 
 window.verbumClient = new VerbumAPIClientBrowser()

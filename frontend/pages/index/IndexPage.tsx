@@ -1,19 +1,16 @@
 import * as React from 'react'
 import { useEffect } from 'react'
 import { useDispatch } from 'react-redux'
-import { useLocation } from 'react-router-dom'
-import {
-    useDicts,
-    search,
-    searchReset,
-    useSearchState,
-} from '../../reducers'
+import { useHistory } from 'react-router-dom'
+import { useDicts, useSearchState } from '../../store'
+import { search, searchReset } from './search'
 import { SearchControl } from './SearchControl'
-import { DictionariesList } from './DictionariesList'
-import { Article } from '../../common/Article'
+import { DictsList } from './DictsList'
+import { ArticleView, useURLSearch } from '../../common'
 
 export const IndexPage: React.VFC = () => {
-    const urlSearch = useURLSearchQuery()
+    const history = useHistory()
+    const urlSearch = useURLSearch()
     const q: string = urlSearch.get('q') || ''
     const dicts = useDicts()
     const searchState = useSearchState()
@@ -27,16 +24,20 @@ export const IndexPage: React.VFC = () => {
         return () => dispatch(searchReset())
     }, [q])
 
+    const onSearch = (q: string) => {
+        if (!q) {
+            history.push('/')
+        } else {
+            history.push('/?q=' + encodeURIComponent(q))
+        }
+    }
+
     return (
         <div>
-            <SearchControl />
+            <SearchControl onSearch={onSearch} urlQ={q} />
             <p />
-            {q && searchState.hits.map(hit => <Article key={`${hit.DictionaryID}-${hit.ID}`} a={hit} />)}
-            {!q && <DictionariesList dictionaries={dicts} />}
+            {q && searchState.hits.map(hit => <ArticleView key={`${hit.DictionaryID}-${hit.ID}`} a={hit} />)}
+            {!q && <DictsList dictionaries={dicts} />}
         </div>
     )
-}
-
-function useURLSearchQuery(): URLSearchParams {
-    return new URLSearchParams(useLocation().search)
 }

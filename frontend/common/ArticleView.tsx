@@ -1,12 +1,13 @@
 import * as React from 'react'
-import { Article as A, useDicts } from '../reducers'
+import { Article } from './article'
+import { useDicts } from '../store'
 import { IconExternal } from '../icons'
 
-type ArticleProps = {
-    a: A
+type ArticleViewProps = {
+    a: Article
 }
 
-export const Article: React.VFC<ArticleProps> = ({ a }) => {
+export const ArticleView: React.VFC<ArticleViewProps> = ({ a }) => {
     const dicts = useDicts()
 
     return (

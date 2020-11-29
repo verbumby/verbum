@@ -11,7 +11,8 @@ import { configureStore } from '@reduxjs/toolkit'
 import { Provider } from 'react-redux'
 
 import { App } from './App'
-import { dictionariesListFetch, rootReducer } from './reducers'
+import { rootReducer } from './store'
+import { dictsFetch } from './common'
 import { VerbumAPIClientServer } from './verbum/server'
 
 global.verbumClient = new VerbumAPIClientServer({apiURL: 'http://localhost:8080'})
@@ -33,7 +34,7 @@ k.use(async ctx => {
     const stateStore = configureStore({
         reducer: rootReducer,
     })
-    await stateStore.dispatch(dictionariesListFetch())
+    await stateStore.dispatch(dictsFetch())
     const preloadedState = stateStore.getState()
 
     const routerContext: StaticRouterContext = {}
