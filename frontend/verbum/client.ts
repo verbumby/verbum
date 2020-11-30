@@ -1,8 +1,9 @@
-import { Article, Dict } from '../common'
+import { Article, Dict, Suggestion } from '../common'
 
 export interface VerbumAPIClient {
     getDictionaries(): Promise<Dict[]>
     search(q: string): Promise<Article[]>
+    suggest(q: string): Promise<Suggestion[]>
 }
 
 declare global {
@@ -18,5 +19,9 @@ export abstract class VerbumAPIClientImpl implements VerbumAPIClient {
 
     async search(q: string): Promise<Article[]> {
         return this.call<Article[]>('/api/search?q=' + encodeURIComponent(q))
+    }
+
+    async suggest(q: string): Promise<Suggestion[]> {
+        return this.call<Suggestion[]>('/api/suggest?q=' + encodeURIComponent(q))
     }
 }
