@@ -1,7 +1,9 @@
 import * as React from 'react'
-import { useEffect } from 'react'
+import { useEffect, useState, useRef } from 'react'
 
+import { Suggestions } from './Suggestions'
 import { IconBackspace, IconSearch } from '../../icons'
+import { Suggestion } from '../../common'
 
 type SearchControlProps = {
     urlQ: string
@@ -9,17 +11,30 @@ type SearchControlProps = {
 }
 
 export const SearchControl: React.VFC<SearchControlProps> = ({ urlQ, onSearch }) => {
-    const [q, setQ] = React.useState<string>(urlQ)
-    const qEl = React.useRef<HTMLInputElement>(null)
+    const [q, setQ] = useState<string>(urlQ)
+    const qEl = useRef<HTMLInputElement>(null)
 
     useEffect(() => {
         setQ(urlQ)
+        setSuggestions([])
         qEl.current.setSelectionRange(0, qEl.current.value.length)
     }, [urlQ])
 
     const onClearClick = () => {
         setQ('')
         qEl.current.focus()
+    }
+
+    const [suggestions, setSuggestions] = useState<Suggestion[]>([])
+
+    const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const v = e.target.value
+        setQ(v)
+        if (!v) {
+            setSuggestions([])
+        } else {
+            verbumClient.suggest(v).then(suggs => setSuggestions(suggs))
+        }
     }
 
     return (
@@ -31,7 +46,7 @@ export const SearchControl: React.VFC<SearchControlProps> = ({ urlQ, onSearch })
                         type="text"
                         name="q"
                         value={q}
-                        onChange={(e) => setQ(e.target.value)}
+                        onChange={onChange}
                         autoComplete="off"
                         autoFocus
                     />
@@ -43,8 +58,7 @@ export const SearchControl: React.VFC<SearchControlProps> = ({ urlQ, onSearch })
                         <IconSearch />
                     </button>
                 </div>
-                <ul className="suggestions" style={{ display: 'none' }}>
-                </ul>
+                {suggestions.length > 0 && <Suggestions suggestions={suggestions} />}
             </form>
         </div>
     )
