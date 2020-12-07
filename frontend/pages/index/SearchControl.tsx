@@ -14,10 +14,18 @@ export const SearchControl: React.VFC<SearchControlProps> = ({ urlQ, onSearch })
     const [q, setQ] = useState<string>(urlQ)
     const qEl = useRef<HTMLInputElement>(null)
 
+    const [suggestions, setSuggestions] = useState<Suggestion[]>([])
+    const [activeSuggestion, setActiveSuggestion] = useState<string>('')
+
+    const resetSuggestions = () => {
+        setSuggestions([])
+        setActiveSuggestion('')
+    }
+
     const urlQJustChanged = useRef<boolean>(false)
     useEffect(() => {
         setQ(urlQ)
-        setSuggestions([])
+        resetSuggestions()
         urlQJustChanged.current = true
     }, [urlQ])
     useEffect(() => {
@@ -33,13 +41,11 @@ export const SearchControl: React.VFC<SearchControlProps> = ({ urlQ, onSearch })
         qEl.current.focus()
     }
 
-    const [suggestions, setSuggestions] = useState<Suggestion[]>([])
-
     const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const v = e.target.value
         setQ(v)
         if (!v) {
-            setSuggestions([])
+            resetSuggestions()
         } else {
             // TODO: cancel prev request and check if it's the same promise
             verbumClient.suggest(v).then(suggs => setSuggestions(suggs))
@@ -48,8 +54,19 @@ export const SearchControl: React.VFC<SearchControlProps> = ({ urlQ, onSearch })
 
     const onBlur = (e: React.FocusEvent<HTMLInputElement>) => {
         if (suggestions.length > 0) {
-            setTimeout(() => setSuggestions([]), 150)
+            setTimeout(() => resetSuggestions(), 150)
         }
+    }
+
+    const setActiveSuggestinDelayedTimeoutID = useRef<number>(null)
+    const setActiveSuggestinDelayed = (s: string) => {
+        if (setActiveSuggestinDelayedTimeoutID.current) {
+            clearTimeout(setActiveSuggestinDelayedTimeoutID.current)
+        }
+        setActiveSuggestinDelayedTimeoutID.current = window.setTimeout(() => {
+            setActiveSuggestion(s)
+            setActiveSuggestinDelayedTimeoutID.current = null
+        }, 15)
     }
 
     return (
@@ -73,7 +90,14 @@ export const SearchControl: React.VFC<SearchControlProps> = ({ urlQ, onSearch })
                         <IconSearch />
                     </button>
                 </div>
-                {suggestions.length > 0 && <Suggestions onClick={onSearch} suggestions={suggestions} />}
+                {suggestions.length > 0 && (
+                    <Suggestions
+                        suggestions={suggestions}
+                        activeOne={activeSuggestion}
+                        onClick={onSearch}
+                        setActiveOne={setActiveSuggestinDelayed}
+                    />
+                )}
             </form>
         </div>
     )

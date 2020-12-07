@@ -19,10 +19,10 @@ textarea, input[type="text"], input[type="button"], input[type="submit"] {
 .search-input .button-clear:active {color: red;}
 
 .suggestions {position: absolute; width: 100%; box-sizing: border-box;
-  background: white; padding: 0; margin: 0; list-style: none;
+  background: white; padding: 0; margin: 0; list-style: none; cursor: pointer;
   border: 1px solid lightgrey; border-top: none; box-shadow: 0 2px 4px rgba(0,0,0,0.1)}
 .suggestions li {padding: 5px;}
-.suggestions li.active {background-color: #e3e3e3; cursor: pointer;}
+.suggestions li.active {background-color: #e3e3e3;}
 
 .article {padding: 6px; border-bottom: 1px solid lightgrey;}
 .article:last-child {border-bottom: none;}
