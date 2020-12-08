@@ -52,6 +52,14 @@ export const SearchControl: React.VFC<SearchControlProps> = ({ urlQ, onSearch })
         }
     }
 
+    const onKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+        switch (e.key) {
+            case "Escape":
+                resetSuggestions()
+                break
+        }
+    }
+
     const onBlur = (e: React.FocusEvent<HTMLInputElement>) => {
         if (suggestions.length > 0) {
             setTimeout(() => resetSuggestions(), 150)
@@ -70,6 +78,7 @@ export const SearchControl: React.VFC<SearchControlProps> = ({ urlQ, onSearch })
                         name="q"
                         value={q}
                         onChange={onChange}
+                        onKeyDown={onKeyDown}
                         onBlur={onBlur}
                         autoComplete="off"
                     />
