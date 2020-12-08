@@ -3,7 +3,7 @@ import { useEffect, useState, useRef } from 'react'
 
 import { Suggestions } from './Suggestions'
 import { IconBackspace, IconSearch } from '../../icons'
-import { Suggestion } from '../../common'
+import { Suggestion, useDelayed } from '../../common'
 
 type SearchControlProps = {
     urlQ: string
@@ -58,16 +58,7 @@ export const SearchControl: React.VFC<SearchControlProps> = ({ urlQ, onSearch })
         }
     }
 
-    const setActiveSuggestinDelayedTimeoutID = useRef<number>(null)
-    const setActiveSuggestinDelayed = (s: string) => {
-        if (setActiveSuggestinDelayedTimeoutID.current) {
-            clearTimeout(setActiveSuggestinDelayedTimeoutID.current)
-        }
-        setActiveSuggestinDelayedTimeoutID.current = window.setTimeout(() => {
-            setActiveSuggestion(s)
-            setActiveSuggestinDelayedTimeoutID.current = null
-        }, 15)
-    }
+    const setActiveSuggestionDelayed = useDelayed(setActiveSuggestion, 15)
 
     return (
         <div id="search">
@@ -95,7 +86,7 @@ export const SearchControl: React.VFC<SearchControlProps> = ({ urlQ, onSearch })
                         suggestions={suggestions}
                         activeOne={activeSuggestion}
                         onClick={onSearch}
-                        setActiveOne={setActiveSuggestinDelayed}
+                        setActiveOne={setActiveSuggestionDelayed}
                     />
                 )}
             </form>
