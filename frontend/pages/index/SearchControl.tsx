@@ -98,6 +98,7 @@ function useSuggestions(): [
     const [suggs, setSuggs] = useState<Suggestion[]>([])
     const [active, setActive] = useState<number>(-1)
     const [hard, setHard] = useState<boolean>(false)
+    const promise = useRef<Promise<Suggestion[]>>(null)
 
     const resetSuggestions = () => {
         setSuggs([])
@@ -108,10 +109,16 @@ function useSuggestions(): [
     const onChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
         if (!e.target.value) {
             resetSuggestions()
+            promise.current = null
         } else {
             setHard(false)
-            // TODO: cancel prev request and check if it's the same promise
-            verbumClient.suggest(e.target.value).then(suggs => {
+            // TODO: cancel prev request
+            const p = verbumClient.suggest(e.target.value)
+            promise.current = p
+            p.then(suggs => {
+                if (promise.current != p) {
+                    return
+                }
                 if (active > suggs.length - 1) {
                     setActive(-1)
                     setHard(false)
