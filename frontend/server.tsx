@@ -9,6 +9,7 @@ import koaMount from 'koa-mount'
 import { StaticRouter, StaticRouterContext } from 'react-router'
 import { configureStore } from '@reduxjs/toolkit'
 import { Provider } from 'react-redux'
+import { Helmet } from "react-helmet";
 
 import { App } from './App'
 import { rootReducer } from './store'
@@ -49,15 +50,16 @@ k.use(async ctx => {
             </StaticRouter>
         </Provider>
     )
+    const helmet = Helmet.renderStatic()
 
     if (routerContext.url) {
         ctx.redirect(routerContext.url)
         return
     }
 
-
     let body = indexhtml
-    body = body.replace('HEAD_TITLE_PLACEHOLDER', 'Some TItle ololo')
+    body = body.replace('HEAD_TITLE_PLACEHOLDER', helmet.title.toString())
+    body = body.replace('HEAD_META_PLACEHOLDER', helmet.meta.toString())
     body = body.replace('PRELOADED_STATE_PLACEHOLDER', JSON.stringify(preloadedState).replace(/</g, '\\u003c'))
     body = body.replace('BODY_PLACEHOLDER', reactRendered)
     ctx.body = body
