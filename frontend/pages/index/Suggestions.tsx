@@ -3,19 +3,19 @@ import { Suggestion } from '../../common'
 
 type SuggestionsProps = {
     suggestions: Suggestion[],
-    activeOne: string,
+    active: number,
     onClick: (s: string) => void,
-    setActiveOne: (s: string) => void,
+    setActive: (n: number) => void,
 }
-export const Suggestions: React.VFC<SuggestionsProps> = ({ suggestions, activeOne, onClick, setActiveOne }) => (
+export const Suggestions: React.VFC<SuggestionsProps> = ({ suggestions, active, onClick, setActive }) => (
     <ul className="suggestions">
-        {suggestions.map(s => (
+        {suggestions.map((s, i) => (
             <li
                 key={s}
-                className={s === activeOne ? 'active': ''}
+                className={i === active ? 'active': ''}
                 onClick={() => onClick(s)}
-                onMouseEnter={() => setActiveOne(s)}
-                onMouseLeave={() => setActiveOne('')}
+                onMouseEnter={() => setActive(i)}
+                onMouseLeave={() => setActive(-1)}
             >{s}</li>
         ))}
     </ul>

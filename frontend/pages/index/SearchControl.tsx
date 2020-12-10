@@ -14,13 +14,13 @@ export const SearchControl: React.VFC<SearchControlProps> = ({ urlQ, onSearch })
     const [q, setQ] = useState<string>(urlQ)
     const qEl = useRef<HTMLInputElement>(null)
 
-    const [suggestions, setSuggestions] = useState<Suggestion[]>([])
-    const [activeSuggestion, setActiveSuggestion] = useState<string>('')
-
-    const resetSuggestions = () => {
-        setSuggestions([])
-        setActiveSuggestion('')
-    }
+    let [
+        suggestions,
+        resetSuggestions,
+        calculateQ,
+        inputProps,
+        suggestionViewProps,
+    ] = useSuggestions()
 
     const urlQJustChanged = useRef<boolean>(false)
     useEffect(() => {
@@ -38,49 +38,27 @@ export const SearchControl: React.VFC<SearchControlProps> = ({ urlQ, onSearch })
 
     const onClearClick = () => {
         setQ('')
+        resetSuggestions()
         qEl.current.focus()
     }
 
-    const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const v = e.target.value
-        setQ(v)
-        if (!v) {
-            resetSuggestions()
-        } else {
-            // TODO: cancel prev request and check if it's the same promise
-            verbumClient.suggest(v).then(suggs => setSuggestions(suggs))
-        }
-    }
-
-    const onKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-        switch (e.key) {
-            case "Escape":
-                resetSuggestions()
-                break
-        }
-    }
-
-    const onBlur = (e: React.FocusEvent<HTMLInputElement>) => {
-        if (suggestions.length > 0) {
-            setTimeout(() => resetSuggestions(), 150)
-        }
-    }
-
-    const setActiveSuggestionDelayed = useDelayed(setActiveSuggestion, 15)
+    const { onChange } = inputProps
+    inputProps = { ...inputProps, onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
+        setQ(e.target.value)
+        onChange(e)
+    }}
 
     return (
         <div id="search">
-            <form action="/" method="get" onSubmit={e => { e.preventDefault(); onSearch(q) }} >
+            <form action="/" method="get" onSubmit={e => { e.preventDefault(); onSearch(calculateQ(q)) }} >
                 <div className="search-input">
                     <input
                         ref={qEl}
                         type="text"
                         name="q"
-                        value={q}
-                        onChange={onChange}
-                        onKeyDown={onKeyDown}
-                        onBlur={onBlur}
+                        value={calculateQ(q)}
                         autoComplete="off"
+                        {...inputProps}
                     />
                     {q && (<span className="btn button-clear" onClick={onClearClick}>
                         <IconBackspace />
@@ -91,14 +69,104 @@ export const SearchControl: React.VFC<SearchControlProps> = ({ urlQ, onSearch })
                     </button>
                 </div>
                 {suggestions.length > 0 && (
-                    <Suggestions
-                        suggestions={suggestions}
-                        activeOne={activeSuggestion}
-                        onClick={onSearch}
-                        setActiveOne={setActiveSuggestionDelayed}
-                    />
+                    <Suggestions onClick={onSearch} {...suggestionViewProps} />
                 )}
             </form>
         </div>
     )
+}
+
+type useSuggestionsSuggestionsViewProps = {
+    suggestions: Suggestion[],
+    active: number,
+    setActive: (n: number) => void,
+}
+
+type useSuggestionsInputProps = {
+    onChange: (e: React.ChangeEvent<HTMLInputElement>) => void,
+    onKeyDown: (e: React.KeyboardEvent<HTMLInputElement>) => void,
+    onBlur: (e: React.FocusEvent<HTMLInputElement>) => void
+}
+
+function useSuggestions(): [
+    Suggestion[],
+    () => void,
+    (q: string) => string,
+    useSuggestionsInputProps,
+    useSuggestionsSuggestionsViewProps,
+] {
+    const [suggs, setSuggs] = useState<Suggestion[]>([])
+    const [active, setActive] = useState<number>(-1)
+    const [hard, setHard] = useState<boolean>(false)
+
+    const resetSuggestions = () => {
+        setSuggs([])
+        setActive(-1)
+        setHard(false)
+    }
+
+    const onChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
+        if (!e.target.value) {
+            resetSuggestions()
+        } else {
+            setHard(false)
+            // TODO: cancel prev request and check if it's the same promise
+            verbumClient.suggest(e.target.value).then(suggs => {
+                if (active > suggs.length - 1) {
+                    setActive(-1)
+                    setHard(false)
+                }
+                setSuggs(suggs)
+            })
+        }
+    }
+
+    const onKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+        switch (e.key) {
+            case "Escape":
+                resetSuggestions()
+                break
+            case "ArrowDown":
+                if (active + 1 < suggs.length) {
+                    setActive(active + 1)
+                    setHard(true)
+                } else {
+                    setActive(-1)
+                    setHard(true)
+                }
+                break
+            case "ArrowUp":
+                if (active - 1 >= -1) {
+                    setActive(active - 1)
+                    setHard(true)
+                } else {
+                    setActive(suggs.length - 1)
+                    setHard(true)
+                }
+                break
+        }
+    }
+
+    const onBlur = (e: React.FocusEvent<HTMLInputElement>) => {
+        if (suggs.length > 0) {
+            setTimeout(() => resetSuggestions(), 150)
+        }
+    }
+
+    const setActiveSuggestionDelayed = useDelayed((n: number) => {
+        setActive(n)
+        setHard(false)
+    }, 15)
+
+    const calculateQ = (q: string): string => {
+        return hard && active > -1 ? suggs[active] : q
+    }
+
+    return [
+        suggs,
+        resetSuggestions,
+        calculateQ,
+        {onChange, onKeyDown, onBlur},
+        {suggestions: suggs, active, setActive: setActiveSuggestionDelayed},
+    ]
 }
