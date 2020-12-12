@@ -6,16 +6,15 @@ import { renderToString } from 'react-dom/server'
 import Koa from 'koa'
 import koaStatic from 'koa-static'
 import koaMount from 'koa-mount'
-import { StaticRouter, StaticRouterContext } from 'react-router'
+import { matchPath, StaticRouter, StaticRouterContext } from 'react-router'
 import { configureStore } from '@reduxjs/toolkit'
 import { Provider } from 'react-redux'
 import { Helmet } from "react-helmet";
 
 import { App } from './App'
 import { rootReducer } from './store'
-import { dictsFetch } from './common'
-import { search } from './pages/index'
 import { VerbumAPIClientServer } from './verbum/server'
+import { routes } from './routes'
 
 global.verbumClient = new VerbumAPIClientServer({apiURL: 'http://localhost:8080'})
 
@@ -36,10 +35,18 @@ k.use(async ctx => {
     const store = configureStore({
         reducer: rootReducer,
     })
-    await Promise.all([
-        store.dispatch(dictsFetch(ctx.URL.searchParams)),
-        store.dispatch(search(ctx.URL.searchParams)),
-    ])
+    const promises: Promise<void>[] = []
+    routes.some(route => {
+        const match = matchPath(ctx.URL.pathname, route)
+        if (match) {
+            for (const dataLoader of route.dataLoaders) {
+                promises.push(store.dispatch(dataLoader(match, ctx.URL.searchParams)))
+            }
+        }
+        return match
+    })
+    await Promise.all(promises)
+
     const preloadedState = store.getState()
 
     const routerContext: StaticRouterContext = {}

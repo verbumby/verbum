@@ -1,3 +1,5 @@
+import { match } from 'react-router-dom'
+
 import { Article } from '../../common/article'
 import { AppThunkAction } from '../../store'
 
@@ -62,7 +64,7 @@ export function searchReducer(state: SearchState = {q: '', hits: []}, a: SearchA
     }
 }
 
-export const search = (urlSearch: URLSearchParams): AppThunkAction => {
+export const search = (match: match, urlSearch: URLSearchParams): AppThunkAction => {
     return async (dispatch, getState): Promise<void> => {
         try {
             const q = urlSearch.get('q')

@@ -1,3 +1,4 @@
+import { match } from 'react-router-dom'
 import { AppThunkAction } from '../store'
 import { Dict } from './dict'
 
@@ -23,7 +24,7 @@ export function dictsReducer(state:DictsState = [], a:DictsActions): DictsState 
     }
 }
 
-export const dictsFetch = (urlSearch: URLSearchParams): AppThunkAction => {
+export const dictsFetch = (match: match, urlSearch: URLSearchParams): AppThunkAction => {
     return async (dispatch) => {
         try {
             dispatch(dictsSet(await verbumClient.getDictionaries()))

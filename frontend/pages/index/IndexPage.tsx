@@ -1,7 +1,7 @@
 import * as React from 'react'
 import { useEffect } from 'react'
 import { useDispatch } from 'react-redux'
-import { useHistory } from 'react-router-dom'
+import { useHistory, useRouteMatch } from 'react-router-dom'
 import { Helmet } from "react-helmet"
 
 import { useDicts, useSearchState } from '../../store'
@@ -12,6 +12,7 @@ import { ArticleView, useURLSearch } from '../../common'
 
 export const IndexPage: React.VFC = () => {
     const history = useHistory()
+    const match = useRouteMatch()
     const urlSearch = useURLSearch()
     const q: string = urlSearch.get('q') || ''
     const dicts = useDicts()
@@ -19,7 +20,7 @@ export const IndexPage: React.VFC = () => {
 
     const dispatch = useDispatch()
     useEffect(() => {
-        dispatch(search(urlSearch))
+        dispatch(search(match, urlSearch))
         return () => dispatch(searchReset())
     }, [q])
 
