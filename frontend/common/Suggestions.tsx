@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { Suggestion } from '../../common'
+import { Suggestion } from '.'
 
 type SuggestionsProps = {
     suggestions: Suggestion[],

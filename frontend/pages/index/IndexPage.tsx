@@ -1,17 +1,15 @@
 import * as React from 'react'
 import { useEffect } from 'react'
 import { useDispatch } from 'react-redux'
-import { useHistory, useRouteMatch } from 'react-router-dom'
+import { useRouteMatch } from 'react-router-dom'
 import { Helmet } from "react-helmet"
 
 import { useDicts, useSearchState } from '../../store'
 import { search, searchReset } from './search'
-import { SearchControl } from './SearchControl'
 import { DictsList } from './DictsList'
-import { ArticleView, useURLSearch } from '../../common'
+import { ArticleView, useURLSearch, SearchControl } from '../../common'
 
 export const IndexPage: React.VFC = () => {
-    const history = useHistory()
     const match = useRouteMatch()
     const urlSearch = useURLSearch()
     const q: string = urlSearch.get('q') || ''
@@ -23,14 +21,6 @@ export const IndexPage: React.VFC = () => {
         dispatch(search(match, urlSearch))
         return () => dispatch(searchReset())
     }, [q])
-
-    const onSearch = (q: string) => {
-        if (!q) {
-            history.push('/')
-        } else {
-            history.push('/?q=' + encodeURIComponent(q))
-        }
-    }
 
     const renderDictList = (): React.ReactNode => (
         <>
@@ -55,7 +45,7 @@ export const IndexPage: React.VFC = () => {
 
     return (
         <div>
-            <SearchControl onSearch={onSearch} urlQ={q} />
+            <SearchControl urlQ={q} />
             {!q ? renderDictList() : renderSearchResults() }
         </div>
     )

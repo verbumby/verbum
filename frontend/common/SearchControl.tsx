@@ -2,17 +2,26 @@ import * as React from 'react'
 import { useEffect, useState, useRef } from 'react'
 
 import { Suggestions } from './Suggestions'
-import { IconBackspace, IconSearch } from '../../icons'
-import { Suggestion, useDelayed } from '../../common'
+import { IconBackspace, IconSearch } from '../icons'
+import { Suggestion, useDelayed } from '.'
+import { useHistory } from 'react-router-dom'
 
 type SearchControlProps = {
     urlQ: string
-    onSearch: (q: string) => void
 }
 
-export const SearchControl: React.VFC<SearchControlProps> = ({ urlQ, onSearch }) => {
+export const SearchControl: React.VFC<SearchControlProps> = ({ urlQ }) => {
     const [q, setQ] = useState<string>(urlQ)
     const qEl = useRef<HTMLInputElement>(null)
+    const history = useHistory()
+
+    const onSearch = (q: string) => {
+        if (!q) {
+            history.push('/')
+        } else {
+            history.push('/?q=' + encodeURIComponent(q))
+        }
+    }
 
     let [
         suggestions,

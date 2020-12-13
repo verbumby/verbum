@@ -24,12 +24,14 @@ func APIArticle(w http.ResponseWriter, rctx *chttp.Context) error {
 	type articleview struct {
 		ID           string
 		Title        string
+		Headword     []string
 		Content      string
 		DictionaryID string
 	}
 	resp := articleview{
 		ID:           a.ID,
 		Title:        a.Title,
+		Headword:     a.Headword,
 		Content:      string(a.Dictionary.ToHTML(a.Content, a.Title)),
 		DictionaryID: a.Dictionary.ID(),
 	}
