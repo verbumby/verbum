@@ -2,6 +2,8 @@ import { match } from "react-router-dom"
 import { Article } from "../../common"
 import { AppThunkAction } from "../../store"
 
+export type ArticleState = Article
+
 export type MatchParams = {
     dictID: string
     articleID: string
@@ -43,7 +45,7 @@ export function articleReset(): ArticleResetAction {
 
 export type ArticleActions = ArticleFetchKickOffAction | ArticleFetchSuccessAction | ArticleResetAction
 
-export function articleReducer(state: Article = null, a: ArticleActions): Article {
+export function articleReducer(state: ArticleState = null, a: ArticleActions): ArticleState {
     switch (a.type) {
         case ARTICLE_FETCH_KICKOFF:
             return null

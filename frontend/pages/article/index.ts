@@ -1,2 +1,2 @@
 export { ArticlePage } from './ArticlePage'
-export { articleReset, ArticleActions, articleReducer, articleFetch } from './article'
+export { ArticleState, articleReset, ArticleActions, articleReducer, articleFetch } from './article'

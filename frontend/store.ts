@@ -3,14 +3,14 @@ import { useSelector as useSelectorParent } from 'react-redux'
 import { SearchActions, SearchState, searchReducer } from './pages/index/index'
 import { DictsActions, DictsState, dictsReducer, Article } from './common'
 import { ThunkAction } from '@reduxjs/toolkit'
-import { ArticleActions, articleReducer } from './pages/article'
+import { ArticleState, ArticleActions, articleReducer } from './pages/article'
 
 type AllActions = DictsActions | SearchActions | ArticleActions
 
 export type RootState = {
     dicts: DictsState
     search: SearchState
-    article: Article
+    article: ArticleState
 }
 
 export const rootReducer = combineReducers<RootState, AllActions>({
@@ -34,8 +34,8 @@ export function useSearchState(): SearchState {
     return useSelector<SearchState>(state => state.search)
 }
 
-export function useArticle(): Article {
-    return useSelector<Article>(state => state.article)
+export function useArticle(): ArticleState {
+    return useSelector<ArticleState>(state => state.article)
 }
 
 export type AppThunkAction<ReturnType = void> = ThunkAction<Promise<ReturnType>, RootState, unknown, AllActions>
