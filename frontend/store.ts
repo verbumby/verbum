@@ -1,7 +1,7 @@
 import { combineReducers } from 'redux'
 import { useSelector as useSelectorParent } from 'react-redux'
 import { SearchActions, SearchState, searchReducer } from './pages/index/index'
-import { DictsActions, DictsState, dictsReducer, Article } from './common'
+import { Dict, DictsActions, DictsState, dictsReducer } from './common'
 import { ThunkAction } from '@reduxjs/toolkit'
 import { ArticleState, ArticleActions, articleReducer } from './pages/article'
 
@@ -28,6 +28,10 @@ export function useSelector<TSelected = unknown>(
 
 export function useDicts(): DictsState {
     return useSelector<DictsState>(state => state.dicts)
+}
+
+export function useDict(id: string): Dict {
+    return useDicts().find(d => d.ID === id)
 }
 
 export function useSearchState(): SearchState {

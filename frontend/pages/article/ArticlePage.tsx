@@ -3,13 +3,13 @@ import { Helmet } from 'react-helmet'
 import { useDispatch } from 'react-redux'
 import { useRouteMatch } from 'react-router-dom'
 import { ArticleView, useURLSearch } from '../../common'
-import { useArticle, useDicts } from '../../store'
+import { useArticle, useDict } from '../../store'
 import { articleFetch, articleReset, MatchParams } from './article'
 
 export const ArticlePage: React.VFC = () => {
-    const dicts = useDicts()
     const match = useRouteMatch<MatchParams>()
     const urlSearch = useURLSearch()
+    const dict = useDict(match.params.dictID)
     const a = useArticle()
 
     const dispatch = useDispatch()
@@ -27,7 +27,7 @@ export const ArticlePage: React.VFC = () => {
     return (
         <>
             <Helmet>
-                <title>{a.Title} - {dicts.find(d => d.ID === a.DictionaryID).Title}</title>
+                <title>{a.Title} - {dict.Title}</title>
                 <meta name="robots" content="index, nofollow" />
             </Helmet>
             <div>

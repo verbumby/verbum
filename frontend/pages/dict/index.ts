@@ -1,0 +1,1 @@
+export { DictPage } from './DictPage'
