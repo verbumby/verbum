@@ -179,9 +179,3 @@ func Dictionary(w http.ResponseWriter, rctx *chttp.Context) error {
 
 	return nil
 }
-
-func calcPages(c, total int) []int {
-	result := []int{}
-
-	return result
-}
