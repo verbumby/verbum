@@ -1,4 +1,5 @@
 import { match } from "react-router-dom"
+import { URLSearchParams } from "url"
 import { Article } from "../../common"
 import { AppThunkAction } from "../../store"
 
@@ -58,7 +59,7 @@ export function articleReducer(state: ArticleState = null, a: ArticleActions): A
     }
 }
 
-export const articleFetch = (match: match<MatchParams>, urlSearch: URLSearchParams): AppThunkAction => {
+export const articleFetch = (match: match<MatchParams>): AppThunkAction => {
     return async (dispatch, getState): Promise<void> => {
         try {
             const { dictID, articleID } = match.params
@@ -70,3 +71,6 @@ export const articleFetch = (match: match<MatchParams>, urlSearch: URLSearchPara
         }
     }
 }
+
+export const articleFetchServer = (match: match<MatchParams>, urlSearchParams: URLSearchParams): AppThunkAction =>
+    articleFetch(match)

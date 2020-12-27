@@ -8,14 +8,13 @@ import { articleFetch, articleReset, MatchParams } from './article'
 
 export const ArticlePage: React.VFC = () => {
     const match = useRouteMatch<MatchParams>()
-    const urlSearch = useURLSearch()
     const dict = useDict(match.params.dictID)
     const a = useArticle()
 
     const dispatch = useDispatch()
     React.useEffect(() => {
         if (!a) {
-            dispatch(articleFetch(match, urlSearch))
+            dispatch(articleFetch(match))
         }
         return () => dispatch(articleReset())
     }, [match.path])

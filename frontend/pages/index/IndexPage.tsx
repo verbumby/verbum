@@ -5,14 +5,14 @@ import { useRouteMatch } from 'react-router-dom'
 import { Helmet } from "react-helmet"
 
 import { useDicts, useSearchState } from '../../store'
-import { search, searchReset } from './search'
+import { search, searchReset, useURLSearch } from './search'
 import { DictsList } from './DictsList'
-import { ArticleView, useURLSearch, SearchControl } from '../../common'
+import { ArticleView, SearchControl } from '../../common'
 
 export const IndexPage: React.VFC = () => {
     const match = useRouteMatch()
     const urlSearch = useURLSearch()
-    const q: string = urlSearch.get('q') || ''
+    const q = urlSearch.get('q')
     const dicts = useDicts()
     const searchState = useSearchState()
 
@@ -36,7 +36,7 @@ export const IndexPage: React.VFC = () => {
     const renderSearchResults = (): React.ReactNode => (
         <>
             <Helmet>
-                <title>face - Пошук</title>
+                <title>{q} - Пошук</title>
                 <meta name="robots" content="noindex, nofollow" />
             </Helmet>
             {searchState.hits.map(hit => <ArticleView key={`${hit.DictionaryID}-${hit.ID}`} a={hit} />)}

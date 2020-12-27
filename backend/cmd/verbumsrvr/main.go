@@ -88,6 +88,8 @@ func bootstrapServer() error {
 	r := mux.NewRouter()
 	// statics := http.FileServer(http.Dir("statics"))
 	r.HandleFunc("/api/dictionaries/{dictionary:[a-z-]+}/articles/{article:[a-zA-Z0-9-]+}", chttp.MakeHandler(handlers.APIArticle, chttp.ContentTypeJSONMiddleware))
+	r.HandleFunc("/api/dictionaries/{dictionary:[a-z-]+}/letterfilter", chttp.MakeHandler(handlers.APILetterFilter, chttp.ContentTypeJSONMiddleware))
+	r.HandleFunc("/api/dictionaries/{dictionary:[a-z-]+}/articles", chttp.MakeHandler(handlers.APIDictionaryArticles, chttp.ContentTypeJSONMiddleware))
 	r.HandleFunc("/api/dictionaries", chttp.MakeHandler(handlers.APIDictionariesList, chttp.ContentTypeJSONMiddleware))
 	r.HandleFunc("/api/search", chttp.MakeHandler(handlers.APISearch, chttp.ContentTypeJSONMiddleware))
 	r.HandleFunc("/api/suggest", chttp.MakeHandler(handlers.APISuggest, chttp.ContentTypeJSONMiddleware))

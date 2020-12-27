@@ -1,2 +1,2 @@
-export { SearchActions, SearchState, searchReducer, search } from './search'
+export { SearchActions, SearchState, searchReducer, searchServer } from './search'
 export { IndexPage } from './IndexPage'

@@ -5,3 +5,11 @@ export type Article = {
     Content: string
     DictionaryID: string
 }
+
+export type ArticleList = {
+    Articles: Article[]
+    Pagination: {
+        Current: number
+        Total: number
+    }
+}
