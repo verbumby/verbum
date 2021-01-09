@@ -1,10 +1,10 @@
 const path = require('path')
 const { CleanWebpackPlugin } = require('clean-webpack-plugin')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
-const FaviconsWebpackPlugin = require('favicons-webpack-plugin')
 const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer')
 const MiniCssExtractPlugin = require('mini-css-extract-plugin')
 const CssMinimizerPlugin = require('css-minimizer-webpack-plugin')
+const CopyPlugin = require('copy-webpack-plugin')
 
 const prod = process.env.NODE_ENV === 'production'
 const mode = prod ? 'production' : 'development'
@@ -73,11 +73,8 @@ const browser = {
             filename: '../index.html',
             publicPath: '/statics',
         }),
-        new FaviconsWebpackPlugin({
-            logo: './frontend/favicon.png',
-            prefix: prod ? 'favicon-[contenthash]' : 'favicon',
-            publicPath: '/statics/',
-            inject: true,
+        new CopyPlugin({
+            patterns: [{ from: 'frontend/favicon.png' }]
         }),
         new BundleAnalyzerPlugin({
             analyzerMode: 'static',

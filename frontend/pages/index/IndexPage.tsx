@@ -26,6 +26,9 @@ export const IndexPage: React.VFC = () => {
         <>
             <Helmet>
                 <title>Verbum - Анлайн Слоўнік Беларускай Мовы</title>
+                <meta name="description" content="Verbum - Анлайн Слоўнік Беларускай Мовы" />
+                <meta property="og:title" content="Verbum - Анлайн Слоўнік Беларускай Мовы" />
+                <meta property="og:description" content="Verbum - Анлайн Слоўнік Беларускай Мовы" />
                 <meta name="robots" content="index, follow" />
             </Helmet>
             <p />
@@ -37,6 +40,9 @@ export const IndexPage: React.VFC = () => {
         <>
             <Helmet>
                 <title>{q} - Пошук</title>
+                <meta name="description" content={`${q} - Пошук`} />
+                <meta property="og:title" content={`${q} - Пошук`} />
+                <meta property="og:description" content={`${q} - Пошук`} />
                 <meta name="robots" content="noindex, nofollow" />
             </Helmet>
             {searchState.hits.map(hit => <ArticleView key={`${hit.DictionaryID}-${hit.ID}`} a={hit} />)}

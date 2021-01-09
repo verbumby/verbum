@@ -39,6 +39,9 @@ export const DictPage: React.VFC = ({ }) => {
         <>
             <Helmet>
                 <title>{dict.Title}</title>
+                <meta name="description" content={`${dict.Title}`} />
+                <meta property="og:title" content={`${dict.Title}`} />
+                <meta property="og:description" content={`${dict.Title}`} />
                 <meta name="robots" content="noindex, follow" />
             </Helmet>
             <h4 className="ml-1 mr-1 mb-3">{dict.Title}</h4>

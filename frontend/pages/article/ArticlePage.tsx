@@ -27,6 +27,9 @@ export const ArticlePage: React.VFC = () => {
         <>
             <Helmet>
                 <title>{a.Title} - {dict.Title}</title>
+                <meta name="description" content={`${a.Title} - ${dict.Title}`} />
+                <meta property="og:title" content={`${a.Title} - ${dict.Title}`} />
+                <meta property="og:description" content={`${a.Title} - ${dict.Title}`} />
                 <meta name="robots" content="index, nofollow" />
             </Helmet>
             <div>

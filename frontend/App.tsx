@@ -5,9 +5,13 @@ import './styles.css'
 
 import { Footer, Logo } from './common'
 import { routes } from './routes'
+import { Helmet } from "react-helmet"
 
 const App: React.VFC = () => (
     <>
+        <Helmet>
+            <meta property="og:image" content="/statics/favicon.png?v1" />
+        </Helmet>
         <LoadingBarContainer />
         <div className="content">
             <Logo />
