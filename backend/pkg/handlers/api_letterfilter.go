@@ -100,7 +100,17 @@ func APILetterFilter(w http.ResponseWriter, rctx *chttp.Context) error {
 		letterFilter.AddLevel(aggsrespbody.Aggregations.Prefix.Letter3.Letter3.Letter3.Buckets)
 	}
 
-	if err := json.NewEncoder(w).Encode(letterFilter.Links()); err != nil {
+	type letterfilterview struct {
+		DictID  string
+		Prefix  string
+		Entries [][]htmlui.LetterFilterLink
+	}
+
+	if err := json.NewEncoder(w).Encode(letterfilterview{
+		DictID:  dictID,
+		Prefix:  string(prefix),
+		Entries: letterFilter.Links(),
+	}); err != nil {
 		return fmt.Errorf("encode response: %w", err)
 	}
 

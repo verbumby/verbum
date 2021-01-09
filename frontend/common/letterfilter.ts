@@ -5,4 +5,8 @@ export type LetterFilterEntry = {
     Title: string
 }
 
-export type LetterFilter = LetterFilterEntry[][]
+export type LetterFilter = {
+    DictID: string
+    Prefix: string
+    Entries: LetterFilterEntry[][]
+}

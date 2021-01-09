@@ -67,6 +67,13 @@ export const letterFilterFetch = (match: match<MatchParams>, urlSearch: URLSearc
         try {
             const { dictID } = match.params
             const prefix = urlSearch.get('prefix')
+            const state = getState()
+            if (state.letterFilter
+                && state.letterFilter.DictID === dictID
+                && state.letterFilter.Prefix === prefix
+            ) {
+                return
+            }
             dispatch(letterFilterFetchKickOff(dictID, prefix))
             dispatch(letterFilterFetchSuccess(await verbumClient.getLetterFilter(dictID, prefix)))
         } catch (err) {

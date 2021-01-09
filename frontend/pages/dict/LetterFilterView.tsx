@@ -10,7 +10,7 @@ type LetterFilterViewProps = {
 export const LetterFilterView: React.VFC<LetterFilterViewProps> = ({ letterFilter, prefixToURL }) => {
     return (
         <div className="letter-filter">
-            {letterFilter.map((lfl, i) => (
+            {letterFilter.Entries.map((lfl, i) => (
                 <div key={i} className="letter-filter-level mt-1 mb-1">
                     {lfl.map(l => (
                         <Link
