@@ -31,6 +31,14 @@ function letterFilterFetchSuccess(letterFilter: LetterFilter): LetterFilterFetch
     }
 }
 
+const LETTER_FILTER_FETCH_FAILURE = 'LETTER_FILTER/FETCH/FAILURE'
+type LetterFilterFetchFailureAction = {
+    type: typeof LETTER_FILTER_FETCH_FAILURE
+}
+function letterFilterFetchFailure(): LetterFilterFetchFailureAction {
+    return { type: LETTER_FILTER_FETCH_FAILURE }
+}
+
 const LETTER_FILTER_RESET = 'LETTER_FILTER/RESET'
 type LetterFilterResetAction = {
     type: typeof LETTER_FILTER_RESET
@@ -39,7 +47,7 @@ export function letterFilterReset(): LetterFilterResetAction {
     return { type: LETTER_FILTER_RESET }
 }
 
-export type LetterFilterActions = LetterFilterFetchKickOffAction | LetterFilterFetchSuccessAction | LetterFilterResetAction
+export type LetterFilterActions = LetterFilterFetchKickOffAction | LetterFilterFetchSuccessAction | LetterFilterFetchFailureAction | LetterFilterResetAction
 
 export function letterFilterReducer(state: LetterFilterState = null, a: LetterFilterActions): LetterFilterState {
     switch (a.type) {
@@ -62,6 +70,7 @@ export const letterFilterFetch = (match: match<MatchParams>, urlSearch: URLSearc
             dispatch(letterFilterFetchKickOff(dictID, prefix))
             dispatch(letterFilterFetchSuccess(await verbumClient.getLetterFilter(dictID, prefix)))
         } catch (err) {
+            dispatch(letterFilterFetchFailure())
             console.log('ERROR: ', err)
             throw err
         }

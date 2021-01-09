@@ -36,6 +36,14 @@ function dictArticlesFetchSuccess(articleList: ArticleList): DictArticlesFetchSu
     return {type: DICT_ARTICLES_FETCH_SUCCESS, articleList}
 }
 
+const DICT_ARTICLES_FETCH_FAILURE = 'DICT_ARTICLES/FETCH/FAILURE'
+type DictArticlesFetchFailureAction = {
+    type: typeof DICT_ARTICLES_FETCH_FAILURE
+}
+function dictArticlesFetchFailure(): DictArticlesFetchFailureAction {
+    return {type: DICT_ARTICLES_FETCH_FAILURE}
+}
+
 const DICT_ARTICLES_RESET = 'DICT_ARTICLES/RESET'
 type DictArticlesResetAction = {
     type: typeof DICT_ARTICLES_RESET
@@ -44,7 +52,7 @@ export function dictArticlesReset(): DictArticlesResetAction {
     return {type:DICT_ARTICLES_RESET}
 }
 
-export type DictArticlesActions = DictArticlesFetchKickoffAction | DictArticlesFetchSuccessAction | DictArticlesResetAction
+export type DictArticlesActions = DictArticlesFetchKickoffAction | DictArticlesFetchSuccessAction | DictArticlesFetchFailureAction | DictArticlesResetAction
 
 export function dictArticlesReducer(state: DictArticlesState = null, a: DictArticlesActions): DictArticlesState {
     switch (a.type) {
@@ -68,6 +76,7 @@ export const dictArticlesFetch = (match: match<MatchParams>, urlSearch: URLSearc
             dispatch(dictArticlesFetchKickOff(dictID, prefix, page))
             dispatch(dictArticlesFetchSuccess(await verbumClient.getDictArticles(dictID, prefix, page)))
         } catch (err) {
+            dispatch(dictArticlesFetchFailure())
             console.log('ERROR: ', err)
             throw err
         }

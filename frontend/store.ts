@@ -5,6 +5,7 @@ import { Dict, DictsActions, DictsState, dictsReducer } from './common'
 import { ThunkAction } from '@reduxjs/toolkit'
 import { ArticleState, ArticleActions, articleReducer } from './pages/article'
 import { DictArticlesActions, LetterFilterActions, letterFilterReducer, LetterFilterState, DictArticlesState, dictArticlesReducer } from './pages/dict'
+import { loadingBarReducer } from 'react-redux-loading-bar'
 
 type AllActions = DictsActions | SearchActions | ArticleActions | LetterFilterActions | DictArticlesActions
 
@@ -14,6 +15,7 @@ export type RootState = {
     article: ArticleState
     letterFilter: LetterFilterState
     dictArticles: DictArticlesState
+    loadingBar: any
 }
 
 export const rootReducer = combineReducers<RootState, AllActions>({
@@ -22,6 +24,7 @@ export const rootReducer = combineReducers<RootState, AllActions>({
     article: articleReducer,
     letterFilter: letterFilterReducer,
     dictArticles: dictArticlesReducer,
+    loadingBar: loadingBarReducer,
 })
 
 export function useSelector<TSelected = unknown>(

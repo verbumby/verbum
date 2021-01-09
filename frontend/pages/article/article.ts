@@ -30,10 +30,15 @@ type ArticleFetchSuccessAction = {
     a: Article
 }
 function articleFetchSuccess(a: Article): ArticleFetchSuccessAction {
-    return {
-        type: ARTICLE_FETCH_SUCCESS,
-        a,
-    }
+    return { type: ARTICLE_FETCH_SUCCESS, a }
+}
+
+const ARTICLE_FETCH_FAILURE = 'ARTICLE/FETCH/FAILURE'
+type ArticleFetchFailureAction = {
+    type: typeof ARTICLE_FETCH_FAILURE
+}
+function articleFetchFailure(): ArticleFetchFailureAction {
+    return { type: ARTICLE_FETCH_FAILURE }
 }
 
 const ARTICLE_RESET = 'ARTICLE/RESET'
@@ -44,7 +49,7 @@ export function articleReset(): ArticleResetAction {
     return { type: ARTICLE_RESET }
 }
 
-export type ArticleActions = ArticleFetchKickOffAction | ArticleFetchSuccessAction | ArticleResetAction
+export type ArticleActions = ArticleFetchKickOffAction | ArticleFetchSuccessAction | ArticleFetchFailureAction | ArticleResetAction
 
 export function articleReducer(state: ArticleState = null, a: ArticleActions): ArticleState {
     switch (a.type) {
@@ -66,6 +71,7 @@ export const articleFetch = (match: match<MatchParams>): AppThunkAction => {
             dispatch(articleFetchKickOff(dictID, articleID))
             dispatch(articleFetchSuccess(await verbumClient.getArticle(dictID, articleID)))
         } catch (err) {
+            dispatch(articleFetchFailure())
             console.log('ERROR: ', err)
             throw err
         }
