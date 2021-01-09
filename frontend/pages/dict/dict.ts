@@ -24,7 +24,7 @@ type DictArticlesFetchKickoffAction = {
     page: number
 }
 function dictArticlesFetchKickOff(dictID: string, prefix: string, page: number): DictArticlesFetchKickoffAction {
-    return {type: DICT_ARTICLES_FETCH_KICKOFF, dictID, prefix, page}
+    return { type: DICT_ARTICLES_FETCH_KICKOFF, dictID, prefix, page }
 }
 
 const DICT_ARTICLES_FETCH_SUCCESS = 'DICT_ARTICLES/FETCH/SUCCESS'
@@ -33,7 +33,7 @@ type DictArticlesFetchSuccessAction = {
     articleList: ArticleList
 }
 function dictArticlesFetchSuccess(articleList: ArticleList): DictArticlesFetchSuccessAction {
-    return {type: DICT_ARTICLES_FETCH_SUCCESS, articleList}
+    return { type: DICT_ARTICLES_FETCH_SUCCESS, articleList }
 }
 
 const DICT_ARTICLES_FETCH_FAILURE = 'DICT_ARTICLES/FETCH/FAILURE'
@@ -41,7 +41,7 @@ type DictArticlesFetchFailureAction = {
     type: typeof DICT_ARTICLES_FETCH_FAILURE
 }
 function dictArticlesFetchFailure(): DictArticlesFetchFailureAction {
-    return {type: DICT_ARTICLES_FETCH_FAILURE}
+    return { type: DICT_ARTICLES_FETCH_FAILURE }
 }
 
 const DICT_ARTICLES_RESET = 'DICT_ARTICLES/RESET'
@@ -49,7 +49,7 @@ type DictArticlesResetAction = {
     type: typeof DICT_ARTICLES_RESET
 }
 export function dictArticlesReset(): DictArticlesResetAction {
-    return {type:DICT_ARTICLES_RESET}
+    return { type: DICT_ARTICLES_RESET }
 }
 
 export type DictArticlesActions = DictArticlesFetchKickoffAction | DictArticlesFetchSuccessAction | DictArticlesFetchFailureAction | DictArticlesResetAction
@@ -73,6 +73,14 @@ export const dictArticlesFetch = (match: match<MatchParams>, urlSearch: URLSearc
             const { dictID } = match.params
             const prefix = urlSearch.get('prefix')
             const page = urlSearch.get('page')
+            const state = getState()
+            if (state.dictArticles
+                && state.dictArticles.DictID === dictID
+                && state.dictArticles.Prefix === prefix
+                && state.dictArticles.Pagination.Current === page
+            ) {
+                return
+            }
             dispatch(dictArticlesFetchKickOff(dictID, prefix, page))
             dispatch(dictArticlesFetchSuccess(await verbumClient.getDictArticles(dictID, prefix, page)))
         } catch (err) {

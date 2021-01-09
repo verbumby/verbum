@@ -7,6 +7,8 @@ export type Article = {
 }
 
 export type ArticleList = {
+    DictID: string
+    Prefix: string
     Articles: Article[]
     Pagination: {
         Current: number

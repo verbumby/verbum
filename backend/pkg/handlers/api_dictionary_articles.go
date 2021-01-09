@@ -83,9 +83,13 @@ func APIDictionaryArticles(w http.ResponseWriter, rctx *chttp.Context) error {
 	}
 
 	if err := json.NewEncoder(w).Encode(struct {
+		DictID     string
+		Prefix     string
 		Articles   []articleview
 		Pagination paginationview
 	}{
+		DictID:   dictID,
+		Prefix:   string(prefix),
 		Articles: articleviews,
 		Pagination: paginationview{
 			Current: urlQuery.Get("page").(*htmlui.IntegerQueryParam).Value(),
