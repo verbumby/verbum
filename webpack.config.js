@@ -31,7 +31,7 @@ const server = {
                 exclude: /node_modules/,
                 use: [{ loader: 'ts-loader' }],
             },
-            { test: /\.css$/, use: 'null-loader'},
+            { test: /\.css$/, use: 'null-loader' },
         ],
     },
     devtool: 'source-map',
@@ -62,7 +62,7 @@ const browser = {
     module: {
         rules: [
             { test: /\.tsx?$/, use: ['ts-loader'], exclude: /node_modules/ },
-            { test: /\.css$/, use: [MiniCssExtractPlugin.loader, 'css-loader']},
+            { test: /\.css$/, use: [MiniCssExtractPlugin.loader, 'css-loader'] },
         ],
     },
     devtool: 'source-map',
@@ -90,6 +90,12 @@ const browser = {
             `...`,
             new CssMinimizerPlugin(),
         ],
+        splitChunks: {
+            cacheGroups: {
+                react: { name: 'react', test: /\/node_modules\/react/, chunks: 'all' },
+                reactDom: { name: 'react-dom', test: /\/node_modules\/react-dom/, chunks: 'all' },
+            },
+        },
     },
 }
 
