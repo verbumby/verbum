@@ -1,0 +1,74 @@
+name: Verbum CI
+
+on: [push]
+
+jobs:
+  build-backend:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - uses: actions/setup-go@v2
+      with:
+        go-version: '^1.15.1'
+    - run: go test -v ./...
+    - run: make build
+    - run: make build-ctl
+    - uses: actions/upload-artifact@v2
+      with:
+        name: binaries
+        path: |
+          verbumsrvr
+          verbumctl
+        if-no-files-found: error
+
+  build-frontend:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - uses: actions/setup-node@v1
+      with:
+        node-version: '15.0.x'
+    - run: npm ci
+    - run: make fe-build-prod
+    - uses: actions/upload-artifact@v2
+      with:
+        name: frontend-bundle
+        path: frontend/dist/
+        if-no-files-found: error
+
+  package:
+    runs-on: ubuntu-latest
+    needs:
+    - build-backend
+    - build-frontend
+    steps:
+    - uses: actions/checkout@v2
+    - uses: actions/download-artifact@v2
+      with:
+        name: binaries
+    - uses: actions/download-artifact@v2
+      with:
+        name: frontend-bundle
+        path: frontend/dist/
+    - run: deploy/deb.bash
+    - uses: actions/upload-artifact@v2
+      with:
+        name: verbum.deb
+        path: deploy/verbum.deb
+        if-no-files-found: error
+
+  deploy:
+    runs-on: ubuntu-latest
+    if: ${{ github.ref == 'refs/heads/master' }}
+    needs: package
+    environment: deployment
+    steps:
+    - uses: actions/checkout@v2
+    - uses: actions/download-artifact@v2
+      with:
+        name: verbum.deb
+        path: deploy/
+    - run: dpkg --info deploy/verbum.deb
+    - run: deploy/deploy.bash
+      env:
+        ID_ED25519: ${{ secrets.ID_ED25519 }}

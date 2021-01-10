@@ -13,7 +13,7 @@ cp -R templates $root/usr/local/share/verbum
 mkdir -p $root/usr/lib/systemd/system
 cp deploy/verbum.service $root/usr/lib/systemd/system/
 
-v="$TRAVIS_BUILD_NUMBER"
+v="$GITHUB_RUN_NUMBER"
 if [ -z "$v" ]; then
     t=$(date +"%Y%m%d-%H%M%S")
     h=$(git rev-parse --short HEAD)
@@ -32,7 +32,7 @@ Priority: optional
 Depends:
 Maintainer: Vadzim Ramanenka
 Installed-Size:
-Description: Verbum - Online Platform Dictionary.
+Description: Verbum - Online Dictionary Platform.
 EOF
 
 dpkg -b $root deploy/verbum.deb
