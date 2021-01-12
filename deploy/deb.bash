@@ -10,8 +10,11 @@ cp verbumsrvr verbumctl $root/usr/local/bin
 mkdir -p $root/usr/local/share/verbum
 cp -R templates $root/usr/local/share/verbum
 
+mkdir -p $root/usr/local/share/verbum/frontend
+cp -R frontend/dist $root/usr/local/share/verbum/frontend
+
 mkdir -p $root/usr/lib/systemd/system
-cp deploy/verbum.service $root/usr/lib/systemd/system/
+cp deploy/verbum.service deploy/verbum-frontend.service $root/usr/lib/systemd/system/
 
 v="$GITHUB_RUN_NUMBER"
 if [ -z "$v" ]; then
