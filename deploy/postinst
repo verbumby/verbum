@@ -10,10 +10,12 @@ if ! id verbum > /dev/null 2>&1; then
         verbum
 fi
 
-systemctl daemon-reload
-systemctl enable verbum.service
-systemctl restart verbum.service
-
 if [ ! -f /usr/local/share/verbum/config.yaml ]; then
     touch /usr/local/share/verbum/config.yaml
 fi
+
+systemctl daemon-reload
+systemctl enable verbum.service
+systemctl restart verbum.service
+systemctl enable verbum-frontend.service
+systemctl restart verbum-frontend.service
