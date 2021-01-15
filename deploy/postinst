@@ -2,6 +2,10 @@
 
 set -e
 
+chown root:root /usr/local/bin/verbum{srvr,ctl}
+chmod +x /usr/local/bin/verbum{srvr,ctl}
+chown -R root:root /usr/local/share/verbum
+
 if ! id verbum > /dev/null 2>&1; then
     useradd --system \
         --no-create-home \
