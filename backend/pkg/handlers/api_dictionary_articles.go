@@ -42,8 +42,9 @@ func APIDictionaryArticles(w http.ResponseWriter, rctx *chttp.Context) error {
 		})
 	}
 	articles, total, err := article.Query("/dict-"+dictID+"/_search", map[string]interface{}{
-		"from": (urlQuery.Get("page").(*htmlui.IntegerQueryParam).Value() - 1) * pageSize,
-		"size": pageSize,
+		"track_total_hits": true,
+		"from":             (urlQuery.Get("page").(*htmlui.IntegerQueryParam).Value() - 1) * pageSize,
+		"size":             pageSize,
 		"sort": []interface{}{
 			"Title",
 		},
