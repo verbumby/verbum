@@ -2,8 +2,6 @@ package main
 
 import (
 	"context"
-	"fmt"
-	"html/template"
 	"log"
 	"net/http"
 	"net/http/httputil"
@@ -20,7 +18,6 @@ import (
 	"github.com/verbumby/verbum/backend/pkg/chttp"
 	"github.com/verbumby/verbum/backend/pkg/handlers"
 	"github.com/verbumby/verbum/backend/pkg/storage"
-	"github.com/verbumby/verbum/backend/pkg/tm"
 )
 
 func main() {
@@ -34,59 +31,7 @@ func main() {
 }
 
 func bootstrapServer() error {
-	templates := []struct {
-		name    string
-		files   []string
-		funcMap template.FuncMap
-	}{
-		{
-			name: "index",
-			files: []string{
-				"./templates/layout.html",
-				"./templates/index-page.html",
-				"./templates/search-control.html",
-			},
-			funcMap: template.FuncMap{},
-		},
-		{
-			name: "search-results",
-			files: []string{
-				"./templates/layout.html",
-				"./templates/search-results-page.html",
-				"./templates/search-control.html",
-				"./templates/article.html",
-			},
-			funcMap: template.FuncMap{},
-		},
-		{
-			name: "dictionary",
-			files: []string{
-				"./templates/layout.html",
-				"./templates/dictionary-page.html",
-				"./templates/article.html",
-				"./templates/pagination.html",
-			},
-			funcMap: template.FuncMap{},
-		},
-		{
-			name: "article",
-			files: []string{
-				"./templates/layout.html",
-				"./templates/article-page.html",
-				"./templates/article.html",
-			},
-			funcMap: template.FuncMap{},
-		},
-	}
-
-	for _, t := range templates {
-		if err := tm.Compile(t.name, t.files, t.funcMap); err != nil {
-			return fmt.Errorf("compile %s template: %w", t.name, err)
-		}
-	}
-
 	r := mux.NewRouter()
-	// statics := http.FileServer(http.Dir("statics"))
 	r.HandleFunc("/api/dictionaries/{dictionary:[a-z-]+}/articles/{article:[a-zA-Z0-9-]+}", chttp.MakeHandler(handlers.APIArticle, chttp.ContentTypeJSONMiddleware))
 	r.HandleFunc("/api/dictionaries/{dictionary:[a-z-]+}/letterfilter", chttp.MakeHandler(handlers.APILetterFilter, chttp.ContentTypeJSONMiddleware))
 	r.HandleFunc("/api/dictionaries/{dictionary:[a-z-]+}/articles", chttp.MakeHandler(handlers.APIDictionaryArticles, chttp.ContentTypeJSONMiddleware))
@@ -95,12 +40,7 @@ func bootstrapServer() error {
 	r.HandleFunc("/api/suggest", chttp.MakeHandler(handlers.APISuggest, chttp.ContentTypeJSONMiddleware))
 	r.HandleFunc("/robots.txt", chttp.MakeHandler(handlers.RobotsTXT))
 	r.HandleFunc("/sitemap-index.xml", chttp.MakeHandler(handlers.SitemapIndex))
-	// r.PathPrefix("/statics/").Handler(http.StripPrefix("/statics/", statics))
-	r.HandleFunc("/_suggest", chttp.MakeHandler(handlers.Suggest))
-	// r.HandleFunc("/{dictionary:[a-z-]+}", chttp.MakeHandler(handlers.Dictionary))
 	r.HandleFunc("/{dictionary:[a-z-]+}/sitemap-{n:[0-9]+}.xml", chttp.MakeHandler(handlers.SitemapOfDictionary))
-	// r.HandleFunc("/{dictionary:[a-z-]+}/{article:[a-zA-Z0-9-]+}", chttp.MakeHandler(handlers.Article))
-	// r.HandleFunc("/", chttp.MakeHandler(handlers.Index))
 	rpurl := url.URL{Scheme: "http", Host: "localhost:8079"}
 	rp := httputil.NewSingleHostReverseProxy(&rpurl)
 	r.PathPrefix("/").Handler(rp)
