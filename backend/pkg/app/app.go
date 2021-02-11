@@ -46,9 +46,9 @@ func Bootstrap() error {
 		return fmt.Errorf("elastic index templates migrate: %w", err)
 	}
 
-	if err := timestampFieldMigrate(); err != nil {
-		return fmt.Errorf("timestamp field migration: %w", err)
-	}
+	// if err := timestampFieldMigrate(); err != nil {
+	// 	return fmt.Errorf("timestamp field migration: %w", err)
+	// }
 
 	return nil
 }
