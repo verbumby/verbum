@@ -1,6 +1,7 @@
 package dictionary
 
 import (
+	"fmt"
 	"html/template"
 
 	"github.com/verbumby/verbum/backend/pkg/dictionary/dslparser"
@@ -31,10 +32,15 @@ func (d DSL) Slug() string {
 
 // ToHTML implements Dictionary interface
 func (d DSL) ToHTML(content, title string) template.HTML {
-	htmlv, err := dslparser.DSLParser(content)
+	htmlvitf, err := dslparser.Parse(
+		"article",
+		[]byte(content),
+		dslparser.GlobalStore("dictID", d.ID()),
+	)
 	if err != nil {
-		panic(err)
+		panic(fmt.Errorf("parse article: %w", err))
 	}
+	htmlv := htmlvitf.(string)
 	if d.includeTitleInContent {
 		htmlv = `<p><v-hw>` + title + `</v-hw></p>` + htmlv
 	}

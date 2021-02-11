@@ -49,7 +49,7 @@ Body ⟵ ps:Part+ {
     return result.String(), nil
 }
 
-Part ⟵ EscapeSequence / Accent / Transcription / OpenTag / CloseTag / Newline / Anything
+Part ⟵ EscapeSequence / Accent / Transcription / Image / OpenTag / CloseTag / Newline / Anything
 
 EscapeSequence ⟵ '\\' ch:('[' / ']') {
     return string(ch.([]byte)), nil
@@ -85,6 +85,24 @@ Transcription ⟵ "[t]" ps:( EscapeSequence / [^[] )+ "[/t]" {
     }
     result.WriteString(`</v-trx>`)
     return result.String(), nil
+}
+
+Image ⟵ "[s]" fnitf:( EscapeSequence / [^[] )+ "[/s]" {
+    // TODO: extract function: []interface{} to string convertion
+    var result strings.Builder
+    for _, vitf := range fnitf.([]interface{}) {
+        switch v := vitf.(type) {
+        case string:
+            result.WriteString(v)
+        case []byte:
+            result.Write(v)
+        default:
+            return nil, fmt.Errorf("unknown image tag content part type %T of %v", v, v)
+        }
+    }
+    fn := result.String()
+    dictID := c.globalStore["dictID"].(string)
+    return fmt.Sprintf(`<img src="/images/%s/%s" alt="%s"/>`, dictID, fn, fn), nil
 }
 
 OpenTag ⟵ '[' tnitf:Tagname targ:Tagarg? ']' {

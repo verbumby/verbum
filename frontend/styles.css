@@ -39,6 +39,7 @@ textarea, input[type="text"], input[type="button"], input[type="submit"] {
 .article .source {text-align: right; color: darkgrey; font-size: 0.9em;}
 .article p {margin: 0;}
 .article.rvblr p {margin: 0.5rem 0;}
+.article.hsbm img {max-width:100%;}
 
 .logo {color:darkgrey; padding: 6px 0; font-weight: bold;}
 .logo h1 {display: inline; font-weight: bold;}

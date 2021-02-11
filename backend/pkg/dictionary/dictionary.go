@@ -37,4 +37,10 @@ var dictionaries = []Dictionary{
 		slug:                  "anhyelska-byelaruski-slounik-pashkyevich-2006",
 		includeTitleInContent: true,
 	},
+	DSL{
+		id:                    "hsbm",
+		title:                 "Гістарычны слоўнік беларускай мовы (1982–2017)",
+		slug:                  "histarychny-slounik-bielaruskaj-movy-1982-2017",
+		includeTitleInContent: true,
+	},
 }

@@ -16,7 +16,7 @@ import (
 )
 
 }
-All ⟵ Preamble "\n" as:Articles EOF {
+All ⟵ Preamble "\n"+ as:Articles EOF {
 	return dictparser.Dictionary {
 		Articles: as.([]dictparser.Article),
 	}, nil

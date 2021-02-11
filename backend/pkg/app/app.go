@@ -28,6 +28,8 @@ func Bootstrap() error {
 
 	viper.SetDefault("elastic.addr", "http://localhost:9200")
 
+	viper.SetDefault("images.path", "./images")
+
 	viper.SetConfigName("config")
 	viper.AddConfigPath(".")
 	viper.AddConfigPath("/usr/local/share/verbum")
