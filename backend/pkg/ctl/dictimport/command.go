@@ -28,13 +28,15 @@ func Command() *cobra.Command {
 	result.PersistentFlags().StringVar(&c.filename, "filename", "", "filename of the dict")
 	result.PersistentFlags().StringVar(&c.format, "format", "", "dsl|stardict")
 	result.PersistentFlags().StringVar(&c.indexID, "index-id", "", "storage index id")
+	result.PersistentFlags().StringVar(&c.romanizer, "romanizer", "", "<blank>|belarusian|russian")
 	return result
 }
 
 type commandController struct {
-	filename string
-	format   string
-	indexID  string
+	filename  string
+	format    string
+	indexID   string
+	romanizer string
 }
 
 func (c *commandController) Run(cmd *cobra.Command, args []string) {
@@ -103,50 +105,48 @@ func (c *commandController) createIndex(maxResultWindow int) error {
 			},
 		},
 		"mappings": map[string]interface{}{
-			"_doc": map[string]interface{}{
-				"properties": map[string]interface{}{
-					"Title": map[string]interface{}{"type": "keyword"},
-					"Headword": map[string]interface{}{
-						"type":     "text",
-						"analyzer": "hw",
-						"fields": map[string]interface{}{
-							"Smaller": map[string]interface{}{
-								"type":            "text",
-								"analyzer":        "hw_smaller",
-								"search_analyzer": "hw",
-							},
+			"properties": map[string]interface{}{
+				"Title": map[string]interface{}{"type": "keyword"},
+				"Headword": map[string]interface{}{
+					"type":     "text",
+					"analyzer": "hw",
+					"fields": map[string]interface{}{
+						"Smaller": map[string]interface{}{
+							"type":            "text",
+							"analyzer":        "hw_smaller",
+							"search_analyzer": "hw",
 						},
 					},
-					"HeadwordAlt": map[string]interface{}{
-						"type":     "text",
-						"analyzer": "hw",
-						"fields": map[string]interface{}{
-							"Smaller": map[string]interface{}{
-								"type":            "text",
-								"analyzer":        "hw_smaller",
-								"search_analyzer": "hw",
-							},
+				},
+				"HeadwordAlt": map[string]interface{}{
+					"type":     "text",
+					"analyzer": "hw",
+					"fields": map[string]interface{}{
+						"Smaller": map[string]interface{}{
+							"type":            "text",
+							"analyzer":        "hw_smaller",
+							"search_analyzer": "hw",
 						},
 					},
-					"Prefix": map[string]interface{}{
-						"type": "nested",
-						"properties": map[string]interface{}{
-							"Letter1": map[string]interface{}{"type": "keyword"},
-							"Letter2": map[string]interface{}{"type": "keyword"},
-							"Letter3": map[string]interface{}{"type": "keyword"},
-						},
+				},
+				"Prefix": map[string]interface{}{
+					"type": "nested",
+					"properties": map[string]interface{}{
+						"Letter1": map[string]interface{}{"type": "keyword"},
+						"Letter2": map[string]interface{}{"type": "keyword"},
+						"Letter3": map[string]interface{}{"type": "keyword"},
 					},
-					"Suggest": map[string]interface{}{
-						"type":                         "completion",
-						"analyzer":                     "hw",
-						"preserve_separators":          true,
-						"preserve_position_increments": true,
-						"max_input_length":             50,
-					},
-					"Content": map[string]interface{}{
-						"type":  "text",
-						"index": false,
-					},
+				},
+				"Suggest": map[string]interface{}{
+					"type":                         "completion",
+					"analyzer":                     "hw",
+					"preserve_separators":          true,
+					"preserve_position_increments": true,
+					"max_input_length":             50,
+				},
+				"Content": map[string]interface{}{
+					"type":  "text",
+					"index": false,
 				},
 			},
 		},
@@ -190,8 +190,10 @@ func (c *commandController) indexArticles(d dictparser.Dictionary) error {
 			prefixes = append(prefixes, prefix)
 		}
 
-		// TODO: flag to control id assemble strategy
-		id := c.assembleID(a.Headwords)
+		id, err := c.assembleID(a.Headwords)
+		if err != nil {
+			return fmt.Errorf("assemble id for %v: %w", a.Headwords, err)
+		}
 		idcache[id]++
 		if idcache[id] > 1 {
 			id = fmt.Sprintf("%s-%d", id, idcache[id])
@@ -234,14 +236,22 @@ func (c *commandController) indexArticles(d dictparser.Dictionary) error {
 	return nil
 }
 
-func (c *commandController) assembleID(hws []string) string {
+func (c *commandController) assembleID(hws []string) (string, error) {
 	romanized := []string{}
 	for _, hw := range hws {
-		// romanized = append(romanized, textutil.RomanizeBelarusian(hw))
-		romanized = append(romanized, hw)
+		switch c.romanizer {
+		case "belarusian":
+			romanized = append(romanized, textutil.RomanizeBelarusian(hw))
+		case "russian":
+			romanized = append(romanized, textutil.RomanizeRussian(hw))
+		case "":
+			romanized = append(romanized, hw)
+		default:
+			return "", fmt.Errorf("unknown romanizing strategy: %s", c.romanizer)
+		}
 	}
 	result := strings.Join(romanized, "-")
-	return textutil.Slugify(result)
+	return textutil.Slugify(result), nil
 }
 
 func (c *commandController) flushBuffer(buff *bytes.Buffer) error {
