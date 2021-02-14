@@ -7,6 +7,7 @@ import (
 	"log"
 	"os"
 	"strings"
+	"time"
 
 	"github.com/spf13/cobra"
 	"github.com/verbumby/verbum/backend/pkg/ctl/dictimport/dictparser"
@@ -148,6 +149,9 @@ func (c *commandController) createIndex(maxResultWindow int) error {
 					"type":  "text",
 					"index": false,
 				},
+				"ModifiedAt": map[string]interface{}{
+					"type": "date",
+				},
 			},
 		},
 	}, nil)
@@ -206,6 +210,7 @@ func (c *commandController) indexArticles(d dictparser.Dictionary) error {
 			"Suggest":     suggests,
 			"Prefix":      prefixes,
 			"Content":     a.Body,
+			"ModifiedAt":  time.Now().UTC().Format(time.RFC3339),
 		}
 
 		if err := json.NewEncoder(buff).Encode(map[string]interface{}{

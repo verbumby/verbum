@@ -46,9 +46,9 @@ func Bootstrap() error {
 		return fmt.Errorf("elastic index templates migrate: %w", err)
 	}
 
-	// if err := timestampFieldMigrate(); err != nil {
-	// 	return fmt.Errorf("timestamp field migration: %w", err)
-	// }
+	if err := timestampFieldMigrate(); err != nil {
+		return fmt.Errorf("timestamp field migration: %w", err)
+	}
 
 	return nil
 }
@@ -93,18 +93,18 @@ func elasticIndexTemplatesMigrate() error {
 func timestampFieldMigrate() error {
 	dicts := dictionary.GetAll()
 
-	respbody := map[string]struct {
-		Mappings map[string]map[string]interface{} `json:"mappings"`
-	}{}
-	if err := storage.Get("/dict-"+dicts[0].ID()+"/_mapping", &respbody); err != nil {
-		return fmt.Errorf("get mappings: %w", err)
-	}
-
-	if _, ok := respbody["dict-"+dicts[0].ID()].Mappings["ModifiedAt"]; ok {
-		return nil
-	}
-
 	for _, d := range dicts {
+		respbody := map[string]struct {
+			Mappings map[string]map[string]interface{} `json:"mappings"`
+		}{}
+		if err := storage.Get("/dict-"+d.ID()+"/_mapping", &respbody); err != nil {
+			return fmt.Errorf("get mappings: %w", err)
+		}
+
+		if _, ok := respbody["dict-"+d.ID()].Mappings["ModifiedAt"]; ok {
+			return nil
+		}
+
 		err := storage.Put(
 			"/dict-"+d.ID()+"/_mapping",
 			map[string]interface{}{
