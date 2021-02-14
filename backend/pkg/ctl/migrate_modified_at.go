@@ -58,6 +58,10 @@ func MigrateModifiedAt() *cobra.Command {
 						fmt.Print(".")
 					}
 
+					if buff.Len() == 0 {
+						return nil
+					}
+
 					if err := storage.Post("/"+index+"/_bulk", buff, nil); err != nil {
 						return fmt.Errorf("bulk update: %w", err)
 					}
