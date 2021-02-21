@@ -1,8 +1,8 @@
-import { Article, ArticleList, Dict, LetterFilter, Suggestion } from '../common'
+import { Article, ArticleList, Dict, LetterFilter, SearchResult, Suggestion } from '../common'
 
 export interface VerbumAPIClient {
     getDictionaries(): Promise<Dict[]>
-    search(q: string): Promise<Article[]>
+    search(q: string): Promise<SearchResult>
     suggest(q: string): Promise<Suggestion[]>
     getArticle(dictID: string, articleID: string): Promise<Article>
     getLetterFilter(dictID: string, prefix: string): Promise<LetterFilter>
@@ -20,8 +20,8 @@ export abstract class VerbumAPIClientImpl implements VerbumAPIClient {
         return this.call<Dict[]>('/api/dictionaries')
     }
 
-    async search(q: string): Promise<Article[]> {
-        return this.call<Article[]>('/api/search?q=' + encodeURIComponent(q))
+    async search(q: string): Promise<SearchResult> {
+        return this.call<SearchResult>('/api/search?q=' + encodeURIComponent(q))
     }
 
     async suggest(q: string): Promise<Suggestion[]> {
