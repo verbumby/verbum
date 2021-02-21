@@ -43,16 +43,20 @@ func APISearch(w http.ResponseWriter, rctx *chttp.Context) error {
 		DictionaryID string
 	}
 
-	resp := []articleview{}
+	articleviews := []articleview{}
 	for _, a := range articles {
-		resp = append(resp, articleview{
+		articleviews = append(articleviews, articleview{
 			ID:           a.ID,
 			Content:      string(a.Dictionary.ToHTML(a.Content, a.Title)),
 			DictionaryID: a.Dictionary.ID(),
 		})
 	}
 
-	if err := json.NewEncoder(w).Encode(resp); err != nil {
+	if err := json.NewEncoder(w).Encode(struct {
+		Articles []articleview
+	}{
+		Articles: articleviews,
+	}); err != nil {
 		return fmt.Errorf("encode response: %w", err)
 	}
 

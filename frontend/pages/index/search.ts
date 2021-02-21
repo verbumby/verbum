@@ -1,8 +1,7 @@
 import { match } from 'react-router-dom'
 import { URLSearchParams } from 'url'
 
-import { URLSearch, useURLSearch as useURLSearchCommon } from '../../common'
-import { Article } from '../../common/article'
+import { SearchResult, URLSearch, useURLSearch as useURLSearchCommon } from '../../common'
 import { AppThunkAction } from '../../store'
 
 const URLSearchDefaults = {
@@ -13,7 +12,7 @@ export const useURLSearch = () => useURLSearchCommon(URLSearchDefaults)
 
 export type SearchState = {
     q: string
-    hits: Article[]
+    searchResult: SearchResult
 }
 
 const SEARCH_KICKOFF = 'SEARCH/KICKOFF'
@@ -31,12 +30,12 @@ function searchKickOff(q: string): SearchKickOffAction {
 const SEARCH_SUCCESS = 'SEARCH/SUCCESS'
 type SearchSuccessAction = {
     type: typeof SEARCH_SUCCESS
-    hits: Article[]
+    searchResult: SearchResult
 }
-function searchSuccess(hits: Article[]): SearchSuccessAction {
+function searchSuccess(searchResult: SearchResult): SearchSuccessAction {
     return {
         type: SEARCH_SUCCESS,
-        hits,
+        searchResult,
     }
 }
 
@@ -58,22 +57,22 @@ export function searchReset(): SearchResetAction {
 
 export type SearchActions = SearchKickOffAction | SearchSuccessAction | SearchFailureAction | SearchResetAction
 
-export function searchReducer(state: SearchState = {q: '', hits: []}, a: SearchActions): SearchState {
+export function searchReducer(state: SearchState = {q: '', searchResult: null}, a: SearchActions): SearchState {
     switch (a.type) {
         case SEARCH_KICKOFF:
             return {
                 q: a.q,
-                hits: [],
+                searchResult: null,
             }
         case SEARCH_SUCCESS:
             return {
                 ...state,
-                hits: a.hits,
+                searchResult: a.searchResult,
             }
         case SEARCH_RESET:
             return {
                 q: '',
-                hits: [],
+                searchResult: null,
             }
         default:
             return state
