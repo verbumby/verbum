@@ -17,3 +17,14 @@ func Get(dictionaryID string) Dictionary {
 func GetAll() []Dictionary {
 	return dictionaries
 }
+
+// GetAllAsMap get all dicts as a map
+func GetAllAsMap() map[string]Dictionary {
+	result := map[string]Dictionary{}
+
+	for _, d := range GetAll() {
+		result[d.ID()] = d
+	}
+
+	return result
+}
