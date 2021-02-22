@@ -24,6 +24,8 @@ textarea, input[type="text"], input[type="button"], input[type="submit"] {
 .suggestions li {padding: 5px;}
 .suggestions li.active {background-color: #e3e3e3;}
 
+.no-results {padding: 6px;}
+
 .article {padding: 6px; border-bottom: 1px solid lightgrey;}
 .article:last-child {border-bottom: none;}
 .article v-hw {font-weight: bold;}
