@@ -38,6 +38,7 @@ func bootstrapServer() error {
 	r.HandleFunc("/api/dictionaries", chttp.MakeHandler(handlers.APIDictionariesList, chttp.ContentTypeJSONMiddleware))
 	r.HandleFunc("/api/search", chttp.MakeHandler(handlers.APISearch, chttp.ContentTypeJSONMiddleware))
 	r.HandleFunc("/api/suggest", chttp.MakeHandler(handlers.APISuggest, chttp.ContentTypeJSONMiddleware))
+	r.PathPrefix("/api/").HandlerFunc(chttp.MakeHandler(handlers.APINotFound))
 	imagesServer := http.FileServer(http.Dir(viper.GetString("images.path")))
 	r.PathPrefix("/images/").Handler(http.StripPrefix("/images", imagesServer))
 	r.HandleFunc("/robots.txt", chttp.MakeHandler(handlers.RobotsTXT))
