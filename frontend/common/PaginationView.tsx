@@ -16,7 +16,7 @@ type PageLink = {
     Text: string
 }
 
-export const Pagination: React.VFC<PaginationProps> = ({ current, total, pageToURL }) => {
+export const PaginationView: React.VFC<PaginationProps> = ({ current, total, pageToURL }) => {
     const links: PageLink[] = []
 
     const d = 3
