@@ -2,12 +2,11 @@ import * as React from 'react'
 import { Helmet } from 'react-helmet'
 import { useDispatch } from 'react-redux'
 import { useRouteMatch } from 'react-router-dom'
-import { ArticleView } from '../../common'
+import { ArticleView, PaginationView } from '../../common'
 import { useDict, useDictArticles, useLetterFilter } from '../../store'
 import { letterFilterFetch, letterFilterReset } from './letterfilter'
 import { dictArticlesFetch, MatchParams, dictArticlesReset, useURLSearch } from './dict'
 import { LetterFilterView } from './LetterFilterView'
-import { Pagination } from './Pagination'
 
 export const DictPage: React.VFC = ({ }) => {
     const match = useRouteMatch<MatchParams>()
@@ -59,7 +58,7 @@ export const DictPage: React.VFC = ({ }) => {
                 <div>
                     {dictArticles.Articles.map(a => <ArticleView key={a.DictionaryID + a.ID} a={a} />)}
                 </div>
-                <Pagination
+                <PaginationView
                     current={dictArticles.Pagination.Current}
                     total={dictArticles.Pagination.Total}
                     pageToURL={p => ({

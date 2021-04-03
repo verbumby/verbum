@@ -2,7 +2,7 @@ import { Article, ArticleList, Dict, LetterFilter, SearchResult, Suggestion } fr
 
 export interface VerbumAPIClient {
     getDictionaries(): Promise<Dict[]>
-    search(q: string): Promise<SearchResult>
+    search(q: string, page: number): Promise<SearchResult>
     suggest(q: string): Promise<Suggestion[]>
     getArticle(dictID: string, articleID: string): Promise<Article>
     getLetterFilter(dictID: string, prefix: string): Promise<LetterFilter>
@@ -20,8 +20,9 @@ export abstract class VerbumAPIClientImpl implements VerbumAPIClient {
         return this.call<Dict[]>('/api/dictionaries')
     }
 
-    async search(q: string): Promise<SearchResult> {
-        return this.call<SearchResult>('/api/search?q=' + encodeURIComponent(q))
+    async search(q: string, page: number): Promise<SearchResult> {
+        q = encodeURIComponent(q)
+        return this.call<SearchResult>(`/api/search?q=${q}&page=${page}`)
     }
 
     async suggest(q: string): Promise<Suggestion[]> {

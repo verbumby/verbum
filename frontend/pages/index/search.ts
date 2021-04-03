@@ -5,7 +5,8 @@ import { SearchResult, URLSearch, useURLSearch as useURLSearchCommon } from '../
 import { AppThunkAction } from '../../store'
 
 const URLSearchDefaults = {
-    q: ''
+    q: '',
+    page: 1
 }
 
 export const useURLSearch = () => useURLSearchCommon(URLSearchDefaults)
@@ -89,9 +90,10 @@ export const search = (match: match, urlSearch: URLSearch<typeof URLSearchDefaul
             if (q === getState().search.q) {
                 return
             }
+            const page = urlSearch.get('page')
 
             dispatch(searchKickOff(q))
-            dispatch(searchSuccess(await verbumClient.search(q)))
+            dispatch(searchSuccess(await verbumClient.search(q, page)))
         } catch (err) {
             dispatch(searchFailure())
             console.log('ERROR: ', err)

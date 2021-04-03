@@ -3,24 +3,36 @@ package handlers
 import (
 	"encoding/json"
 	"fmt"
+	"math"
 	"net/http"
 	"strings"
 
 	"github.com/verbumby/verbum/backend/pkg/article"
 	"github.com/verbumby/verbum/backend/pkg/chttp"
 	"github.com/verbumby/verbum/backend/pkg/dictionary"
+	"github.com/verbumby/verbum/backend/pkg/htmlui"
 	"github.com/verbumby/verbum/backend/pkg/storage"
 )
 
 // APISearch search endpoint
 func APISearch(w http.ResponseWriter, rctx *chttp.Context) error {
-	q := rctx.R.URL.Query().Get("q")
+	urlQuery := htmlui.Query([]htmlui.QueryParam{
+		htmlui.NewStringQueryParam("q", ""),
+		htmlui.NewIntegerQueryParam("page", 1),
+	})
+	urlQuery.From(rctx.R.URL.Query())
+
+	q := urlQuery.Get("q").(*htmlui.StringQueryParam).Value()
 	if len(q) > 1000 {
 		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
 		return nil
 	}
+	page := urlQuery.Get("page").(*htmlui.IntegerQueryParam).Value()
 
+	const pageSize = 10
 	reqbody := map[string]interface{}{
+		"from": (page - 1) * pageSize,
+		"size": pageSize,
 		"query": map[string]interface{}{
 			"multi_match": map[string]interface{}{
 				"query": q,
@@ -68,7 +80,8 @@ func APISearch(w http.ResponseWriter, rctx *chttp.Context) error {
 	respbody := struct {
 		Hits struct {
 			Total struct {
-				Value int `json:"value"`
+				Value    int    `json:"value"`
+				Relation string `json:"relation"`
 			} `json:"total"`
 			Hits []struct {
 				Source article.Article `json:"_source"`
@@ -132,12 +145,24 @@ func APISearch(w http.ResponseWriter, rctx *chttp.Context) error {
 		}
 	}
 
+	type paginationview struct {
+		Current  int
+		Total    int
+		Relation string
+	}
+
 	if err := json.NewEncoder(w).Encode(struct {
 		Articles        []articleview
 		TermSuggestions []string
+		Pagination      paginationview
 	}{
 		Articles:        articleviews,
 		TermSuggestions: termSuggestions,
+		Pagination: paginationview{
+			Current:  urlQuery.Get("page").(*htmlui.IntegerQueryParam).Value(),
+			Total:    int(math.Ceil(float64(respbody.Hits.Total.Value) / pageSize)),
+			Relation: respbody.Hits.Total.Relation,
+		},
 	}); err != nil {
 		return fmt.Errorf("encode response: %w", err)
 	}

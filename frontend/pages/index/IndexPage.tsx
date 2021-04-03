@@ -7,12 +7,13 @@ import { Helmet } from "react-helmet"
 import { useDicts, useSearchState } from '../../store'
 import { search, searchReset, useURLSearch } from './search'
 import { DictsList } from './DictsList'
-import { ArticleView, SearchControl } from '../../common'
+import { ArticleView, PaginationView, SearchControl } from '../../common'
 
 export const IndexPage: React.VFC = () => {
     const match = useRouteMatch()
     const urlSearch = useURLSearch()
     const q = urlSearch.get('q')
+    const page = urlSearch.get('page')
     const dicts = useDicts()
     const searchState = useSearchState()
 
@@ -20,7 +21,7 @@ export const IndexPage: React.VFC = () => {
     useEffect(() => {
         dispatch(search(match, urlSearch))
         return () => dispatch(searchReset())
-    }, [q])
+    }, [q, page])
 
     const renderDictList = (): React.ReactNode => (
         <>
@@ -37,8 +38,6 @@ export const IndexPage: React.VFC = () => {
     )
 
     const renderSearchResults = (): React.ReactNode => {
-
-
         return (
             <>
                 <Helmet>
@@ -48,8 +47,22 @@ export const IndexPage: React.VFC = () => {
                     <meta property="og:description" content={`${q} - Пошук`} />
                     <meta name="robots" content="noindex, nofollow" />
                 </Helmet>
-                {searchState.searchResult && searchState.searchResult.Articles.map(
-                    hit => <ArticleView key={`${hit.DictionaryID}-${hit.ID}`} a={hit} />
+                {searchState.searchResult && (
+                    <> <div>{searchState.searchResult.Articles.map(
+                        hit => <ArticleView key={`${hit.DictionaryID}-${hit.ID}`} a={hit} />
+                    )}
+                    </div>
+                    <PaginationView
+                        current={searchState.searchResult.Pagination.Current}
+                        total={searchState.searchResult.Pagination.Total}
+                        pageToURL={p => ({
+                            search: urlSearch
+                                .clone()
+                                .set("page", p)
+                                .encode()
+                        })}
+                    />
+                    </>
                 )}
                 {searchState.searchResult
                     && searchState.searchResult.Articles.length == 0

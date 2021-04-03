@@ -1,3 +1,5 @@
+import { Pagination } from "./"
+
 export type Article = {
     ID: string
     Title: string
@@ -10,8 +12,5 @@ export type ArticleList = {
     DictID: string
     Prefix: string
     Articles: Article[]
-    Pagination: {
-        Current: number
-        Total: number
-    }
+    Pagination: Pagination
 }
