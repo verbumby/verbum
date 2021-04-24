@@ -5,6 +5,8 @@ import { Suggestions } from './Suggestions'
 import { IconBackspace, IconSearch } from '../icons'
 import { Suggestion, useDelayed } from '.'
 import { useHistory } from 'react-router-dom'
+import { useDispatch } from 'react-redux'
+import { hideLoading, showLoading } from 'react-redux-loading-bar'
 
 type SearchControlProps = {
     urlQ: string
@@ -108,6 +110,7 @@ function useSuggestions(): [
     const [active, setActive] = useState<number>(-1)
     const [hard, setHard] = useState<boolean>(false)
     const promise = useRef<Promise<Suggestion[]>>(null)
+    const dispatch = useDispatch()
 
     const resetSuggestions = () => {
         setSuggs([])
@@ -122,6 +125,7 @@ function useSuggestions(): [
         } else {
             setHard(false)
             // TODO: cancel prev request
+            dispatch(showLoading())
             const p = verbumClient.suggest(e.target.value)
             promise.current = p
             p.then(suggs => {
@@ -133,6 +137,8 @@ function useSuggestions(): [
                     setHard(false)
                 }
                 setSuggs(suggs)
+            }).finally(() => {
+                dispatch(hideLoading())
             })
         }
     }
