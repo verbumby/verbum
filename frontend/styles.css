@@ -18,7 +18,7 @@ textarea, input[type="text"], input[type="button"], input[type="submit"] {
   border: 1px solid lightgrey; border-right: none; border-left: none;}
 .search-input .button-clear:active {color: red;}
 
-.suggestions {position: absolute; width: 100%; box-sizing: border-box;
+.suggestions {position: absolute; width: 100%; box-sizing: border-box; z-index: 1000;
   background: white; padding: 0; margin: 0; list-style: none; cursor: pointer;
   border: 1px solid lightgrey; border-top: none; box-shadow: 0 2px 4px rgba(0,0,0,0.1)}
 .suggestions li {padding: 5px;}

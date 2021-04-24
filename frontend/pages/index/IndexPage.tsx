@@ -47,7 +47,7 @@ export const IndexPage: React.VFC = () => {
                     <meta property="og:description" content={`${q} - Пошук`} />
                     <meta name="robots" content="noindex, nofollow" />
                 </Helmet>
-                {searchState.searchResult && (
+                {searchState.searchResult && searchState.searchResult.Articles.length > 0 && (
                     <> <div>{searchState.searchResult.Articles.map(
                         hit => <ArticleView key={`${hit.DictionaryID}-${hit.ID}`} a={hit} />
                     )}
