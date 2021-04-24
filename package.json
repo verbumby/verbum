@@ -30,7 +30,7 @@
     "clean-webpack-plugin": "^3.0.0",
     "copy-webpack-plugin": "^7.0.0",
     "css-loader": "^5.0.1",
-    "css-minimizer-webpack-plugin": "^1.1.5",
+    "css-minimizer-webpack-plugin": "^2.0.0",
     "html-webpack-plugin": "^5.0.0-alpha.15",
     "koa": "^2.13.0",
     "koa-mount": "^4.0.0",
