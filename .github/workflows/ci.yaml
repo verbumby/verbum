@@ -1,6 +1,6 @@
 name: Verbum CI
 
-on: [push]
+on: [push, pull_request]
 
 jobs:
   build-backend:
@@ -59,7 +59,7 @@ jobs:
 
   deploy:
     runs-on: ubuntu-latest
-    if: ${{ github.ref == 'refs/heads/master' }}
+    if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/master' }}
     needs: package
     environment: prod
     steps:
