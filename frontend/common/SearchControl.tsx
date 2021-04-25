@@ -110,6 +110,7 @@ function useSuggestions(): [
     const [active, setActive] = useState<number>(-1)
     const [hard, setHard] = useState<boolean>(false)
     const promise = useRef<Promise<Suggestion[]>>(null)
+    const abort = useRef<AbortController>(null)
     const dispatch = useDispatch()
 
     const resetSuggestions = () => {
@@ -122,11 +123,20 @@ function useSuggestions(): [
         if (!e.target.value) {
             resetSuggestions()
             promise.current = null
+            abort.current = null
         } else {
             setHard(false)
-            // TODO: cancel prev request
+
             dispatch(showLoading())
-            const p = verbumClient.suggest(e.target.value)
+
+            if (abort.current) {
+                abort.current.abort()
+            }
+            abort.current = new AbortController()
+
+            const p = verbumClient
+                .withSignal(abort.current.signal)
+                .suggest(e.target.value)
             promise.current = p
             p.then(suggs => {
                 if (promise.current != p) {
@@ -137,6 +147,8 @@ function useSuggestions(): [
                     setHard(false)
                 }
                 setSuggs(suggs)
+            }).catch(() => {
+                // ignore abort exception
             }).finally(() => {
                 dispatch(hideLoading())
             })

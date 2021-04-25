@@ -14,7 +14,7 @@ export class VerbumAPIClientServer extends VerbumAPIClientImpl {
     }
 
     async call<T>(path: string): Promise<T> {
-        const resp = await fetch(this.apiURL + path)
+        const resp = await fetch(this.apiURL + path, { signal: this.signal })
         return resp.json() as Promise<T>
     }
 }

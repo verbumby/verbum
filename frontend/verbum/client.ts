@@ -1,6 +1,7 @@
 import { Article, ArticleList, Dict, LetterFilter, SearchResult, Suggestion } from '../common'
 
 export interface VerbumAPIClient {
+    withSignal(signal: AbortSignal): this
     getDictionaries(): Promise<Dict[]>
     search(q: string, page: number): Promise<SearchResult>
     suggest(q: string): Promise<Suggestion[]>
@@ -14,6 +15,14 @@ declare global {
 }
 
 export abstract class VerbumAPIClientImpl implements VerbumAPIClient {
+    protected signal: AbortSignal;
+
+    withSignal(signal: AbortSignal): this {
+        const result = Object.create(this) as this
+        result.signal = signal
+        return result
+    }
+
     abstract call<T>(path: string): Promise<T>
 
     async getDictionaries(): Promise<Dict[]> {
