@@ -119,8 +119,8 @@ function useSuggestions(): [
         setHard(false)
     }
 
-    const onChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
-        if (!e.target.value) {
+    const onChangeHandler = useDelayed((q: string): void => {
+        if (!q) {
             resetSuggestions()
             promise.current = null
             abort.current = null
@@ -136,7 +136,7 @@ function useSuggestions(): [
 
             const p = verbumClient
                 .withSignal(abort.current.signal)
-                .suggest(e.target.value)
+                .suggest(q)
             promise.current = p
             p.then(suggs => {
                 if (promise.current != p) {
@@ -153,6 +153,10 @@ function useSuggestions(): [
                 dispatch(hideLoading())
             })
         }
+    }, 150)
+
+    const onChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
+        onChangeHandler(e.target.value)
     }
 
     const onKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
