@@ -42,15 +42,19 @@ func Bootstrap() error {
 		return fmt.Errorf("article migrate: %w", err)
 	}
 
-	if err := elasticIndexTemplatesMigrate(); err != nil {
-		return fmt.Errorf("elastic index templates migrate: %w", err)
-	}
-
-	if err := timestampFieldMigrate(); err != nil {
-		return fmt.Errorf("timestamp field migration: %w", err)
-	}
-
 	return nil
+
+	/*
+		if err := elasticIndexTemplatesMigrate(); err != nil {
+			return fmt.Errorf("elastic index templates migrate: %w", err)
+		}
+
+		if err := timestampFieldMigrate(); err != nil {
+			return fmt.Errorf("timestamp field migration: %w", err)
+		}
+
+		return nil
+	*/
 }
 
 func elasticIndexTemplatesMigrate() error {
