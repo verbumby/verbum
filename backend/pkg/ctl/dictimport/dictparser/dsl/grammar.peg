@@ -23,7 +23,7 @@ All ⟵ Preamble "\n"+ as:Articles EOF {
 }
 
 Preamble ⟵ PreambleEntry+
-PreambleEntry ⟵ '#' k:PreambleEntryKey [\t] '"' v:PreambleEntryValue '"' "\n" {
+PreambleEntry ⟵ '#' k:PreambleEntryKey [\t ] '"' v:PreambleEntryValue '"' "\n" {
 	return dictparser.MetaEntry{Key: k.(string), Value: v.(string)}, nil
 }
 PreambleEntryKey ⟵ [A-Z_]+ { return string(c.text), nil }

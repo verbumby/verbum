@@ -136,6 +136,8 @@ OpenTag ⟵ '[' tnitf:Tagname targ:Tagarg? ']' {
         return `<v-ex>`, nil
     case "lang":
         return ``, nil
+    case "!trs":
+        fallthrough
     case "i":
         return `<i>`, nil
     case "com":
@@ -166,6 +168,8 @@ CloseTag ⟵ "[/" tnitf:Tagname ']' {
         return `</v-ex>`, nil
     case "lang":
         return ``, nil
+    case "!trs":
+        fallthrough
     case "i":
         return `</i>`, nil
     case "com":
@@ -183,7 +187,7 @@ CloseTag ⟵ "[/" tnitf:Tagname ']' {
     }
 }
 
-Tagname ⟵ n:("m1" / "m2" / "m3" / "m" / "b" / "com" / "c" / "'" / "sup" / "p" / "ex" / "lang" / "i" / "trn" / "*" / "ref") {
+Tagname ⟵ n:("m1" / "m2" / "m3" / "m" / "b" / "com" / "c" / "'" / "sup" / "p" / "ex" / "lang" / "i" / "trn" / "!trs" / "*" / "ref") {
     return string(n.([]byte)), nil
 }
 

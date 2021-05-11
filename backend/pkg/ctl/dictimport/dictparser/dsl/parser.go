@@ -51,6 +51,11 @@ func ParseDSLReader(filename string, r io.Reader) (dictparser.Dictionary, error)
 			}
 		}
 
+		var re = regexp.MustCompile(`(?U)\[ex]\[b]\[lang id=2](.*)\[/lang]`)
+		for _, match := range re.FindAllStringSubmatch(a.Body, -1) {
+			hwsalt = append(hwsalt, match[1])
+		}
+
 		d.Articles[i].Headwords = hws
 		d.Articles[i].HeadwordsAlt = hwsalt
 		d.Articles[i].Body = a.Body

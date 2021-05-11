@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
+	"math"
 	"os"
 	"strings"
 	"time"
@@ -30,6 +31,10 @@ func Command() *cobra.Command {
 	result.PersistentFlags().StringVar(&c.format, "format", "", "dsl|stardict")
 	result.PersistentFlags().StringVar(&c.indexID, "index-id", "", "storage index id")
 	result.PersistentFlags().StringVar(&c.romanizer, "romanizer", "", "<blank>|belarusian|russian")
+	result.PersistentFlags().BoolVar(&c.dryrun, "dryrun", true, "true/false")
+	result.PersistentFlags().IntVar(&c.limit, "limit", 1000, "limits the number of articles processed, -1 disables the limit")
+	result.PersistentFlags().BoolVarP(&c.verbose, "verbose", "v", false, "verbose output: true/false")
+
 	return result
 }
 
@@ -38,10 +43,19 @@ type commandController struct {
 	format    string
 	indexID   string
 	romanizer string
+	dryrun    bool
+	limit     int
+	verbose   bool
 }
 
 func (c *commandController) Run(cmd *cobra.Command, args []string) {
-	fmt.Println(c.filename)
+	if c.limit == -1 {
+		c.limit = math.MaxInt32
+	}
+	if c.dryrun {
+		log.Println("dryrun mode enabled")
+	}
+	log.Println("processing ", c.filename)
 	if err := c.run(); err != nil {
 		log.Fatal(err)
 	}
@@ -79,6 +93,9 @@ func (c *commandController) run() error {
 }
 
 func (c *commandController) createIndex(maxResultWindow int) error {
+	if c.dryrun {
+		return nil
+	}
 	err := storage.Put("/dict-"+c.indexID, map[string]interface{}{
 		"settings": map[string]interface{}{
 			"number_of_shards":   1,
@@ -100,7 +117,7 @@ func (c *commandController) createIndex(maxResultWindow int) error {
 				"tokenizer": map[string]interface{}{
 					"hw_smaller": map[string]interface{}{
 						"type":              "char_group",
-						"tokenize_on_chars": []string{"-", " ", "(", ")", ","},
+						"tokenize_on_chars": []string{"-", "—", " ", "(", ")", ",", "!", "?", "…"},
 					},
 				},
 			},
@@ -136,6 +153,8 @@ func (c *commandController) createIndex(maxResultWindow int) error {
 						"Letter1": map[string]interface{}{"type": "keyword"},
 						"Letter2": map[string]interface{}{"type": "keyword"},
 						"Letter3": map[string]interface{}{"type": "keyword"},
+						"Letter4": map[string]interface{}{"type": "keyword"},
+						"Letter5": map[string]interface{}{"type": "keyword"},
 					},
 				},
 				"Suggest": map[string]interface{}{
@@ -166,6 +185,10 @@ func (c *commandController) indexArticles(d dictparser.Dictionary) error {
 
 	buff := &bytes.Buffer{}
 	for i, a := range d.Articles {
+		if i == c.limit {
+			break
+		}
+
 		suggests := []map[string]interface{}{}
 		prefixes := []map[string]string{}
 
@@ -223,6 +246,14 @@ func (c *commandController) indexArticles(d dictparser.Dictionary) error {
 			return fmt.Errorf("encode %s doc: %w", id, err)
 		}
 
+		if c.verbose {
+			toprint := map[string]interface{}{"_doc": doc, "_id": id}
+			if err := json.NewEncoder(os.Stdout).Encode(toprint); err != nil {
+				return fmt.Errorf("encode %s doc for verbose output: %w", id, err)
+			}
+			fmt.Println()
+		}
+
 		if (i+1)%100 == 0 {
 			if err := c.flushBuffer(buff); err != nil {
 				return fmt.Errorf("flush buffer: %w", err)
@@ -260,6 +291,9 @@ func (c *commandController) assembleID(hws []string) (string, error) {
 }
 
 func (c *commandController) flushBuffer(buff *bytes.Buffer) error {
+	if c.dryrun {
+		return nil
+	}
 	if err := storage.Post("/dict-"+c.indexID+"/_doc/_bulk", buff, nil); err != nil {
 		return fmt.Errorf("bulk post to storage: %w", err)
 	}
