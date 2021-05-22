@@ -49,7 +49,7 @@ type commandController struct {
 }
 
 func (c *commandController) Run(cmd *cobra.Command, args []string) {
-	if c.limit == -1 {
+	if !c.dryrun || c.limit == -1 {
 		c.limit = math.MaxInt32
 	}
 	if c.dryrun {
@@ -81,7 +81,7 @@ func (c *commandController) run() error {
 
 	log.Printf("found %d articles in the dictionary", len(d.Articles))
 
-	if err := c.createIndex(len(d.Articles)); err != nil {
+	if err := c.createIndex(len(d.Articles) + 50000); err != nil {
 		return fmt.Errorf("create index: %w", err)
 	}
 
