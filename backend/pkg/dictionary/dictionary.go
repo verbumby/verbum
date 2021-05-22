@@ -52,4 +52,8 @@ var dictionaries = []Dictionary{
 		slug:                  "histarychny-slounik-bielaruskaj-movy-1982-2017",
 		includeTitleInContent: true,
 	},
+	DSL{
+		id:    "esbm",
+		title: "Этымалагічны слоўнік беларускай мовы",
+	},
 }
