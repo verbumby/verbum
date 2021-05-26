@@ -130,6 +130,8 @@ OpenTag ⟵ '[' tnitf:Tagname targ:Tagarg? ']' {
         return `<strong>`, nil
     case "sup":
         return `<sup>`, nil
+    case "sub":
+        return `<sub>`, nil
     case "p":
         return ``, nil
     case "ex":
@@ -162,6 +164,8 @@ CloseTag ⟵ "[/" tnitf:Tagname ']' {
         return `</strong>`, nil
     case "sup":
         return `</sup>`, nil
+    case "sub":
+        return `</sub>`, nil
     case "p":
         return ``, nil
     case "ex":
@@ -187,7 +191,7 @@ CloseTag ⟵ "[/" tnitf:Tagname ']' {
     }
 }
 
-Tagname ⟵ n:("m1" / "m2" / "m3" / "m" / "b" / "com" / "c" / "'" / "sup" / "p" / "ex" / "lang" / "i" / "trn" / "!trs" / "*" / "ref") {
+Tagname ⟵ n:("m1" / "m2" / "m3" / "m" / "b" / "com" / "c" / "'" / "sup" / "sub" / "p" / "ex" / "lang" / "i" / "trn" / "!trs" / "*" / "ref") {
     return string(n.([]byte)), nil
 }
 
