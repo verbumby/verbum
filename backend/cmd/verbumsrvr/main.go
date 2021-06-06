@@ -49,7 +49,6 @@ func bootstrapServer() error {
 	r.PathPrefix("/").Handler(rp)
 
 	chttp.InitCookieManager()
-	chttp.InitAccessLog()
 	go storage.PruneOldBackups()
 
 	if viper.IsSet("http.addr") {
