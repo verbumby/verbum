@@ -7,7 +7,7 @@ Environment=NODE_ENV=production
 Type=simple
 User=verbum
 Group=verbum
-ExecStart=/usr/bin/node /usr/local/share/verbum/frontend/server.bundle.js
+ExecStart=/usr/bin/node /usr/local/share/verbum/frontend/server.js
 NoNewPrivileges=true
 WorkingDirectory=/usr/local/share/verbum/frontend
 StandardOutput=journal
