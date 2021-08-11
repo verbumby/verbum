@@ -29,7 +29,8 @@ jobs:
       with:
         node-version: '15.0.x'
     - run: npm ci
-    - run: make fe-build-prod
+    - run: make fe-lint
+    - run: make fe-build
     - uses: actions/upload-artifact@v2
       with:
         name: frontend-bundle
