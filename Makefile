@@ -15,17 +15,40 @@ build-parsers:
 	cd backend/pkg/ctl/dictimport/dictparser/dsl && pigeon -o grammar.go grammar.peg
 	cd backend/pkg/dictionary/dslparser && pigeon -o grammar.go grammar.peg
 
-.PHONY: fe-build-watch
-fe-build-watch:
-	npx webpack --watch --progress
+.PHONY: fe-lint
+fe-lint:
+	npx tsc --noEmit
 
-.PHONY: fe-build-prod
-fe-build-prod:
-	NODE_ENV=production npx webpack
+.PHONY: fe-build
+fe-build:
+	npx esbuild frontend/server.tsx \
+		--bundle \
+		--define:process.env.NODE_ENV='"production"' \
+		--minify \
+		--sourcemap \
+		--platform=node \
+		--target=node15.0 \
+		--outdir=frontend/dist
+
+	rm -f frontend/dist/public/*.{js,js.map,css,css.map}
+	npx esbuild frontend/browser.tsx \
+		--bundle \
+		--define:process.env.NODE_ENV='"production"' \
+		--minify \
+		--sourcemap \
+		--platform=browser \
+		--target=es2016 \
+		--outdir=frontend/dist/public \
+		--entry-names=[name]-[hash] \
+		--metafile=frontend/dist/browser.meta.json \
+		--loader:.png=file
+
+	cp frontend/index.html frontend/dist/index.html
+	cp frontend/favicon.png frontend/dist/public/favicon.png
 
 .PHONY: fe-run
 fe-run:
-	cd frontend/dist && node server.bundle.js
+	cd frontend/dist && node server.js
 
 .PHONY: es-sync-backup
 es-sync:

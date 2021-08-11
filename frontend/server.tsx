@@ -16,9 +16,33 @@ import { rootReducer } from './store'
 import { VerbumAPIClientServer } from './verbum/server'
 import { routes } from './routes'
 
-global.verbumClient = new VerbumAPIClientServer({apiURL: 'http://localhost:8080'})
+global.verbumClient = new VerbumAPIClientServer({ apiURL: 'http://localhost:8080' })
+
+interface BundleMetadata {
+    outputs: {
+        [path: string]: {}
+    }
+}
+const browserBundleMetadata: BundleMetadata = JSON.parse(readFileSync('browser.meta.json', 'utf-8'))
+const assets = Object.keys(browserBundleMetadata.outputs)
+    .filter(v => !v.endsWith('.map'))
+    .map(v => v.replace('frontend/dist/public/', ''))
 
 const indexhtml = readFileSync('index.html', 'utf-8')
+    .replace(
+        'CSS_BUNDLES_PLACEHOLDER',
+        assets
+            .filter(v => v.endsWith('.css'))
+            .map(v => `<link href="/statics/${v}" rel="stylesheet">`)
+            .join("\n"),
+    )
+    .replace(
+        'JS_BUNDLES_PLACEHOLDER',
+        assets
+            .filter(v => v.endsWith('.js'))
+            .map(v => `<script defer="defer" src="/statics/${v}"></script>`)
+            .join("\n"),
+    )
 
 const kstatics = new Koa()
 kstatics.use(koaStatic(

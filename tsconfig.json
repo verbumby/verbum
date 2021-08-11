@@ -2,9 +2,10 @@
     "compilerOptions": {
         "sourceMap": true,
         "jsx": "react",
-        "target": "ES2019",
+        "target": "ES2016",
         "allowSyntheticDefaultImports": true,
         "noImplicitAny": true,
-        "moduleResolution": "node"
-    }
+        "moduleResolution": "node",
+        "skipLibCheck": true,
+    },
 }
