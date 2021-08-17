@@ -3,6 +3,9 @@ package htmlui
 import (
 	"net/url"
 	"strconv"
+	"strings"
+
+	"github.com/verbumby/verbum/backend/pkg/dictionary"
 )
 
 // Query url query
@@ -172,4 +175,104 @@ func (p *IntegerQueryParam) Reset() {
 // ValueEqualsDefault implements interface URLQueryParam
 func (p *IntegerQueryParam) ValueEqualsDefault() bool {
 	return p.def == p.value
+}
+
+// StringQueryParam string url query param
+type InDictsQueryParam struct {
+	name  string
+	value []string
+	def   []string
+}
+
+// NewStringQueryParam creates new StringURLQueryParam
+func NewInDictsQueryParam(name string) *InDictsQueryParam {
+	dicts := dictionary.GetAll()
+	def := make([]string, len(dicts))
+	for i, d := range dicts {
+		def[i] = d.ID()
+	}
+	value := make([]string, len(def))
+	copy(value, def)
+
+	return &InDictsQueryParam{
+		name:  name,
+		value: value,
+		def:   def,
+	}
+}
+
+// Name implements interface URLQueryParam
+func (p *InDictsQueryParam) Name() string {
+	return p.name
+}
+
+// Value returns param value
+func (p *InDictsQueryParam) Value() []string {
+	return p.value
+}
+
+// SetValue set's value
+func (p *InDictsQueryParam) SetValue(vs []string) {
+	value := []string{}
+	for _, id := range p.def {
+		contains := false
+		for _, v := range vs {
+			if id == v {
+				contains = true
+				break
+			}
+		}
+		if contains {
+			value = append(value, id)
+		}
+	}
+	p.value = value
+}
+
+// Decode implements interface URLQueryParam
+func (p *InDictsQueryParam) Decode(value string) {
+	if value == "" {
+		p.Reset()
+		return
+	}
+
+	vs := strings.Split(value, ",")
+	p.SetValue(vs)
+}
+
+// Encode implements interface URLQueryParam
+func (p *InDictsQueryParam) Encode() string {
+	return strings.Join(p.value, ",")
+}
+
+// Clone implements interface URLQueryParam
+func (p *InDictsQueryParam) Clone() QueryParam {
+	result := InDictsQueryParam{}
+	result.name = p.name
+	result.value = make([]string, len(p.value))
+	copy(result.value, p.value)
+	result.def = make([]string, len(p.def))
+	copy(result.def, p.def)
+	return &result
+}
+
+// Reset implements interface URLQueryParam
+func (p *InDictsQueryParam) Reset() {
+	p.value = make([]string, len(p.def))
+	copy(p.value, p.def)
+}
+
+// ValueEqualsDefault implements interface URLQueryParam
+func (p *InDictsQueryParam) ValueEqualsDefault() bool {
+	if len(p.value) != len(p.def) {
+		return false
+	}
+
+	for i := range p.value {
+		if p.value[i] != p.def[i] {
+			return false
+		}
+	}
+
+	return true
 }

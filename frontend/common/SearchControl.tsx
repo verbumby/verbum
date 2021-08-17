@@ -7,22 +7,27 @@ import { Suggestion, useDelayed } from '.'
 import { useHistory } from 'react-router-dom'
 import { useDispatch } from 'react-redux'
 import { hideLoading, showLoading } from 'react-redux-loading-bar'
+import { useDictsFilter } from './dictsfilter'
 
 type SearchControlProps = {
     urlQ: string
+    urlIn: string
+    calculateSearchURL: (q: string, inDicts: string) => string
 }
 
-export const SearchControl: React.VFC<SearchControlProps> = ({ urlQ }) => {
+export const SearchControl: React.VFC<SearchControlProps> = ({ urlQ, urlIn, calculateSearchURL }) => {
     const [q, setQ] = useState<string>(urlQ)
     const qEl = useRef<HTMLInputElement>(null)
     const history = useHistory()
 
+    const {
+        inDicts,
+        icon: dictsFilterIcon,
+        filter: dictsFilter
+    } = useDictsFilter(urlIn)
+
     const onSearch = (q: string) => {
-        if (!q) {
-            history.push('/')
-        } else {
-            history.push('/?q=' + encodeURIComponent(q))
-        }
+        history.push('/' + calculateSearchURL(q, inDicts))
     }
 
     let [
@@ -31,7 +36,7 @@ export const SearchControl: React.VFC<SearchControlProps> = ({ urlQ }) => {
         calculateQ,
         inputProps,
         suggestionViewProps,
-    ] = useSuggestions()
+    ] = useSuggestions(inDicts)
 
     const urlQJustChanged = useRef<boolean>(false)
     useEffect(() => {
@@ -54,14 +59,28 @@ export const SearchControl: React.VFC<SearchControlProps> = ({ urlQ }) => {
     }
 
     const { onChange } = inputProps
-    inputProps = { ...inputProps, onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
-        setQ(e.target.value)
-        onChange(e)
-    }}
+    inputProps = {
+        ...inputProps, onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
+            setQ(e.target.value)
+            onChange(e)
+        }
+    }
 
     return (
         <div id="search">
-            <form action="/" method="get" onSubmit={e => { e.preventDefault(); onSearch(calculateQ(q)) }} >
+            <form
+                action="/"
+                method="get"
+                onSubmit={
+                    e => {
+                        e.preventDefault()
+                        if (inDicts === '-') {
+                            return
+                        }
+                        onSearch(calculateQ(q))
+                    }
+                }
+            >
                 <div className="search-input">
                     <input
                         ref={qEl}
@@ -71,17 +90,19 @@ export const SearchControl: React.VFC<SearchControlProps> = ({ urlQ }) => {
                         autoComplete="off"
                         {...inputProps}
                     />
-                    {q && (<span className="btn button-clear" onClick={onClearClick}>
+                    {q && (<span className="btn button-control button-clear" onClick={onClearClick}>
                         <IconBackspace />
                     </span>)}
-                    <button type="submit" className="btn button-search button-search-wide">Шукаць</button>
-                    <button type="submit" className="btn button-search button-search-small">
+                    {dictsFilterIcon}
+                    <button type="submit" disabled={inDicts === '-'} className="btn button-search button-search-wide">Шукаць</button>
+                    <button type="submit" disabled={inDicts === '-'} className="btn button-search button-search-small">
                         <IconSearch />
                     </button>
                 </div>
                 {suggestions.length > 0 && (
                     <Suggestions onClick={onSearch} {...suggestionViewProps} />
                 )}
+                {dictsFilter}
             </form>
         </div>
     )
@@ -99,7 +120,7 @@ type useSuggestionsInputProps = {
     onBlur: (e: React.FocusEvent<HTMLInputElement>) => void
 }
 
-function useSuggestions(): [
+function useSuggestions(inDicts: string): [
     Suggestion[],
     () => void,
     (q: string) => string,
@@ -120,7 +141,7 @@ function useSuggestions(): [
     }
 
     const onChangeHandler = useDelayed((q: string): void => {
-        if (!q) {
+        if (!q || inDicts == '-') {
             resetSuggestions()
             promise.current = null
             abort.current = null
@@ -136,7 +157,7 @@ function useSuggestions(): [
 
             const p = verbumClient
                 .withSignal(abort.current.signal)
-                .suggest(q)
+                .suggest(q, inDicts)
             promise.current = p
             p.then(suggs => {
                 if (promise.current != p) {
@@ -204,7 +225,7 @@ function useSuggestions(): [
         suggs,
         resetSuggestions,
         calculateQ,
-        {onChange, onKeyDown, onBlur},
-        {suggestions: suggs, active, setActive: setActiveSuggestionDelayed},
+        { onChange, onKeyDown, onBlur },
+        { suggestions: suggs, active, setActive: setActiveSuggestionDelayed },
     ]
 }
