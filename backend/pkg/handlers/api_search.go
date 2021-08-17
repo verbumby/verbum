@@ -18,6 +18,7 @@ import (
 func APISearch(w http.ResponseWriter, rctx *chttp.Context) error {
 	urlQuery := htmlui.Query([]htmlui.QueryParam{
 		htmlui.NewStringQueryParam("q", ""),
+		htmlui.NewInDictsQueryParam("in"),
 		htmlui.NewIntegerQueryParam("page", 1),
 	})
 	urlQuery.From(rctx.R.URL.Query())
@@ -28,6 +29,20 @@ func APISearch(w http.ResponseWriter, rctx *chttp.Context) error {
 		return nil
 	}
 	page := urlQuery.Get("page").(*htmlui.IntegerQueryParam).Value()
+	inDicts := urlQuery.Get("in").(*htmlui.InDictsQueryParam).Value()
+	if len(q) > 1000 {
+		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
+		return nil
+	}
+
+	inDictsStr := ""
+	for _, d := range inDicts {
+		if len(inDictsStr) == 0 {
+			inDictsStr = "dict-" + d
+		} else {
+			inDictsStr += ",dict-" + d
+		}
+	}
 
 	const pageSize = 10
 	reqbody := map[string]interface{}{
@@ -96,7 +111,7 @@ func APISearch(w http.ResponseWriter, rctx *chttp.Context) error {
 		} `json:"suggest"`
 	}{}
 
-	if err := storage.Post("/dict-*/_search", reqbody, &respbody); err != nil {
+	if err := storage.Post("/"+inDictsStr+"/_search", reqbody, &respbody); err != nil {
 		return fmt.Errorf("query elastic: %w", err)
 	}
 

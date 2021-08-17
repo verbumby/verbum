@@ -6,15 +6,37 @@ import (
 	"net/http"
 
 	"github.com/verbumby/verbum/backend/pkg/chttp"
+	"github.com/verbumby/verbum/backend/pkg/htmlui"
 	"github.com/verbumby/verbum/backend/pkg/storage"
 )
 
 // APISuggest handles suggest http request
 func APISuggest(w http.ResponseWriter, rctx *chttp.Context) error {
-	q := rctx.R.URL.Query().Get("q")
+	urlQuery := htmlui.Query([]htmlui.QueryParam{
+		htmlui.NewStringQueryParam("q", ""),
+		htmlui.NewInDictsQueryParam("in"),
+	})
+	urlQuery.From(rctx.R.URL.Query())
+
+	q := urlQuery.Get("q").(*htmlui.StringQueryParam).Value()
 	if len(q) > 500 {
 		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
 		return nil
+	}
+
+	inDicts := urlQuery.Get("in").(*htmlui.InDictsQueryParam).Value()
+	if len(q) > 1000 {
+		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
+		return nil
+	}
+
+	inDictsStr := ""
+	for _, d := range inDicts {
+		if len(inDictsStr) == 0 {
+			inDictsStr = "dict-" + d
+		} else {
+			inDictsStr += ",dict-" + d
+		}
 	}
 
 	reqbody := map[string]interface{}{
@@ -41,7 +63,7 @@ func APISuggest(w http.ResponseWriter, rctx *chttp.Context) error {
 		} `json:"suggest"`
 	}{}
 
-	if err := storage.Post("/dict-*/_search", reqbody, &respbody); err != nil {
+	if err := storage.Post("/"+inDictsStr+"/_search", reqbody, &respbody); err != nil {
 		return fmt.Errorf("query elastic: %w", err)
 	}
 

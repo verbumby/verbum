@@ -3,8 +3,8 @@ import { Article, ArticleList, Dict, LetterFilter, SearchResult, Suggestion } fr
 export interface VerbumAPIClient {
     withSignal(signal: AbortSignal): this
     getDictionaries(): Promise<Dict[]>
-    search(q: string, page: number): Promise<SearchResult>
-    suggest(q: string): Promise<Suggestion[]>
+    search(q: string, inDicts: string, page: number): Promise<SearchResult>
+    suggest(q: string, inDicts: string): Promise<Suggestion[]>
     getArticle(dictID: string, articleID: string): Promise<Article>
     getLetterFilter(dictID: string, prefix: string): Promise<LetterFilter>
     getDictArticles(dictID: string, prefix: string, page: number): Promise<ArticleList>
@@ -29,13 +29,16 @@ export abstract class VerbumAPIClientImpl implements VerbumAPIClient {
         return this.call<Dict[]>('/api/dictionaries')
     }
 
-    async search(q: string, page: number): Promise<SearchResult> {
+    async search(q: string, inDicts: string, page: number): Promise<SearchResult> {
         q = encodeURIComponent(q)
-        return this.call<SearchResult>(`/api/search?q=${q}&page=${page}`)
+        inDicts = encodeURIComponent(inDicts)
+        return this.call<SearchResult>(`/api/search?q=${q}&in=${inDicts}&page=${page}`)
     }
 
-    async suggest(q: string): Promise<Suggestion[]> {
-        return this.call<Suggestion[]>('/api/suggest?q=' + encodeURIComponent(q))
+    async suggest(q: string, inDicts: string): Promise<Suggestion[]> {
+        q = encodeURIComponent(q)
+        inDicts = encodeURIComponent(inDicts)
+        return this.call<Suggestion[]>(`/api/suggest?q=${q}&in=${inDicts}`)
     }
 
     async getArticle(dictID: string, articleID: string): Promise<Article> {

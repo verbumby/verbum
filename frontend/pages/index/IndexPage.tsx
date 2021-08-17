@@ -13,6 +13,7 @@ export const IndexPage: React.VFC = () => {
     const match = useRouteMatch()
     const urlSearch = useURLSearch()
     const q = urlSearch.get('q')
+    const inDicts = urlSearch.get('in')
     const page = urlSearch.get('page')
     const dicts = useDicts()
     const searchState = useSearchState()
@@ -21,7 +22,7 @@ export const IndexPage: React.VFC = () => {
     useEffect(() => {
         dispatch(search(match, urlSearch))
         return () => dispatch(searchReset())
-    }, [q, page])
+    }, [q, inDicts, page])
 
     const renderDictList = (): React.ReactNode => (
         <>
@@ -103,7 +104,18 @@ export const IndexPage: React.VFC = () => {
 
     return (
         <div>
-            <SearchControl urlQ={q} />
+            <SearchControl
+                urlQ={q}
+                urlIn={inDicts}
+                calculateSearchURL={
+                    (q, inDicts) => urlSearch
+                        .clone()
+                        .set('q', q)
+                        .set('in', inDicts)
+                        .set('page', 1)
+                        .encode()
+                }
+            />
             {!q ? renderDictList() : renderSearchResults()}
         </div>
     )
