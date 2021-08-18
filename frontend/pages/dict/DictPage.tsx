@@ -2,11 +2,12 @@ import * as React from 'react'
 import { Helmet } from 'react-helmet'
 import { useDispatch } from 'react-redux'
 import { useRouteMatch } from 'react-router-dom'
-import { ArticleView, PaginationView } from '../../common'
+import { ArticleView, PaginationView, SearchControl } from '../../common'
 import { useDict, useDictArticles, useLetterFilter } from '../../store'
 import { letterFilterFetch, letterFilterReset } from './letterfilter'
 import { dictArticlesFetch, MatchParams, dictArticlesReset, useURLSearch } from './dict'
 import { LetterFilterView } from './LetterFilterView'
+import { useURLSearch as useIndexURLSearch } from '../index/search'
 
 export const DictPage: React.VFC = ({ }) => {
     const match = useRouteMatch<MatchParams>()
@@ -19,6 +20,8 @@ export const DictPage: React.VFC = ({ }) => {
     const letterFilter = useLetterFilter()
     const dictArticles = useDictArticles()
     const dispatch = useDispatch()
+
+    const indexURLSearch = useIndexURLSearch()
 
     React.useEffect(() => {
         dispatch(letterFilterFetch(match, urlSearch))
@@ -44,6 +47,20 @@ export const DictPage: React.VFC = ({ }) => {
                 <meta name="robots" content="noindex, follow" />
             </Helmet>
             <h4 className="ml-1 mr-1 mb-3">{dict.Title}</h4>
+            <div className="mb-3">
+                <SearchControl
+                    urlQ=""
+                    urlIn={dict.ID}
+                    calculateSearchURL={
+                        (q, inDicts) => indexURLSearch
+                            .clone()
+                            .set('q', q)
+                            .set('in', inDicts)
+                            .set('page', 1)
+                            .encode()
+                    }
+                />
+            </div>
             <LetterFilterView
                 letterFilter={letterFilter}
                 prefixToURL={prefix => ({
