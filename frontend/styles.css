@@ -53,7 +53,7 @@ textarea, input[type="text"], input[type="button"], input[type="submit"] {
 }
 .article v-accent {color: brown;}
 .article v-ex v-accent {color: rgba(165, 42, 42, 0.5);}
-.article .source {text-align: right; color: darkgrey; font-size: 0.9em;}
+.article .source {text-align: right; color: darkgrey; font-size: 0.9em; padding-top: 3px}
 .article p {margin: 0;}
 .article.rvblr p {margin: 0.5rem 0;}
 .article.hsbm img {max-width:100%;}

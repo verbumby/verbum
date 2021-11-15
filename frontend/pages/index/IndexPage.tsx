@@ -50,7 +50,14 @@ export const IndexPage: React.VFC = () => {
                 </Helmet>
                 {searchState.searchResult && searchState.searchResult.Articles.length > 0 && (
                     <> <div>{searchState.searchResult.Articles.map(
-                        hit => <ArticleView key={`${hit.DictionaryID}-${hit.ID}`} a={hit} />
+                        hit => (
+                            <ArticleView
+                                key={`${hit.DictionaryID}-${hit.ID}`}
+                                a={hit}
+                                showExternalButton={true}
+                                showSource={true}
+                            />
+                        )
                     )}
                     </div>
                     <PaginationView
