@@ -73,7 +73,14 @@ export const DictPage: React.VFC = ({ }) => {
             />
             {dictArticles && <>
                 <div>
-                    {dictArticles.Articles.map(a => <ArticleView key={a.DictionaryID + a.ID} a={a} />)}
+                    {dictArticles.Articles.map(a => (
+                        <ArticleView
+                            key={a.DictionaryID + a.ID}
+                            a={a}
+                            showExternalButton={true}
+                            showSource={false}
+                        />
+                    ))}
                 </div>
                 <PaginationView
                     current={dictArticles.Pagination.Current}

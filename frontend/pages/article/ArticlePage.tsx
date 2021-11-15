@@ -47,7 +47,7 @@ export const ArticlePage: React.VFC = () => {
                             .encode()
                     }
                 />
-                <ArticleView a={a} />
+                <ArticleView a={a} showExternalButton={false} showSource={true} />
             </div>
         </>
     )
