@@ -25,11 +25,6 @@ var dictionaries = []Dictionary{
 		id:    "brs",
 		title: "Беларуска-расійскі слоўнік, 4‑е выданне (Лукашанец, 2012)",
 	},
-	Stardict{
-		id:    "bel-rus",
-		title: "Беларуска-расійскі слоўнік",
-		slug:  "bielaruska-rasijski-slounik",
-	},
 	DSL{
 		id:                    "rbs",
 		title:                 "Расійска-беларускі слоўнік, 8-е выданне (Крапіва, 2002)",
