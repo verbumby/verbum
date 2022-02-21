@@ -16,7 +16,7 @@ import { rootReducer } from './store'
 import { VerbumAPIClientServer } from './verbum/server'
 import { routes } from './routes'
 
-global.verbumClient = new VerbumAPIClientServer({ apiURL: 'http://localhost:8080' })
+global.verbumClient = new VerbumAPIClientServer({ apiURL: 'http://127.0.0.1:8080' })
 
 interface BundleMetadata {
     outputs: {

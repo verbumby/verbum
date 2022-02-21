@@ -1,14 +1,14 @@
 package dictionary
 
-import "html/template"
-
-import "strings"
+import (
+	"html/template"
+	"strings"
+)
 
 // Stardict dictionary
 type Stardict struct {
 	id    string
 	title string
-	slug  string
 }
 
 // ID implements Dictionary interface
@@ -19,11 +19,6 @@ func (d Stardict) ID() string {
 // Title implements Dictionary interface
 func (d Stardict) Title() string {
 	return d.title
-}
-
-// Slug implements Dictionary interface
-func (d Stardict) Slug() string {
-	return d.slug
 }
 
 // ToHTML implements Dictionary interface

@@ -10,7 +10,6 @@ import (
 type Markdown struct {
 	id    string
 	title string
-	slug  string
 }
 
 // ID implements Dictionary interface
@@ -21,11 +20,6 @@ func (d Markdown) ID() string {
 // Title implements Dictionary interface
 func (d Markdown) Title() string {
 	return d.title
-}
-
-// Slug implements Dictionary interface
-func (d Markdown) Slug() string {
-	return d.slug
 }
 
 // ToHTML implements Dictionary interface

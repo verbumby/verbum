@@ -11,7 +11,6 @@ import (
 type DSL struct {
 	id                    string
 	title                 string
-	slug                  string
 	includeTitleInContent bool
 }
 
@@ -23,11 +22,6 @@ func (d DSL) ID() string {
 // Title implements Dictionary interface
 func (d DSL) Title() string {
 	return d.title
-}
-
-// Slug implements Dictionary interface
-func (d DSL) Slug() string {
-	return d.slug
 }
 
 // ToHTML implements Dictionary interface

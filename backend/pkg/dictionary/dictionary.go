@@ -6,49 +6,43 @@ import "html/template"
 type Dictionary interface {
 	ID() string
 	Title() string
-	Slug() string
 	ToHTML(content, title string) template.HTML
 }
 
 var dictionaries = []Dictionary{
 	Markdown{
 		id:    "rvblr",
-		title: "Тлумачальны слоўнік беларускай мовы (rv-blr.com)",
-		slug:  "tlumachalny-slounik-bielaruskaj-movy-rv-blr-com",
+		title: "Тлумачальны слоўнік беларускай літаратурнай мовы (2002, правапіс да 2008 г.)",
 	},
 	DSL{
 		id:    "krapiva",
-		title: "Тлумачальны слоўнік беларускай мовы (Крапіва, 1977–1984)",
-		slug:  "tlumachalny-slounik-bielaruskaj-movy-krapiva-1977–1984",
+		title: "Тлумачальны слоўнік беларускай мовы (1977-84, правапіс да 2008 г.)",
 	},
 	DSL{
 		id:    "brs",
-		title: "Беларуска-расійскі слоўнік, 4‑е выданне (Лукашанец, 2012)",
+		title: "Беларуска-рускі слоўнік, 4-е выданне (актуальны правапіс)",
 	},
 	DSL{
 		id:                    "rbs",
-		title:                 "Расійска-беларускі слоўнік, 8-е выданне (Крапіва, 2002)",
+		title:                 "Руска-беларускі слоўнік НАН РБ, 8-е выданне (правапіс да 2008 г.)",
 		includeTitleInContent: true,
 	},
 	Stardict{
 		id:    "rus-bel",
-		title: "Расійска-беларускі універсальны слоўнік",
-		slug:  "rasijska-bielaruski-universalny-slounik",
+		title: "Руска-беларускі слоўнік НАН РБ, 8-е выданне (другая версія, правапіс да 2008 г.)",
 	},
 	DSL{
 		id:                    "pashkievich",
-		title:                 "Ангельска-беларускі слоўнік (Пашкевіч, 2006)",
-		slug:                  "anhyelska-byelaruski-slounik-pashkyevich-2006",
+		title:                 "Ангельска-беларускі слоўнік (В. Пашкевіч, 2006, класічны правапіс)",
 		includeTitleInContent: true,
 	},
 	DSL{
 		id:                    "hsbm",
 		title:                 "Гістарычны слоўнік беларускай мовы (1982–2017)",
-		slug:                  "histarychny-slounik-bielaruskaj-movy-1982-2017",
 		includeTitleInContent: true,
 	},
 	DSL{
 		id:    "esbm",
-		title: "Этымалагічны слоўнік беларускай мовы",
+		title: "Этымалагічны слоўнік беларускай мовы, тамы 1-3 (1978-85, правапіс да 2008 г.)",
 	},
 }
