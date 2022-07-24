@@ -99,7 +99,7 @@ func bootstrapServer() error {
 		}
 	}()
 
-	termChan := make(chan os.Signal)
+	termChan := make(chan os.Signal, 1)
 	signal.Notify(termChan, syscall.SIGINT, syscall.SIGTERM)
 	<-termChan
 

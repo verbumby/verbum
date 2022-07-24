@@ -30,17 +30,13 @@ func APISearch(w http.ResponseWriter, rctx *chttp.Context) error {
 	}
 	page := urlQuery.Get("page").(*htmlui.IntegerQueryParam).Value()
 	inDicts := urlQuery.Get("in").(*htmlui.InDictsQueryParam).Value()
-	if len(q) > 1000 {
-		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
-		return nil
-	}
 
 	inDictsStr := ""
 	for _, d := range inDicts {
 		if len(inDictsStr) == 0 {
-			inDictsStr = "dict-" + d
+			inDictsStr = "dict-" + dictionary.Get(d).IndexID()
 		} else {
-			inDictsStr += ",dict-" + d
+			inDictsStr += ",dict-" + dictionary.Get(d).IndexID()
 		}
 	}
 
@@ -49,7 +45,7 @@ func APISearch(w http.ResponseWriter, rctx *chttp.Context) error {
 		"from": (page - 1) * pageSize,
 		"size": pageSize,
 		"query": map[string]interface{}{
-			"multi_match": map[string]interface{}{
+			"simple_query_string": map[string]any{
 				"query": q,
 				"fields": []string{
 					"Headword^4",
@@ -57,6 +53,7 @@ func APISearch(w http.ResponseWriter, rctx *chttp.Context) error {
 					"HeadwordAlt^2",
 					"HeadwordAlt.Smaller^1",
 				},
+				"default_operator": "AND",
 			},
 		},
 		"suggest": map[string]interface{}{
@@ -116,13 +113,12 @@ func APISearch(w http.ResponseWriter, rctx *chttp.Context) error {
 	}
 
 	articles := []article.Article{}
-	dicts := dictionary.GetAllAsMap()
 	for _, hit := range respbody.Hits.Hits {
-		dictID := strings.TrimPrefix(hit.Index, "dict-")
+		indexID := strings.TrimPrefix(hit.Index, "dict-")
 
 		article := hit.Source
 		article.ID = hit.ID
-		article.Dictionary = dicts[dictID]
+		article.Dictionary = dictionary.GetByIndexID(indexID)
 		articles = append(articles, article)
 	}
 

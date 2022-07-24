@@ -48,7 +48,7 @@ func SitemapIndex(w http.ResponseWriter, rctx *chttp.Context) error {
 		countresp := struct {
 			Count uint64 `json:"count"`
 		}{}
-		url := fmt.Sprintf("/dict-%s/_count", d.ID())
+		url := fmt.Sprintf("/dict-%s/_count", d.IndexID())
 		if err := storage.Get(url, &countresp); err != nil {
 			return fmt.Errorf("storage get %s docs count: %w", d.ID(), err)
 		}
@@ -75,7 +75,11 @@ func SitemapIndex(w http.ResponseWriter, rctx *chttp.Context) error {
 // SitemapOfDictionary handles dictionary sitemap request
 func SitemapOfDictionary(w http.ResponseWriter, rctx *chttp.Context) error {
 	vars := mux.Vars(rctx.R)
-	dictID := vars["dictionary"]
+	d := dictionary.Get(vars["dictionary"])
+	if d == nil {
+		return APINotFound(w, rctx)
+	}
+
 	nstr := vars["n"]
 	n, _ := strconv.ParseUint(nstr, 10, 64)
 
@@ -95,7 +99,7 @@ func SitemapOfDictionary(w http.ResponseWriter, rctx *chttp.Context) error {
 			} `json:"hits"`
 		} `json:"hits"`
 	}{}
-	url := fmt.Sprintf("/dict-%s/_search", dictID)
+	url := fmt.Sprintf("/dict-%s/_search", d.IndexID())
 	if err := storage.Post(url, reqbody, &respbody); err != nil {
 		return fmt.Errorf("sotrage post: %w", err)
 	}
@@ -117,7 +121,7 @@ func SitemapOfDictionary(w http.ResponseWriter, rctx *chttp.Context) error {
 
 	for _, a := range respbody.Hits.Hits {
 		result.URL = append(result.URL, urlt{
-			Loc:        fmt.Sprintf("%s/%s/%s", viper.GetString("https.canonicalAddr"), dictID, a.ID),
+			Loc:        fmt.Sprintf("%s/%s/%s", viper.GetString("https.canonicalAddr"), d.ID(), a.ID),
 			Changefreq: "yearly",
 			Lastmod:    a.Source.ModifiedAt,
 		})

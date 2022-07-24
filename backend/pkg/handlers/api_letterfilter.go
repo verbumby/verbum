@@ -15,11 +15,10 @@ import (
 // APILetterFilter handle letter filter request
 func APILetterFilter(w http.ResponseWriter, rctx *chttp.Context) error {
 	vars := mux.Vars(rctx.R)
-	dictID := vars["dictionary"]
 
-	dict := dictionary.Get(dictID)
-	if dict == nil {
-		return fmt.Errorf("dictionary get %s: not found", dictID)
+	d := dictionary.Get(vars["dictionary"])
+	if d == nil {
+		return APINotFound(w, rctx)
 	}
 
 	urlQuery := htmlui.Query([]htmlui.QueryParam{
@@ -82,7 +81,7 @@ func APILetterFilter(w http.ResponseWriter, rctx *chttp.Context) error {
 			}
 		} `json:"aggregations"`
 	}{}
-	if err := storage.Post("/dict-"+dictID+"/_search", aggsreqbody, &aggsrespbody); err != nil {
+	if err := storage.Post("/dict-"+d.IndexID()+"/_search", aggsreqbody, &aggsrespbody); err != nil {
 		return fmt.Errorf("aggs query: %w", err)
 	}
 
@@ -107,7 +106,7 @@ func APILetterFilter(w http.ResponseWriter, rctx *chttp.Context) error {
 	}
 
 	if err := json.NewEncoder(w).Encode(letterfilterview{
-		DictID:  dictID,
+		DictID:  d.ID(),
 		Prefix:  string(prefix),
 		Entries: letterFilter.Links(),
 	}); err != nil {

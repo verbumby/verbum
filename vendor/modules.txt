@@ -67,12 +67,17 @@ github.com/spf13/pflag
 github.com/spf13/viper
 # github.com/stretchr/testify v1.4.0
 ## explicit
+# golang.org/x/exp v0.0.0-20220722155223-a9213eeb770e
+## explicit; go 1.18
+golang.org/x/exp/constraints
+golang.org/x/exp/slices
 # golang.org/x/net v0.0.0-20180208041118-f5dfe339be1d
 ## explicit
 golang.org/x/net/html
 golang.org/x/net/html/atom
-# golang.org/x/sys v0.0.0-20180302081741-dd2ff4accc09
-## explicit
+# golang.org/x/sys v0.0.0-20211019181941-9d821ace8654
+## explicit; go 1.17
+golang.org/x/sys/internal/unsafeheader
 golang.org/x/sys/unix
 # golang.org/x/text v0.3.0
 ## explicit

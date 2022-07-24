@@ -16,11 +16,10 @@ import (
 // APIDictionaryArticles handles dictionary articles request
 func APIDictionaryArticles(w http.ResponseWriter, rctx *chttp.Context) error {
 	vars := mux.Vars(rctx.R)
-	dictID := vars["dictionary"]
 
-	dict := dictionary.Get(dictID)
-	if dict == nil {
-		return fmt.Errorf("dictionary get %s: not found", dictID)
+	d := dictionary.Get(vars["dictionary"])
+	if d == nil {
+		return APINotFound(w, rctx)
 	}
 
 	urlQuery := htmlui.Query([]htmlui.QueryParam{
@@ -41,7 +40,7 @@ func APIDictionaryArticles(w http.ResponseWriter, rctx *chttp.Context) error {
 			},
 		})
 	}
-	articles, total, err := article.Query("/dict-"+dictID+"/_search", map[string]interface{}{
+	articles, total, err := article.Query("/dict-"+d.IndexID()+"/_search", map[string]interface{}{
 		"track_total_hits": true,
 		"from":             (urlQuery.Get("page").(*htmlui.IntegerQueryParam).Value() - 1) * pageSize,
 		"size":             pageSize,
@@ -89,7 +88,7 @@ func APIDictionaryArticles(w http.ResponseWriter, rctx *chttp.Context) error {
 		Articles   []articleview
 		Pagination paginationview
 	}{
-		DictID:   dictID,
+		DictID:   d.ID(),
 		Prefix:   string(prefix),
 		Articles: articleviews,
 		Pagination: paginationview{

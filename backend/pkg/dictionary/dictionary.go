@@ -5,18 +5,24 @@ import "html/template"
 // Dictionary represents a dictionary
 type Dictionary interface {
 	ID() string
+	IndexID() string
+	Aliases() []string
 	Title() string
 	ToHTML(content, title string) template.HTML
 }
 
 var dictionaries = []Dictionary{
 	Markdown{
-		id:    "rvblr",
-		title: "Тлумачальны слоўнік беларускай літаратурнай мовы (2002, правапіс да 2008 г.)",
+		id:      "tsblm",
+		indexID: "rvblr",
+		aliases: []string{"rvblr"},
+		title:   "Тлумачальны слоўнік беларускай літаратурнай мовы (2002, правапіс да 2008 г.)",
 	},
 	DSL{
-		id:    "krapiva",
-		title: "Тлумачальны слоўнік беларускай мовы (1977-84, правапіс да 2008 г.)",
+		id:      "tsbm",
+		indexID: "krapiva",
+		aliases: []string{"krapiva"},
+		title:   "Тлумачальны слоўнік беларускай мовы (1977-84, правапіс да 2008 г.)",
 	},
 	DSL{
 		id:    "brs",
@@ -32,13 +38,15 @@ var dictionaries = []Dictionary{
 		title: "Руска-беларускі слоўнік НАН РБ, 8-е выданне (другая версія, правапіс да 2008 г.)",
 	},
 	DSL{
-		id:                    "pashkievich",
+		id:                    "abs",
+		indexID:               "pashkievich",
+		aliases:               []string{"pashkievich"},
 		title:                 "Ангельска-беларускі слоўнік (В. Пашкевіч, 2006, класічны правапіс)",
 		includeTitleInContent: true,
 	},
 	DSL{
 		id:                    "hsbm",
-		title:                 "Гістарычны слоўнік беларускай мовы (1982–2017)",
+		title:                 "Гістарычны слоўнік беларускай мовы (1982–2017, часткова)",
 		includeTitleInContent: true,
 	},
 	DSL{
