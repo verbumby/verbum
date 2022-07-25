@@ -5,6 +5,8 @@ import (
 	"strconv"
 	"strings"
 
+	"golang.org/x/exp/slices"
+
 	"github.com/verbumby/verbum/backend/pkg/dictionary"
 )
 
@@ -214,16 +216,16 @@ func (p *InDictsQueryParam) Value() []string {
 // SetValue set's value
 func (p *InDictsQueryParam) SetValue(vs []string) {
 	value := []string{}
-	for _, id := range p.def {
+	for _, d := range dictionary.GetAll() {
 		contains := false
 		for _, v := range vs {
-			if id == v {
+			if d.ID() == v || slices.Contains(d.Aliases(), v) {
 				contains = true
 				break
 			}
 		}
 		if contains {
-			value = append(value, id)
+			value = append(value, d.ID())
 		}
 	}
 	p.value = value

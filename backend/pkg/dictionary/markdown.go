@@ -8,13 +8,26 @@ import (
 
 // Markdown dictionary
 type Markdown struct {
-	id    string
-	title string
+	id      string
+	indexID string
+	aliases []string
+	title   string
 }
 
 // ID implements Dictionary interface
 func (d Markdown) ID() string {
 	return d.id
+}
+
+func (d Markdown) IndexID() string {
+	if d.indexID == "" {
+		return d.id
+	}
+	return d.indexID
+}
+
+func (d Markdown) Aliases() []string {
+	return d.aliases
 }
 
 // Title implements Dictionary interface

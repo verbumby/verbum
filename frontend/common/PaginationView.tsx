@@ -92,7 +92,7 @@ export const PaginationView: React.VFC<PaginationProps> = ({ current, total, pag
         <>
             <p />
             <nav aria-label="pagination" >
-                <ul className="pagination pagination-sm justify-content-center">
+                <ul className="pagination justify-content-center">
                     {links.map(l => (
                         <li key={l.Key} className={`page-item ${l.Active ? 'active' : ''} ${l.Disabled ? 'disabled' : ''}`}>
                             <Link className="page-link" to={l.URL}>{l.Text}</Link>

@@ -10,6 +10,8 @@ import (
 // DSL dictionary
 type DSL struct {
 	id                    string
+	indexID               string
+	aliases               []string
 	title                 string
 	includeTitleInContent bool
 }
@@ -17,6 +19,17 @@ type DSL struct {
 // ID implements Dictionary interface
 func (d DSL) ID() string {
 	return d.id
+}
+
+func (d DSL) IndexID() string {
+	if d.indexID == "" {
+		return d.id
+	}
+	return d.indexID
+}
+
+func (d DSL) Aliases() []string {
+	return d.aliases
 }
 
 // Title implements Dictionary interface

@@ -1,10 +1,11 @@
 package dictionary
 
-// Get a dictionary by ID
-func Get(dictionaryID string) Dictionary {
+import "golang.org/x/exp/slices"
+
+func Get(idOrAlias string) Dictionary {
 	var result Dictionary
 	for _, d := range dictionaries {
-		if d.ID() == dictionaryID {
+		if d.ID() == idOrAlias || slices.Contains(d.Aliases(), idOrAlias) {
 			result = d
 			break
 		}
@@ -13,18 +14,15 @@ func Get(dictionaryID string) Dictionary {
 	return result
 }
 
-// GetAll dictionaries
 func GetAll() []Dictionary {
 	return dictionaries
 }
 
-// GetAllAsMap get all dicts as a map
-func GetAllAsMap() map[string]Dictionary {
-	result := map[string]Dictionary{}
-
-	for _, d := range GetAll() {
-		result[d.ID()] = d
+func GetByIndexID(indexID string) Dictionary {
+	for _, d := range dictionaries {
+		if indexID == d.IndexID() {
+			return d
+		}
 	}
-
-	return result
+	return nil
 }

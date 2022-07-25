@@ -13,7 +13,6 @@ type ArticleViewProps = {
     showSource: boolean
 }
 
-const defaultIconStyles: React.CSSProperties = { color: 'darkgray', padding: 0, outline: 'none', boxShadow: 'none' }
 const defaultIconTooltipDelayConfig: OverlayDelay = { show: 1000, hide: 20 }
 
 const IconExternalController: React.VFC<{ a: Article }> = ({ a }) => {
@@ -24,7 +23,7 @@ const IconExternalController: React.VFC<{ a: Article }> = ({ a }) => {
         >Адчыніць артыкул асобна</Tooltip>
     )
     return (<OverlayTrigger overlay={renderOpenInNewTabTooltip} delay={defaultIconTooltipDelayConfig}>
-        <a href={`/${a.DictionaryID}/${a.ID}`} className="btn btn-link ml-2" target="_blank" style={defaultIconStyles}>
+        <a href={`/${a.DictionaryID}/${a.ID}`} className="btn btn-link ml-2" target="_blank">
             <IconExternal />
         </a>
     </OverlayTrigger>)
@@ -46,7 +45,7 @@ const IconCopyLinkController: React.VFC<{ a: Article }> = ({ a }) => {
         window.setTimeout(() => { setActivated(false) }, 1500)
     }
 
-    const iconStyles: React.CSSProperties = { ...defaultIconStyles }
+    const iconStyles: React.CSSProperties = { }
     if (activated) {
         iconStyles.color = 'red'
     }
@@ -63,7 +62,7 @@ export const ArticleView: React.VFC<ArticleViewProps> = ({ a, showExternalButton
 
     return (
         <div className={`article ${a.DictionaryID}`}>
-            <div className="float-right">
+            <div className="buttons" >
                 {showExternalButton && <IconExternalController a={a} />}
                 <IconCopyLinkController a={a} />
             </div>

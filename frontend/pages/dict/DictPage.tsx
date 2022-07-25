@@ -1,7 +1,7 @@
 import * as React from 'react'
 import { Helmet } from 'react-helmet'
 import { useDispatch } from 'react-redux'
-import { useRouteMatch } from 'react-router-dom'
+import { Redirect, useRouteMatch } from 'react-router-dom'
 import { ArticleView, PaginationView, SearchControl } from '../../common'
 import { useDict, useDictArticles, useLetterFilter } from '../../store'
 import { letterFilterFetch, letterFilterReset } from './letterfilter'
@@ -16,7 +16,10 @@ export const DictPage: React.VFC = ({ }) => {
     const prefix = urlSearch.get('prefix')
     const page = urlSearch.get('page')
 
-    const dict = useDict(match.params.dictID)
+    const [dict, dictIsAlias] = useDict(match.params.dictID)
+    if (dictIsAlias) {
+        return <Redirect to={{pathname: `/${dict.ID}`, search: urlSearch.encode() }} />
+    }
     const letterFilter = useLetterFilter()
     const dictArticles = useDictArticles()
     const dispatch = useDispatch()

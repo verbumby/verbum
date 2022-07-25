@@ -6,6 +6,7 @@ import (
 	"net/http"
 
 	"github.com/verbumby/verbum/backend/pkg/chttp"
+	"github.com/verbumby/verbum/backend/pkg/dictionary"
 	"github.com/verbumby/verbum/backend/pkg/htmlui"
 	"github.com/verbumby/verbum/backend/pkg/storage"
 )
@@ -19,11 +20,6 @@ func APISuggest(w http.ResponseWriter, rctx *chttp.Context) error {
 	urlQuery.From(rctx.R.URL.Query())
 
 	q := urlQuery.Get("q").(*htmlui.StringQueryParam).Value()
-	if len(q) > 500 {
-		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
-		return nil
-	}
-
 	inDicts := urlQuery.Get("in").(*htmlui.InDictsQueryParam).Value()
 	if len(q) > 1000 {
 		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
@@ -33,9 +29,9 @@ func APISuggest(w http.ResponseWriter, rctx *chttp.Context) error {
 	inDictsStr := ""
 	for _, d := range inDicts {
 		if len(inDictsStr) == 0 {
-			inDictsStr = "dict-" + d
+			inDictsStr = "dict-" + dictionary.Get(d).IndexID()
 		} else {
-			inDictsStr += ",dict-" + d
+			inDictsStr += ",dict-" + dictionary.Get(d).IndexID()
 		}
 	}
 

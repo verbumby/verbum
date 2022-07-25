@@ -8,15 +8,20 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/verbumby/verbum/backend/pkg/article"
 	"github.com/verbumby/verbum/backend/pkg/chttp"
+	"github.com/verbumby/verbum/backend/pkg/dictionary"
 )
 
 // APIArticle handles article page request
 func APIArticle(w http.ResponseWriter, rctx *chttp.Context) error {
 	vars := mux.Vars(rctx.R)
-	dID := vars["dictionary"]
+	d := dictionary.Get(vars["dictionary"])
+	if d == nil {
+		return APINotFound(w, rctx)
+	}
+
 	aID := vars["article"]
 
-	a, err := article.Get(dID, aID)
+	a, err := article.Get(d, aID)
 	if err != nil {
 		return fmt.Errorf("get article: %w", err)
 	}

@@ -8,6 +8,7 @@ import (
 	"regexp"
 	"strings"
 
+	"github.com/verbumby/verbum/backend/pkg/dictionary"
 	"github.com/verbumby/verbum/backend/pkg/storage"
 	"github.com/verbumby/verbum/backend/pkg/textutil"
 )
@@ -120,7 +121,7 @@ func Migrate() error {
 	}
 
 	rvblrFixSniehTitle := func() error {
-		a, err := Get("rvblr", "snieh")
+		a, err := Get(dictionary.Get("rvblr"), "snieh")
 		if err != nil {
 			return fmt.Errorf("get: %w", err)
 		}
@@ -273,13 +274,4 @@ func Migrate() error {
 	}
 
 	return nil
-}
-
-func stringArrayContains(a []string, s string) bool {
-	for _, as := range a {
-		if as == s {
-			return true
-		}
-	}
-	return false
 }

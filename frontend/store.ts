@@ -38,8 +38,16 @@ export function useDicts(): DictsState {
     return useSelector<DictsState>(state => state.dicts)
 }
 
-export function useDict(id: string): Dict {
-    return useDicts().find(d => d.ID === id)
+export function useDict(id: string): [Dict, boolean] {
+    let d = useDicts().find(d => d.ID === id)
+    if (d) {
+        return [d, false]
+    }
+    d = useDicts().find(d => d.Aliases && d.Aliases.includes(id))
+    if (d) {
+        return [d, true]
+    }
+    return [null, false]
 }
 
 export function useSearchState(): SearchState {

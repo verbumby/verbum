@@ -50,25 +50,20 @@ func Query(path string, reqbody interface{}) ([]Article, int, error) {
 }
 
 // Get gets one article from the storage
-func Get(dictionaryID, articleID string) (Article, error) {
+func Get(d dictionary.Dictionary, articleID string) (Article, error) {
 	respbody := struct {
 		Source Article `json:"_source"`
 		Index  string  `json:"_index"`
 		ID     string  `json:"_id"`
 	}{}
 
-	path := fmt.Sprintf("/dict-%s/_doc/%s", dictionaryID, articleID)
+	path := fmt.Sprintf("/dict-%s/_doc/%s", d.IndexID(), articleID)
 	if err := storage.Get(path, &respbody); err != nil {
 		return Article{}, fmt.Errorf("storage get: %w", err)
 	}
 
-	dict := dictionary.Get(dictionaryID)
-	if dict == nil {
-		return Article{}, fmt.Errorf("dictionary get %s: not found", dictionaryID)
-	}
-
 	article := respbody.Source
-	article.Dictionary = dict
+	article.Dictionary = d
 	article.ID = respbody.ID
 
 	return article, nil
