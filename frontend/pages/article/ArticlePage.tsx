@@ -2,7 +2,7 @@ import * as React from 'react'
 import { Helmet } from 'react-helmet'
 import { useDispatch } from 'react-redux'
 import { Redirect, useRouteMatch } from 'react-router-dom'
-import { ArticleView, SearchControl } from '../../common'
+import { ArticleView, SearchControl, NotFound } from '../../common'
 import { useArticle, useDict } from '../../store'
 import { useURLSearch as useIndexURLSearch } from '../index/search'
 import { articleFetch, articleReset, MatchParams } from './article'
@@ -13,6 +13,10 @@ export const ArticlePage: React.VFC = () => {
     if (dictIsAlias) {
         return <Redirect to={{pathname: `/${dict.ID}/${match.params.articleID}` }} />
     }
+    if (dict === null) {
+        return <NotFound />
+    }
+
     const a = useArticle()
     const indexURLSearch = useIndexURLSearch()
 

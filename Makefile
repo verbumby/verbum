@@ -47,7 +47,7 @@ fe-build:
 	cp frontend/favicon.png frontend/dist/public/favicon.png
 
 .PHONY: fe-run
-fe-run:
+fe-run: fe-build
 	cd frontend/dist && node server.js
 
 .PHONY: es-sync-backup

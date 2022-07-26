@@ -2,7 +2,7 @@ import * as React from 'react'
 import { Helmet } from 'react-helmet'
 import { useDispatch } from 'react-redux'
 import { Redirect, useRouteMatch } from 'react-router-dom'
-import { ArticleView, PaginationView, SearchControl } from '../../common'
+import { ArticleView, NotFound, PaginationView, SearchControl } from '../../common'
 import { useDict, useDictArticles, useLetterFilter } from '../../store'
 import { letterFilterFetch, letterFilterReset } from './letterfilter'
 import { dictArticlesFetch, MatchParams, dictArticlesReset, useURLSearch } from './dict'
@@ -20,6 +20,10 @@ export const DictPage: React.VFC = ({ }) => {
     if (dictIsAlias) {
         return <Redirect to={{pathname: `/${dict.ID}`, search: urlSearch.encode() }} />
     }
+    if (dict === null) {
+        return <NotFound />
+    }
+
     const letterFilter = useLetterFilter()
     const dictArticles = useDictArticles()
     const dispatch = useDispatch()
