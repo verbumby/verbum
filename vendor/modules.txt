@@ -86,6 +86,6 @@ golang.org/x/text/unicode/norm
 # gopkg.in/russross/blackfriday.v2 v2.0.0
 ## explicit
 gopkg.in/russross/blackfriday.v2
-# gopkg.in/yaml.v2 v2.2.2
+# gopkg.in/yaml.v2 v2.2.8
 ## explicit
 gopkg.in/yaml.v2
