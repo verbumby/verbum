@@ -87,6 +87,9 @@ k.use(async ctx => {
         ctx.redirect(routerContext.url)
         return
     }
+    if (routerContext.statusCode) {
+        ctx.response.status = routerContext.statusCode
+    }
 
     let body = indexhtml
     body = body.replace('HEAD_TITLE_PLACEHOLDER', helmet.title.toString())
