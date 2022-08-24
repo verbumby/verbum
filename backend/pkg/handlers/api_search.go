@@ -52,6 +52,7 @@ func APISearch(w http.ResponseWriter, rctx *chttp.Context) error {
 					"Headword.Smaller^3",
 					"HeadwordAlt^2",
 					"HeadwordAlt.Smaller^1",
+					"Phrases^0",
 				},
 				"default_operator": "AND",
 			},
