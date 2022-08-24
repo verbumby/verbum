@@ -3,11 +3,22 @@ package dsl
 import (
 	"fmt"
 	"io"
+	"os"
 	"regexp"
 	"strings"
 
 	"github.com/verbumby/verbum/backend/pkg/ctl/dictimport/dictparser"
 )
+
+func ParseDSLFile(filename string) (dictparser.Dictionary, error) {
+	f, err := os.Open(filename)
+	if err != nil {
+		return dictparser.Dictionary{}, fmt.Errorf("open %s file: %w", filename, err)
+	}
+	defer f.Close()
+
+	return ParseDSLReader(filename, f)
+}
 
 func ParseDSLReader(filename string, r io.Reader) (dictparser.Dictionary, error) {
 	ditf, err := ParseReader(filename, r)
