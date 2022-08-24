@@ -13,6 +13,7 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/verbumby/verbum/backend/pkg/ctl/dictimport/dictparser"
 	"github.com/verbumby/verbum/backend/pkg/ctl/dictimport/dictparser/dsl"
+	"github.com/verbumby/verbum/backend/pkg/ctl/dictimport/dictparser/html"
 	"github.com/verbumby/verbum/backend/pkg/storage"
 	"github.com/verbumby/verbum/backend/pkg/textutil"
 )
@@ -27,8 +28,8 @@ func Command() *cobra.Command {
 		Run:   c.Run,
 	}
 
-	result.PersistentFlags().StringVar(&c.filename, "filename", "", "filename of the dict")
-	result.PersistentFlags().StringVar(&c.format, "format", "", "dsl|stardict")
+	result.PersistentFlags().StringVar(&c.filename, "filename", "", "filename/dictionary of the dict")
+	result.PersistentFlags().StringVar(&c.format, "format", "", "dsl|stardict|html")
 	result.PersistentFlags().StringVar(&c.indexID, "index-id", "", "storage index id")
 	result.PersistentFlags().StringVar(&c.romanizer, "romanizer", "", "<blank>|belarusian|russian")
 	result.PersistentFlags().BoolVar(&c.dryrun, "dryrun", true, "true/false")
@@ -62,16 +63,13 @@ func (c *commandController) Run(cmd *cobra.Command, args []string) {
 }
 
 func (c *commandController) run() error {
-	f, err := os.Open(c.filename)
-	if err != nil {
-		return fmt.Errorf("open %s file: %w", c.filename, err)
-	}
-	defer f.Close()
-
+	var err error
 	var d dictparser.Dictionary
 	switch c.format {
 	case "dsl":
-		d, err = dsl.ParseDSLReader(c.filename, f)
+		d, err = dsl.ParseDSLFile(c.filename)
+	case "html":
+		d, err = html.LoadArticles(c.filename)
 	default:
 		err = fmt.Errorf("unsupported format %s", c.format)
 	}
@@ -117,7 +115,7 @@ func (c *commandController) createIndex(maxResultWindow int) error {
 				"tokenizer": map[string]interface{}{
 					"hw_smaller": map[string]interface{}{
 						"type":              "char_group",
-						"tokenize_on_chars": []string{"-", "—", " ", "(", ")", ",", "!", "?", "…"},
+						"tokenize_on_chars": []string{"-", ".", "/", "—", " ", "(", ")", ",", "!", "?", "…"},
 					},
 				},
 			},
@@ -146,6 +144,10 @@ func (c *commandController) createIndex(maxResultWindow int) error {
 							"search_analyzer": "hw",
 						},
 					},
+				},
+				"Phrases": map[string]any{
+					"type":     "text",
+					"analyzer": "standard",
 				},
 				"Prefix": map[string]interface{}{
 					"type": "nested",
@@ -208,7 +210,7 @@ func (c *commandController) indexArticles(d dictparser.Dictionary) error {
 			prefix := map[string]string{}
 			i := 0
 			for _, r := range phw {
-				if i > 2 {
+				if i > 4 {
 					break
 				}
 				prefix[fmt.Sprintf("Letter%d", i+1)] = string(r)
@@ -217,19 +219,26 @@ func (c *commandController) indexArticles(d dictparser.Dictionary) error {
 			prefixes = append(prefixes, prefix)
 		}
 
-		id, err := c.assembleID(a.Headwords)
-		if err != nil {
-			return fmt.Errorf("assemble id for %v: %w", a.Headwords, err)
-		}
-		idcache[id]++
-		if idcache[id] > 1 {
-			id = fmt.Sprintf("%s-%d", id, idcache[id])
+		var id string
+		if a.ID != "" {
+			id = a.ID
+		} else {
+			var err error
+			id, err = c.assembleID(a.Headwords)
+			if err != nil {
+				return fmt.Errorf("assemble id for %v: %w", a.Headwords, err)
+			}
+			idcache[id]++
+			if idcache[id] > 1 {
+				id = fmt.Sprintf("%s-%d", id, idcache[id])
+			}
 		}
 
 		doc := map[string]interface{}{
 			"Title":       strings.Join(a.Headwords, ", "),
 			"Headword":    a.Headwords,
 			"HeadwordAlt": a.HeadwordsAlt,
+			"Phrases":     a.Phrases,
 			"Suggest":     suggests,
 			"Prefix":      prefixes,
 			"Content":     a.Body,
