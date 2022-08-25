@@ -221,7 +221,7 @@ func (c *commandController) indexArticles(d dictparser.Dictionary) error {
 
 		var id string
 		if a.ID != "" {
-			id = a.ID
+			id = textutil.Slugify(a.ID)
 		} else {
 			var err error
 			id, err = c.assembleID(a.Headwords)
