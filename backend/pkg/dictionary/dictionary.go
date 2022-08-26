@@ -45,8 +45,9 @@ var dictionaries = []Dictionary{
 		includeTitleInContent: true,
 	},
 	HTML{
-		id:    "susha",
-		title: "Англійска-беларускі слоўнік (Т. Суша, 2013)",
+		id:      "susha",
+		indexID: "susha-2",
+		title:   "Англійска-беларускі слоўнік (Т. Суша, 2013)",
 	},
 	DSL{
 		id:                    "hsbm",
