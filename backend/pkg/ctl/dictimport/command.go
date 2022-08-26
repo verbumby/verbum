@@ -220,7 +220,7 @@ func (c *commandController) indexArticles(d dictparser.Dictionary) error {
 		}
 
 		var id string
-		if a.ID != "" {
+		if d.IDsProvided {
 			id = textutil.Slugify(a.ID)
 		} else {
 			var err error
@@ -246,7 +246,7 @@ func (c *commandController) indexArticles(d dictparser.Dictionary) error {
 		}
 
 		if err := json.NewEncoder(buff).Encode(map[string]interface{}{
-			"index": map[string]interface{}{"_id": id},
+			"create": map[string]any{"_id": id},
 		}); err != nil {
 			return fmt.Errorf("encode bulk insert meta for id %s: %w", id, err)
 		}
@@ -303,8 +303,34 @@ func (c *commandController) flushBuffer(buff *bytes.Buffer) error {
 	if c.dryrun {
 		return nil
 	}
-	if err := storage.Post("/dict-"+c.indexID+"/_doc/_bulk", buff, nil); err != nil {
+	type respItemType struct {
+		ID    string          `json:"_id"`
+		Error json.RawMessage `json:"error"`
+	}
+
+	type respType struct {
+		Errors bool `json:"errors"`
+		Items  []struct {
+			Create *respItemType `json:"create"`
+			Index  *respItemType `json:"index"`
+			Delete *respItemType `json:"delete"`
+			Update *respItemType `json:"update"`
+		} `json:"items"`
+	}
+
+	var resp respType
+	if err := storage.Post("/dict-"+c.indexID+"/_doc/_bulk", buff, &resp); err != nil {
 		return fmt.Errorf("bulk post to storage: %w", err)
+	}
+
+	if resp.Errors {
+		errors := []string{}
+		for _, item := range resp.Items {
+			if item.Create.Error != nil {
+				errors = append(errors, fmt.Sprintf("id `%s`: %s", item.Create.ID, string(item.Create.Error)))
+			}
+		}
+		return fmt.Errorf("bulk post to storage returned errors: " + strings.Join(errors, "; "))
 	}
 	return nil
 }

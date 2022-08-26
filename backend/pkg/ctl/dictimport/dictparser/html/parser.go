@@ -63,7 +63,7 @@ func LoadArticles(directory string) (dictparser.Dictionary, error) {
 		articles = append(articles, a)
 	}
 
-	return dictparser.Dictionary{Articles: articles}, nil
+	return dictparser.Dictionary{Articles: articles, IDsProvided: true}, nil
 }
 
 func readNewLineSeparatedFile(filename string) ([]string, error) {
