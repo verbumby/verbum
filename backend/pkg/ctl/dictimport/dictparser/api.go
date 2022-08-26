@@ -1,8 +1,9 @@
 package dictparser
 
 type Dictionary struct {
-	Meta     []MetaEntry
-	Articles []Article
+	Meta        []MetaEntry
+	Articles    []Article
+	IDsProvided bool
 }
 
 type MetaEntry struct {
