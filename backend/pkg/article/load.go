@@ -30,19 +30,19 @@ func Query(path string, reqbody interface{}) ([]Article, int, error) {
 	result := []Article{}
 	dicts := map[string]dictionary.Dictionary{}
 	for _, hit := range respbody.Hits.Hits {
-		dictID := strings.TrimPrefix(hit.Index, "dict-")
-		if _, ok := dicts[dictID]; !ok {
-			dict := dictionary.Get(dictID)
+		indexID := strings.TrimPrefix(hit.Index, "dict-")
+		if _, ok := dicts[indexID]; !ok {
+			dict := dictionary.GetByIndexID(indexID)
 			if dict == nil {
-				return nil, 0, fmt.Errorf("dictionary get %s: not found", dictID)
+				return nil, 0, fmt.Errorf("dictionary get %s: not found", indexID)
 			}
 
-			dicts[dictID] = dict
+			dicts[indexID] = dict
 		}
 
 		article := hit.Source
 		article.ID = hit.ID
-		article.Dictionary = dicts[dictID]
+		article.Dictionary = dicts[indexID]
 		result = append(result, article)
 	}
 
