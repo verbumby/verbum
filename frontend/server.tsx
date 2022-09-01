@@ -84,6 +84,7 @@ k.use(async ctx => {
     const helmet = Helmet.renderStatic()
 
     if (routerContext.url) {
+        ctx.status = 301
         ctx.redirect(routerContext.url)
         return
     }
