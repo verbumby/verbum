@@ -31,7 +31,7 @@ func Command() *cobra.Command {
 	result.PersistentFlags().StringVar(&c.filename, "filename", "", "filename/dictionary of the dict")
 	result.PersistentFlags().StringVar(&c.format, "format", "", "dsl|stardict|html")
 	result.PersistentFlags().StringVar(&c.indexID, "index-id", "", "storage index id")
-	result.PersistentFlags().StringVar(&c.romanizer, "romanizer", "", "<blank>|belarusian|russian")
+	result.PersistentFlags().StringVar(&c.romanizer, "romanizer", "", "<blank>|belarusian|russian|polish")
 	result.PersistentFlags().BoolVar(&c.dryrun, "dryrun", true, "true/false")
 	result.PersistentFlags().IntVar(&c.limit, "limit", 1000, "limits the number of articles processed, -1 disables the limit")
 	result.PersistentFlags().BoolVarP(&c.verbose, "verbose", "v", false, "verbose output: true/false")
@@ -235,7 +235,7 @@ func (c *commandController) indexArticles(d dictparser.Dictionary) error {
 		}
 
 		doc := map[string]interface{}{
-			"Title":       strings.Join(a.Headwords, ", "),
+			"Title":       a.Title,
 			"Headword":    a.Headwords,
 			"HeadwordAlt": a.HeadwordsAlt,
 			"Phrases":     a.Phrases,
@@ -289,6 +289,8 @@ func (c *commandController) assembleID(hws []string) (string, error) {
 			romanized = append(romanized, textutil.RomanizeBelarusian(hw))
 		case "russian":
 			romanized = append(romanized, textutil.RomanizeRussian(hw))
+		case "polish":
+			romanized = append(romanized, textutil.SlugifyPolish(hw))
 		case "":
 			romanized = append(romanized, hw)
 		default:
