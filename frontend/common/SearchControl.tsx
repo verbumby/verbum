@@ -138,13 +138,17 @@ function useSuggestions(inDicts: string): [
         setSuggs([])
         setActive(-1)
         setHard(false)
+        promise.current = null
+        if (abort.current) {
+            abort.current.abort()
+        }
+        abort.current = null
+        onChangeHandlerCancel()
     }
 
-    const onChangeHandler = useDelayed((q: string): void => {
+    const [onChangeHandler, onChangeHandlerCancel] = useDelayed((q: string): void => {
         if (!q || inDicts == '-') {
             resetSuggestions()
-            promise.current = null
-            abort.current = null
         } else {
             setHard(false)
 
@@ -212,7 +216,7 @@ function useSuggestions(inDicts: string): [
         }
     }
 
-    const setActiveSuggestionDelayed = useDelayed((n: number) => {
+    const [setActiveSuggestionDelayed] = useDelayed((n: number) => {
         setActive(n)
         setHard(false)
     }, 15)
