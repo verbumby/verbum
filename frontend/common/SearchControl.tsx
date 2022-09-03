@@ -185,28 +185,28 @@ function useSuggestions(inDicts: string): [
     }
 
     const onKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-        switch (e.key) {
-            case "Escape":
-                resetSuggestions()
-                break
-            case "ArrowDown":
-                if (active + 1 < suggs.length) {
-                    setActive(active + 1)
-                    setHard(true)
-                } else {
-                    setActive(-1)
-                    setHard(true)
-                }
-                break
-            case "ArrowUp":
-                if (active - 1 >= -1) {
-                    setActive(active - 1)
-                    setHard(true)
-                } else {
-                    setActive(suggs.length - 1)
-                    setHard(true)
-                }
-                break
+        if (e.key == "Escape") {
+            resetSuggestions()
+        } else if (e.key == "ArrowDown" || e.key == "j" && e.metaKey) {
+            e.stopPropagation()
+            e.preventDefault()
+            if (active + 1 < suggs.length) {
+                setActive(active + 1)
+                setHard(true)
+            } else {
+                setActive(-1)
+                setHard(true)
+            }
+        } else if (e.key == "ArrowUp" || e.key == "k" && e.metaKey) {
+            e.stopPropagation()
+            e.preventDefault()
+            if (active - 1 >= -1) {
+                setActive(active - 1)
+                setHard(true)
+            } else {
+                setActive(suggs.length - 1)
+                setHard(true)
+            }
         }
     }
 
