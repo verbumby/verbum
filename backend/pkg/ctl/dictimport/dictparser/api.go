@@ -13,6 +13,7 @@ type MetaEntry struct {
 
 type Article struct {
 	ID           string
+	Title        string
 	Headwords    []string
 	HeadwordsAlt []string
 	Phrases      []string

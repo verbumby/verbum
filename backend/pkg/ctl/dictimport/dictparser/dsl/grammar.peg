@@ -37,7 +37,7 @@ Articles ⟵ asitf:Article* {
 	return as, nil
 }
 
-Article ⟵ hwsitf:Headword+ body:Body "\n"? {
+Article ⟵ hwsitf:Headword+ "\n"* body:Body "\n"* {
 	hws := make([]string, len(hwsitf.([]interface{})))
 	for i, hwitf := range hwsitf.([]interface{}) {
 		hws[i] = hwitf.(string)

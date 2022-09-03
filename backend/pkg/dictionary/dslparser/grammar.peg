@@ -50,10 +50,14 @@ Body ⟵ ps:Part+ {
     return result.String(), nil
 }
 
-Part ⟵ EscapeSequence / Accent / Transcription / Image / OpenTag / CloseTag / Newline / Anything
+Part ⟵ EscapeSequence / DoublePipe / Accent / Transcription / Image / OpenTag / CloseTag / Newline / Anything
 
-EscapeSequence ⟵ '\\' ch:('[' / ']') {
+EscapeSequence ⟵ '\\' ch:('[' / ']' / '~') {
     return string(ch.([]byte)), nil
+}
+
+DoublePipe ⟵ "||" {
+    return "|", nil
 }
 
 Accent ⟵ "[']" ch:. "[/']" {

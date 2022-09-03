@@ -51,6 +51,7 @@ func LoadArticles(directory string) (dictparser.Dictionary, error) {
 			Phrases:      []string{},
 			Body:         bodies[i],
 		}
+		a.Title = strings.Join(a.Headwords, ", ")
 
 		if headwordsAlt[i] != "-" {
 			a.HeadwordsAlt = strings.Split(headwordsAlt[i], "\n")

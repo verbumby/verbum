@@ -27,20 +27,11 @@ func ParseDSLReader(filename string, r io.Reader) (dictparser.Dictionary, error)
 	}
 
 	var indentRe = regexp.MustCompile(`(?m)^\t`)
-	var hwCurlyBracesRe = regexp.MustCompile(`(?U){.*}`)
 
 	d := ditf.(dictparser.Dictionary)
 
 	for i, a := range d.Articles {
 		a.Body = indentRe.ReplaceAllLiteralString(a.Body, "")
-		bodylower := strings.ToLower(a.Body)
-
-		phws := []string{}
-		for _, phw := range a.Headwords {
-			phw = hwCurlyBracesRe.ReplaceAllLiteralString(phw, "")
-			phws = append(phws, phw)
-		}
-		a.Headwords = phws
 
 		hws := []string{}
 		hwsalt := []string{}
@@ -49,26 +40,31 @@ func ParseDSLReader(filename string, r io.Reader) (dictparser.Dictionary, error)
 			phw = strings.TrimSpace(phw)
 			phw = strings.ReplaceAll(phw, "\\(", "(")
 			phw = strings.ReplaceAll(phw, "\\)", ")")
-
-			phrase := fmt.Sprintf("[b][ex][lang id=1049][c steelblue]%s[/c][/lang][/ex][/b]", phw)
-			phrase = strings.ToLower(phrase)
-
 			phw = strings.ReplaceAll(phw, "...", "")
 
-			if strings.Contains(bodylower, phrase) || strings.Contains(phw, "(") {
-				hwsalt = append(hwsalt, phw)
-			} else {
-				hws = append(hws, phw)
-			}
+			hws = append(hws, phw)
 		}
 
-		var re = regexp.MustCompile(`(?U)\[ex]\[b]\[lang id=2](.*)\[/lang]`)
-		for _, match := range re.FindAllStringSubmatch(a.Body, -1) {
-			hwsalt = append(hwsalt, match[1])
+		title := strings.Join(hws, ", ")
+		title = strings.ReplaceAll(title, "{", "")
+		title = strings.ReplaceAll(title, "}", "")
+		title = strings.ReplaceAll(title, "\\~", "~")
+		title = strings.ReplaceAll(title, " ,", ",")
+
+		var reCurlyBrace = regexp.MustCompile(`{.*?}`)
+		d.Articles[i].Headwords = []string{}
+		for _, hw := range hws {
+			hw = reCurlyBrace.ReplaceAllString(hw, "")
+			d.Articles[i].Headwords = append(d.Articles[i].Headwords, hw)
 		}
 
-		d.Articles[i].Headwords = hws
+		if len(hws) == 0 {
+			return d, fmt.Errorf("no headwords for article %v found", a)
+		}
+
+		d.Articles[i].Title = title
 		d.Articles[i].HeadwordsAlt = hwsalt
+		d.Articles[i].Phrases = []string{}
 		d.Articles[i].Body = a.Body
 	}
 
