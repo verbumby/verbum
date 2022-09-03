@@ -138,13 +138,17 @@ function useSuggestions(inDicts: string): [
         setSuggs([])
         setActive(-1)
         setHard(false)
+        promise.current = null
+        if (abort.current) {
+            abort.current.abort()
+        }
+        abort.current = null
+        onChangeHandlerCancel()
     }
 
-    const onChangeHandler = useDelayed((q: string): void => {
+    const [onChangeHandler, onChangeHandlerCancel] = useDelayed((q: string): void => {
         if (!q || inDicts == '-') {
             resetSuggestions()
-            promise.current = null
-            abort.current = null
         } else {
             setHard(false)
 
@@ -181,28 +185,28 @@ function useSuggestions(inDicts: string): [
     }
 
     const onKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-        switch (e.key) {
-            case "Escape":
-                resetSuggestions()
-                break
-            case "ArrowDown":
-                if (active + 1 < suggs.length) {
-                    setActive(active + 1)
-                    setHard(true)
-                } else {
-                    setActive(-1)
-                    setHard(true)
-                }
-                break
-            case "ArrowUp":
-                if (active - 1 >= -1) {
-                    setActive(active - 1)
-                    setHard(true)
-                } else {
-                    setActive(suggs.length - 1)
-                    setHard(true)
-                }
-                break
+        if (e.key == "Escape") {
+            resetSuggestions()
+        } else if (e.key == "ArrowDown" || e.key == "j" && e.metaKey) {
+            e.stopPropagation()
+            e.preventDefault()
+            if (active + 1 < suggs.length) {
+                setActive(active + 1)
+                setHard(true)
+            } else {
+                setActive(-1)
+                setHard(true)
+            }
+        } else if (e.key == "ArrowUp" || e.key == "k" && e.metaKey) {
+            e.stopPropagation()
+            e.preventDefault()
+            if (active - 1 >= -1) {
+                setActive(active - 1)
+                setHard(true)
+            } else {
+                setActive(suggs.length - 1)
+                setHard(true)
+            }
         }
     }
 
@@ -212,7 +216,7 @@ function useSuggestions(inDicts: string): [
         }
     }
 
-    const setActiveSuggestionDelayed = useDelayed((n: number) => {
+    const [setActiveSuggestionDelayed] = useDelayed((n: number) => {
         setActive(n)
         setHard(false)
     }, 15)
