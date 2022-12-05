@@ -27,7 +27,7 @@ export const IndexPage: React.VFC = () => {
     const renderDictList = (): React.ReactNode => (
         <>
             <Helmet>
-                <title>Verbum - Анлайн Слоўнік Беларускай Мовы</title>
+                <title>Verbum - Анлайнавы Слоўнік Беларускай Мовы</title>
                 <meta name="description" content="Verbum - Анлайн Слоўнік Беларускай Мовы" />
                 <meta property="og:title" content="Verbum - Анлайн Слоўнік Беларускай Мовы" />
                 <meta property="og:description" content="Verbum - Анлайн Слоўнік Беларускай Мовы" />
