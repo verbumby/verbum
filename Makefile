@@ -27,7 +27,7 @@ fe-build:
 		--minify \
 		--sourcemap \
 		--platform=node \
-		--target=node15.0 \
+		--target=node18.0 \
 		--outdir=frontend/dist
 
 	rm -f frontend/dist/public/*.{js,js.map,css,css.map}
