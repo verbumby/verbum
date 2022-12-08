@@ -13,7 +13,7 @@ jobs:
     - run: go test -v ./...
     - run: make build
     - run: make build-ctl
-    - uses: actions/upload-artifact@v2
+    - uses: actions/upload-artifact@v3
       with:
         name: binaries
         path: |
@@ -31,7 +31,7 @@ jobs:
     - run: npm ci
     - run: make fe-lint
     - run: make fe-build
-    - uses: actions/upload-artifact@v2
+    - uses: actions/upload-artifact@v3
       with:
         name: frontend-bundle
         path: frontend/dist/
@@ -44,15 +44,15 @@ jobs:
     - build-frontend
     steps:
     - uses: actions/checkout@v2
-    - uses: actions/download-artifact@v2
+    - uses: actions/download-artifact@v3
       with:
         name: binaries
-    - uses: actions/download-artifact@v2
+    - uses: actions/download-artifact@v3
       with:
         name: frontend-bundle
         path: frontend/dist/
     - run: deploy/deb.bash
-    - uses: actions/upload-artifact@v2
+    - uses: actions/upload-artifact@v3
       with:
         name: verbum.deb
         path: deploy/verbum.deb
@@ -65,7 +65,7 @@ jobs:
     environment: prod
     steps:
     - uses: actions/checkout@v3
-    - uses: actions/download-artifact@v2
+    - uses: actions/download-artifact@v3
       with:
         name: verbum.deb
         path: deploy/
