@@ -23,6 +23,7 @@ func main() {
 	}
 	rootCmd.AddCommand(
 		dictimport.Command(),
+		ctl.ReindexCommand(),
 		ctl.MigrateSlugs(),
 		ctl.MigrateRvblrWrongHeadwords(),
 		ctl.MigrateStardictFixPrefixCase(),

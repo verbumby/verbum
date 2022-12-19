@@ -48,11 +48,12 @@ func APISearch(w http.ResponseWriter, rctx *chttp.Context) error {
 			"simple_query_string": map[string]any{
 				"query": q,
 				"fields": []string{
-					"Headword^4",
-					"Headword.Smaller^3",
-					"HeadwordAlt^2",
-					"HeadwordAlt.Smaller^1",
-					"Phrases^0",
+					"Headword^5",
+					"Headword.Smaller^4",
+					"HeadwordAlt^3",
+					"HeadwordAlt.Smaller^2",
+					"Phrases^1",
+					// "Content^0",
 				},
 				"default_operator": "AND",
 			},
