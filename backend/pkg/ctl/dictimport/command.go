@@ -94,92 +94,7 @@ func (c *commandController) createIndex(maxResultWindow int) error {
 	if c.dryrun {
 		return nil
 	}
-	err := storage.Put("/dict-"+c.indexID, map[string]interface{}{
-		"settings": map[string]interface{}{
-			"number_of_shards":   1,
-			"number_of_replicas": 0,
-			"max_result_window":  maxResultWindow,
-			"analysis": map[string]interface{}{
-				"analyzer": map[string]interface{}{
-					"hw": map[string]interface{}{
-						"filter":    []string{"lowercase"},
-						"type":      "custom",
-						"tokenizer": "keyword",
-					},
-					"hw_smaller": map[string]interface{}{
-						"filter":    []string{"lowercase"},
-						"type":      "custom",
-						"tokenizer": "hw_smaller",
-					},
-				},
-				"tokenizer": map[string]interface{}{
-					"hw_smaller": map[string]interface{}{
-						"type":              "char_group",
-						"tokenize_on_chars": []string{"-", ".", "/", "—", " ", "(", ")", ",", "!", "?", "…"},
-					},
-				},
-			},
-		},
-		"mappings": map[string]interface{}{
-			"properties": map[string]interface{}{
-				"Title": map[string]interface{}{"type": "keyword"},
-				"Headword": map[string]interface{}{
-					"type":     "text",
-					"analyzer": "hw",
-					"fields": map[string]interface{}{
-						"Smaller": map[string]interface{}{
-							"type":            "text",
-							"analyzer":        "hw_smaller",
-							"search_analyzer": "hw",
-						},
-					},
-				},
-				"HeadwordAlt": map[string]interface{}{
-					"type":     "text",
-					"analyzer": "hw",
-					"fields": map[string]interface{}{
-						"Smaller": map[string]interface{}{
-							"type":            "text",
-							"analyzer":        "hw_smaller",
-							"search_analyzer": "hw",
-						},
-					},
-				},
-				"Phrases": map[string]any{
-					"type":     "text",
-					"analyzer": "standard",
-				},
-				"Prefix": map[string]interface{}{
-					"type": "nested",
-					"properties": map[string]interface{}{
-						"Letter1": map[string]interface{}{"type": "keyword"},
-						"Letter2": map[string]interface{}{"type": "keyword"},
-						"Letter3": map[string]interface{}{"type": "keyword"},
-						"Letter4": map[string]interface{}{"type": "keyword"},
-						"Letter5": map[string]interface{}{"type": "keyword"},
-					},
-				},
-				"Suggest": map[string]interface{}{
-					"type":                         "completion",
-					"analyzer":                     "hw",
-					"preserve_separators":          true,
-					"preserve_position_increments": true,
-					"max_input_length":             50,
-				},
-				"Content": map[string]interface{}{
-					"type":  "text",
-					"index": false,
-				},
-				"ModifiedAt": map[string]interface{}{
-					"type": "date",
-				},
-			},
-		},
-	}, nil)
-	if err != nil {
-		return fmt.Errorf("storage put: %w", err)
-	}
-	return nil
+	return storage.CreateDictIndex(c.indexID, maxResultWindow)
 }
 
 func (c *commandController) indexArticles(d dictparser.Dictionary) error {
@@ -305,34 +220,10 @@ func (c *commandController) flushBuffer(buff *bytes.Buffer) error {
 	if c.dryrun {
 		return nil
 	}
-	type respItemType struct {
-		ID    string          `json:"_id"`
-		Error json.RawMessage `json:"error"`
-	}
 
-	type respType struct {
-		Errors bool `json:"errors"`
-		Items  []struct {
-			Create *respItemType `json:"create"`
-			Index  *respItemType `json:"index"`
-			Delete *respItemType `json:"delete"`
-			Update *respItemType `json:"update"`
-		} `json:"items"`
-	}
-
-	var resp respType
+	var resp storage.BulkResponse
 	if err := storage.Post("/dict-"+c.indexID+"/_doc/_bulk", buff, &resp); err != nil {
 		return fmt.Errorf("bulk post to storage: %w", err)
 	}
-
-	if resp.Errors {
-		errors := []string{}
-		for _, item := range resp.Items {
-			if item.Create.Error != nil {
-				errors = append(errors, fmt.Sprintf("id `%s`: %s", item.Create.ID, string(item.Create.Error)))
-			}
-		}
-		return fmt.Errorf("bulk post to storage returned errors: " + strings.Join(errors, "; "))
-	}
-	return nil
+	return resp.Error()
 }
