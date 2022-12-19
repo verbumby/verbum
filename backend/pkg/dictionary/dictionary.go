@@ -14,52 +14,52 @@ type Dictionary interface {
 var dictionaries = []Dictionary{
 	Markdown{
 		id:      "tsblm",
-		indexID: "tsblm",
+		indexID: "rvblr",
 		aliases: []string{"rvblr"},
 		title:   "Тлумачальны слоўнік беларускай літаратурнай мовы (2002, правапіс да 2008 г.)",
 	},
 	DSL{
 		id:      "tsbm",
-		indexID: "tsbm",
+		indexID: "krapiva",
 		aliases: []string{"krapiva"},
 		title:   "Тлумачальны слоўнік беларускай мовы (1977-84, правапіс да 2008 г.)",
 	},
 	DSL{
-		id:                    "hsbm-2",
+		id:                    "hsbm",
 		title:                 "Гістарычны слоўнік беларускай мовы (1982–2017, часткова)",
 		includeTitleInContent: true,
 	},
 	DSL{
-		id:    "esbm-2",
+		id:    "esbm",
 		title: "Этымалагічны слоўнік беларускай мовы (1978-2017)",
 	},
 	DSL{
-		id:    "brs-2",
+		id:    "brs",
 		title: "Беларуска-рускі слоўнік, 4-е выданне (актуальны правапіс)",
 	},
 	DSL{
-		id:                    "rbs-2",
+		id:                    "rbs",
 		title:                 "Руска-беларускі слоўнік НАН РБ, 8-е выданне (правапіс да 2008 г.)",
 		includeTitleInContent: true,
 	},
 	Stardict{
-		id:    "rus-bel-2",
+		id:    "rus-bel",
 		title: "Руска-беларускі слоўнік НАН РБ, 8-е выданне (другая версія, правапіс да 2008 г.)",
 	},
 	DSL{
 		id:                    "abs",
-		indexID:               "abs",
+		indexID:               "pashkievich",
 		aliases:               []string{"pashkievich"},
 		title:                 "Ангельска-беларускі слоўнік (В. Пашкевіч, 2006, класічны правапіс)",
 		includeTitleInContent: true,
 	},
 	HTML{
 		id:      "susha",
-		indexID: "susha",
+		indexID: "susha-2",
 		title:   "Англійска-беларускі слоўнік (Т. Суша, 2013, актуальны правапіс)",
 	},
 	DSL{
-		id:                    "pbs-2",
+		id:                    "pbs",
 		title:                 "Польска-беларускі слоўнік (Я. Волкава, В. Авілава, 2004, правапіс да 2008 г.)",
 		includeTitleInContent: true,
 	},
