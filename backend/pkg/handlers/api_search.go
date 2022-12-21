@@ -3,6 +3,7 @@ package handlers
 import (
 	"encoding/json"
 	"fmt"
+	"log"
 	"math"
 	"net/http"
 	"strings"
@@ -58,6 +59,15 @@ func APISearch(w http.ResponseWriter, rctx *chttp.Context) error {
 				"default_operator": "AND",
 			},
 		},
+		"highlight": map[string]any{
+			"fields": map[string]any{
+				"Content": map[string]any{},
+			},
+			"number_of_fragments": 0,
+
+			"pre_tags":  []string{"<highlight>"},
+			"post_tags": []string{"</highlight>"},
+		},
 		"suggest": map[string]interface{}{
 			"text": q,
 			"OverHeadword": map[string]interface{}{
@@ -98,9 +108,12 @@ func APISearch(w http.ResponseWriter, rctx *chttp.Context) error {
 				Relation string `json:"relation"`
 			} `json:"total"`
 			Hits []struct {
-				Source article.Article `json:"_source"`
-				Index  string          `json:"_index"`
-				ID     string          `json:"_id"`
+				Source    article.Article `json:"_source"`
+				Index     string          `json:"_index"`
+				ID        string          `json:"_id"`
+				Highlight struct {
+					Content []string
+				} `json:"highlight"`
 			} `json:"hits"`
 		} `json:"hits"`
 		Suggest map[string][]struct {
@@ -114,16 +127,6 @@ func APISearch(w http.ResponseWriter, rctx *chttp.Context) error {
 		return fmt.Errorf("query elastic: %w", err)
 	}
 
-	articles := []article.Article{}
-	for _, hit := range respbody.Hits.Hits {
-		indexID := strings.TrimPrefix(hit.Index, "dict-")
-
-		article := hit.Source
-		article.ID = hit.ID
-		article.Dictionary = dictionary.GetByIndexID(indexID)
-		articles = append(articles, article)
-	}
-
 	type articleview struct {
 		ID           string
 		Content      string
@@ -131,11 +134,26 @@ func APISearch(w http.ResponseWriter, rctx *chttp.Context) error {
 	}
 
 	articleviews := []articleview{}
-	for _, a := range articles {
+	for _, hit := range respbody.Hits.Hits {
+		indexID := strings.TrimPrefix(hit.Index, "dict-")
+		dict := dictionary.GetByIndexID(indexID)
+
+		content := hit.Source.Content
+
+		if len(hit.Highlight.Content) == 0 {
+			log.Printf("APISearch: no highlights for %s/%s queried with `%s` in %s ", indexID, hit.ID, q, inDictsStr)
+		} else if len(hit.Highlight.Content) > 1 {
+			log.Printf("APISearch: more than 1 highlight for %s/%s queried with %s in %s ", indexID, hit.ID, q, inDictsStr)
+		} else {
+			content = hit.Highlight.Content[0]
+		}
+
+		content = string(dict.ToHTML(content, hit.Source.Title))
+
 		articleviews = append(articleviews, articleview{
-			ID:           a.ID,
-			Content:      string(a.Dictionary.ToHTML(a.Content, a.Title)),
-			DictionaryID: a.Dictionary.ID(),
+			ID:           hit.ID,
+			Content:      content,
+			DictionaryID: dict.ID(),
 		})
 	}
 
