@@ -36,6 +36,6 @@ func (d Markdown) Title() string {
 }
 
 // ToHTML implements Dictionary interface
-func (d Markdown) ToHTML(content, title string) template.HTML {
+func (d Markdown) ToHTML(content string) template.HTML {
 	return template.HTML(blackfriday.Run([]byte(content)))
 }

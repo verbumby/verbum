@@ -149,7 +149,7 @@ func APISearch(w http.ResponseWriter, rctx *chttp.Context) error {
 			content = strings.ReplaceAll(content, "[']<highlight>", "<highlight>[']")
 		}
 
-		content = string(dict.ToHTML(content, hit.Source.Title))
+		content = string(dict.ToHTML(content))
 
 		articleviews = append(articleviews, articleview{
 			ID:           hit.ID,

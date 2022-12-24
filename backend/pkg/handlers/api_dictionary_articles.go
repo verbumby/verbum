@@ -72,7 +72,7 @@ func APIDictionaryArticles(w http.ResponseWriter, rctx *chttp.Context) error {
 	for _, a := range articles {
 		articleviews = append(articleviews, articleview{
 			ID:           a.ID,
-			Content:      string(a.Dictionary.ToHTML(a.Content, a.Title)),
+			Content:      string(a.Dictionary.ToHTML(a.Content)),
 			DictionaryID: a.Dictionary.ID(),
 		})
 	}

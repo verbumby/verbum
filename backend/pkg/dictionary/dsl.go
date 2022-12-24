@@ -9,11 +9,10 @@ import (
 
 // DSL dictionary
 type DSL struct {
-	id                    string
-	indexID               string
-	aliases               []string
-	title                 string
-	includeTitleInContent bool
+	id      string
+	indexID string
+	aliases []string
+	title   string
 }
 
 // ID implements Dictionary interface
@@ -38,7 +37,7 @@ func (d DSL) Title() string {
 }
 
 // ToHTML implements Dictionary interface
-func (d DSL) ToHTML(content, title string) template.HTML {
+func (d DSL) ToHTML(content string) template.HTML {
 	htmlvitf, err := dslparser.Parse(
 		"article",
 		[]byte(content),
@@ -48,8 +47,5 @@ func (d DSL) ToHTML(content, title string) template.HTML {
 		panic(fmt.Errorf("parse article: %w", err))
 	}
 	htmlv := htmlvitf.(string)
-	if d.includeTitleInContent {
-		htmlv = `<p><v-hw>` + title + `</v-hw></p>` + htmlv
-	}
 	return template.HTML(htmlv)
 }

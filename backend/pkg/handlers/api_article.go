@@ -37,7 +37,7 @@ func APIArticle(w http.ResponseWriter, rctx *chttp.Context) error {
 		ID:           a.ID,
 		Title:        a.Title,
 		Headword:     a.Headword,
-		Content:      string(a.Dictionary.ToHTML(a.Content, a.Title)),
+		Content:      string(a.Dictionary.ToHTML(a.Content)),
 		DictionaryID: a.Dictionary.ID(),
 	}
 
