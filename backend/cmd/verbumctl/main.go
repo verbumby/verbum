@@ -28,6 +28,7 @@ func main() {
 		ctl.MigrateRvblrWrongHeadwords(),
 		ctl.MigrateStardictFixPrefixCase(),
 		ctl.MigrateModifiedAt(),
+		ctl.MigrateTitleToContentCommand(),
 	)
 	if err := rootCmd.Execute(); err != nil {
 		log.Fatal(err)
