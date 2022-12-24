@@ -33,7 +33,7 @@ func (d HTML) Title() string {
 	return d.title
 }
 
-func (d HTML) ToHTML(content, title string) template.HTML {
+func (d HTML) ToHTML(content string) template.HTML {
 	content = norm.NFD.String(content)
 
 	var re = regexp.MustCompile(`.\x{0301}`)

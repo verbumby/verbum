@@ -8,7 +8,7 @@ type Dictionary interface {
 	IndexID() string
 	Aliases() []string
 	Title() string
-	ToHTML(content, title string) template.HTML
+	ToHTML(content string) template.HTML
 }
 
 var dictionaries = []Dictionary{
@@ -25,10 +25,9 @@ var dictionaries = []Dictionary{
 		title:   "Тлумачальны слоўнік беларускай мовы (1977-84, правапіс да 2008 г.)",
 	},
 	DSL{
-		id:                    "hsbm",
-		indexID:               "hsbm-2",
-		title:                 "Гістарычны слоўнік беларускай мовы (1982–2017, часткова)",
-		includeTitleInContent: true,
+		id:      "hsbm",
+		indexID: "hsbm",
+		title:   "Гістарычны слоўнік беларускай мовы (1982–2017, часткова)",
 	},
 	DSL{
 		id:      "esbm",
@@ -41,10 +40,9 @@ var dictionaries = []Dictionary{
 		title:   "Беларуска-рускі слоўнік, 4-е выданне (актуальны правапіс)",
 	},
 	DSL{
-		id:                    "rbs",
-		indexID:               "rbs-2",
-		title:                 "Руска-беларускі слоўнік НАН РБ, 8-е выданне (правапіс да 2008 г.)",
-		includeTitleInContent: true,
+		id:      "rbs",
+		indexID: "rbs",
+		title:   "Руска-беларускі слоўнік НАН РБ, 8-е выданне (правапіс да 2008 г.)",
 	},
 	Stardict{
 		id:      "rus-bel",
@@ -52,11 +50,10 @@ var dictionaries = []Dictionary{
 		title:   "Руска-беларускі слоўнік НАН РБ, 8-е выданне (другая версія, правапіс да 2008 г.)",
 	},
 	DSL{
-		id:                    "abs",
-		indexID:               "abs",
-		aliases:               []string{"pashkievich"},
-		title:                 "Ангельска-беларускі слоўнік (В. Пашкевіч, 2006, класічны правапіс)",
-		includeTitleInContent: true,
+		id:      "abs",
+		indexID: "abs-2",
+		aliases: []string{"pashkievich"},
+		title:   "Ангельска-беларускі слоўнік (В. Пашкевіч, 2006, класічны правапіс)",
 	},
 	HTML{
 		id:      "susha",
@@ -64,9 +61,8 @@ var dictionaries = []Dictionary{
 		title:   "Англійска-беларускі слоўнік (Т. Суша, 2013, актуальны правапіс)",
 	},
 	DSL{
-		id:                    "pbs",
-		indexID:               "pbs-2",
-		title:                 "Польска-беларускі слоўнік (Я. Волкава, В. Авілава, 2004, правапіс да 2008 г.)",
-		includeTitleInContent: true,
+		id:      "pbs",
+		indexID: "pbs",
+		title:   "Польска-беларускі слоўнік (Я. Волкава, В. Авілава, 2004, правапіс да 2008 г.)",
 	},
 }

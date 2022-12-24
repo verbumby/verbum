@@ -35,7 +35,7 @@ func (d Stardict) Title() string {
 }
 
 // ToHTML implements Dictionary interface
-func (d Stardict) ToHTML(content, title string) template.HTML {
+func (d Stardict) ToHTML(content string) template.HTML {
 	content = strings.ReplaceAll(content, "<k>", "<p><v-hw>")
 	content = strings.ReplaceAll(content, "</k>", "</v-hw></p>")
 	return template.HTML(content)
