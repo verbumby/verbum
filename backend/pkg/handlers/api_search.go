@@ -146,6 +146,7 @@ func APISearch(w http.ResponseWriter, rctx *chttp.Context) error {
 			log.Printf("APISearch: more than 1 highlight for %s/%s queried with %s in %s ", indexID, hit.ID, q, inDictsStr)
 		} else {
 			content = hit.Highlight.Content[0]
+			content = strings.ReplaceAll(content, "[']<highlight>", "<highlight>[']")
 		}
 
 		content = string(dict.ToHTML(content, hit.Source.Title))
