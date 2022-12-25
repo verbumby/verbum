@@ -29,6 +29,7 @@ func main() {
 		ctl.MigrateStardictFixPrefixCase(),
 		ctl.MigrateModifiedAt(),
 		ctl.MigrateTitleToContentCommand(),
+		ctl.MigrateZeroWidthSpaceBeforeSupCommand(),
 	)
 	if err := rootCmd.Execute(); err != nil {
 		log.Fatal(err)

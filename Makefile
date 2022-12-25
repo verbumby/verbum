@@ -58,4 +58,4 @@ es-sync:
 es-restore-last:
 	curl -XDELETE 'localhost:9200/dict-*' ; echo
 	LAST=$$(curl localhost:9200/_snapshot/backup/_all 2>/dev/null | jq -r '.snapshots[].snapshot' | sort | tail -n 1) \
-	&& curl -XPOST localhost:9200/_snapshot/backup/$$LAST/_restore -d '{"indices":"dict-*"}'
+	&& curl -XPOST localhost:9200/_snapshot/backup/$$LAST/_restore -H 'content-type: application/json' -d '{"indices":"dict-*"}'
