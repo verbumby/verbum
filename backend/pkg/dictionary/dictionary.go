@@ -57,7 +57,7 @@ var dictionaries = []Dictionary{
 	},
 	HTML{
 		id:      "susha",
-		indexID: "susha",
+		indexID: "susha-2",
 		title:   "Англійска-беларускі слоўнік (Т. Суша, 2013, актуальны правапіс)",
 	},
 	DSL{
