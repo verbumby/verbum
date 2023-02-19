@@ -7,7 +7,7 @@ import (
 	"log"
 	"math"
 	"os"
-	"strings"
+	"regexp"
 	"time"
 
 	"github.com/spf13/cobra"
@@ -31,22 +31,24 @@ func Command() *cobra.Command {
 	result.PersistentFlags().StringVar(&c.filename, "filename", "", "filename/dictionary of the dict")
 	result.PersistentFlags().StringVar(&c.format, "format", "", "dsl|stardict|html")
 	result.PersistentFlags().StringVar(&c.indexID, "index-id", "", "storage index id")
-	result.PersistentFlags().StringVar(&c.romanizer, "romanizer", "", "<blank>|belarusian|russian|polish")
+	result.PersistentFlags().StringVar(&c.romanizer, "romanizer", "", "<blank>|belarusian|russian|polish|german")
 	result.PersistentFlags().BoolVar(&c.dryrun, "dryrun", true, "true/false")
 	result.PersistentFlags().IntVar(&c.limit, "limit", 1000, "limits the number of articles processed, -1 disables the limit")
 	result.PersistentFlags().BoolVarP(&c.verbose, "verbose", "v", false, "verbose output: true/false")
+	result.PersistentFlags().BoolVarP(&c.putTitleInContent, "put-title-in-content", "", false, "whether to put the title in the content: true/false")
 
 	return result
 }
 
 type commandController struct {
-	filename  string
-	format    string
-	indexID   string
-	romanizer string
-	dryrun    bool
-	limit     int
-	verbose   bool
+	filename          string
+	format            string
+	indexID           string
+	romanizer         string
+	dryrun            bool
+	limit             int
+	verbose           bool
+	putTitleInContent bool
 }
 
 func (c *commandController) Run(cmd *cobra.Command, args []string) {
@@ -139,7 +141,7 @@ func (c *commandController) indexArticles(d dictparser.Dictionary) error {
 			id = textutil.Slugify(a.ID)
 		} else {
 			var err error
-			id, err = c.assembleID(a.Headwords)
+			id, err = c.assembleID(a.Headwords[0])
 			if err != nil {
 				return fmt.Errorf("assemble id for %v: %w", a.Headwords, err)
 			}
@@ -149,6 +151,14 @@ func (c *commandController) indexArticles(d dictparser.Dictionary) error {
 			}
 		}
 
+		content := a.Body
+		if c.putTitleInContent {
+			content = "<p><v-hw>" + a.Title + "</v-hw></p>\n" + content
+		}
+
+		var reBrace = regexp.MustCompile(`\[.*?\]`)
+		a.Title = reBrace.ReplaceAllString(a.Title, "")
+
 		doc := map[string]interface{}{
 			"Title":       a.Title,
 			"Headword":    a.Headwords,
@@ -156,7 +166,7 @@ func (c *commandController) indexArticles(d dictparser.Dictionary) error {
 			"Phrases":     a.Phrases,
 			"Suggest":     suggests,
 			"Prefix":      prefixes,
-			"Content":     a.Body,
+			"Content":     content,
 			"ModifiedAt":  time.Now().UTC().Format(time.RFC3339),
 		}
 
@@ -196,23 +206,24 @@ func (c *commandController) indexArticles(d dictparser.Dictionary) error {
 	return nil
 }
 
-func (c *commandController) assembleID(hws []string) (string, error) {
-	romanized := []string{}
-	for _, hw := range hws {
-		switch c.romanizer {
-		case "belarusian":
-			romanized = append(romanized, textutil.RomanizeBelarusian(hw))
-		case "russian":
-			romanized = append(romanized, textutil.RomanizeRussian(hw))
-		case "polish":
-			romanized = append(romanized, textutil.SlugifyPolish(hw))
-		case "":
-			romanized = append(romanized, hw)
-		default:
-			return "", fmt.Errorf("unknown romanizing strategy: %s", c.romanizer)
-		}
+func (c *commandController) assembleID(firstHW string) (string, error) {
+	hw := firstHW
+	var romanized string
+	switch c.romanizer {
+	case "belarusian":
+		romanized = textutil.RomanizeBelarusian(hw)
+	case "russian":
+		romanized = textutil.RomanizeRussian(hw)
+	case "polish":
+		romanized = textutil.SlugifyPolish(hw)
+	case "german":
+		romanized = textutil.SlugifyDeutsch(hw)
+	case "":
+		romanized = hw
+	default:
+		return "", fmt.Errorf("unknown romanizing strategy: %s", c.romanizer)
 	}
-	result := strings.Join(romanized, "-")
+	result := romanized
 	return textutil.Slugify(result), nil
 }
 
