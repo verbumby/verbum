@@ -28,9 +28,9 @@ export const IndexPage: React.VFC = () => {
         <>
             <Helmet>
                 <title>Verbum - Анлайнавы Слоўнік Беларускай Мовы</title>
-                <meta name="description" content="Verbum - Анлайн Слоўнік Беларускай Мовы" />
-                <meta property="og:title" content="Verbum - Анлайн Слоўнік Беларускай Мовы" />
-                <meta property="og:description" content="Verbum - Анлайн Слоўнік Беларускай Мовы" />
+                <meta name="description" content="Verbum - Анлайнавы Слоўнік Беларускай Мовы" />
+                <meta property="og:title" content="Verbum - Анлайнавы Слоўнік Беларускай Мовы" />
+                <meta property="og:description" content="Verbum - Анлайнавы Слоўнік Беларускай Мовы" />
                 <meta name="robots" content="index, follow" />
             </Helmet>
             <p />
