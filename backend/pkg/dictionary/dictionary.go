@@ -67,7 +67,7 @@ var dictionaries = []Dictionary{
 	},
 	DSL{
 		id:      "kurjanka",
-		indexID: "kurjanka-2",
+		indexID: "kurjanka-3",
 		title:   "Нямецка-беларускі слоўнік (М. Кур'янка, 2006, правапіс да 2008 г.)",
 	},
 }
