@@ -65,14 +65,11 @@ var (
 
 func renderAbbrevs(content string, abbrevs map[string]string) string {
 	return reAbbrev.ReplaceAllStringFunc(content, func(m string) string {
-		fmt.Println("--------------------")
-		fmt.Println(m)
 		text := reStripHtml.ReplaceAllLiteralString(m, "")
 		text = strings.ToLower(text)
 		if v, ok := abbrevs[text]; ok {
 			m = strings.Replace(m, "<v-abbr>", fmt.Sprintf(`<v-abbr title="%s">`, html.EscapeString(v)), 1)
 		}
-		fmt.Println(m)
 		return m
 	})
 }
