@@ -13,6 +13,7 @@ type DSL struct {
 	indexID string
 	aliases []string
 	title   string
+	abbrevs map[string]string
 }
 
 // ID implements Dictionary interface
@@ -47,5 +48,8 @@ func (d DSL) ToHTML(content string) template.HTML {
 		panic(fmt.Errorf("parse article: %w", err))
 	}
 	htmlv := htmlvitf.(string)
+	if d.abbrevs != nil {
+		htmlv = renderAbbrevs(htmlv, d.abbrevs)
+	}
 	return template.HTML(htmlv)
 }

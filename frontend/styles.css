@@ -60,6 +60,8 @@ textarea, input[type="text"], input[type="button"], input[type="submit"] {
 .article .buttons {float: right;}
 .article .buttons .btn {color: darkgray; padding: 0; outline: none; box-shadow: none; font-size:20px;}
 .article highlight {background-color: #ffffc6; box-shadow: 0 0 5px 3px #ffffc6;}
+.article v-abbr {color: darkgreen;}
+.article v-abbr[title] {cursor: default;}
 
 .logo {color:darkgrey; padding: 6px 0; font-weight: bold;}
 .logo h1 {display: inline; font-weight: bold;}

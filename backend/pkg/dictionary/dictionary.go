@@ -1,6 +1,8 @@
 package dictionary
 
-import "html/template"
+import (
+	"html/template"
+)
 
 // Dictionary represents a dictionary
 type Dictionary interface {
@@ -23,6 +25,7 @@ var dictionaries = []Dictionary{
 		indexID: "tsbm",
 		aliases: []string{"krapiva"},
 		title:   "Тлумачальны слоўнік беларускай мовы (1977-84, правапіс да 2008 г.)",
+		abbrevs: parseDSLAbbrev(tsbmAbbrev),
 	},
 	DSL{
 		id:      "hsbm",
@@ -33,16 +36,19 @@ var dictionaries = []Dictionary{
 		id:      "esbm",
 		indexID: "esbm-2",
 		title:   "Этымалагічны слоўнік беларускай мовы (1978-2017)",
+		abbrevs: parseDSLAbbrev(esbmAbbrev),
 	},
 	DSL{
 		id:      "brs",
 		indexID: "brs-2",
 		title:   "Беларуска-рускі слоўнік, 4-е выданне (актуальны правапіс)",
+		abbrevs: parseDSLAbbrev(brsAbbrev),
 	},
 	DSL{
 		id:      "rbs",
 		indexID: "rbs",
 		title:   "Руска-беларускі слоўнік НАН РБ, 8-е выданне (правапіс да 2008 г.)",
+		abbrevs: parseDSLAbbrev(rbsAbbrev),
 	},
 	Stardict{
 		id:      "rus-bel",
