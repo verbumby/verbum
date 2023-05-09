@@ -19,7 +19,7 @@ func TestKrapivaParser(t *testing.T) {
 		{
 			name:    "case1",
 			content: "[m1][b][c darkblue]непрыгляднасць,[/c][/b][c brown] ‑і, [p]ж.[/p][/c]\n[m2]\\[Вася\\] Уласцівасць непрыгляднага; непрывабнасць.\n",
-			want:    `<p class="ml-0"><strong><span style="color: darkblue">непрыгляднасць,</span></strong><span style="color: brown"> ‑і, ж.</span></p><p class="ml-2">[Вася] Уласцівасць непрыгляднага; непрывабнасць.</p>`,
+			want:    `<p class="ml-0"><strong><span style="color: darkblue">непрыгляднасць,</span></strong><span style="color: brown"> ‑і, <v-abbr>ж.</v-abbr></span></p><p class="ml-2">[Вася] Уласцівасць непрыгляднага; непрывабнасць.</p>`,
 			wantErr: false,
 		},
 		{
