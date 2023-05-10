@@ -24,7 +24,10 @@ var rbsAbbrev string
 func parseDSLAbbrev(content string) map[string]string {
 	s := bufio.NewScanner(strings.NewReader(content))
 	result := map[string]string{}
-	key := ""
+
+	keys := []string{}
+	keysSealed := false
+
 	for s.Scan() {
 		line := s.Text()
 
@@ -37,17 +40,26 @@ func parseDSLAbbrev(content string) map[string]string {
 		}
 
 		if strings.HasPrefix(line, "\t") || strings.HasPrefix(line, " ") {
+			keysSealed = true
 			line = strings.TrimSpace(line)
-			if _, ok := result[key]; ok {
-				line = "\n" + line
+			for _, key := range keys {
+				if _, ok := result[key]; ok {
+					line = "\n" + line
+				}
+				result[key] += line
 			}
-			result[key] += strings.TrimSpace(line)
 		} else {
-			key = strings.ToLower(strings.TrimSpace(line))
+			if keysSealed {
+				keys = []string{}
+				keysSealed = false
+			}
+
+			key := strings.TrimSpace(line)
 			if _, ok := result[key]; ok {
 				fmt.Println("duplicate abbrev key: " + key)
-				// panic("duplicate abbrev key: " + key)
 			}
+
+			keys = append(keys, key)
 		}
 	}
 
@@ -66,7 +78,6 @@ var (
 func renderAbbrevs(content string, abbrevs map[string]string) string {
 	return reAbbrev.ReplaceAllStringFunc(content, func(m string) string {
 		text := reStripHtml.ReplaceAllLiteralString(m, "")
-		text = strings.ToLower(text)
 		if v, ok := abbrevs[text]; ok {
 			m = strings.Replace(m, "<v-abbr>", fmt.Sprintf(`<v-abbr title="%s">`, html.EscapeString(v)), 1)
 		}
