@@ -7,6 +7,7 @@ import (
 	"html"
 	"regexp"
 	"strings"
+	"unicode"
 )
 
 //go:embed esbm_abrv.dsl
@@ -65,6 +66,21 @@ func parseDSLAbbrev(content string) map[string]string {
 
 	if s.Err() != nil {
 		panic(s.Err())
+	}
+
+	extra := map[string]string{}
+	for k, v := range result {
+		kr := []rune(k)
+		kr[0] = unicode.ToUpper(kr[0])
+		k = string(kr)
+
+		if _, ok := result[k]; !ok {
+			extra[k] = v
+		}
+	}
+
+	for k, v := range extra {
+		result[k] = v
 	}
 
 	return result
