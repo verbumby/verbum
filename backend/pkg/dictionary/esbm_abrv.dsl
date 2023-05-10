@@ -870,6 +870,7 @@ eнic.
 	уздзенскае
 уйг.
 	уйгурскае
+ўкр.
 укр.
 	украінскае
 уладз.
@@ -3695,7 +3696,11 @@ PF
 	Пекарский Э. К. Словарь якутского языка. Т. 1-3. [Москва], 1958.
 
 Пятк.
+Пятк. 1
 	Pietkiewicz Cz. Polesie Rzeczyckie. Cz. 1: Kultura materialna. Kraków, 1928. Cz. 2: Kultura duchowa Polesia Rzeczyckiego. Warszawa, 1938.
+
+Пятк. 2
+	Pietkiewicz Cz. Polesie Rzeczyckie. Cz. 2: Kultura duchowa Polesia Rzeczyckiego. Warszawa, 1938.
 
 Пятк. 3
 	Pietkiewicz Cz. Kultura społeczna Polesia Rzeczyckiego. Toruń, 2013.
@@ -4542,6 +4547,13 @@ UAJb
 	Фасмер M. Греко-славянские этюды. III: Греческие заимствования в русском языке // Сборник ОРЯС. Т. 86. СПб., 1909.
 
 Федар.
+Федар. 1
+Федар. 2
+Федар. 3
+Федар. 4
+Федар. 5
+Федар. 6
+Федар. 7
 	Federowski М. Lud Białoruski na Rusi Litewskiej: materiały do etnografii słowiańskiej zgromadzone w latach 1877-1905. T. 1-7. Warszawa, 1897-1969.
 
 Федз.-Доўб.
