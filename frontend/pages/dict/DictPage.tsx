@@ -53,7 +53,7 @@ export const DictPage: React.VFC = ({ }) => {
                 <meta property="og:description" content={`${dict.Title}`} />
                 <meta name="robots" content="noindex, follow" />
             </Helmet>
-            <h4 className="ml-1 mr-1 mb-3">{dict.Title}</h4>
+            <h4 className="mx-1 mb-3">{dict.Title}</h4>
             <div className="mb-3">
                 <SearchControl
                     urlQ=""

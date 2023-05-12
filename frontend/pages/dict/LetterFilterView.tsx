@@ -15,7 +15,7 @@ export const LetterFilterView: React.VFC<LetterFilterViewProps> = ({ letterFilte
                     {lfl.map(l => (
                         <Link
                             key={l.Text}
-                            className={`btn ml-1 mb-1 btn-sm btn-light ${l.Active ? 'active' : ''}`}
+                            className={`btn ms-1 mb-1 btn-sm btn-light ${l.Active ? 'active' : ''}`}
                             title={l.Title}
                             to={prefixToURL(l.URL)}
                         >{l.Text === ' ' ? <>&nbsp;</> : <>{l.Text}</>}</Link>
