@@ -1,5 +1,7 @@
 html, body, .root {height: 100%;}
 body {margin: 0;font-family: Arial, Helvetica, sans-serif;}
+footer .btn, a {text-decoration: none;}
+a:hover {text-decoration: underline;}
 
 textarea, input[type="text"], input[type="button"], input[type="submit"] {
   -webkit-appearance: none; border-radius: 0; outline: none; }
@@ -61,7 +63,7 @@ textarea, input[type="text"], input[type="button"], input[type="submit"] {
 .article .buttons .btn {color: darkgray; padding: 0; outline: none; box-shadow: none; font-size:20px;}
 .article highlight {background-color: #ffffc6; box-shadow: 0 0 5px 3px #ffffc6;}
 .article v-abbr {color: darkgreen;}
-.article v-abbr[title] {cursor: default;}
+.article v-abbr[data-bs-toggle="tooltip"] {cursor: default;}
 
 .logo {color:darkgrey; padding: 6px 0; font-weight: bold;}
 .logo h1 {display: inline; font-weight: bold;}
@@ -76,5 +78,6 @@ textarea, input[type="text"], input[type="button"], input[type="submit"] {
 .letter-filter-level:last-child {border-bottom:none;}
 
 .pagination {flex-wrap: wrap;}
-.pagination .page-item .page-link {border-radius: 0; border:0; color: darkgray;}
+.pagination .page-item .page-link {border-radius: 0; border:0; color: darkgray; }
+.pagination .page-link.disabled, .pagination .disabled > .page-link {background: none;}
 .pagination .page-item.active .page-link { background-color: inherit; border-bottom:1px solid darkgray; cursor: inherit;}

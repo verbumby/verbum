@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { OverlayTrigger, Tooltip } from "react-bootstrap";
 import { Article } from './article'
 import { useDicts } from '../store'
@@ -23,7 +23,7 @@ const IconExternalController: React.VFC<{ a: Article }> = ({ a }) => {
         >Адчыніць артыкул асобна</Tooltip>
     )
     return (<OverlayTrigger overlay={renderOpenInNewTabTooltip} delay={defaultIconTooltipDelayConfig}>
-        <a href={`/${a.DictionaryID}/${a.ID}`} className="btn btn-link ml-2" target="_blank">
+        <a href={`/${a.DictionaryID}/${a.ID}`} className="btn btn-link ms-2" target="_blank">
             <IconExternal />
         </a>
     </OverlayTrigger>)
@@ -51,7 +51,7 @@ const IconCopyLinkController: React.VFC<{ a: Article }> = ({ a }) => {
     }
 
     return (<OverlayTrigger overlay={renderCopyLinkTooltip} delay={defaultIconTooltipDelayConfig}>
-        <button type="button" className="btn btn-link ml-2" style={iconStyles} onClick={onClick}>
+        <button type="button" className="btn btn-link ms-2" style={iconStyles} onClick={onClick}>
             <IconClipboard type={activated ? 'check' : ''} />
         </button>
     </OverlayTrigger>)
@@ -59,9 +59,32 @@ const IconCopyLinkController: React.VFC<{ a: Article }> = ({ a }) => {
 
 export const ArticleView: React.VFC<ArticleViewProps> = ({ a, showExternalButton, showSource }) => {
     const dicts = useDicts()
+    const [articleRoot, setArticleRoot] = useState(null)
+    const [bootstrapAPI, setBootstrapAPI] = useState(null)
+
+    useEffect(() => {
+        import('bootstrap').then(setBootstrapAPI)
+    }, [])
+
+    useEffect(() => {
+        if (!bootstrapAPI || !articleRoot) {
+            return
+        }
+
+        let ts = new Array()
+        for (let e of articleRoot.querySelectorAll('[data-bs-toggle="tooltip"]')) {
+            ts.push(new bootstrapAPI.Tooltip(e))
+        }
+
+        return () => {
+            for (let t of ts) {
+                t.dispose()
+            }
+        }
+    }, [bootstrapAPI, articleRoot])
 
     return (
-        <div className={`article ${a.DictionaryID}`}>
+        <div className={`article ${a.DictionaryID}`} ref={setArticleRoot}>
             <div className="buttons" >
                 {showExternalButton && <IconExternalController a={a} />}
                 <IconCopyLinkController a={a} />

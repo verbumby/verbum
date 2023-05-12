@@ -1,6 +1,7 @@
 import * as React from "react"
 import { Switch, Route } from "react-router-dom"
 import LoadingBarContainer from "react-redux-loading-bar"
+import 'bootstrap/dist/css/bootstrap.css'
 import './styles.css'
 
 import { Footer, Logo } from './common'

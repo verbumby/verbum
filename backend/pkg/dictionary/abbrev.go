@@ -95,7 +95,8 @@ func renderAbbrevs(content string, abbrevs map[string]string) string {
 	return reAbbrev.ReplaceAllStringFunc(content, func(m string) string {
 		text := reStripHtml.ReplaceAllLiteralString(m, "")
 		if v, ok := abbrevs[text]; ok {
-			m = strings.Replace(m, "<v-abbr>", fmt.Sprintf(`<v-abbr title="%s">`, html.EscapeString(v)), 1)
+			tt := `<v-abbr data-bs-toggle="tooltip" data-bs-title="%s" tabindex="0">`
+			m = strings.Replace(m, "<v-abbr>", fmt.Sprintf(tt, html.EscapeString(v)), 1)
 		}
 		return m
 	})
