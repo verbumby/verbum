@@ -3167,7 +3167,7 @@ MAGP
 Махэк, Studie
 	Machek V. Studie о tvoření výrazů expresivních. Praha, 1930.
 
-Мацвееў, Финно-угор. заим.
+Мацвееў, Финно-угор. заимствования
 	Матвеев А. К. Финно-угорские заимствования в русских говорах Северного Урала // Ученые зап. Урал. гос. ун-та им. А. М. Горького. Вып. 32. Свердловск, 1959.
 
 Мацэнаўэр, Cizí sl.
@@ -4212,7 +4212,7 @@ SSLP
 Ст.-бел. лексіконы
 	Старабеларускія лексіконы / укл. А. Яскевіч. Мінск, 1992.
 
-St. Ling. Polono-Jugosl. 2
+St. lingv. Polono–Jugosl., 2
 	Studia Linguistica Polono-Jugoslavica. T. 2: Посветено на акад. Божидар Видоески. Скопjе, 1982.
 
 Стойкаў, Соф. ученич. говор
@@ -4237,7 +4237,7 @@ Stud. fil.
 	Studime Filologjikë. Tiranë, 1964 і наст.
 
 Studia Etym. Brun.
-Etym. Brun. 1
+Etym. Brun.
 	Studia Etymologica Brunensia. Praha, 2000 і наст.
 
 Стэндэр-Петарсан, Slav.-germ.
