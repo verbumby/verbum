@@ -34,7 +34,7 @@ var dictionaries = []Dictionary{
 	},
 	DSL{
 		id:      "esbm",
-		indexID: "esbm-4",
+		indexID: "esbm-5",
 		title:   "Этымалагічны слоўнік беларускай мовы (1978-2017)",
 		abbrevs: parseDSLAbbrev(esbmAbbrev),
 	},
