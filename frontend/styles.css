@@ -61,7 +61,7 @@ textarea, input[type="text"], input[type="button"], input[type="submit"] {
 .article.hsbm img {max-width:100%;}
 .article .buttons {float: right;}
 .article .buttons .btn {color: darkgray; padding: 0; outline: none; box-shadow: none; font-size:20px;}
-.article highlight {background-color: #ffffc6; box-shadow: 0 0 5px 3px #ffffc6;}
+.article highlight {background-color: #ffffc6; box-shadow: 0 0 5px 3px #ffffc6; z-index: -100; position: relative;}
 .article v-abbr {color: darkgreen;}
 .article v-abbr[data-bs-toggle="tooltip"] {cursor: default;}
 
