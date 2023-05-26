@@ -14,6 +14,7 @@ import (
 	"github.com/verbumby/verbum/backend/pkg/ctl/dictimport/dictparser"
 	"github.com/verbumby/verbum/backend/pkg/ctl/dictimport/dictparser/dsl"
 	"github.com/verbumby/verbum/backend/pkg/ctl/dictimport/dictparser/html"
+	"github.com/verbumby/verbum/backend/pkg/ctl/dictimport/dictparser/stardict"
 	"github.com/verbumby/verbum/backend/pkg/storage"
 	"github.com/verbumby/verbum/backend/pkg/textutil"
 )
@@ -72,6 +73,8 @@ func (c *commandController) run() error {
 		d, err = dsl.ParseDSLFile(c.filename)
 	case "html":
 		d, err = html.LoadArticles(c.filename)
+	case "stardict":
+		d, err = stardict.LoadArticles(c.filename)
 	default:
 		err = fmt.Errorf("unsupported format %s", c.format)
 	}
@@ -156,7 +159,7 @@ func (c *commandController) indexArticles(d dictparser.Dictionary) error {
 			content = "<p><v-hw>" + a.Title + "</v-hw></p>\n" + content
 		}
 
-		var reBrace = regexp.MustCompile(`\[.*?\]`)
+		reBrace := regexp.MustCompile(`\[.*?\]`)
 		a.Title = reBrace.ReplaceAllString(a.Title, "")
 
 		doc := map[string]interface{}{
@@ -191,7 +194,6 @@ func (c *commandController) indexArticles(d dictparser.Dictionary) error {
 		if (i+1)%100 == 0 {
 			if err := c.flushBuffer(buff); err != nil {
 				return fmt.Errorf("flush buffer: %w", err)
-
 			}
 			log.Printf("%d articles indexed", i)
 			buff = &bytes.Buffer{}
