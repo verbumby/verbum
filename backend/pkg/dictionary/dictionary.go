@@ -46,7 +46,7 @@ var dictionaries = []Dictionary{
 	},
 	DSL{
 		id:      "rbs",
-		indexID: "rbs",
+		indexID: "rbs-2",
 		title:   "Руска-беларускі слоўнік НАН Беларусі, 8-е выданне (правапіс да 2008 г.)",
 		abbrevs: parseDSLAbbrev(rbsAbbrev),
 	},
