@@ -57,7 +57,7 @@ var dictionaries = []Dictionary{
 	},
 	DSL{
 		id:      "abs",
-		indexID: "abs-3",
+		indexID: "abs-4",
 		aliases: []string{"pashkievich"},
 		title:   "Ангельска-беларускі слоўнік (В. Пашкевіч, 2006, класічны правапіс)",
 	},
