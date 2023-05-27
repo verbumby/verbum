@@ -17,6 +17,8 @@ import (
 	"github.com/spf13/viper"
 	"github.com/verbumby/verbum/backend/pkg/app"
 	"github.com/verbumby/verbum/backend/pkg/chttp"
+	"github.com/verbumby/verbum/backend/pkg/ctl"
+	"github.com/verbumby/verbum/backend/pkg/ctl/dictimport"
 	"github.com/verbumby/verbum/backend/pkg/handlers"
 	"github.com/verbumby/verbum/backend/pkg/storage"
 )
@@ -32,10 +34,20 @@ func main() {
 		Long:  "verbum",
 	}
 
-	rootCmd.AddCommand(&cobra.Command{
-		Use:  "serve",
-		RunE: bootstrapServer,
-	})
+	rootCmd.AddCommand(
+		&cobra.Command{
+			Use:   "serve",
+			Short: "Start the http(s) servers",
+			RunE:  bootstrapServer,
+		},
+		dictimport.Command(),
+		ctl.ReindexCommand(),
+		ctl.MigrateSlugs(),
+		ctl.MigrateRvblrWrongHeadwords(),
+		ctl.MigrateStardictFixPrefixCase(),
+		ctl.MigrateModifiedAt(), ctl.MigrateTitleToContentCommand(),
+		ctl.MigrateZeroWidthSpaceBeforeSupCommand(),
+	)
 
 	if err := rootCmd.Execute(); err != nil {
 		log.Fatal(err)

@@ -6,10 +6,6 @@ build:
 run: build
 	./verbumsrvr serve
 
-.PHONY: build-ctl
-build-ctl:
-	go build -v github.com/verbumby/verbum/backend/cmd/verbumctl
-
 .PHONY: build-parsers
 build-parsers:
 	cd backend/pkg/ctl/dictimport/dictparser/dsl && pigeon -o grammar.go grammar.peg
