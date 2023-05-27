@@ -4,7 +4,7 @@ build:
 
 .PHONY: run
 run: build
-	./verbumsrvr
+	./verbumsrvr serve
 
 .PHONY: build-ctl
 build-ctl:

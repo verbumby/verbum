@@ -13,6 +13,7 @@ import (
 
 	gorillahandlers "github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
+	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 	"github.com/verbumby/verbum/backend/pkg/app"
 	"github.com/verbumby/verbum/backend/pkg/chttp"
@@ -25,12 +26,23 @@ func main() {
 		log.Fatal(err)
 	}
 
-	if err := bootstrapServer(); err != nil {
+	rootCmd := &cobra.Command{
+		Use:   "verbum",
+		Short: "verbum",
+		Long:  "verbum",
+	}
+
+	rootCmd.AddCommand(&cobra.Command{
+		Use:  "serve",
+		RunE: bootstrapServer,
+	})
+
+	if err := rootCmd.Execute(); err != nil {
 		log.Fatal(err)
 	}
 }
 
-func bootstrapServer() error {
+func bootstrapServer(cmd *cobra.Command, args []string) error {
 	r := mux.NewRouter()
 	r.HandleFunc("/api/dictionaries/{dictionary:[a-z-]+}/articles/{article:[a-zA-Z0-9-]+}", chttp.MakeHandler(handlers.APIArticle, chttp.ContentTypeJSONMiddleware))
 	r.HandleFunc("/api/dictionaries/{dictionary:[a-z-]+}/letterfilter", chttp.MakeHandler(handlers.APILetterFilter, chttp.ContentTypeJSONMiddleware))
