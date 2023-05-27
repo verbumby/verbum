@@ -4,11 +4,7 @@ build:
 
 .PHONY: run
 run: build
-	./verbumsrvr
-
-.PHONY: build-ctl
-build-ctl:
-	go build -v github.com/verbumby/verbum/backend/cmd/verbumctl
+	./verbumsrvr serve
 
 .PHONY: build-parsers
 build-parsers:
