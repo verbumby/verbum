@@ -10,8 +10,7 @@ node_modules/
 docker-compose.yml
 config*.yaml
 *.pem
-/verbumsrvr
-/verbumctl
+/verbum
 
 .DS_Store
 .vscode

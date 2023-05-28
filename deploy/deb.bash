@@ -5,7 +5,7 @@ set -e
 root=$(mktemp -d)
 
 mkdir -p $root/usr/local/bin
-cp verbumsrvr $root/usr/local/bin
+cp verbum $root/usr/local/bin
 
 mkdir -p $root/usr/local/share/verbum/frontend
 cp -R frontend/dist/* $root/usr/local/share/verbum/frontend

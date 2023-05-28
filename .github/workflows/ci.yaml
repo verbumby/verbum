@@ -16,8 +16,7 @@ jobs:
       with:
         name: binaries
         path: |
-          verbumsrvr
-          verbumctl
+          verbum
         if-no-files-found: error
 
   build-frontend:

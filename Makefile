@@ -1,10 +1,10 @@
 .PHONY: build
 build:
-	go build -v github.com/verbumby/verbum/backend/cmd/verbumsrvr
+	go build -v github.com/verbumby/verbum/backend/cmd/verbum
 
 .PHONY: run
 run: build
-	./verbumsrvr serve
+	./verbum serve
 
 .PHONY: build-parsers
 build-parsers:
