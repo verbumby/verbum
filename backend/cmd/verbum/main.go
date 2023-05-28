@@ -21,6 +21,7 @@ import (
 	"github.com/verbumby/verbum/backend/pkg/ctl/dictimport"
 	"github.com/verbumby/verbum/backend/pkg/handlers"
 	"github.com/verbumby/verbum/backend/pkg/storage"
+	"github.com/verbumby/verbum/frontend"
 )
 
 func main() {
@@ -65,6 +66,12 @@ func bootstrapServer(cmd *cobra.Command, args []string) error {
 	r.PathPrefix("/api/").HandlerFunc(chttp.MakeHandler(handlers.APINotFound))
 	imagesServer := http.FileServer(http.Dir(viper.GetString("images.path")))
 	r.PathPrefix("/images/").Handler(http.StripPrefix("/images", imagesServer))
+	staticsServer := http.FileServer(http.FS(frontend.DistPublic))
+	staticsHander := http.StripPrefix("/statics", staticsServer)
+	r.PathPrefix("/statics/").HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Cache-Control", "public, max-age=31536000, immutable")
+		staticsHander.ServeHTTP(w, r)
+	})
 	r.HandleFunc("/robots.txt", chttp.MakeHandler(handlers.RobotsTXT))
 	r.HandleFunc("/sitemap-index.xml", chttp.MakeHandler(handlers.SitemapIndex))
 	r.HandleFunc("/{dictionary:[a-z-]+}/sitemap-{n:[0-9]+}.xml", chttp.MakeHandler(handlers.SitemapOfDictionary))

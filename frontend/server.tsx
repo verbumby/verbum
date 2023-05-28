@@ -4,8 +4,6 @@ import { readFileSync } from 'fs'
 import * as React from 'react'
 import { renderToString } from 'react-dom/server'
 import Koa from 'koa'
-import koaStatic from 'koa-static'
-import koaMount from 'koa-mount'
 import { matchPath, StaticRouter, StaticRouterContext } from 'react-router'
 import { configureStore } from '@reduxjs/toolkit'
 import { Provider } from 'react-redux'
@@ -44,17 +42,7 @@ const indexhtml = readFileSync('index.html', 'utf-8')
             .join("\n"),
     )
 
-const kstatics = new Koa()
-kstatics.use(koaStatic(
-    'public',
-    {
-        maxage: 1E3 * 60 * 60 * 24 * 30,
-        immutable: true,
-    },
-))
-
 const k = new Koa()
-k.use(koaMount('/statics', kstatics))
 k.use(async ctx => {
     const store = configureStore({
         reducer: rootReducer,
