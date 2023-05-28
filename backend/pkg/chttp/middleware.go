@@ -11,3 +11,10 @@ func ContentTypeJSONMiddleware(f HandlerFunc) HandlerFunc {
 		return f(w, ctx)
 	}
 }
+
+func CacheControlImmutableMiddleware(f HandlerFunc) HandlerFunc {
+	return func(w http.ResponseWriter, ctx *Context) error {
+		w.Header().Set("Cache-Control", "public, max-age=31536000, immutable")
+		return f(w, ctx)
+	}
+}
