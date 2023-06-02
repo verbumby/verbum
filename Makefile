@@ -1,5 +1,5 @@
 .PHONY: build
-build:
+build: fe-build
 	go build -v github.com/verbumby/verbum/backend/cmd/verbum
 
 .PHONY: run
@@ -20,11 +20,14 @@ fe-build:
 	npx esbuild frontend/server.tsx \
 		--bundle \
 		--define:process.env.NODE_ENV='"production"' \
+		--define:global='globalThis' \
 		--minify \
-		--sourcemap \
-		--platform=node \
-		--target=node18.0 \
+		--sourcemap=inline \
+		--format=iife \
+		--platform=browser \
+		--target=es2020 \
 		--outdir=frontend/dist
+	rm frontend/dist/server.css
 
 	rm -f frontend/dist/public/*.{js,js.map,css,css.map}
 	npx esbuild frontend/browser.tsx \
@@ -36,15 +39,10 @@ fe-build:
 		--target=es2016 \
 		--outdir=frontend/dist/public \
 		--entry-names=[name]-[hash] \
-		--metafile=frontend/dist/browser.meta.json \
 		--loader:.png=file
 
 	cp frontend/index.html frontend/dist/index.html
 	cp frontend/favicon.png frontend/dist/public/favicon.png
-
-.PHONY: fe-run
-fe-run: fe-build
-	cd frontend/dist && node server.js
 
 .PHONY: es-sync-backup
 es-sync:

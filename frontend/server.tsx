@@ -1,58 +1,38 @@
-import 'source-map-support/register'
+import 'fastestsmallesttextencoderdecoder'
+import 'core-js/actual/url'
+import 'core-js/actual/url-search-params'
 
-import { readFileSync } from 'fs'
 import * as React from 'react'
 import { renderToString } from 'react-dom/server'
-import Koa from 'koa'
 import { matchPath, StaticRouter, StaticRouterContext } from 'react-router'
 import { configureStore } from '@reduxjs/toolkit'
 import { Provider } from 'react-redux'
 import { Helmet } from "react-helmet";
 
+import { VerbumAPIClientV8Bridge } from './verbum/v8_bridge'
 import { App } from './App'
 import { rootReducer } from './store'
-import { VerbumAPIClientServer } from './verbum/server'
 import { routes } from './routes'
 
-global.verbumClient = new VerbumAPIClientServer({ apiURL: 'http://127.0.0.1:8080' })
-
-interface BundleMetadata {
-    outputs: {
-        [path: string]: {}
-    }
+declare global {
+    var verbumV8Bridge: (url: string) => any
 }
-const browserBundleMetadata: BundleMetadata = JSON.parse(readFileSync('browser.meta.json', 'utf-8'))
-const assets = Object.keys(browserBundleMetadata.outputs)
-    .filter(v => !v.endsWith('.map'))
-    .map(v => v.replace('frontend/dist/public/', ''))
 
-const indexhtml = readFileSync('index.html', 'utf-8')
-    .replace(
-        'CSS_BUNDLES_PLACEHOLDER',
-        assets
-            .filter(v => v.endsWith('.css'))
-            .map(v => `<link href="/statics/${v}" rel="stylesheet">`)
-            .join("\n"),
-    )
-    .replace(
-        'JS_BUNDLES_PLACEHOLDER',
-        assets
-            .filter(v => v.endsWith('.js'))
-            .map(v => `<script defer="defer" src="/statics/${v}"></script>`)
-            .join("\n"),
-    )
+global.verbumClient = new VerbumAPIClientV8Bridge({ bridge: verbumV8Bridge })
 
-const k = new Koa()
-k.use(async ctx => {
+export async function render(rawUrl: string) {
+    let url = new URL(rawUrl)
+
     const store = configureStore({
         reducer: rootReducer,
     })
+
     const promises: Promise<void>[] = []
     routes.some(route => {
-        const match = matchPath(ctx.URL.pathname, route)
+        const match = matchPath(url.pathname, route)
         if (match) {
             for (const dataLoader of route.dataLoaders) {
-                promises.push(store.dispatch(dataLoader(match, ctx.URL.searchParams)))
+                promises.push(store.dispatch(dataLoader(match, url.searchParams)))
             }
         }
         return match
@@ -64,7 +44,7 @@ k.use(async ctx => {
     const routerContext: StaticRouterContext = {}
     const reactRendered = renderToString(
         <Provider store={store}>
-            <StaticRouter location={ctx.url} context={routerContext}>
+            <StaticRouter location={url} context={routerContext}>
                 <App />
             </StaticRouter>
         </Provider>
@@ -72,21 +52,22 @@ k.use(async ctx => {
     const helmet = Helmet.renderStatic()
 
     if (routerContext.url) {
-        ctx.status = 301
-        ctx.redirect(routerContext.url)
-        return
-    }
-    if (routerContext.statusCode) {
-        ctx.response.status = routerContext.statusCode
+		return {
+			Location: routerContext.url
+		}
     }
 
-    let body = indexhtml
-    body = body.replace('HEAD_TITLE_PLACEHOLDER', helmet.title.toString())
-    body = body.replace('HEAD_META_PLACEHOLDER', helmet.meta.toString())
-    body = body.replace('PRELOADED_STATE_PLACEHOLDER', JSON.stringify(preloadedState).replace(/</g, '\\u003c'))
-    body = body.replace('BODY_PLACEHOLDER', reactRendered)
-    ctx.body = body
-})
+	return{
+		StatusCode: routerContext.statusCode ? routerContext.statusCode : -1,
+		Title: helmet.title.toString(),
+		Meta: helmet.meta.toString(),
+		State: JSON.stringify(preloadedState).replace(/</g, '\\u003c'),
+		Body: reactRendered,
+	}
+}
 
-console.log('listening on localhost:8079')
-k.listen(8079, 'localhost')
+declare global {
+    var render: any
+}
+
+globalThis.render = render

@@ -9,7 +9,7 @@ type DictsSetAction = {
     type: typeof DICTS_SET
     dicts: DictsState
 }
-function dictsSet(dicts: Dict[]): DictsSetAction {
+export function dictsSet(dicts: Dict[]): DictsSetAction {
     return { type: DICTS_SET, dicts }
 }
 

@@ -29,7 +29,7 @@ type ArticleFetchSuccessAction = {
     type: typeof ARTICLE_FETCH_SUCCESS,
     a: Article
 }
-function articleFetchSuccess(a: Article): ArticleFetchSuccessAction {
+export function articleFetchSuccess(a: Article): ArticleFetchSuccessAction {
     return { type: ARTICLE_FETCH_SUCCESS, a }
 }
 

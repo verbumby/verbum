@@ -1,6 +1,6 @@
 export { Article, ArticleList } from './article'
 export { Dict } from './dict'
-export { DictsState, DictsActions, dictsReducer, dictsFetch } from './dicts'
+export { DictsState, DictsActions, dictsReducer, dictsFetch, dictsSet } from './dicts'
 export { ArticleView } from './ArticleView'
 export { Footer } from './Footer'
 export { Logo } from './Logo'

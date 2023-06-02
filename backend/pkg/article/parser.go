@@ -93,11 +93,13 @@ func RvblrParse(content string) (hws []string, hwsalt []string, err error) {
 
 		return result, nil
 	}
+
 	contents := strings.SplitN(content, "\n", 2)
 
 	hws, err = parse(contents[0])
 	if err != nil {
 		err = fmt.Errorf("parse headwords: %w", err)
+		return
 	}
 
 	hwsalt, err = parse(contents[1])
