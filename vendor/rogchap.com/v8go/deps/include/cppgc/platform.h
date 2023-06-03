@@ -5,8 +5,6 @@
 #ifndef INCLUDE_CPPGC_PLATFORM_H_
 #define INCLUDE_CPPGC_PLATFORM_H_
 
-#include <memory>
-
 #include "v8-platform.h"  // NOLINT(build/include_directory)
 #include "v8config.h"     // NOLINT(build/include_directory)
 
@@ -148,7 +146,6 @@ namespace internal {
 V8_EXPORT void Abort();
 
 }  // namespace internal
-
 }  // namespace cppgc
 
 #endif  // INCLUDE_CPPGC_PLATFORM_H_

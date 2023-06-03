@@ -73,11 +73,10 @@ class GarbageCollectedBase {
  * };
  * \endcode
  */
-template <typename T>
+template <typename>
 class GarbageCollected : public internal::GarbageCollectedBase {
  public:
   using IsGarbageCollectedTypeMarker = void;
-  using ParentMostGarbageCollectedType = T;
 
  protected:
   GarbageCollected() = default;

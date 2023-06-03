@@ -5,7 +5,7 @@
 #ifndef INCLUDE_CPPGC_MACROS_H_
 #define INCLUDE_CPPGC_MACROS_H_
 
-#include <cstddef>
+#include <stddef.h>
 
 #include "cppgc/internal/compiler-specific.h"
 

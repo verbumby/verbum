@@ -11,9 +11,7 @@
 #include <unordered_set>
 #include <vector>
 
-#include "v8-local-handle.h"       // NOLINT(build/include_directory)
-#include "v8-message.h"            // NOLINT(build/include_directory)
-#include "v8-persistent-handle.h"  // NOLINT(build/include_directory)
+#include "v8.h"  // NOLINT(build/include_directory)
 
 /**
  * Profiler support for the V8 JavaScript engine.
@@ -22,7 +20,6 @@ namespace v8 {
 
 class HeapGraphNode;
 struct HeapStatsUpdate;
-class Object;
 
 using NativeObject = void*;
 using SnapshotObjectId = uint32_t;
@@ -292,8 +289,8 @@ class V8_EXPORT CpuProfilingOptions {
    *                             interval, set via SetSamplingInterval(). If
    *                             zero, the sampling interval will be equal to
    *                             the profiler's sampling interval.
-   * \param filter_context If specified, profiles will only contain frames
-   *                       using this context. Other frames will be elided.
+   * \param filter_context Deprecated option to filter by context, currently a
+   *                       no-op.
    */
   CpuProfilingOptions(
       CpuProfilingMode mode = kLeafNodeLineNumbers,
@@ -307,13 +304,9 @@ class V8_EXPORT CpuProfilingOptions {
  private:
   friend class internal::CpuProfile;
 
-  bool has_filter_context() const { return !filter_context_.IsEmpty(); }
-  void* raw_filter_context() const;
-
   CpuProfilingMode mode_;
   unsigned max_samples_;
   int sampling_interval_us_;
-  CopyablePersistentTraits<Context>::CopyablePersistent filter_context_;
 };
 
 /**
@@ -499,7 +492,7 @@ class V8_EXPORT HeapGraphNode {
 /**
  * An interface for exporting data from V8, using "push" model.
  */
-class V8_EXPORT OutputStream {
+class V8_EXPORT OutputStream {  // NOLINT
  public:
   enum WriteResult {
     kContinue = 0,
@@ -525,6 +518,7 @@ class V8_EXPORT OutputStream {
     return kAbort;
   }
 };
+
 
 /**
  * HeapSnapshots record the state of the JS heap at some moment.
@@ -592,7 +586,7 @@ class V8_EXPORT HeapSnapshot {
  * An interface for reporting progress and controlling long-running
  * activities.
  */
-class V8_EXPORT ActivityControl {
+class V8_EXPORT ActivityControl {  // NOLINT
  public:
   enum ControlOption {
     kContinue = 0,
@@ -605,6 +599,7 @@ class V8_EXPORT ActivityControl {
    */
   virtual ControlOption ReportProgressValue(int done, int total) = 0;
 };
+
 
 /**
  * AllocationProfile is a sampled profile of allocations done by the program.
@@ -905,8 +900,7 @@ class V8_EXPORT HeapProfiler {
   const HeapSnapshot* TakeHeapSnapshot(
       ActivityControl* control = nullptr,
       ObjectNameResolver* global_object_name_resolver = nullptr,
-      bool treat_global_objects_as_roots = true,
-      bool capture_numeric_value = false);
+      bool treat_global_objects_as_roots = true);
 
   /**
    * Starts tracking of heap objects population statistics. After calling
