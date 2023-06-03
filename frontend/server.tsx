@@ -42,9 +42,10 @@ export async function render(rawUrl: string) {
     const preloadedState = store.getState()
 
     const routerContext: StaticRouterContext = {}
+    const location = { pathname: url.pathname, search: url.search }
     const reactRendered = renderToString(
         <Provider store={store}>
-            <StaticRouter location={url} context={routerContext}>
+            <StaticRouter location={location} context={routerContext}>
                 <App />
             </StaticRouter>
         </Provider>
