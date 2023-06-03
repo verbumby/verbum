@@ -169,7 +169,7 @@ class V8_EXPORT TryCatch {
    */
   void SetCaptureMessage(bool value);
 
-  V8_DEPRECATED(
+  V8_DEPRECATE_SOON(
       "This is private information that should not be exposed by the API")
   static void* JSStackComparableAddress(TryCatch* handler) {
     if (handler == nullptr) return nullptr;

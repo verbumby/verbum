@@ -18,7 +18,6 @@
 namespace v8 {
 
 class Context;
-class UnboundScript;
 
 /**
  * A JavaScript function object (ECMA-262, 15.3).
@@ -58,8 +57,6 @@ class V8_EXPORT Function : public Object {
 
   void SetName(Local<String> name);
   Local<Value> GetName() const;
-
-  MaybeLocal<UnboundScript> GetUnboundScript() const;
 
   /**
    * Name inferred from variable or property assignment of this function.
