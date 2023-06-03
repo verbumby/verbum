@@ -8,7 +8,7 @@ import { Footer, Logo } from './common'
 import { routes } from './routes'
 import { Helmet } from "react-helmet"
 
-const App: React.VFC = () => (
+const App: React.FC = () => (
     <>
         <Helmet>
             <meta property="og:image" content="/statics/favicon.png?v1" />

@@ -4,7 +4,7 @@ type IconFunnelProps = {
     fill: boolean
 }
 
-export const IconFunnel: React.VFC<IconFunnelProps> = ({ fill }) => {
+export const IconFunnel: React.FC<IconFunnelProps> = ({ fill }) => {
     return fill
         ? (
             <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" fill="currentColor" className="bi bi-funnel-fill" viewBox="0 0 16 16">

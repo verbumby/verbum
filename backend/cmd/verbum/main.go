@@ -2,10 +2,9 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"log"
 	"net/http"
-	"net/http/httputil"
-	"net/url"
 	"os"
 	"os/signal"
 	"syscall"
@@ -20,6 +19,7 @@ import (
 	"github.com/verbumby/verbum/backend/pkg/ctl"
 	"github.com/verbumby/verbum/backend/pkg/ctl/dictimport"
 	"github.com/verbumby/verbum/backend/pkg/handlers"
+	"github.com/verbumby/verbum/backend/pkg/serverrender"
 	"github.com/verbumby/verbum/backend/pkg/storage"
 	"github.com/verbumby/verbum/frontend"
 )
@@ -75,9 +75,11 @@ func bootstrapServer(cmd *cobra.Command, args []string) error {
 	r.HandleFunc("/robots.txt", chttp.MakeHandler(handlers.RobotsTXT))
 	r.HandleFunc("/sitemap-index.xml", chttp.MakeHandler(handlers.SitemapIndex))
 	r.HandleFunc("/{dictionary:[a-z-]+}/sitemap-{n:[0-9]+}.xml", chttp.MakeHandler(handlers.SitemapOfDictionary))
-	rpurl := url.URL{Scheme: "http", Host: "localhost:8079"}
-	rp := httputil.NewSingleHostReverseProxy(&rpurl)
-	r.PathPrefix("/").Handler(rp)
+	serverRenderer, err := serverrender.New(r)
+	if err != nil {
+		return fmt.Errorf("create server renderer: %w", err)
+	}
+	r.PathPrefix("/").Handler(chttp.MakeHandler(serverRenderer.ServeHTTP))
 
 	chttp.InitCookieManager()
 	go storage.PruneOldBackups()
@@ -96,21 +98,6 @@ func bootstrapServer(cmd *cobra.Command, args []string) error {
 	rootHandler := gorillahandlers.RecoveryHandler()(
 		gorillahandlers.CompressHandler(r),
 	)
-
-	privateServer := &http.Server{
-		Addr:         viper.GetString("http.private.addr"),
-		Handler:      rootHandler,
-		ReadTimeout:  30 * time.Second,
-		WriteTimeout: 90 * time.Second,
-	}
-
-	go func() {
-		log.Printf("listening on %s", viper.GetString("http.private.addr"))
-		err := privateServer.ListenAndServe()
-		if err != http.ErrServerClosed {
-			log.Printf("private server listen and serve: %v", err)
-		}
-	}()
 
 	publicServer := &http.Server{
 		Addr:         viper.GetString("https.addr"),
@@ -141,10 +128,6 @@ func bootstrapServer(cmd *cobra.Command, args []string) error {
 
 	if err := publicServer.Shutdown(shutdownCtx); err != nil {
 		log.Printf("public server shutdown: %v", err)
-	}
-
-	if err := privateServer.Shutdown(shutdownCtx); err != nil {
-		log.Printf("private server shutdown: %v", err)
 	}
 
 	log.Println("see ya!")

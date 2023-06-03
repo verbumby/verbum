@@ -9,7 +9,7 @@ type DictsFilterProps = {
     onChange?: (state: string) => void
 }
 
-const DictsFilter: React.VFC<DictsFilterProps> = ({ state, onChange }) => {
+const DictsFilter: React.FC<DictsFilterProps> = ({ state, onChange }) => {
     const dicts = useDicts()
     let checkedDicts: string[]
     if (state == '') {

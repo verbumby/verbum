@@ -3,9 +3,8 @@ import { useEffect, useState, useRef } from 'react'
 
 import { Suggestions } from './Suggestions'
 import { IconBackspace, IconSearch } from '../icons'
-import { Suggestion, useDelayed } from '.'
+import { Suggestion, useDelayed, useDispatch } from '.'
 import { useHistory } from 'react-router-dom'
-import { useDispatch } from 'react-redux'
 import { hideLoading, showLoading } from 'react-redux-loading-bar'
 import { useDictsFilter } from './dictsfilter'
 
@@ -15,7 +14,7 @@ type SearchControlProps = {
     calculateSearchURL: (q: string, inDicts: string) => string
 }
 
-export const SearchControl: React.VFC<SearchControlProps> = ({ urlQ, urlIn, calculateSearchURL }) => {
+export const SearchControl: React.FC<SearchControlProps> = ({ urlQ, urlIn, calculateSearchURL }) => {
     const [q, setQ] = useState<string>(urlQ)
     const qEl = useRef<HTMLInputElement>(null)
     const history = useHistory()
@@ -210,7 +209,7 @@ function useSuggestions(inDicts: string): [
         }
     }
 
-    const onBlur = (e: React.FocusEvent<HTMLInputElement>) => {
+    const onBlur = (_: React.FocusEvent<HTMLInputElement>) => {
         if (suggs.length > 0) {
             setTimeout(() => resetSuggestions(), 150)
         }

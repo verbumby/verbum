@@ -1,5 +1,4 @@
 import { match } from 'react-router-dom'
-import { URLSearchParams } from 'url'
 
 import { SearchResult, URLSearch, useURLSearch as useURLSearchCommon } from '../../common'
 import { AppThunkAction } from '../../store'

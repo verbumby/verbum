@@ -1,15 +1,14 @@
 import * as React from 'react'
 import { Helmet } from 'react-helmet'
-import { useDispatch } from 'react-redux'
 import { Redirect, useRouteMatch } from 'react-router-dom'
-import { ArticleView, NotFound, PaginationView, SearchControl } from '../../common'
+import { ArticleView, NotFound, PaginationView, SearchControl, useDispatch } from '../../common'
 import { useDict, useDictArticles, useLetterFilter } from '../../store'
 import { letterFilterFetch, letterFilterReset } from './letterfilter'
 import { dictArticlesFetch, MatchParams, dictArticlesReset, useURLSearch } from './dict'
 import { LetterFilterView } from './LetterFilterView'
 import { useURLSearch as useIndexURLSearch } from '../index/search'
 
-export const DictPage: React.VFC = ({ }) => {
+export const DictPage: React.FC = ({ }) => {
     const match = useRouteMatch<MatchParams>()
     const urlSearch = useURLSearch()
 
@@ -33,11 +32,11 @@ export const DictPage: React.VFC = ({ }) => {
     React.useEffect(() => {
         dispatch(letterFilterFetch(match, urlSearch))
     }, [match.params.dictID, prefix])
-    React.useEffect(() => () => dispatch(letterFilterReset()), [])
+    React.useEffect(() => () => { dispatch(letterFilterReset()) }, [])
 
     React.useEffect(() => {
         dispatch(dictArticlesFetch(match, urlSearch))
-        return () => dispatch(dictArticlesReset())
+        return () => { dispatch(dictArticlesReset()) }
     }, [match.params.dictID, prefix, page])
 
     if (!letterFilter) {

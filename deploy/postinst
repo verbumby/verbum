@@ -21,5 +21,3 @@ fi
 systemctl daemon-reload
 systemctl enable verbum.service
 systemctl restart verbum.service
-systemctl enable verbum-frontend.service
-systemctl restart verbum-frontend.service

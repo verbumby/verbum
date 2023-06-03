@@ -1,5 +1,7 @@
 import { useLocation } from 'react-router-dom'
 import { useRef } from 'react'
+import { useDispatch as useDispatchParent } from 'react-redux'
+import type { AppDispatch } from '../browser'
 import { URLSearch, URLSearchEntries } from './urlsearch'
 
 export function useURLSearch<Entries extends URLSearchEntries>(defaults: Entries): URLSearch<Entries> {
@@ -23,3 +25,6 @@ export function useDelayed<T extends (...args: any[]) => any>(f: T, delayMs: num
         timeoutID.current = null
     }]
 }
+
+type DispatchFunc = () => AppDispatch
+export const useDispatch: DispatchFunc = useDispatchParent
