@@ -5,8 +5,7 @@
 #ifndef INCLUDE_CPPGC_HEAP_STATISTICS_H_
 #define INCLUDE_CPPGC_HEAP_STATISTICS_H_
 
-#include <cstddef>
-#include <cstdint>
+#include <memory>
 #include <string>
 #include <vector>
 
@@ -31,17 +30,19 @@ struct HeapStatistics final {
   };
 
   /**
-   * Object statistics for a single type.
+   * Statistics of object types. For each type the statistics record its name,
+   * how many objects of that type were allocated, and the overall size used by
+   * these objects.
    */
-  struct ObjectStatsEntry {
-    /**
-     * Number of allocated bytes.
-     */
-    size_t allocated_bytes;
-    /**
-     * Number of allocated objects.
-     */
-    size_t object_count;
+  struct ObjectStatistics {
+    /** Number of distinct types in the heap. */
+    size_t num_types = 0;
+    /** Name of each type in the heap. */
+    std::vector<std::string> type_name;
+    /** Number of allocated objects per each type. */
+    std::vector<size_t> type_count;
+    /** Overall size of allocated objects per each type. */
+    std::vector<size_t> type_bytes;
   };
 
   /**
@@ -49,19 +50,14 @@ struct HeapStatistics final {
    * allocated memory size and overall used memory size for the page.
    */
   struct PageStatistics {
-    /** Overall committed amount of memory for the page. */
-    size_t committed_size_bytes = 0;
-    /** Resident amount of memory held by the page. */
-    size_t resident_size_bytes = 0;
+    /** Overall amount of memory allocated for the page. */
+    size_t physical_size_bytes = 0;
     /** Amount of memory actually used on the page. */
     size_t used_size_bytes = 0;
-    /** Statistics for object allocated on the page. Filled only when
-     * NameProvider::HideInternalNames() is false. */
-    std::vector<ObjectStatsEntry> object_statistics;
   };
 
   /**
-   * Statistics of the freelist (used only in non-large object spaces). For
+   * Stastistics of the freelist (used only in non-large object spaces). For
    * each bucket in the freelist the statistics record the bucket size, the
    * number of freelist entries in the bucket, and the overall allocated memory
    * consumed by these freelist entries.
@@ -71,7 +67,7 @@ struct HeapStatistics final {
     std::vector<size_t> bucket_size;
     /** number of freelist entries per bucket. */
     std::vector<size_t> free_count;
-    /** memory size consumed by freelist entries per size. */
+    /** memory size concumed by freelist entries per size. */
     std::vector<size_t> free_size;
   };
 
@@ -84,35 +80,29 @@ struct HeapStatistics final {
   struct SpaceStatistics {
     /** The space name */
     std::string name;
-    /** Overall committed amount of memory for the heap. */
-    size_t committed_size_bytes = 0;
-    /** Resident amount of memory held by the heap. */
-    size_t resident_size_bytes = 0;
+    /** Overall amount of memory allocated for the space. */
+    size_t physical_size_bytes = 0;
     /** Amount of memory actually used on the space. */
     size_t used_size_bytes = 0;
     /** Statistics for each of the pages in the space. */
     std::vector<PageStatistics> page_stats;
     /** Statistics for the freelist of the space. */
     FreeListStatistics free_list_stats;
+    /** Statistics for object allocated on the space. Filled only when
+     * NameProvider::HideInternalNames() is false. */
+    ObjectStatistics object_stats;
   };
 
-  /** Overall committed amount of memory for the heap. */
-  size_t committed_size_bytes = 0;
-  /** Resident amount of memory help by the heap. */
-  size_t resident_size_bytes = 0;
+  /** Overall amount of memory allocated for the heap. */
+  size_t physical_size_bytes = 0;
   /** Amount of memory actually used on the heap. */
   size_t used_size_bytes = 0;
   /** Detail level of this HeapStatistics. */
   DetailLevel detail_level;
 
   /** Statistics for each of the spaces in the heap. Filled only when
-   * `detail_level` is `DetailLevel::kDetailed`. */
+   * detail_level is kDetailed. */
   std::vector<SpaceStatistics> space_stats;
-
-  /**
-   * Vector of `cppgc::GarbageCollected` type names.
-   */
-  std::vector<std::string> type_names;
 };
 
 }  // namespace cppgc

@@ -39,12 +39,9 @@ func NewPromiseResolver(ctx *Context) (*PromiseResolver, error) {
 	if ctx == nil {
 		return nil, errors.New("v8go: Context is required")
 	}
-	rtn := C.NewPromiseResolver(ctx.ptr)
-	obj, err := objectResult(ctx, rtn)
-	if err != nil {
-		return nil, err
-	}
-	return &PromiseResolver{obj, nil}, nil
+	ptr := C.NewPromiseResolver(ctx.ptr)
+	val := &Value{ptr, ctx}
+	return &PromiseResolver{&Object{val}, nil}, nil
 }
 
 // GetPromise returns the associated Promise object for this resolver.
@@ -62,12 +59,16 @@ func (r *PromiseResolver) GetPromise() *Promise {
 // Resolve invokes the Promise resolve state with the given value.
 // The Promise state will transition from Pending to Fulfilled.
 func (r *PromiseResolver) Resolve(val Valuer) bool {
+	r.ctx.register()
+	defer r.ctx.deregister()
 	return C.PromiseResolverResolve(r.ptr, val.value().ptr) != 0
 }
 
 // Reject invokes the Promise reject state with the given value.
 // The Promise state will transition from Pending to Rejected.
 func (r *PromiseResolver) Reject(err *Value) bool {
+	r.ctx.register()
+	defer r.ctx.deregister()
 	return C.PromiseResolverReject(r.ptr, err.ptr) != 0
 }
 
@@ -94,34 +95,31 @@ func (p *Promise) Result() *Value {
 // The default MicrotaskPolicy processes them when the call depth decreases to 0.
 // Call (*Context).PerformMicrotaskCheckpoint to trigger it manually.
 func (p *Promise) Then(cbs ...FunctionCallback) *Promise {
-	var rtn C.RtnValue
+	p.ctx.register()
+	defer p.ctx.deregister()
+
+	var ptr C.ValuePtr
 	switch len(cbs) {
 	case 1:
 		cbID := p.ctx.iso.registerCallback(cbs[0])
-		rtn = C.PromiseThen(p.ptr, C.int(cbID))
+		ptr = C.PromiseThen(p.ptr, C.int(cbID))
 	case 2:
 		cbID1 := p.ctx.iso.registerCallback(cbs[0])
 		cbID2 := p.ctx.iso.registerCallback(cbs[1])
-		rtn = C.PromiseThen2(p.ptr, C.int(cbID1), C.int(cbID2))
+		ptr = C.PromiseThen2(p.ptr, C.int(cbID1), C.int(cbID2))
 
 	default:
 		panic("1 or 2 callbacks required")
 	}
-	obj, err := objectResult(p.ctx, rtn)
-	if err != nil {
-		panic(err) // TODO: Return error
-	}
-	return &Promise{obj}
+	return &Promise{&Object{&Value{ptr, p.ctx}}}
 }
 
 // Catch invokes the given function if the promise is rejected.
 // See Then for other details.
 func (p *Promise) Catch(cb FunctionCallback) *Promise {
+	p.ctx.register()
+	defer p.ctx.deregister()
 	cbID := p.ctx.iso.registerCallback(cb)
-	rtn := C.PromiseCatch(p.ptr, C.int(cbID))
-	obj, err := objectResult(p.ctx, rtn)
-	if err != nil {
-		panic(err) // TODO: Return error
-	}
-	return &Promise{obj}
+	ptr := C.PromiseCatch(p.ptr, C.int(cbID))
+	return &Promise{&Object{&Value{ptr, p.ctx}}}
 }

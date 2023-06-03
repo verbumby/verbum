@@ -31,28 +31,6 @@ func (v *Value) value() *Value {
 	return v
 }
 
-func newValueNull(iso *Isolate) *Value {
-	return &Value{
-		ptr: C.NewValueNull(iso.ptr),
-	}
-}
-
-func newValueUndefined(iso *Isolate) *Value {
-	return &Value{
-		ptr: C.NewValueUndefined(iso.ptr),
-	}
-}
-
-// Undefined returns the `undefined` JS value
-func Undefined(iso *Isolate) *Value {
-	return iso.undefined
-}
-
-// Null returns the `null` JS value
-func Null(iso *Isolate) *Value {
-	return iso.null
-}
-
 // NewValue will create a primitive value. Supported values types to create are:
 //   string -> V8::String
 //   int32 -> V8::Integer
@@ -73,8 +51,9 @@ func NewValue(iso *Isolate, val interface{}) (*Value, error) {
 	case string:
 		cstr := C.CString(v)
 		defer C.free(unsafe.Pointer(cstr))
-		rtn := C.NewValueString(iso.ptr, cstr)
-		return valueResult(nil, rtn)
+		rtnVal = &Value{
+			ptr: C.NewValueString(iso.ptr, cstr),
+		}
 	case int32:
 		rtnVal = &Value{
 			ptr: C.NewValueInteger(iso.ptr, C.int(v)),
@@ -130,8 +109,9 @@ func NewValue(iso *Isolate, val interface{}) (*Value, error) {
 			words[idx] = C.uint64_t(word)
 		}
 
-		rtn := C.NewValueBigIntFromWords(iso.ptr, C.int(sign), C.int(count), &words[0])
-		return valueResult(nil, rtn)
+		rtnVal = &Value{
+			ptr: C.NewValueBigIntFromWords(iso.ptr, C.int(sign), C.int(count), &words[0]),
+		}
 	default:
 		return nil, fmt.Errorf("v8go: unsupported value type `%T`", v)
 	}
@@ -198,12 +178,7 @@ func (v *Value) Boolean() bool {
 
 // DetailString provide a string representation of this value usable for debugging.
 func (v *Value) DetailString() string {
-	rtn := C.ValueToDetailString(v.ptr)
-	if rtn.string == nil {
-		err := newJSError(rtn.error)
-		panic(err) // TODO: Return a fallback value
-	}
-	s := rtn.string
+	s := C.ValueToDetailString(v.ptr)
 	defer C.free(unsafe.Pointer(s))
 	return C.GoString(s)
 }
@@ -229,12 +204,9 @@ func (v *Value) Number() float64 {
 // Object perform the equivalent of Object(value) in JS.
 // To just cast this value as an Object use AsObject() instead.
 func (v *Value) Object() *Object {
-	rtn := C.ValueToObject(v.ptr)
-	obj, err := objectResult(v.ctx, rtn)
-	if err != nil {
-		panic(err) // TODO: Return error
-	}
-	return obj
+	ptr := C.ValueToObject(v.ptr)
+	val := &Value{ptr, v.ctx}
+	return &Object{val}
 }
 
 // String perform the equivalent of `String(value)` in JS. Primitive values
@@ -250,12 +222,6 @@ func (v *Value) String() string {
 // unsigned 32-bit integer by performing the steps in https://tc39.es/ecma262/#sec-touint32.
 func (v *Value) Uint32() uint32 {
 	return uint32(C.ValueToUint32(v.ptr))
-}
-
-// SameValue returns true if the other value is the same value.
-// This is equivalent to `Object.is(v, other)` in JS.
-func (v *Value) SameValue(other *Value) bool {
-	return C.ValueSameValue(v.ptr, other.ptr) != 0
 }
 
 // IsUndefined returns true if this value is the undefined value. See ECMA-262 4.3.10.

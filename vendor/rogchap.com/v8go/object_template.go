@@ -36,9 +36,9 @@ type ObjectTemplate struct {
 
 // NewObjectTemplate creates a new ObjectTemplate.
 // The *ObjectTemplate can be used as a v8go.ContextOption to create a global object in a Context.
-func NewObjectTemplate(iso *Isolate) *ObjectTemplate {
+func NewObjectTemplate(iso *Isolate) (*ObjectTemplate, error) {
 	if iso == nil {
-		panic("nil Isolate argument not supported")
+		return nil, errors.New("v8go: failed to create new ObjectTemplate: Isolate cannot be <nil>")
 	}
 
 	tmpl := &template{
@@ -46,7 +46,7 @@ func NewObjectTemplate(iso *Isolate) *ObjectTemplate {
 		iso: iso,
 	}
 	runtime.SetFinalizer(tmpl, (*template).finalizer)
-	return &ObjectTemplate{tmpl}
+	return &ObjectTemplate{tmpl}, nil
 }
 
 // NewInstance creates a new Object based on the template.
@@ -55,21 +55,8 @@ func (o *ObjectTemplate) NewInstance(ctx *Context) (*Object, error) {
 		return nil, errors.New("v8go: Context cannot be <nil>")
 	}
 
-	rtn := C.ObjectTemplateNewInstance(o.ptr, ctx.ptr)
-	runtime.KeepAlive(o)
-	return objectResult(ctx, rtn)
-}
-
-// SetInternalFieldCount sets the number of internal fields that instances of this
-// template will have.
-func (o *ObjectTemplate) SetInternalFieldCount(fieldCount uint32) {
-	C.ObjectTemplateSetInternalFieldCount(o.ptr, C.int(fieldCount))
-}
-
-// InternalFieldCount returns the number of internal fields that instances of this
-// template will have.
-func (o *ObjectTemplate) InternalFieldCount() uint32 {
-	return uint32(C.ObjectTemplateInternalFieldCount(o.ptr))
+	valPtr := C.ObjectTemplateNewInstance(o.ptr, ctx.ptr)
+	return &Object{&Value{valPtr, ctx}}, nil
 }
 
 func (o *ObjectTemplate) apply(opts *contextOptions) {

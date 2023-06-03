@@ -8,5 +8,3 @@
 deps/darwin-x86_64/libv8_debug.a
 
 c.out
-
-/v8go.test
