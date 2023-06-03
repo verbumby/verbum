@@ -6,6 +6,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- Added support for Value.release() and FunctionCallbackInfo.release(). This is useful when using v8go in a long-running context.
+
+### Fixed
+- Use string length to ensure null character-containing strings in Go/JS are not terminated early.
+- Object.Set with an empty key string is now supported
+
 ## [v0.7.0] - 2021-12-09
 
 ### Added
@@ -30,7 +37,7 @@ to run a pre-compiled script in new contexts.
 - Removed error return value from NewContext which never fails
 - Removed error return value from Context.Isolate() which never fails
 - Removed error return value from NewObjectTemplate and NewFunctionTemplate. Panic if given a nil argument.
-- Function Call accepts receiver as first argument.
+- Function Call accepts receiver as first argument. This **subtle breaking change** will compile old code but interpret the first argument as the receiver. Use `Undefined` to prepend an argument to fix old Call use.
 - Removed Windows support until its build issues are addressed.
 - Upgrade to V8 9.6.180.12
 

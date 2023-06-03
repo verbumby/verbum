@@ -101,7 +101,7 @@ gopkg.in/ini.v1
 # gopkg.in/yaml.v3 v3.0.1
 ## explicit
 gopkg.in/yaml.v3
-# rogchap.com/v8go v0.7.0
+# rogchap.com/v8go v0.8.0
 ## explicit; go 1.16
 rogchap.com/v8go
 rogchap.com/v8go/deps/darwin_arm64
@@ -109,4 +109,5 @@ rogchap.com/v8go/deps/darwin_x86_64
 rogchap.com/v8go/deps/include
 rogchap.com/v8go/deps/include/cppgc
 rogchap.com/v8go/deps/include/libplatform
+rogchap.com/v8go/deps/linux_arm64
 rogchap.com/v8go/deps/linux_x86_64
