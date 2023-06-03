@@ -6,7 +6,7 @@ type DictsListProps = {
     dictionaries: Dict[]
 }
 
-export const DictsList: React.VFC<DictsListProps> = ({ dictionaries }) => {
+export const DictsList: React.FC<DictsListProps> = ({ dictionaries }) => {
     return (
         <ul>
             {dictionaries.map(d => <li key={d.ID}><Link to={`/${d.ID}`}>{d.Title}</Link></li>)}

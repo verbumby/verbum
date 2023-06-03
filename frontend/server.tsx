@@ -18,7 +18,7 @@ declare global {
     var verbumV8Bridge: (url: string) => any
 }
 
-global.verbumClient = new VerbumAPIClientV8Bridge({ bridge: verbumV8Bridge })
+globalThis.verbumClient = new VerbumAPIClientV8Bridge({ bridge: verbumV8Bridge })
 
 export async function render(rawUrl: string) {
     let url = new URL(rawUrl)

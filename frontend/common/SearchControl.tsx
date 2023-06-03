@@ -15,7 +15,7 @@ type SearchControlProps = {
     calculateSearchURL: (q: string, inDicts: string) => string
 }
 
-export const SearchControl: React.VFC<SearchControlProps> = ({ urlQ, urlIn, calculateSearchURL }) => {
+export const SearchControl: React.FC<SearchControlProps> = ({ urlQ, urlIn, calculateSearchURL }) => {
     const [q, setQ] = useState<string>(urlQ)
     const qEl = useRef<HTMLInputElement>(null)
     const history = useHistory()
@@ -210,7 +210,7 @@ function useSuggestions(inDicts: string): [
         }
     }
 
-    const onBlur = (e: React.FocusEvent<HTMLInputElement>) => {
+    const onBlur = (_: React.FocusEvent<HTMLInputElement>) => {
         if (suggs.length > 0) {
             setTimeout(() => resetSuggestions(), 150)
         }

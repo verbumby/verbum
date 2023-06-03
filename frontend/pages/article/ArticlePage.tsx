@@ -7,7 +7,7 @@ import { useArticle, useDict } from '../../store'
 import { useURLSearch as useIndexURLSearch } from '../index/search'
 import { articleFetch, articleReset, MatchParams } from './article'
 
-export const ArticlePage: React.VFC = () => {
+export const ArticlePage: React.FC = () => {
     const match = useRouteMatch<MatchParams>()
     const [dict, dictIsAlias] = useDict(match.params.dictID)
     if (dictIsAlias) {
@@ -25,7 +25,7 @@ export const ArticlePage: React.VFC = () => {
         if (!a) {
             dispatch(articleFetch(match))
         }
-        return () => dispatch(articleReset())
+        return () => { dispatch(articleReset()) }
     }, [match.path])
 
     if (!a) {

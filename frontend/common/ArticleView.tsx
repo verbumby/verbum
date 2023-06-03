@@ -15,7 +15,7 @@ type ArticleViewProps = {
 
 const defaultIconTooltipDelayConfig: OverlayDelay = { show: 1000, hide: 20 }
 
-const IconExternalController: React.VFC<{ a: Article }> = ({ a }) => {
+const IconExternalController: React.FC<{ a: Article }> = ({ a }) => {
     const renderOpenInNewTabTooltip = (props: OverlayInjectedProps) => (
         <Tooltip
             id={`tooltip-open-article-in-new-tab-${a.DictionaryID}-${a.ID}`}
@@ -29,7 +29,7 @@ const IconExternalController: React.VFC<{ a: Article }> = ({ a }) => {
     </OverlayTrigger>)
 }
 
-const IconCopyLinkController: React.VFC<{ a: Article }> = ({ a }) => {
+const IconCopyLinkController: React.FC<{ a: Article }> = ({ a }) => {
     const [activated, setActivated] = useState<boolean>(false)
     const renderCopyLinkTooltip = (props: OverlayInjectedProps) => (
         <Tooltip
@@ -57,7 +57,7 @@ const IconCopyLinkController: React.VFC<{ a: Article }> = ({ a }) => {
     </OverlayTrigger>)
 }
 
-export const ArticleView: React.VFC<ArticleViewProps> = ({ a, showExternalButton, showSource }) => {
+export const ArticleView: React.FC<ArticleViewProps> = ({ a, showExternalButton, showSource }) => {
     const dicts = useDicts()
     const [articleRoot, setArticleRoot] = useState(null)
     const [bootstrapAPI, setBootstrapAPI] = useState(null)

@@ -7,7 +7,7 @@ type LetterFilterViewProps = {
     letterFilter: LetterFilter
     prefixToURL: (prefix: string) => LocationDescriptor
 }
-export const LetterFilterView: React.VFC<LetterFilterViewProps> = ({ letterFilter, prefixToURL }) => {
+export const LetterFilterView: React.FC<LetterFilterViewProps> = ({ letterFilter, prefixToURL }) => {
     return (
         <div className="letter-filter">
             {letterFilter.Entries.map((lfl, i) => (

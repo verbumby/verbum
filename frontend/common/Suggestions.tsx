@@ -7,7 +7,7 @@ type SuggestionsProps = {
     onClick: (s: string) => void,
     setActive: (n: number) => void,
 }
-export const Suggestions: React.VFC<SuggestionsProps> = ({ suggestions, active, onClick, setActive }) => (
+export const Suggestions: React.FC<SuggestionsProps> = ({ suggestions, active, onClick, setActive }) => (
     <ul className="suggestions">
         {suggestions.map((s, i) => (
             <li

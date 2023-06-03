@@ -4,7 +4,7 @@ type IconClipboardProps = {
     type?: 'check' | ''
 }
 
-export const IconClipboard: React.VFC<IconClipboardProps> = ({ type = '' }) => {
+export const IconClipboard: React.FC<IconClipboardProps> = ({ type = '' }) => {
     switch (type) {
         case 'check':
             return (<svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" fill="currentColor" className="bi bi-clipboard-check" viewBox="0 0 16 16">

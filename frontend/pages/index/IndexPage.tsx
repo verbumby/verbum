@@ -9,7 +9,7 @@ import { search, searchReset, useURLSearch } from './search'
 import { DictsList } from './DictsList'
 import { ArticleView, PaginationView, SearchControl } from '../../common'
 
-export const IndexPage: React.VFC = () => {
+export const IndexPage: React.FC = () => {
     const match = useRouteMatch()
     const urlSearch = useURLSearch()
     const q = urlSearch.get('q')
@@ -21,7 +21,7 @@ export const IndexPage: React.VFC = () => {
     const dispatch = useDispatch()
     useEffect(() => {
         dispatch(search(match, urlSearch))
-        return () => dispatch(searchReset())
+        return () => { dispatch(searchReset()) }
     }, [q, inDicts, page])
 
     const renderDictList = (): React.ReactNode => (

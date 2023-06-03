@@ -9,7 +9,7 @@ import { dictArticlesFetch, MatchParams, dictArticlesReset, useURLSearch } from 
 import { LetterFilterView } from './LetterFilterView'
 import { useURLSearch as useIndexURLSearch } from '../index/search'
 
-export const DictPage: React.VFC = ({ }) => {
+export const DictPage: React.FC = ({ }) => {
     const match = useRouteMatch<MatchParams>()
     const urlSearch = useURLSearch()
 
@@ -33,11 +33,11 @@ export const DictPage: React.VFC = ({ }) => {
     React.useEffect(() => {
         dispatch(letterFilterFetch(match, urlSearch))
     }, [match.params.dictID, prefix])
-    React.useEffect(() => () => dispatch(letterFilterReset()), [])
+    React.useEffect(() => () => { dispatch(letterFilterReset()) }, [])
 
     React.useEffect(() => {
         dispatch(dictArticlesFetch(match, urlSearch))
-        return () => dispatch(dictArticlesReset())
+        return () => { dispatch(dictArticlesReset()) }
     }, [match.params.dictID, prefix, page])
 
     if (!letterFilter) {
