@@ -2,6 +2,10 @@
 build: fe-build
 	go build -v github.com/verbumby/verbum/backend/cmd/verbum
 
+.PHONY: build-ci
+build-ci:
+	go build -v github.com/verbumby/verbum/backend/cmd/verbum
+
 .PHONY: run
 run: build
 	./verbum serve

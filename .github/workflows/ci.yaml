@@ -33,7 +33,7 @@ jobs:
         name: frontend-bundle
         path: frontend/dist/
     - run: go test -v ./...
-    - run: make build
+    - run: make build-ci
     - uses: actions/upload-artifact@v3
       with:
         name: binaries
