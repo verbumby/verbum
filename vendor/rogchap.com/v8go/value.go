@@ -31,11 +31,32 @@ func (v *Value) value() *Value {
 	return v
 }
 
+func newValueNull(iso *Isolate) *Value {
+	return &Value{
+		ptr: C.NewValueNull(iso.ptr),
+	}
+}
+
+func newValueUndefined(iso *Isolate) *Value {
+	return &Value{
+		ptr: C.NewValueUndefined(iso.ptr),
+	}
+}
+
+// Undefined returns the `undefined` JS value
+func Undefined(iso *Isolate) *Value {
+	return iso.undefined
+}
+
+// Null returns the `null` JS value
+func Null(iso *Isolate) *Value {
+	return iso.null
+}
+
 // NewValue will create a primitive value. Supported values types to create are:
 //   string -> V8::String
 //   int32 -> V8::Integer
 //   uint32 -> V8::Integer
-//   bool -> V8::Boolean
 //   int64 -> V8::BigInt
 //   uint64 -> V8::BigInt
 //   bool -> V8::Boolean
@@ -51,9 +72,8 @@ func NewValue(iso *Isolate, val interface{}) (*Value, error) {
 	case string:
 		cstr := C.CString(v)
 		defer C.free(unsafe.Pointer(cstr))
-		rtnVal = &Value{
-			ptr: C.NewValueString(iso.ptr, cstr),
-		}
+		rtn := C.NewValueString(iso.ptr, cstr, C.int(len(v)))
+		return valueResult(nil, rtn)
 	case int32:
 		rtnVal = &Value{
 			ptr: C.NewValueInteger(iso.ptr, C.int(v)),
@@ -109,9 +129,8 @@ func NewValue(iso *Isolate, val interface{}) (*Value, error) {
 			words[idx] = C.uint64_t(word)
 		}
 
-		rtnVal = &Value{
-			ptr: C.NewValueBigIntFromWords(iso.ptr, C.int(sign), C.int(count), &words[0]),
-		}
+		rtn := C.NewValueBigIntFromWords(iso.ptr, C.int(sign), C.int(count), &words[0])
+		return valueResult(nil, rtn)
 	default:
 		return nil, fmt.Errorf("v8go: unsupported value type `%T`", v)
 	}
@@ -178,9 +197,13 @@ func (v *Value) Boolean() bool {
 
 // DetailString provide a string representation of this value usable for debugging.
 func (v *Value) DetailString() string {
-	s := C.ValueToDetailString(v.ptr)
-	defer C.free(unsafe.Pointer(s))
-	return C.GoString(s)
+	rtn := C.ValueToDetailString(v.ptr)
+	if rtn.data == nil {
+		err := newJSError(rtn.error)
+		panic(err) // TODO: Return a fallback value
+	}
+	defer C.free(unsafe.Pointer(rtn.data))
+	return C.GoStringN(rtn.data, rtn.length)
 }
 
 // Int32 perform the equivalent of `Number(value)` in JS and convert the result to a
@@ -204,9 +227,12 @@ func (v *Value) Number() float64 {
 // Object perform the equivalent of Object(value) in JS.
 // To just cast this value as an Object use AsObject() instead.
 func (v *Value) Object() *Object {
-	ptr := C.ValueToObject(v.ptr)
-	val := &Value{ptr, v.ctx}
-	return &Object{val}
+	rtn := C.ValueToObject(v.ptr)
+	obj, err := objectResult(v.ctx, rtn)
+	if err != nil {
+		panic(err) // TODO: Return error
+	}
+	return obj
 }
 
 // String perform the equivalent of `String(value)` in JS. Primitive values
@@ -214,14 +240,20 @@ func (v *Value) Object() *Object {
 // print their definition.
 func (v *Value) String() string {
 	s := C.ValueToString(v.ptr)
-	defer C.free(unsafe.Pointer(s))
-	return C.GoString(s)
+	defer C.free(unsafe.Pointer(s.data))
+	return C.GoStringN(s.data, C.int(s.length))
 }
 
 // Uint32 perform the equivalent of `Number(value)` in JS and convert the result to an
 // unsigned 32-bit integer by performing the steps in https://tc39.es/ecma262/#sec-touint32.
 func (v *Value) Uint32() uint32 {
 	return uint32(C.ValueToUint32(v.ptr))
+}
+
+// SameValue returns true if the other value is the same value.
+// This is equivalent to `Object.is(v, other)` in JS.
+func (v *Value) SameValue(other *Value) bool {
+	return C.ValueSameValue(v.ptr, other.ptr) != 0
 }
 
 // IsUndefined returns true if this value is the undefined value. See ECMA-262 4.3.10.
@@ -497,6 +529,11 @@ func (v *Value) IsSharedArrayBuffer() bool {
 // IsProxy returns true if this value is a JavaScript `Proxy`.
 func (v *Value) IsProxy() bool {
 	return C.ValueIsProxy(v.ptr) != 0
+}
+
+// Release this value.  Using the value after calling this function will result in undefined behavior.
+func (v *Value) Release() {
+	C.ValueRelease(v.ptr)
 }
 
 // IsWasmModuleObject returns true if this value is a `WasmModuleObject`.
