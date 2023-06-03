@@ -19,7 +19,7 @@
 using namespace v8;
 
 auto default_platform = platform::NewDefaultPlatform();
-ArrayBuffer::Allocator* default_allocator;
+auto default_allocator = ArrayBuffer::Allocator::NewDefaultAllocator();
 
 const int ScriptCompilerNoCompileOptions = ScriptCompiler::kNoCompileOptions;
 const int ScriptCompilerConsumeCodeCache = ScriptCompiler::kConsumeCodeCache;
@@ -143,8 +143,6 @@ void Init() {
 #endif
   V8::InitializePlatform(default_platform.get());
   V8::Initialize();
-
-  default_allocator = ArrayBuffer::Allocator::NewDefaultAllocator();
   return;
 }
 
@@ -239,7 +237,7 @@ RtnUnboundScript IsolateCompileUnboundScript(IsolatePtr iso,
                                                  opts.cachedData.length);
   }
 
-  ScriptOrigin script_origin(iso, ogn);
+  ScriptOrigin script_origin(ogn);
 
   ScriptCompiler::Source source(src, script_origin, cached_data);
 
@@ -641,7 +639,7 @@ RtnValue RunScript(ContextPtr ctx, const char* source, const char* origin) {
     return rtn;
   }
 
-  ScriptOrigin script_origin(iso, ogn);
+  ScriptOrigin script_origin(ogn);
   Local<Script> script;
   if (!Script::Compile(local_ctx, src, &script_origin).ToLocal(&script)) {
     rtn.error = ExceptionError(try_catch, iso, local_ctx);
