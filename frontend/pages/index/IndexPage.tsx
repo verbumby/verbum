@@ -1,6 +1,6 @@
 import * as React from 'react'
 import { useEffect } from 'react'
-import { useDispatch } from 'react-redux'
+import { useDispatch } from '../../common'
 import { Link, useRouteMatch } from 'react-router-dom'
 import { Helmet } from "react-helmet"
 

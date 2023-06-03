@@ -4,7 +4,7 @@ export { DictsState, DictsActions, dictsReducer, dictsFetch, dictsSet } from './
 export { ArticleView } from './ArticleView'
 export { Footer } from './Footer'
 export { Logo } from './Logo'
-export { useURLSearch, useDelayed } from './hooks'
+export { useURLSearch, useDelayed, useDispatch } from './hooks'
 export { Suggestion } from './suggestion'
 export { SearchControl } from './SearchControl'
 export { LetterFilterEntry, LetterFilter } from './letterfilter'

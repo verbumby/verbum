@@ -3,9 +3,8 @@ import { useEffect, useState, useRef } from 'react'
 
 import { Suggestions } from './Suggestions'
 import { IconBackspace, IconSearch } from '../icons'
-import { Suggestion, useDelayed } from '.'
+import { Suggestion, useDelayed, useDispatch } from '.'
 import { useHistory } from 'react-router-dom'
-import { useDispatch } from 'react-redux'
 import { hideLoading, showLoading } from 'react-redux-loading-bar'
 import { useDictsFilter } from './dictsfilter'
 
