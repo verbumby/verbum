@@ -72,25 +72,16 @@ func (r *serverRenderer) newV8Ctx() (*v8go.Context, error) {
 		return nil, fmt.Errorf("read %s: %w", serverRenderFilename, err)
 	}
 
-	v8ctx, err := v8go.NewContext()
-	if err != nil {
-		return nil, fmt.Errorf("create new context: %w", err)
-	}
+	v8ctx := v8go.NewContext()
 
-	v8iso, err := v8ctx.Isolate()
-	if err != nil {
-		return nil, fmt.Errorf("get isolate: %w", err)
-	}
-
-	vbridge, err := v8go.NewFunctionTemplate(v8iso, func(info *v8go.FunctionCallbackInfo) *v8go.Value {
+	vbridge := v8go.NewFunctionTemplate(v8ctx.Isolate(), func(info *v8go.FunctionCallbackInfo) *v8go.Value {
 		// TODO: common err prefix
-		vfalse, err := v8go.NewValue(v8iso, false)
 
 		rawUrl := info.Args()[0].String()
 		u, err := url.Parse(rawUrl)
 		if err != nil {
 			log.Printf("parse url: %v", err)
-			return vfalse
+			return v8go.Null(v8ctx.Isolate())
 		}
 
 		w := httptest.NewRecorder()
@@ -98,20 +89,17 @@ func (r *serverRenderer) newV8Ctx() (*v8go.Context, error) {
 		r.handler.ServeHTTP(w, rctx)
 
 		if w.Code == http.StatusNotFound {
-			return vfalse
+			return v8go.Null(v8ctx.Isolate())
 		}
 
 		result, err := v8go.JSONParse(v8ctx, w.Body.String())
 		if err != nil {
 			log.Printf("parse as js from json: %v", err)
-			return vfalse
+			return v8go.Null(v8ctx.Isolate())
 		}
 
 		return result
 	})
-	if err != nil {
-		return nil, fmt.Errorf("create bridge function template: %w", err)
-	}
 
 	if err := v8ctx.Global().Set("verbumV8Bridge", vbridge.GetFunction(v8ctx)); err != nil {
 		return nil, fmt.Errorf("set v8 bridge function: %w", err)
@@ -144,21 +132,12 @@ func (r *serverRenderer) ServeHTTP(w http.ResponseWriter, rctx *chttp.Context) e
 	}
 
 	url := "https://" + rctx.R.Host + rctx.R.RequestURI
-	v8iso, err := v8ctx.Isolate()
-	if err != nil {
-		return fmt.Errorf("get v8 isolate: %w", err)
-	}
-	vurl, err := v8go.NewValue(v8iso, url)
+	vurl, err := v8go.NewValue(v8ctx.Isolate(), url)
 	if err != nil {
 		return fmt.Errorf("new url value: %w", err)
 	}
 
-	vfalse, err := v8go.NewValue(v8iso, false)
-	if err != nil {
-		return fmt.Errorf("new false value: %w", err)
-	}
-
-	vres, err := promiseResolver(v8ctx)(render.Call(vfalse, vurl))
+	vres, err := promiseResolver(v8ctx)(render.Call(v8go.Undefined(v8ctx.Isolate()), vurl))
 	if err != nil {
 		return fmt.Errorf("render failed: %w", err)
 	}
