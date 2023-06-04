@@ -29,7 +29,7 @@ fe-build:
 		--sourcemap=inline \
 		--format=iife \
 		--platform=browser \
-		--target=es2020 \
+		--target=es2017 \
 		--outdir=frontend/dist
 	rm frontend/dist/server.css
 

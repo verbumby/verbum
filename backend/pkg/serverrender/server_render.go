@@ -2,7 +2,6 @@ package serverrender
 
 import (
 	"encoding/json"
-	"errors"
 	"fmt"
 	"log"
 	"net/http"
@@ -11,14 +10,14 @@ import (
 	"strings"
 	"sync"
 
+	"github.com/dop251/goja"
 	"github.com/verbumby/verbum/backend/pkg/chttp"
 	"github.com/verbumby/verbum/frontend"
-	"rogchap.com/v8go"
 )
 
 type serverRenderer struct {
 	handler   http.Handler
-	v8ctx     *v8go.Context
+	vm        *goja.Runtime
 	mu        *sync.Mutex
 	indexHTML string
 }
@@ -33,9 +32,9 @@ func New(handler http.Handler) (*serverRenderer, error) {
 	}
 
 	var err error
-	result.v8ctx, err = result.newV8Ctx()
+	result.vm, err = result.newV8Ctx()
 	if err != nil {
-		return nil, fmt.Errorf("create v8 ctx: %w", err)
+		return nil, fmt.Errorf("create goja vm: %w", err)
 	}
 
 	result.mu = &sync.Mutex{}
@@ -72,23 +71,21 @@ func (r *serverRenderer) prepareIndexHTML() error {
 	return nil
 }
 
-func (r *serverRenderer) newV8Ctx() (*v8go.Context, error) {
+func (r *serverRenderer) newV8Ctx() (*goja.Runtime, error) {
 	serverRenderFilename := "dist/server.js"
 	serverRender, err := frontend.Dist.ReadFile(serverRenderFilename)
 	if err != nil {
 		return nil, fmt.Errorf("read %s: %w", serverRenderFilename, err)
 	}
 
-	v8ctx := v8go.NewContext()
+	vm := goja.New()
 
-	vbridge := v8go.NewFunctionTemplate(v8ctx.Isolate(), func(info *v8go.FunctionCallbackInfo) *v8go.Value {
-		// TODO: common err prefix
-
-		rawUrl := info.Args()[0].String()
+	bridge := func(call goja.FunctionCall) goja.Value {
+		rawUrl := call.Argument(0).Export().(string)
 		u, err := url.Parse(rawUrl)
 		if err != nil {
 			log.Printf("parse url: %v", err)
-			return v8go.Null(v8ctx.Isolate())
+			return goja.Undefined()
 		}
 
 		w := httptest.NewRecorder()
@@ -96,68 +93,53 @@ func (r *serverRenderer) newV8Ctx() (*v8go.Context, error) {
 		r.handler.ServeHTTP(w, rctx)
 
 		if w.Code == http.StatusNotFound {
-			return v8go.Null(v8ctx.Isolate())
+			return goja.Null()
 		}
 
-		result, err := v8go.JSONParse(v8ctx, w.Body.String())
-		if err != nil {
+		var result interface{}
+
+		if err := json.Unmarshal(w.Body.Bytes(), &result); err != nil {
 			log.Printf("parse as js from json: %v", err)
-			return v8go.Null(v8ctx.Isolate())
+			return goja.Null()
 		}
 
-		return result
-	})
-
-	if err := v8ctx.Global().Set("verbumV8Bridge", vbridge.GetFunction(v8ctx)); err != nil {
-		return nil, fmt.Errorf("set v8 bridge function: %w", err)
+		return vm.ToValue(result)
+	}
+	if err := vm.Set("verbumV8Bridge", bridge); err != nil {
+		return nil, fmt.Errorf("set bridge function: %w", err)
 	}
 
-	_, err = v8ctx.RunScript(string(serverRender), serverRenderFilename)
-	if err != nil {
-		return nil, fmt.Errorf("v8 run %s: %w", serverRenderFilename, err)
+	if _, err := vm.RunScript(serverRenderFilename, string(serverRender)); err != nil {
+		return nil, fmt.Errorf("run %s: %w", serverRenderFilename, err)
 	}
 
-	return v8ctx, nil
+	return vm, nil
 }
 
 func (r *serverRenderer) ServeHTTP(w http.ResponseWriter, rctx *chttp.Context) error {
 	r.mu.Lock()
 	defer r.mu.Unlock()
 
-	var render *v8go.Function
-	if f, err := r.v8ctx.Global().Get("render"); err != nil {
-		return fmt.Errorf("get render function from renderer context: %w", err)
-	} else {
-		render, err = f.AsFunction()
-		if err != nil {
-			return fmt.Errorf("cast render key to a function: %w", err)
-		}
+	render, ok := goja.AssertFunction(r.vm.Get("render"))
+	if !ok {
+		return fmt.Errorf("failed to get render function from goja vm")
 	}
 
 	url := "https://" + rctx.R.Host + rctx.R.RequestURI
-	vurl, err := v8go.NewValue(r.v8ctx.Isolate(), url)
+
+	pres, err := render(goja.Undefined(), r.vm.ToValue(url))
 	if err != nil {
-		return fmt.Errorf("new url value: %w", err)
+		return fmt.Errorf("goja render: %w", err)
 	}
 
-	vres, err := promiseResolver(r.v8ctx)(render.Call(v8go.Undefined(r.v8ctx.Isolate()), vurl))
+	res, err := resolvePromise(pres)
 	if err != nil {
 		return fmt.Errorf("render failed: %w", err)
 	}
 
-	res, err := vres.AsObject()
-	if err != nil {
-		return fmt.Errorf("render result convert to object: %w", err)
-	}
-
-	str, err := v8go.JSONStringify(r.v8ctx, res)
-	if err != nil {
-		return fmt.Errorf("stringify render result: %w", err)
-	}
-
-	result := RenderResult{}
-	if err := json.Unmarshal([]byte(str), &result); err != nil {
-		return fmt.Errorf("unmarshal render result: %w", err)
+	var result RenderResult
+	if err := r.vm.ExportTo(res, &result); err != nil {
+		return fmt.Errorf("parse render result: %w", err)
 	}
 
 	if result.Location != "" {
@@ -175,30 +157,26 @@ func (r *serverRenderer) ServeHTTP(w http.ResponseWriter, rctx *chttp.Context) e
 	body = strings.ReplaceAll(body, "PRELOADED_STATE_PLACEHOLDER", result.State)
 	body = strings.ReplaceAll(body, "BODY_PLACEHOLDER", result.Body)
 
-	fmt.Fprint(w, body)
+	if _, err := fmt.Fprint(w, body); err != nil {
+		return fmt.Errorf("write response: %w", err)
+	}
 
 	return nil
 }
 
-func promiseResolver(v8ctx *v8go.Context) func(*v8go.Value, error) (*v8go.Value, error) {
-	return func(val *v8go.Value, err error) (*v8go.Value, error) {
-		if err != nil || !val.IsPromise() {
-			return val, err
-		}
-		for {
-			switch p, _ := val.AsPromise(); p.State() {
-			case v8go.Fulfilled:
-				return p.Result(), nil
-			case v8go.Rejected:
-				return nil, errors.New(p.Result().DetailString())
-			case v8go.Pending:
-				v8ctx.PerformMicrotaskCheckpoint() // run VM to make progress on the promise
-				fmt.Printf(".")
-				// go round the loop again...
-			default:
-				return nil, fmt.Errorf("illegal v8go.Promise state %d", p) // unreachable
-			}
-		}
+func resolvePromise(v goja.Value) (goja.Value, error) {
+	p, ok := v.Export().(*goja.Promise)
+	if !ok {
+		return nil, fmt.Errorf("not a promise: %v", v)
+	}
+
+	switch p.State() {
+	case goja.PromiseStateFulfilled:
+		return p.Result(), nil
+	case goja.PromiseStateRejected:
+		return nil, fmt.Errorf("rejected: %v", p.Result().(*goja.Object).Get("stack"))
+	default:
+		return nil, fmt.Errorf("unexpected pending state of promise %v", p)
 	}
 }
 
