@@ -9,16 +9,17 @@ import (
 	"net/http/httptest"
 	"net/url"
 	"strings"
+	"sync"
 
 	"github.com/verbumby/verbum/backend/pkg/chttp"
-	"github.com/verbumby/verbum/backend/pkg/util"
 	"github.com/verbumby/verbum/frontend"
 	"rogchap.com/v8go"
 )
 
 type serverRenderer struct {
 	handler   http.Handler
-	pool      *util.Pool[*v8go.Context]
+	v8ctx     *v8go.Context
+	mu        *sync.Mutex
 	indexHTML string
 }
 
@@ -31,7 +32,13 @@ func New(handler http.Handler) (*serverRenderer, error) {
 		return nil, fmt.Errorf("prepare index.html: %w", err)
 	}
 
-	result.pool = util.NewPool(result.newV8Ctx)
+	var err error
+	result.v8ctx, err = result.newV8Ctx()
+	if err != nil {
+		return nil, fmt.Errorf("create v8 ctx: %w", err)
+	}
+
+	result.mu = &sync.Mutex{}
 
 	return result, nil
 }
@@ -114,15 +121,11 @@ func (r *serverRenderer) newV8Ctx() (*v8go.Context, error) {
 }
 
 func (r *serverRenderer) ServeHTTP(w http.ResponseWriter, rctx *chttp.Context) error {
-	v8ctx, err := r.pool.Get()
-	if err != nil {
-		return fmt.Errorf("get v8ctx: %w", err)
-	}
-
-	defer r.pool.Put(v8ctx)
+	r.mu.Lock()
+	defer r.mu.Unlock()
 
 	var render *v8go.Function
-	if f, err := v8ctx.Global().Get("render"); err != nil {
+	if f, err := r.v8ctx.Global().Get("render"); err != nil {
 		return fmt.Errorf("get render function from renderer context: %w", err)
 	} else {
 		render, err = f.AsFunction()
@@ -132,12 +135,12 @@ func (r *serverRenderer) ServeHTTP(w http.ResponseWriter, rctx *chttp.Context) e
 	}
 
 	url := "https://" + rctx.R.Host + rctx.R.RequestURI
-	vurl, err := v8go.NewValue(v8ctx.Isolate(), url)
+	vurl, err := v8go.NewValue(r.v8ctx.Isolate(), url)
 	if err != nil {
 		return fmt.Errorf("new url value: %w", err)
 	}
 
-	vres, err := promiseResolver(v8ctx)(render.Call(v8go.Undefined(v8ctx.Isolate()), vurl))
+	vres, err := promiseResolver(r.v8ctx)(render.Call(v8go.Undefined(r.v8ctx.Isolate()), vurl))
 	if err != nil {
 		return fmt.Errorf("render failed: %w", err)
 	}
@@ -147,7 +150,7 @@ func (r *serverRenderer) ServeHTTP(w http.ResponseWriter, rctx *chttp.Context) e
 		return fmt.Errorf("render result convert to object: %w", err)
 	}
 
-	str, err := v8go.JSONStringify(v8ctx, res)
+	str, err := v8go.JSONStringify(r.v8ctx, res)
 	if err != nil {
 		return fmt.Errorf("stringify render result: %w", err)
 	}
