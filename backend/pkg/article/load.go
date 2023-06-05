@@ -1,6 +1,7 @@
 package article
 
 import (
+	"errors"
 	"fmt"
 	"strings"
 
@@ -59,6 +60,9 @@ func Get(d dictionary.Dictionary, articleID string) (Article, error) {
 
 	path := fmt.Sprintf("/dict-%s/_doc/%s", d.IndexID(), articleID)
 	if err := storage.Get(path, &respbody); err != nil {
+		if errors.Is(err, storage.ErrNotFound) {
+			return Article{}, nil
+		}
 		return Article{}, fmt.Errorf("storage get: %w", err)
 	}
 
