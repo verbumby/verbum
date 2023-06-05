@@ -21,14 +21,18 @@ export const ArticlePage: React.FC = () => {
 
     const dispatch = useDispatch()
     React.useEffect(() => {
-        if (!a) {
+        if (a === undefined) {
             dispatch(articleFetch(match))
         }
         return () => { dispatch(articleReset()) }
     }, [match.path])
 
-    if (!a) {
+    if (a === undefined) {
         return <></>
+    }
+
+    if (a === null) {
+        return <NotFound />
     }
 
     return (

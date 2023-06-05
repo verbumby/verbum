@@ -2,7 +2,9 @@ import { match } from "react-router-dom"
 import { Article } from "../../common"
 import { AppThunkAction } from "../../store"
 
-export type ArticleState = Article
+export type ArticleState = {
+    a?: Article
+}
 
 export type MatchParams = {
     dictID: string
@@ -50,14 +52,14 @@ export function articleReset(): ArticleResetAction {
 
 export type ArticleActions = ArticleFetchKickOffAction | ArticleFetchSuccessAction | ArticleFetchFailureAction | ArticleResetAction
 
-export function articleReducer(state: ArticleState = null, a: ArticleActions): ArticleState {
+export function articleReducer(state: ArticleState = {}, a: ArticleActions): ArticleState {
     switch (a.type) {
         case ARTICLE_FETCH_KICKOFF:
-            return null
+            return state
         case ARTICLE_FETCH_SUCCESS:
-            return a.a
+            return { a: a.a }
         case ARTICLE_RESET:
-            return null
+            return {}
         default:
             return state
     }

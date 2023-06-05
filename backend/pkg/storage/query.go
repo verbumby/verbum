@@ -2,6 +2,7 @@ package storage
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"io/ioutil"
@@ -10,6 +11,8 @@ import (
 
 	"github.com/spf13/viper"
 )
+
+var ErrNotFound = errors.New("not found")
 
 // Query queries the storage
 func Query(method, path string, reqbody, respbody interface{}) error {
@@ -45,6 +48,10 @@ func Query(method, path string, reqbody, respbody interface{}) error {
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK && resp.StatusCode != http.StatusCreated {
+		if resp.StatusCode == http.StatusNotFound {
+			return ErrNotFound
+		}
+
 		respbytes, _ := ioutil.ReadAll(resp.Body)
 		return fmt.Errorf(
 			"invalid response code: expected %d, got %d: %s",

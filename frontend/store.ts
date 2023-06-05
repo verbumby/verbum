@@ -1,7 +1,7 @@
 import { combineReducers } from 'redux'
 import { useSelector as useSelectorParent } from 'react-redux'
 import { SearchActions, SearchState, searchReducer } from './pages/index/index'
-import { Dict, DictsActions, DictsState, dictsReducer } from './common'
+import { Dict, Article, DictsActions, DictsState, dictsReducer } from './common'
 import { ThunkAction } from '@reduxjs/toolkit'
 import { ArticleState, ArticleActions, articleReducer } from './pages/article'
 import { DictArticlesActions, LetterFilterActions, letterFilterReducer, LetterFilterState, DictArticlesState, dictArticlesReducer } from './pages/dict'
@@ -54,8 +54,12 @@ export function useSearchState(): SearchState {
     return useSelector<SearchState>(state => state.search)
 }
 
-export function useArticle(): ArticleState {
+export function useArticleState(): ArticleState {
     return useSelector<ArticleState>(state => state.article)
+}
+
+export function useArticle(): Article {
+    return useArticleState().a
 }
 
 export function useLetterFilter(): LetterFilterState {

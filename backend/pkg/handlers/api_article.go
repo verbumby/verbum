@@ -26,6 +26,10 @@ func APIArticle(w http.ResponseWriter, rctx *chttp.Context) error {
 		return fmt.Errorf("get article: %w", err)
 	}
 
+	if a.ID == "" {
+		return APINotFound(w, rctx)
+	}
+
 	type articleview struct {
 		ID           string
 		Title        string
