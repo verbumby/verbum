@@ -16,6 +16,8 @@ import { routes } from './routes'
 
 declare global {
     var verbumV8Bridge: (url: string) => any
+    var render: any
+    var console: Console
 }
 
 globalThis.verbumClient = new VerbumAPIClientV8Bridge({ bridge: verbumV8Bridge })
@@ -67,8 +69,6 @@ export async function render(rawUrl: string) {
 	}
 }
 
-declare global {
-    var render: any
-}
-
 globalThis.render = render
+
+globalThis.console = {log: () => {}} as Console
