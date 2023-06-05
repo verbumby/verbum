@@ -32,7 +32,7 @@ func New(handler http.Handler) (*serverRenderer, error) {
 	}
 
 	var err error
-	result.vm, err = result.newV8Ctx()
+	result.vm, err = result.newVM()
 	if err != nil {
 		return nil, fmt.Errorf("create goja vm: %w", err)
 	}
@@ -71,7 +71,7 @@ func (r *serverRenderer) prepareIndexHTML() error {
 	return nil
 }
 
-func (r *serverRenderer) newV8Ctx() (*goja.Runtime, error) {
+func (r *serverRenderer) newVM() (*goja.Runtime, error) {
 	serverRenderFilename := "dist/server.js"
 	serverRender, err := frontend.Dist.ReadFile(serverRenderFilename)
 	if err != nil {
@@ -94,6 +94,11 @@ func (r *serverRenderer) newV8Ctx() (*goja.Runtime, error) {
 
 		if w.Code == http.StatusNotFound {
 			return goja.Null()
+		}
+
+		if w.Code != http.StatusOK {
+			msg := fmt.Sprintf("unexpected %d status code when calling %s: %s", w.Code, rawUrl, w.Body.String())
+			panic(vm.ToValue(msg))
 		}
 
 		var result interface{}
@@ -174,7 +179,12 @@ func resolvePromise(v goja.Value) (goja.Value, error) {
 	case goja.PromiseStateFulfilled:
 		return p.Result(), nil
 	case goja.PromiseStateRejected:
-		return nil, fmt.Errorf("rejected: %v", p.Result().(*goja.Object).Get("stack"))
+		r := p.Result()
+		if o, ok := r.(*goja.Object); ok {
+			return nil, fmt.Errorf("rejected: %v", o.Get("stack"))
+		} else {
+			return nil, fmt.Errorf("rejected: %v", r.String())
+		}
 	default:
 		return nil, fmt.Errorf("unexpected pending state of promise %v", p)
 	}
