@@ -5,7 +5,7 @@ curl -s -XPUT 'http://localhost:9200/_snapshot/backup' \
     -d '{
         "type": "fs",
         "settings": {
-            "location": "/usr/share/elasticsearch/backups/backup",
+            "location": "'$1'",
             "compress": true
         }
     }'

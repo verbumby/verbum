@@ -48,12 +48,27 @@ fe-build:
 	cp frontend/index.html frontend/dist/index.html
 	cp frontend/favicon.png frontend/dist/public/favicon.png
 
-.PHONY: es-sync-backup
+.PHONY: es-sync
 es-sync:
 	aws --profile verbum s3 sync s3://verbumby-backup elastic/backup --delete
 
 .PHONY: es-restore-last
 es-restore-last:
-	curl -XDELETE 'localhost:9200/dict-*' ; echo
-	LAST=$$(curl localhost:9200/_snapshot/backup/_all 2>/dev/null | jq -r '.snapshots[].snapshot' | sort | tail -n 1) \
-	&& curl -XPOST localhost:9200/_snapshot/backup/$$LAST/_restore -H 'content-type: application/json' -d '{"indices":"dict-*"}'
+	elastic/restore-last-backup.bash
+
+.PHONY: es-run
+es-run:
+	elastic/elasticsearch/bin/elasticsearch \
+		-Expack.security.enabled=false \
+        -Expack.profiling.enabled=false \
+		-Ehttp.host=127.0.0.1 \
+		-Ecluster.name=verbum-dev \
+		-Enode.name=verbum-1 \
+		-Ecluster.initial_master_nodes=verbum-1 \
+		-Epath.data=$$(pwd)/elastic/data \
+		-Epath.repo=$$(pwd)/elastic/backup
+
+.PHONY: es-setup-backup-repo
+es-setup-backup-repo:
+	elastic/setup-snapshot.bash $$(pwd)/elastic/backup
+

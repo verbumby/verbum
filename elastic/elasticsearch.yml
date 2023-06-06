@@ -1,6 +1,0 @@
-cluster.name: docker-cluster
-node.name: master-node-a
-cluster.initial_master_nodes:
-  - master-node-a
-network.host: 0.0.0.0
-path.repo: ["/usr/share/elasticsearch/backups"]
