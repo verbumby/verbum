@@ -13,7 +13,7 @@ type DSL struct {
 	indexID string
 	aliases []string
 	title   string
-	abbrevs map[string]string
+	abbrevs *Abbrevs
 }
 
 // ID implements Dictionary interface
@@ -52,4 +52,8 @@ func (d DSL) ToHTML(content string) template.HTML {
 		htmlv = renderAbbrevs(htmlv, d.abbrevs)
 	}
 	return template.HTML(htmlv)
+}
+
+func (d DSL) Abbrevs() *Abbrevs {
+	return d.abbrevs
 }

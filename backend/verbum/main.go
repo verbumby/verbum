@@ -10,7 +10,6 @@ import (
 	"syscall"
 	"time"
 
-
 	gorillahandlers "github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
 	"github.com/spf13/cobra"
@@ -18,6 +17,7 @@ import (
 	"github.com/verbumby/verbum/backend/chttp"
 	"github.com/verbumby/verbum/backend/ctl"
 	"github.com/verbumby/verbum/backend/ctl/dictimport"
+	"github.com/verbumby/verbum/backend/dictionary"
 	"github.com/verbumby/verbum/backend/handlers"
 	"github.com/verbumby/verbum/backend/serverrender"
 	"github.com/verbumby/verbum/backend/storage"
@@ -26,6 +26,10 @@ import (
 
 func main() {
 	if err := initConfig(); err != nil {
+		log.Fatal(err)
+	}
+
+	if err := dictionary.InitDictionaries(); err != nil {
 		log.Fatal(err)
 	}
 

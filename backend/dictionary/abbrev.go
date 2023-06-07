@@ -5,6 +5,7 @@ import (
 	_ "embed"
 	"fmt"
 	"html"
+	"log"
 	"regexp"
 	"strings"
 	"unicode"
@@ -22,12 +23,22 @@ var brsAbbrev string
 //go:embed rbs_abrv.dsl
 var rbsAbbrev string
 
-func parseDSLAbbrev(content string) map[string]string {
-	s := bufio.NewScanner(strings.NewReader(content))
-	result := map[string]string{}
+type Abbrevs struct {
+	list  []*Abbrev
+	cache map[string]*Abbrev
+}
 
-	keys := []string{}
+type Abbrev struct {
+	Keys  []string
+	Value string
+}
+
+func loadDSLAbbrevs(content string) (*Abbrevs, error) {
+	s := bufio.NewScanner(strings.NewReader(content))
+
 	keysSealed := false
+	list := []*Abbrev{}
+	c := &Abbrev{}
 
 	for s.Scan() {
 		line := s.Text()
@@ -43,47 +54,52 @@ func parseDSLAbbrev(content string) map[string]string {
 		if strings.HasPrefix(line, "\t") || strings.HasPrefix(line, " ") {
 			keysSealed = true
 			line = strings.TrimSpace(line)
-			for _, key := range keys {
-				if _, ok := result[key]; ok {
-					line = "\n" + line
-				}
-				result[key] += line
-			}
+			c.Value += line + "\n"
 		} else {
 			if keysSealed {
-				keys = []string{}
+				list = append(list, c)
+				c = &Abbrev{}
 				keysSealed = false
 			}
 
 			key := strings.TrimSpace(line)
-			if _, ok := result[key]; ok {
-				fmt.Println("duplicate abbrev key: " + key)
-			}
-
-			keys = append(keys, key)
+			c.Keys = append(c.Keys, key)
 		}
 	}
+
+	list = append(list, c)
 
 	if s.Err() != nil {
-		panic(s.Err())
+		return nil, fmt.Errorf("scanner error: %w", s.Err())
 	}
 
-	extra := map[string]string{}
-	for k, v := range result {
-		kr := []rune(k)
-		kr[0] = unicode.ToUpper(kr[0])
-		k = string(kr)
+	cache := map[string]*Abbrev{}
 
-		if _, ok := result[k]; !ok {
-			extra[k] = v
+	for _, c := range list {
+		for _, k := range c.Keys {
+			if _, ok := cache[k]; ok {
+				log.Printf("duplicate abbrev key: %s", k)
+			}
+			cache[k] = c
 		}
 	}
 
-	for k, v := range extra {
-		result[k] = v
+	for _, c := range list {
+		for _, k := range c.Keys {
+			kr := []rune(k)
+			if unicode.IsUpper(kr[0]) {
+				continue
+			}
+			kr[0] = unicode.ToUpper(kr[0])
+			k = string(kr)
+			cache[k] = c
+		}
 	}
 
-	return result
+	return &Abbrevs{
+		list:  list,
+		cache: cache,
+	}, nil
 }
 
 var (
@@ -91,12 +107,12 @@ var (
 	reStripHtml = regexp.MustCompile(`(?U)</?.*>`)
 )
 
-func renderAbbrevs(content string, abbrevs map[string]string) string {
+func renderAbbrevs(content string, abbrevs *Abbrevs) string {
 	return reAbbrev.ReplaceAllStringFunc(content, func(m string) string {
 		text := reStripHtml.ReplaceAllLiteralString(m, "")
-		if v, ok := abbrevs[text]; ok {
+		if v, ok := abbrevs.cache[text]; ok {
 			tt := `<v-abbr data-bs-toggle="tooltip" data-bs-title="%s" tabindex="0">`
-			m = strings.Replace(m, "<v-abbr>", fmt.Sprintf(tt, html.EscapeString(v)), 1)
+			m = strings.Replace(m, "<v-abbr>", fmt.Sprintf(tt, html.EscapeString(v.Value)), 1)
 		}
 		return m
 	})

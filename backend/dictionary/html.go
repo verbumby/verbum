@@ -36,12 +36,16 @@ func (d HTML) Title() string {
 func (d HTML) ToHTML(content string) template.HTML {
 	content = norm.NFD.String(content)
 
-	var re = regexp.MustCompile(`.\x{0301}`)
-	var substitution = "<v-accent>$0</v-accent>"
+	re := regexp.MustCompile(`.\x{0301}`)
+	substitution := "<v-accent>$0</v-accent>"
 
 	content = re.ReplaceAllString(content, substitution)
 
 	content = norm.NFC.String(content)
 
 	return template.HTML(content)
+}
+
+func (d HTML) Abbrevs() *Abbrevs {
+	return nil
 }

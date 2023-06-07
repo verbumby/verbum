@@ -12,13 +12,19 @@ import (
 // APIDictionariesList dictionaries list endpoint
 func APIDictionariesList(w http.ResponseWriter, rctx *chttp.Context) error {
 	type dictview struct {
-		ID      string
-		Aliases []string
-		Title   string
+		ID         string
+		Aliases    []string
+		Title      string
+		HasAbbrevs bool
 	}
 	toencode := []dictview{}
 	for _, d := range dictionary.GetAll() {
-		toencode = append(toencode, dictview{ID: d.ID(), Aliases: d.Aliases(), Title: d.Title()})
+		toencode = append(toencode, dictview{
+			ID:         d.ID(),
+			Aliases:    d.Aliases(),
+			Title:      d.Title(),
+			HasAbbrevs: d.Abbrevs() != nil,
+		})
 	}
 	if err := json.NewEncoder(w).Encode(toencode); err != nil {
 		return fmt.Errorf("encode response: %w", err)

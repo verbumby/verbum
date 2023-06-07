@@ -39,3 +39,7 @@ func (d Markdown) Title() string {
 func (d Markdown) ToHTML(content string) template.HTML {
 	return template.HTML(blackfriday.Run([]byte(content)))
 }
+
+func (d Markdown) Abbrevs() *Abbrevs {
+	return nil
+}

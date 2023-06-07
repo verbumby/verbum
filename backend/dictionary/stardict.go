@@ -40,3 +40,7 @@ func (d Stardict) ToHTML(content string) template.HTML {
 	content = strings.ReplaceAll(content, "</k>", "</v-hw></p>")
 	return template.HTML(content)
 }
+
+func (d Stardict) Abbrevs() *Abbrevs {
+	return nil
+}
