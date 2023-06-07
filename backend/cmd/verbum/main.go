@@ -14,7 +14,6 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
-	"github.com/verbumby/verbum/backend/pkg/app"
 	"github.com/verbumby/verbum/backend/pkg/chttp"
 	"github.com/verbumby/verbum/backend/pkg/ctl"
 	"github.com/verbumby/verbum/backend/pkg/ctl/dictimport"
@@ -25,7 +24,7 @@ import (
 )
 
 func main() {
-	if err := app.Bootstrap(); err != nil {
+	if err := initConfig(); err != nil {
 		log.Fatal(err)
 	}
 
@@ -53,6 +52,35 @@ func main() {
 	if err := rootCmd.Execute(); err != nil {
 		log.Fatal(err)
 	}
+}
+
+func initConfig() error {
+	viper.SetDefault("https.addr", ":8443")
+	viper.SetDefault("https.certFile", "cert.pem")
+	viper.SetDefault("https.keyFile", "key.pem")
+	viper.SetDefault("https.canonicalAddr", "https://localhost:8443")
+
+	viper.SetDefault("cookie.name", "vadm")
+	viper.SetDefault("cookie.nameState", "vadm-state")
+	viper.SetDefault("cookie.maxAge", 604800)
+
+	viper.SetDefault("oauth.endpointToken", "https://www.googleapis.com/oauth2/v4/token")
+	viper.SetDefault("oauth.endpointUserinfo", "https://www.googleapis.com/oauth2/v3/userinfo")
+	viper.SetDefault("oauth.endpointAuth", "https://accounts.google.com/o/oauth2/v2/auth")
+
+	viper.SetDefault("elastic.addr", "http://localhost:9200")
+
+	viper.SetDefault("images.path", "./images")
+
+	viper.SetConfigName("config")
+	viper.AddConfigPath(".")
+	viper.AddConfigPath("/usr/local/share/verbum")
+
+	if err := viper.ReadInConfig(); err != nil {
+		return fmt.Errorf("read in config: %w", err)
+	}
+
+	return nil
 }
 
 func bootstrapServer(cmd *cobra.Command, args []string) error {
