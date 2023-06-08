@@ -3,6 +3,7 @@ package dictionary
 import (
 	"bufio"
 	_ "embed"
+	"encoding/json"
 	"fmt"
 	"html"
 	"log"
@@ -17,6 +18,10 @@ import (
 type Abbrevs struct {
 	list  []*Abbrev
 	cache map[string]*Abbrev
+}
+
+func (a *Abbrevs) MarshalJSON() ([]byte, error) {
+	return json.Marshal(a.list)
 }
 
 type Abbrev struct {

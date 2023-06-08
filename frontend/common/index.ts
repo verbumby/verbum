@@ -1,5 +1,6 @@
 export { Article, ArticleList } from './article'
 export { Dict } from './dict'
+export { Abbrevs, Abbr } from './abbrevs'
 export { DictsState, DictsActions, dictsReducer, dictsFetch, dictsSet } from './dicts'
 export { ArticleView } from './ArticleView'
 export { Footer } from './Footer'
