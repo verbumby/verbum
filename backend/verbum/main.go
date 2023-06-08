@@ -77,6 +77,8 @@ func initConfig() error {
 
 	viper.SetDefault("images.path", "./images")
 
+	viper.SetDefault("dicts.repo.path", "../slouniki")
+
 	viper.SetConfigName("config")
 	viper.AddConfigPath(".")
 	viper.AddConfigPath("/usr/local/share/verbum")

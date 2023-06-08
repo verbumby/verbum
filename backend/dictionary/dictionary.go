@@ -25,7 +25,7 @@ func InitDictionaries() error {
 		title:   "Тлумачальны слоўнік беларускай літаратурнай мовы (2002, правапіс да 2008 г.)",
 	})
 
-	abbrevs, err := loadDSLAbbrevs(tsbmAbbrev)
+	abbrevs, err := loadDSLAbbrevs("tsbm/tsbm_abrv.dsl")
 	if err != nil {
 		return fmt.Errorf("load tsbm abbrevs: %w", err)
 	}
@@ -43,7 +43,7 @@ func InitDictionaries() error {
 		title:   "Гістарычны слоўнік беларускай мовы (1982–2017, часткова)",
 	})
 
-	abbrevs, err = loadDSLAbbrevs(esbmAbbrev)
+	abbrevs, err = loadDSLAbbrevs("esbm/esbm_abrv.dsl")
 	if err != nil {
 		return fmt.Errorf("load esbm abbrevs: %w", err)
 	}
@@ -54,7 +54,7 @@ func InitDictionaries() error {
 		abbrevs: abbrevs,
 	})
 
-	abbrevs, err = loadDSLAbbrevs(brsAbbrev)
+	abbrevs, err = loadDSLAbbrevs("brs/brs_abrv.dsl")
 	if err != nil {
 		return fmt.Errorf("load brs abbrevs: %w", err)
 	}
@@ -65,7 +65,7 @@ func InitDictionaries() error {
 		abbrevs: abbrevs,
 	})
 
-	abbrevs, err = loadDSLAbbrevs(rbsAbbrev)
+	abbrevs, err = loadDSLAbbrevs("rbs/rbs_abrv.dsl")
 	if err != nil {
 		return fmt.Errorf("load rbs abbrevs: %w", err)
 	}

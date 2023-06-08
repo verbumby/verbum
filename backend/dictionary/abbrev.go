@@ -6,22 +6,13 @@ import (
 	"fmt"
 	"html"
 	"log"
+	"os"
 	"regexp"
 	"strings"
 	"unicode"
+
+	"github.com/spf13/viper"
 )
-
-//go:embed esbm_abrv.dsl
-var esbmAbbrev string
-
-//go:embed tsbm_abrv.dsl
-var tsbmAbbrev string
-
-//go:embed brs_abrv.dsl
-var brsAbbrev string
-
-//go:embed rbs_abrv.dsl
-var rbsAbbrev string
 
 type Abbrevs struct {
 	list  []*Abbrev
@@ -33,8 +24,15 @@ type Abbrev struct {
 	Value string
 }
 
-func loadDSLAbbrevs(content string) (*Abbrevs, error) {
-	s := bufio.NewScanner(strings.NewReader(content))
+func loadDSLAbbrevs(filename string) (*Abbrevs, error) {
+	filename = viper.GetString("dicts.repo.path") + "/" + filename
+	f, err := os.Open(filename)
+	if err != nil {
+		return nil, fmt.Errorf("open %s: %w", filename, err)
+	}
+	defer f.Close()
+
+	s := bufio.NewScanner(f)
 
 	keysSealed := false
 	list := []*Abbrev{}
