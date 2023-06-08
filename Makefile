@@ -1,10 +1,10 @@
 .PHONY: build
 build: fe-build
-	go build -v github.com/verbumby/verbum/backend/cmd/verbum
+	go build -v github.com/verbumby/verbum/backend/verbum
 
 .PHONY: build-ci
 build-ci:
-	go build -v github.com/verbumby/verbum/backend/cmd/verbum
+	go build -v github.com/verbumby/verbum/backend/verbum
 
 .PHONY: run
 run: build
@@ -12,8 +12,8 @@ run: build
 
 .PHONY: build-parsers
 build-parsers:
-	cd backend/pkg/ctl/dictimport/dictparser/dsl && pigeon -o grammar.go grammar.peg
-	cd backend/pkg/dictionary/dslparser && pigeon -o grammar.go grammar.peg
+	cd backend/ctl/dictimport/dictparser/dsl && pigeon -o grammar.go grammar.peg
+	cd backend/dictionary/dslparser && pigeon -o grammar.go grammar.peg
 
 .PHONY: fe-lint
 fe-lint:
