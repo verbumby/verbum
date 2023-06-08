@@ -37,10 +37,15 @@ func InitDictionaries() error {
 		abbrevs: abbrevs,
 	})
 
+	abbrevs, err = loadDSLAbbrevs("hsbm/hsbm_abrv.dsl")
+	if err != nil {
+		return fmt.Errorf("load hsbm abbrevs: %w", err)
+	}
 	dictionaries = append(dictionaries, DSL{
 		id:      "hsbm",
 		indexID: "hsbm",
 		title:   "Гістарычны слоўнік беларускай мовы (1982–2017, часткова)",
+		abbrevs: abbrevs,
 	})
 
 	abbrevs, err = loadDSLAbbrevs("esbm/esbm_abrv.dsl")

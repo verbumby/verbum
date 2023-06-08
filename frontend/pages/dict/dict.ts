@@ -9,6 +9,7 @@ export type MatchParams = {
 export const URLSearchDefaults = {
     prefix: '',
     page: 1,
+    section: '',
 }
 
 export const useURLSearch = () => useURLSearchCommon(URLSearchDefaults)
@@ -69,6 +70,10 @@ export function dictArticlesReducer(state: DictArticlesState = null, a: DictArti
 export const dictArticlesFetch = (match: match<MatchParams>, urlSearch: URLSearch<typeof URLSearchDefaults>): AppThunkAction => {
     return async (dispatch, getState): Promise<void> => {
         try {
+            if (urlSearch.get('section') !== '') {
+                return
+            }
+
             const { dictID } = match.params
             const prefix = urlSearch.get('prefix')
             const page = urlSearch.get('page')

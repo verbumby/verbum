@@ -35,6 +35,13 @@ export class URLSearch<Entries extends URLSearchEntries = {}> {
         return this
     }
 
+    resetAll(): URLSearch<Entries> {
+        for (const k in this.defaults) {
+            this.values[k] = this.defaults[k]
+        }
+        return this
+    }
+
     clone(): URLSearch<Entries> {
         const result: URLSearch<Entries> = new URLSearch<Entries>(this.defaults)
         result.values = {...this.values}

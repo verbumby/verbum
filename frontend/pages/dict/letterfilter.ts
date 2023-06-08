@@ -65,6 +65,10 @@ export function letterFilterReducer(state: LetterFilterState = null, a: LetterFi
 export const letterFilterFetch = (match: match<MatchParams>, urlSearch: URLSearch<typeof URLSearchDefaults>): AppThunkAction => {
     return async (dispatch, getState): Promise<void> => {
         try {
+            if (urlSearch.get('section') !== '') {
+                return
+            }
+
             const { dictID } = match.params
             const prefix = urlSearch.get('prefix')
             const state = getState()
