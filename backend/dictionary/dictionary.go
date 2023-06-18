@@ -43,7 +43,7 @@ func InitDictionaries() error {
 	}
 	dictionaries = append(dictionaries, DSL{
 		id:      "hsbm",
-		indexID: "hsbm",
+		indexID: "hsbm-2",
 		title:   "Гістарычны слоўнік беларускай мовы (1982–2017, часткова)",
 		abbrevs: abbrevs,
 	})
