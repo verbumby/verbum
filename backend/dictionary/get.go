@@ -1,6 +1,10 @@
 package dictionary
 
-import "golang.org/x/exp/slices"
+import (
+	"regexp"
+
+	"golang.org/x/exp/slices"
+)
 
 func Get(idOrAlias string) Dictionary {
 	var result Dictionary
@@ -18,11 +22,18 @@ func GetAll() []Dictionary {
 	return dictionaries
 }
 
-func GetByIndexID(indexID string) Dictionary {
+func GetByID(id string) Dictionary {
 	for _, d := range dictionaries {
-		if indexID == d.IndexID() {
+		if id == d.ID() {
 			return d
 		}
 	}
 	return nil
+}
+
+var reIndexToID = regexp.MustCompile(`(?m)^dict-(.+?)(!?-\d+)?$`)
+
+func GetByIndex(index string) Dictionary {
+	match := reIndexToID.FindStringSubmatch(index)
+	return GetByID(match[1])
 }
