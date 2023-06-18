@@ -235,7 +235,7 @@ func (c *commandController) flushBuffer(buff *bytes.Buffer) error {
 	}
 
 	var resp storage.BulkResponse
-	if err := storage.Post("/dict-"+c.indexID+"/_doc/_bulk", buff, &resp); err != nil {
+	if err := storage.Post("/dict-"+c.indexID+"/_bulk", buff, &resp); err != nil {
 		return fmt.Errorf("bulk post to storage: %w", err)
 	}
 	return resp.Error()
