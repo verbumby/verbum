@@ -3,7 +3,6 @@ package article
 import (
 	"errors"
 	"fmt"
-	"strings"
 
 	"github.com/verbumby/verbum/backend/dictionary"
 	"github.com/verbumby/verbum/backend/storage"
@@ -29,21 +28,15 @@ func Query(path string, reqbody interface{}) ([]Article, int, error) {
 	}
 
 	result := []Article{}
-	dicts := map[string]dictionary.Dictionary{}
 	for _, hit := range respbody.Hits.Hits {
-		indexID := strings.TrimPrefix(hit.Index, "dict-")
-		if _, ok := dicts[indexID]; !ok {
-			dict := dictionary.GetByIndexID(indexID)
-			if dict == nil {
-				return nil, 0, fmt.Errorf("dictionary get %s: not found", indexID)
-			}
-
-			dicts[indexID] = dict
+		dict := dictionary.GetByIndex(hit.Index)
+		if dict == nil {
+			return nil, 0, fmt.Errorf("dictionary get %s: not found", hit.Index)
 		}
 
 		article := hit.Source
 		article.ID = hit.ID
-		article.Dictionary = dicts[indexID]
+		article.Dictionary = dict
 		result = append(result, article)
 	}
 

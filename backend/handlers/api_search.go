@@ -135,15 +135,17 @@ func APISearch(w http.ResponseWriter, rctx *chttp.Context) error {
 
 	articleviews := []articleview{}
 	for _, hit := range respbody.Hits.Hits {
-		indexID := strings.TrimPrefix(hit.Index, "dict-")
-		dict := dictionary.GetByIndexID(indexID)
+		dict := dictionary.GetByIndex(hit.Index)
+		if dict == nil {
+			return fmt.Errorf("can't find dict by index %s", hit.Index)
+		}
 
 		content := hit.Source.Content
 
 		if len(hit.Highlight.Content) == 0 {
-			log.Printf("APISearch: no highlights for %s/%s queried with `%s` in %s ", indexID, hit.ID, q, inDictsStr)
+			log.Printf("APISearch: no highlights for %s/%s queried with `%s` in %s ", hit.Index, hit.ID, q, inDictsStr)
 		} else if len(hit.Highlight.Content) > 1 {
-			log.Printf("APISearch: more than 1 highlight for %s/%s queried with %s in %s ", indexID, hit.ID, q, inDictsStr)
+			log.Printf("APISearch: more than 1 highlight for %s/%s queried with %s in %s ", hit.Index, hit.ID, q, inDictsStr)
 		} else {
 			content = hit.Highlight.Content[0]
 			content = strings.ReplaceAll(content, "[']<highlight>", "<highlight>[']")
