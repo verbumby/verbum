@@ -65,7 +65,7 @@ func InitDictionaries() error {
 	}
 	dictionaries = append(dictionaries, DSL{
 		id:      "brs",
-		indexID: "brs-2",
+		indexID: "brs",
 		title:   "Беларуска-рускі слоўнік, 4-е выданне (актуальны правапіс)",
 		abbrevs: abbrevs,
 	})
