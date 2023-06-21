@@ -93,7 +93,7 @@ func InitDictionaries() error {
 	})
 	dictionaries = append(dictionaries, HTML{
 		id:      "susha",
-		indexID: "susha-2",
+		indexID: "susha",
 		title:   "Англійска-беларускі слоўнік (Т. Суша, 2013, актуальны правапіс)",
 	})
 	dictionaries = append(dictionaries, DSL{
