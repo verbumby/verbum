@@ -10,7 +10,7 @@ import (
 var testHTML string
 
 var thirdArticleHTML string = "<p><strong>A\u200b<sup>2</sup></strong> <v-trx>[eɪ]</v-trx> <em>n.</em> «выда́тна» (<em>самая высокая акадэмічная адзнака ў Англіі</em>);</p>\n" +
-	"<p class=\"ml-5\"><v-ex><em>He got an A in chemistry.</em> Ён атрымаў «выдатна» па хіміі.</v-ex></p>"
+	"<p class=\"ms-5\"><v-ex><em>He got an A in chemistry.</em> Ён атрымаў «выдатна» па хіміі.</v-ex></p>"
 
 func TestParse(t *testing.T) {
 	actual, err := ParseString(testHTML)

@@ -728,11 +728,11 @@ func (c *current) onOpenTag1(tnitf, targ interface{}) (interface{}, error) {
 		}
 		return fmt.Sprintf(`<span style="color: %s">`, targ), nil
 	case "m1":
-		return `<p class="ml-0">`, nil
+		return `<p class="ms-0">`, nil
 	case "m2":
-		return `<p class="ml-2">`, nil
+		return `<p class="ms-2">`, nil
 	case "m3":
-		return `<p class="ml-4">`, nil
+		return `<p class="ms-4">`, nil
 	case "b":
 		return `<strong>`, nil
 	case "sup":
