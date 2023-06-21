@@ -72,7 +72,7 @@ func (c *commandController) run() error {
 	case "dsl":
 		d, err = dsl.ParseDSLFile(c.filename)
 	case "html":
-		d, err = html.LoadArticles(c.filename)
+		d, err = html.ParseFile(c.filename)
 	case "stardict":
 		d, err = stardict.LoadArticles(c.filename)
 	default:
@@ -141,7 +141,7 @@ func (c *commandController) indexArticles(d dictparser.Dictionary) error {
 
 		var id string
 		if d.IDsProvided {
-			id = textutil.Slugify(a.ID)
+			id = a.ID
 		} else {
 			var err error
 			id, err = c.assembleID(a.Headwords[0])
@@ -226,7 +226,7 @@ func (c *commandController) assembleID(firstHW string) (string, error) {
 		return "", fmt.Errorf("unknown romanizing strategy: %s", c.romanizer)
 	}
 	result := romanized
-	return textutil.Slugify(result), nil
+	return textutil.SlugifyLower(result), nil
 }
 
 func (c *commandController) flushBuffer(buff *bytes.Buffer) error {

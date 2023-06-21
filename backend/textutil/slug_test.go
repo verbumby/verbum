@@ -8,8 +8,9 @@ func TestSlugify(t *testing.T) {
 		s    string
 		want string
 	}{
+		{s: "tête-á-tête", want: "tete-a-tete"},
 		{s: "some___url *** !@#!@#//slug-", want: "some-url-slug"},
-		{s: "Tlumachalny slounik bielaruskaj movy", want: "tlumachalny-slounik-bielaruskaj-movy"},
+		{s: "Tlumachalny slounik bielaruskaj movy", want: "Tlumachalny-slounik-bielaruskaj-movy"},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

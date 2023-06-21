@@ -13,6 +13,7 @@ import (
 	"github.com/verbumby/verbum/backend/dictionary"
 	"github.com/verbumby/verbum/backend/htmlui"
 	"github.com/verbumby/verbum/backend/storage"
+	"github.com/verbumby/verbum/backend/textutil"
 )
 
 // APISearch search endpoint
@@ -29,6 +30,8 @@ func APISearch(w http.ResponseWriter, rctx *chttp.Context) error {
 		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
 		return nil
 	}
+	q = textutil.NormalizeQuery(q)
+
 	page := urlQuery.Get("page").(*htmlui.IntegerQueryParam).Value()
 	inDicts := urlQuery.Get("in").(*htmlui.InDictsQueryParam).Value()
 
