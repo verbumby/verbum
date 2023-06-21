@@ -47,7 +47,6 @@ func main() {
 		},
 		dictimport.Command(),
 		ctl.ReindexCommand(),
-		ctl.MigrateSlugs(),
 		ctl.MigrateRvblrWrongHeadwords(),
 		ctl.MigrateStardictFixPrefixCase(),
 		ctl.MigrateModifiedAt(), ctl.MigrateTitleToContentCommand(),

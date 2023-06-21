@@ -9,6 +9,7 @@ import (
 	"github.com/verbumby/verbum/backend/dictionary"
 	"github.com/verbumby/verbum/backend/htmlui"
 	"github.com/verbumby/verbum/backend/storage"
+	"github.com/verbumby/verbum/backend/textutil"
 )
 
 // APISuggest handles suggest http request
@@ -25,6 +26,7 @@ func APISuggest(w http.ResponseWriter, rctx *chttp.Context) error {
 		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
 		return nil
 	}
+	q = textutil.NormalizeQuery(q)
 
 	inDictsStr := ""
 	for _, d := range inDicts {
