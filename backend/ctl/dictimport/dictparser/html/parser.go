@@ -3,12 +3,12 @@ package html
 import (
 	"fmt"
 	"html"
+	"log"
 	"os"
 	"regexp"
 	"strings"
 
 	"github.com/verbumby/verbum/backend/ctl/dictimport/dictparser"
-	"github.com/verbumby/verbum/backend/textutil"
 )
 
 func ParseFile(filename string) (dictparser.Dictionary, error) {
@@ -49,12 +49,17 @@ func ParseString(content string) (dictparser.Dictionary, error) {
 	}
 
 	dup := map[string]dictparser.Article{}
+	dups := false
 	for _, a := range articles {
 		if otherA, ok := dup[a.ID]; ok {
-			// fmt.Println("dup: ", a.ID)
-			return dictparser.Dictionary{}, fmt.Errorf("duplicate id of article %v and %v", otherA, a)
+			dups = true
+			log.Printf("duplicate id of article %v and %v", otherA, a)
 		}
 		dup[a.ID] = a
+	}
+
+	if dups {
+		return dictparser.Dictionary{}, fmt.Errorf("there are duplicate ids")
 	}
 
 	return dictparser.Dictionary{
@@ -63,31 +68,46 @@ func ParseString(content string) (dictparser.Dictionary, error) {
 	}, nil
 }
 
-var reAttr = regexp.MustCompile(`(?m)^<p><strong>(.*?)(?:<sup>(\d+)</sup>)?</strong>`)
+var (
+	reHW    = regexp.MustCompile(`<strong class="(hw(?:-alt)?)">([^<]*)</strong>`)
+	reIndex = regexp.MustCompile(`<sup>(\d+)</sup>`)
+)
 
 func parseArticleAttributes(body string) (id, title string, hws, hwsalt []string, err error) {
-	ms := reAttr.FindAllStringSubmatch(body, -1)
+	ms := reHW.FindAllStringSubmatch(body, -1)
 	if len(ms) == 0 {
 		err = fmt.Errorf("can't find any attributes in %s", body)
 		return
 	}
 
-	m := ms[0]
-	ms = ms[1:]
+	for _, m := range ms {
+		hw := m[2]
+		hw = html.UnescapeString(hw)
+		hw = strings.TrimSpace(hw)
 
-	hws = parseHeadwords(m[1])
-
-	id = hws[0]
-	id = textutil.Slugify(id)
-	title = strings.TrimSpace(m[1])
-
-	if m[2] != "" {
-		id += "-" + m[2]
-		title += " " + m[2]
+		switch m[1] {
+		case "hw":
+			hws = append(hws, hw)
+		case "hw-alt":
+			hwsalt = append(hwsalt, hw)
+		}
 	}
 
-	for _, m := range ms {
-		hwsalt = append(hwsalt, parseHeadwords(m[1])...)
+	title = strings.Join(hws, ", ")
+
+	hws = expandHeadwords(hws)
+	hwsalt = expandHeadwords(hwsalt)
+
+	id = hws[0]
+
+	idx := ""
+	if m := reIndex.FindStringSubmatch(body); m != nil {
+		idx = m[1]
+	}
+
+	if idx != "" {
+		id += "-" + idx
+		title += " " + idx
 	}
 
 	return
@@ -95,11 +115,9 @@ func parseArticleAttributes(body string) (id, title string, hws, hwsalt []string
 
 var reExpandParentheses = regexp.MustCompile(`\(([^)]*)\)`)
 
-func parseHeadwords(s string) []string {
-	s = html.UnescapeString(s)
-	hws := strings.Split(s, ",")
-	for i := range hws {
-		hws[i] = strings.TrimSpace(hws[i])
+func expandHeadwords(hws []string) []string {
+	if hws == nil {
+		return nil
 	}
 
 	expanded := []string{}
@@ -112,10 +130,9 @@ func parseHeadwords(s string) []string {
 			continue
 		}
 
-		hws = append(hws, reExpandParentheses.ReplaceAllString(hw, ""))
-		hws = append(hws, reExpandParentheses.ReplaceAllString(hw, "$1"))
+		hws = append(hws, strings.TrimSpace(reExpandParentheses.ReplaceAllString(hw, "")))
+		hws = append(hws, strings.TrimSpace(reExpandParentheses.ReplaceAllString(hw, "$1")))
 	}
-	hws = expanded
 
-	return hws
+	return expanded
 }

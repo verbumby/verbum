@@ -8,6 +8,7 @@ import (
 	"math"
 	"os"
 	"regexp"
+	"strings"
 	"time"
 
 	"github.com/spf13/cobra"
@@ -139,19 +140,19 @@ func (c *commandController) indexArticles(d dictparser.Dictionary) error {
 			prefixes = append(prefixes, prefix)
 		}
 
-		var id string
+		id := strings.ToLower(a.Headwords[0])
 		if d.IDsProvided {
 			id = a.ID
-		} else {
-			var err error
-			id, err = c.assembleID(a.Headwords[0])
-			if err != nil {
-				return fmt.Errorf("assemble id for %v: %w", a.Headwords, err)
-			}
-			idcache[id]++
-			if idcache[id] > 1 {
-				id = fmt.Sprintf("%s-%d", id, idcache[id])
-			}
+		}
+		var err error
+		id, err = c.assembleID(id)
+		if err != nil {
+			return fmt.Errorf("assemble id for %v: %w", a.Headwords, err)
+		}
+		idcache[id]++
+		if idcache[id] > 1 {
+			id = fmt.Sprintf("%s-%d", id, idcache[id])
+			log.Printf("adding index to id %s", id)
 		}
 
 		content := a.Body
@@ -226,7 +227,7 @@ func (c *commandController) assembleID(firstHW string) (string, error) {
 		return "", fmt.Errorf("unknown romanizing strategy: %s", c.romanizer)
 	}
 	result := romanized
-	return textutil.SlugifyLower(result), nil
+	return textutil.Slugify(result), nil
 }
 
 func (c *commandController) flushBuffer(buff *bytes.Buffer) error {

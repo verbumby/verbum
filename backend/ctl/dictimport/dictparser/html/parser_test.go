@@ -9,8 +9,8 @@ import (
 //go:embed test.html
 var testHTML string
 
-var thirdArticleHTML string = "<p><strong>A\u200b<sup>2</sup></strong> <v-trx>[eɪ]</v-trx> <em>n.</em> «выда́тна» (<em>самая высокая акадэмічная адзнака ў Англіі</em>);</p>\n" +
-	"<p class=\"ms-5\"><v-ex><em>He got an A in chemistry.</em> Ён атрымаў «выдатна» па хіміі.</v-ex></p>"
+var thirdArticleHTML = `<p><strong class="hw">A</strong>` + "\u200b" + `<sup>2</sup> <v-trx>[eɪ]</v-trx> <em>n.</em> «выда́тна» (<em>самая высокая акадэмічная адзнака ў Англіі</em>);</p>
+<p class="ms-5"><v-ex><em>He got an A in chemistry.</em> Ён атрымаў «выдатна» па хіміі.</v-ex></p>`
 
 func TestParse(t *testing.T) {
 	actual, err := ParseString(testHTML)
@@ -18,8 +18,8 @@ func TestParse(t *testing.T) {
 		t.Fatalf("parse string: %v", err)
 	}
 
-	if len(actual.Articles) != 9 {
-		t.Fatalf("expected 9 articles, got %d", len(actual.Articles))
+	if len(actual.Articles) != 10 {
+		t.Fatalf("expected 10 articles, got %d", len(actual.Articles))
 	}
 
 	if actual.Articles[2].Body != thirdArticleHTML {
@@ -77,6 +77,11 @@ func TestParse(t *testing.T) {
 			id:    "parenthetic",
 			title: "parenthetic(al)",
 			hws:   []string{"parenthetic", "parenthetical"},
+		},
+		{
+			id:    "angina",
+			title: "angina (pectoris)",
+			hws:   []string{"angina", "angina pectoris"},
 		},
 	}
 
