@@ -18,7 +18,7 @@ type Dictionary interface {
 var dictionaries []Dictionary
 
 func InitDictionaries() error {
-	dictionaries = append(dictionaries, Markdown{
+	dictionaries = append(dictionaries, HTML{
 		id:      "tsblm",
 		indexID: "tsblm",
 		aliases: []string{"rvblr"},

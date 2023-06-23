@@ -93,6 +93,11 @@ func parseArticleAttributes(body string) (id, title string, hws, hwsalt []string
 		}
 	}
 
+	if len(hws) == 0 {
+		err = fmt.Errorf("no headwords found in %s", body)
+		return
+	}
+
 	title = strings.Join(hws, ", ")
 
 	hws = expandHeadwords(hws)
