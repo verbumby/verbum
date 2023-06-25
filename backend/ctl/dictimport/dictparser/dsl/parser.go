@@ -50,31 +50,35 @@ func ParseDSLReader(filename string, r io.Reader) (dictparser.Dictionary, error)
 var reCurlyBrace = regexp.MustCompile(`{.*?}`)
 
 func prepareHeadwordsForIndexing(hws []string) []string {
-	for i := range hws {
-		hws[i] = reCurlyBrace.ReplaceAllString(hws[i], "")
-		hws[i] = strings.ReplaceAll(hws[i], "\\(", "(")
-		hws[i] = strings.ReplaceAll(hws[i], "\\)", ")")
-		hws[i] = strings.ReplaceAll(hws[i], "...", "")
-		hws[i] = strings.TrimSpace(hws[i])
+	result := []string{}
+	for _, hw := range hws {
+		hw = reCurlyBrace.ReplaceAllString(hw, "")
+		hw = strings.ReplaceAll(hw, "\\(", "(")
+		hw = strings.ReplaceAll(hw, "\\)", ")")
+		hw = strings.ReplaceAll(hw, "...", "")
+		hw = strings.TrimSpace(hw)
+		result = append(result, hw)
 	}
 
-	return hws
+	return result
 }
 
 func assembleTitleFromHeadwords(hws []string) string {
-	for i := range hws {
-		hws[i] = strings.TrimSpace(hws[i])
-		hws[i] = strings.ReplaceAll(hws[i], "{", "")
-		hws[i] = strings.ReplaceAll(hws[i], "}", "")
-		hws[i] = strings.ReplaceAll(hws[i], "\\(", "(")
-		hws[i] = strings.ReplaceAll(hws[i], "\\)", ")")
-		hws[i] = strings.ReplaceAll(hws[i], "\\~", "~")
-		hws[i] = strings.ReplaceAll(hws[i], " ,", ",")
+	result := []string{}
+	for _, hw := range hws {
+		hw = strings.TrimSpace(hw)
+		hw = strings.ReplaceAll(hw, "{", "")
+		hw = strings.ReplaceAll(hw, "}", "")
+		hw = strings.ReplaceAll(hw, "\\(", "(")
+		hw = strings.ReplaceAll(hw, "\\)", ")")
+		hw = strings.ReplaceAll(hw, "\\~", "~")
+		hw = strings.ReplaceAll(hw, " ,", ",")
+		result = append(result, hw)
 	}
 
 	nodup := []string{}
 outer:
-	for _, hw := range hws {
+	for _, hw := range result {
 		for _, noduphw := range nodup {
 			if hw == noduphw {
 				continue outer

@@ -32,6 +32,11 @@ func TestPrepareHeadwordsForIndexing(t *testing.T) {
 			hws:  []string{"ВКП\\(б\\)"},
 			want: []string{"ВКП(б)"},
 		},
+		{
+			name: "{[']}A{[/']}bbau",
+			hws:  []string{"{[']}A{[/']}bbau"},
+			want: []string{"Abbau"},
+		},
 	}
 
 	for _, c := range cases {
