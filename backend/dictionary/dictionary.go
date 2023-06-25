@@ -54,7 +54,7 @@ func InitDictionaries() error {
 	}
 	dictionaries = append(dictionaries, DSL{
 		id:      "esbm",
-		indexID: "esbm-6",
+		indexID: "esbm",
 		title:   "Этымалагічны слоўнік беларускай мовы (1978-2017)",
 		abbrevs: abbrevs,
 	})
