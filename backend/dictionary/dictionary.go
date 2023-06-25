@@ -103,7 +103,7 @@ func InitDictionaries() error {
 	})
 	dictionaries = append(dictionaries, DSL{
 		id:      "kurjanka",
-		indexID: "kurjanka-3",
+		indexID: "kurjanka",
 		title:   "Нямецка-беларускі слоўнік (М. Кур'янка, 2006, правапіс да 2008 г.)",
 	})
 	return nil
