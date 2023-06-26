@@ -1,7 +1,9 @@
 package dsl
 
 import (
+	_ "embed"
 	"reflect"
+	"strings"
 	"testing"
 )
 
@@ -84,6 +86,54 @@ func TestAssembleTitleFromHeadwords(t *testing.T) {
 		actual := assembleTitleFromHeadwords(c.hws)
 		if !reflect.DeepEqual(actual, c.want) {
 			t.Errorf("expected %v got %v", c.want, actual)
+		}
+	}
+}
+
+//go:embed test.dsl
+var testDSL string
+
+func TestParse(t *testing.T) {
+	actual, err := ParseDSLReader("test.dsl", strings.NewReader(testDSL))
+	if err != nil {
+		t.Error(err)
+	}
+
+	if len(actual.Articles) != 3 {
+		t.Fatalf("expected 3 articles, got %d", len(actual.Articles))
+	}
+
+	if actual.Articles[0].Body != "[m1][p]a[/p] сл[']і[/']зкі як вуг[']о[/']р; выкр[']у[/']тлівы[/m]\n" {
+		t.Fatal("the body of 0 article doesn't match")
+	}
+
+	expecteds := []struct {
+		title  string
+		hws    []string
+		hwsalt []string
+	}{
+		{
+			title: "[']a[/']alglatt",
+			hws:   []string{"aalglatt"},
+		},
+		{
+			title: "abridg(e)ment",
+			hws:   []string{"abridgement", "abridgment"},
+		},
+		{
+			title: "ВКП(б)",
+			hws:   []string{"ВКП(б)"},
+		},
+	}
+
+	for i, expected := range expecteds {
+		a := actual.Articles[i]
+
+		if expected.title != a.Title {
+			t.Errorf("article %d: Title doesn't match: expected %s, got %s", i, expected.title, a.Title)
+		}
+		if !reflect.DeepEqual(expected.hws, a.Headwords) {
+			t.Errorf("article %d: Headwords don't match: expected %v, got %v", i, expected.hws, a.Headwords)
 		}
 	}
 }
