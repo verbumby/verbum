@@ -89,7 +89,7 @@ func (r *serverRenderer) newVM() (*goja.Runtime, error) {
 		}
 
 		w := httptest.NewRecorder()
-		rctx := &http.Request{URL: u}
+		rctx := &http.Request{URL: u, Method: http.MethodGet}
 		r.handler.ServeHTTP(w, rctx)
 
 		if w.Code == http.StatusNotFound {
@@ -151,6 +151,8 @@ func (r *serverRenderer) ServeHTTP(w http.ResponseWriter, rctx *chttp.Context) e
 		http.Redirect(w, rctx.R, result.Location, http.StatusMovedPermanently)
 		return nil
 	}
+
+	w.Header().Add("content-type", "text/html; charset=utf-8")
 
 	if result.StatusCode > 0 {
 		w.WriteHeader(result.StatusCode)

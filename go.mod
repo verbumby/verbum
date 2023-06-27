@@ -4,8 +4,7 @@ go 1.18
 
 require (
 	github.com/dop251/goja v0.0.0-20230531210528-d7324b2d74f7
-	github.com/gorilla/handlers v1.5.1
-	github.com/gorilla/mux v1.8.0
+	github.com/go-chi/chi/v5 v5.0.8
 	github.com/gorilla/securecookie v1.1.1
 	github.com/spf13/cobra v1.6.1
 	github.com/spf13/viper v1.15.0
@@ -16,7 +15,6 @@ require (
 
 require (
 	github.com/dlclark/regexp2 v1.7.0 // indirect
-	github.com/felixge/httpsnoop v1.0.1 // indirect
 	github.com/fsnotify/fsnotify v1.6.0 // indirect
 	github.com/go-sourcemap/sourcemap v2.1.3+incompatible // indirect
 	github.com/google/pprof v0.0.0-20230207041349-798e818bf904 // indirect
