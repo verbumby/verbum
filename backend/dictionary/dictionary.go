@@ -87,7 +87,7 @@ func InitDictionaries() error {
 	})
 	dictionaries = append(dictionaries, DSL{
 		id:      "abs",
-		indexID: "abs-4",
+		indexID: "abs",
 		aliases: []string{"pashkievich"},
 		title:   "Ангельска-беларускі слоўнік (В. Пашкевіч, 2006, класічны правапіс)",
 	})
