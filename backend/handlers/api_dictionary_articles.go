@@ -6,7 +6,7 @@ import (
 	"math"
 	"net/http"
 
-	"github.com/gorilla/mux"
+	"github.com/go-chi/chi/v5"
 	"github.com/verbumby/verbum/backend/article"
 	"github.com/verbumby/verbum/backend/chttp"
 	"github.com/verbumby/verbum/backend/dictionary"
@@ -15,9 +15,7 @@ import (
 
 // APIDictionaryArticles handles dictionary articles request
 func APIDictionaryArticles(w http.ResponseWriter, rctx *chttp.Context) error {
-	vars := mux.Vars(rctx.R)
-
-	d := dictionary.Get(vars["dictionary"])
+	d := dictionary.Get(chi.URLParam(rctx.R, "dictionary"))
 	if d == nil {
 		return APINotFound(w, rctx)
 	}

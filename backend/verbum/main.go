@@ -10,8 +10,8 @@ import (
 	"syscall"
 	"time"
 
-	gorillahandlers "github.com/gorilla/handlers"
-	"github.com/gorilla/mux"
+	"github.com/go-chi/chi/v5"
+	"github.com/go-chi/chi/v5/middleware"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 	"github.com/verbumby/verbum/backend/chttp"
@@ -92,7 +92,9 @@ func initConfig() error {
 }
 
 func bootstrapServer(cmd *cobra.Command, args []string) error {
-	r := mux.NewRouter()
+	r := chi.NewRouter()
+	r.Use(middleware.Recoverer)
+	r.Use(middleware.Compress(5))
 	r.HandleFunc("/api/dictionaries/{dictionary:[a-z-]+}/articles/{article:[a-zA-Z0-9-]+}", chttp.MakeHandler(handlers.APIArticle, chttp.ContentTypeJSONMiddleware))
 	r.HandleFunc("/api/dictionaries/{dictionary:[a-z-]+}/letterfilter", chttp.MakeHandler(handlers.APILetterFilter, chttp.ContentTypeJSONMiddleware))
 	r.HandleFunc("/api/dictionaries/{dictionary:[a-z-]+}/articles", chttp.MakeHandler(handlers.APIDictionaryArticles, chttp.ContentTypeJSONMiddleware))
@@ -100,15 +102,15 @@ func bootstrapServer(cmd *cobra.Command, args []string) error {
 	r.HandleFunc("/api/dictionaries", chttp.MakeHandler(handlers.APIDictionariesList, chttp.ContentTypeJSONMiddleware))
 	r.HandleFunc("/api/search", chttp.MakeHandler(handlers.APISearch, chttp.ContentTypeJSONMiddleware))
 	r.HandleFunc("/api/suggest", chttp.MakeHandler(handlers.APISuggest, chttp.ContentTypeJSONMiddleware))
-	r.PathPrefix("/api/").HandlerFunc(chttp.MakeHandler(handlers.APINotFound))
+	r.Mount("/api/", chttp.MakeHandler(handlers.APINotFound))
 	imagesServer := http.FileServer(http.Dir(viper.GetString("images.path")))
-	r.PathPrefix("/images/").Handler(http.StripPrefix("/images", imagesServer))
+	r.Mount("/images/", http.StripPrefix("/images", imagesServer))
 	staticsServer := http.FileServer(http.FS(frontend.DistPublic))
 	staticsHander := http.StripPrefix("/statics", staticsServer)
-	r.PathPrefix("/statics/").HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+	r.Mount("/statics/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Cache-Control", "public, max-age=31536000, immutable")
 		staticsHander.ServeHTTP(w, r)
-	})
+	}))
 	r.HandleFunc("/robots.txt", chttp.MakeHandler(handlers.RobotsTXT))
 	r.HandleFunc("/sitemap-index.xml", chttp.MakeHandler(handlers.SitemapIndex))
 	r.HandleFunc("/{dictionary:[a-z-]+}/sitemap-{n:[0-9]+}.xml", chttp.MakeHandler(handlers.SitemapOfDictionary))
@@ -116,7 +118,7 @@ func bootstrapServer(cmd *cobra.Command, args []string) error {
 	if err != nil {
 		return fmt.Errorf("create server renderer: %w", err)
 	}
-	r.PathPrefix("/").Handler(chttp.MakeHandler(serverRenderer.ServeHTTP))
+	r.Mount("/", chttp.MakeHandler(serverRenderer.ServeHTTP))
 
 	chttp.InitCookieManager()
 	go storage.PruneOldBackups()
@@ -132,13 +134,9 @@ func bootstrapServer(cmd *cobra.Command, args []string) error {
 		}()
 	}
 
-	rootHandler := gorillahandlers.RecoveryHandler()(
-		gorillahandlers.CompressHandler(r),
-	)
-
 	publicServer := &http.Server{
 		Addr:         viper.GetString("https.addr"),
-		Handler:      rootHandler,
+		Handler:      r,
 		ReadTimeout:  30 * time.Second,
 		WriteTimeout: 90 * time.Second,
 	}

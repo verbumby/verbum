@@ -6,7 +6,7 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/gorilla/mux"
+	"github.com/go-chi/chi/v5"
 	"github.com/spf13/viper"
 	"github.com/verbumby/verbum/backend/dictionary"
 	"github.com/verbumby/verbum/backend/storage"
@@ -74,13 +74,12 @@ func SitemapIndex(w http.ResponseWriter, rctx *chttp.Context) error {
 
 // SitemapOfDictionary handles dictionary sitemap request
 func SitemapOfDictionary(w http.ResponseWriter, rctx *chttp.Context) error {
-	vars := mux.Vars(rctx.R)
-	d := dictionary.Get(vars["dictionary"])
+	d := dictionary.Get(chi.URLParam(rctx.R, "dictionary"))
 	if d == nil {
 		return APINotFound(w, rctx)
 	}
 
-	nstr := vars["n"]
+	nstr := chi.URLParam(rctx.R, "n")
 	n, _ := strconv.ParseUint(nstr, 10, 64)
 
 	reqbody := map[string]interface{}{
