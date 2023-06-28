@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
-	"math"
 	"os"
 	"regexp"
 	"strings"
@@ -35,7 +34,6 @@ func Command() *cobra.Command {
 	result.PersistentFlags().StringVar(&c.indexID, "index-id", "", "storage index id")
 	result.PersistentFlags().StringVar(&c.romanizer, "romanizer", "", "<blank>|belarusian|russian|polish|german")
 	result.PersistentFlags().BoolVar(&c.dryrun, "dryrun", true, "true/false")
-	result.PersistentFlags().IntVar(&c.limit, "limit", 1000, "limits the number of articles processed, -1 disables the limit")
 	result.PersistentFlags().BoolVarP(&c.verbose, "verbose", "v", false, "verbose output: true/false")
 	result.PersistentFlags().BoolVarP(&c.putTitleInContent, "put-title-in-content", "", false, "whether to put the title in the content: true/false")
 
@@ -48,15 +46,11 @@ type commandController struct {
 	indexID           string
 	romanizer         string
 	dryrun            bool
-	limit             int
 	verbose           bool
 	putTitleInContent bool
 }
 
 func (c *commandController) Run(cmd *cobra.Command, args []string) {
-	if !c.dryrun || c.limit == -1 {
-		c.limit = math.MaxInt32
-	}
 	if c.dryrun {
 		log.Println("dryrun mode enabled")
 	}
@@ -108,10 +102,6 @@ func (c *commandController) indexArticles(d dictparser.Dictionary) error {
 
 	buff := &bytes.Buffer{}
 	for i, a := range d.Articles {
-		if i == c.limit {
-			break
-		}
-
 		suggests := []map[string]interface{}{}
 		prefixes := []map[string]string{}
 
