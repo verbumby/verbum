@@ -8,6 +8,7 @@ import (
 	"os"
 	"path"
 	"regexp"
+	"strconv"
 	"strings"
 	"time"
 
@@ -74,13 +75,55 @@ func (c *commandController) getFilename() (string, error) {
 	return "", fmt.Errorf("couldn't find the file of %s dictionary", c.dictID)
 }
 
+var reIndexSuffix = regexp.MustCompile(`^dict-(?:.+?)(?:-(\d*))?$`)
+
+func (c *commandController) autoIndexID() (string, error) {
+	path := fmt.Sprintf("/dict-%s-*", c.dictID)
+	resp := map[string]any{}
+	if err := storage.Get(path, &resp); err != nil {
+		return "", fmt.Errorf("list indices: %w", err)
+	}
+	var d int64 = 0
+
+	for index := range resp {
+		m := reIndexSuffix.FindStringSubmatch(index)
+		if m == nil {
+			continue
+		}
+
+		if m[1] == "" {
+			continue
+		}
+
+		nd, err := strconv.ParseInt(m[1], 10, 32)
+		if err != nil {
+			return "", fmt.Errorf("can't parse %s as int: %w", m[1], err)
+		}
+
+		if nd > d {
+			d = nd
+		}
+	}
+
+	return fmt.Sprintf("%s-%d", c.dictID, d+1), nil
+}
+
 func (c *commandController) run() error {
+	var err error
+
 	c.dict = dictionary.GetByID(c.dictID)
 	if c.dict == nil {
 		return fmt.Errorf("unknown dict id %s", c.dictID)
 	}
 
-	var err error
+	if c.indexID == "" {
+		c.indexID, err = c.autoIndexID()
+		if err != nil {
+			return fmt.Errorf("calculate index name: %w", err)
+		}
+	}
+	log.Printf("indexing into %s", c.indexID)
+
 	var d dictparser.Dictionary
 
 	filename, err := c.getFilename()
@@ -114,6 +157,10 @@ func (c *commandController) run() error {
 
 	if err := c.indexArticles(d); err != nil {
 		return fmt.Errorf("index articles: %w", err)
+	}
+
+	if err := c.updateAlias(); err != nil {
+		return fmt.Errorf("update alias: %w", err)
 	}
 
 	return nil
@@ -259,4 +306,62 @@ func (c *commandController) flushBuffer(buff *bytes.Buffer) error {
 		return fmt.Errorf("bulk post to storage: %w", err)
 	}
 	return resp.Error()
+}
+
+func (c *commandController) updateAlias() error {
+	alias := "dict-" + c.dictID
+	path := fmt.Sprintf("/dict-%s-*", c.dictID)
+	resp := map[string]struct {
+		Aliases map[string]any `json:"aliases"`
+	}{}
+	if err := storage.Get(path, &resp); err != nil {
+		return fmt.Errorf("list indexes: %w", err)
+	}
+
+	toBeRemoved := []string{}
+
+	for indexName, index := range resp {
+		if _, ok := index.Aliases[alias]; ok {
+			toBeRemoved = append(toBeRemoved, indexName)
+		}
+	}
+
+	toBeAdded := "dict-" + c.indexID
+
+	log.Printf("removing %v and adding %s to %s alias", toBeRemoved, toBeAdded, alias)
+
+	if c.dryrun {
+		return nil
+	}
+
+	actions := []any{}
+	for _, index := range toBeRemoved {
+		actionBody := map[string]any{
+			"index": index,
+			"alias": alias,
+		}
+
+		action := map[string]any{
+			"remove": actionBody,
+		}
+		actions = append(actions, action)
+	}
+
+	{
+		actionBody := map[string]any{
+			"index": toBeAdded,
+			"alias": alias,
+		}
+
+		action := map[string]any{
+			"add": actionBody,
+		}
+		actions = append(actions, action)
+	}
+
+	if err := storage.Post("/_aliases", map[string]any{"actions": actions}, nil); err != nil {
+		return fmt.Errorf("update alias %s by removing %v and adding %s: %w", alias, toBeRemoved, toBeAdded, err)
+	}
+
+	return nil
 }
