@@ -119,13 +119,13 @@ func (c *commandController) indexArticles(d dictparser.Dictionary) error {
 			})
 
 			prefix := map[string]string{}
-			i := 0
+			j := 0
 			for _, r := range phw {
-				if i > 4 {
+				if j > 4 {
 					break
 				}
-				prefix[fmt.Sprintf("Letter%d", i+1)] = string(r)
-				i++
+				prefix[fmt.Sprintf("Letter%d", j+1)] = string(r)
+				j++
 			}
 			prefixes = append(prefixes, prefix)
 		}
