@@ -9,32 +9,7 @@ import (
 
 // DSL dictionary
 type DSL struct {
-	id      string
-	indexID string
-	aliases []string
-	title   string
-	abbrevs *Abbrevs
-}
-
-// ID implements Dictionary interface
-func (d DSL) ID() string {
-	return d.id
-}
-
-func (d DSL) IndexID() string {
-	if d.indexID == "" {
-		return d.id
-	}
-	return d.indexID
-}
-
-func (d DSL) Aliases() []string {
-	return d.aliases
-}
-
-// Title implements Dictionary interface
-func (d DSL) Title() string {
-	return d.title
+	Common
 }
 
 // ToHTML implements Dictionary interface
@@ -52,8 +27,4 @@ func (d DSL) ToHTML(content string) template.HTML {
 		htmlv = renderAbbrevs(htmlv, d.abbrevs)
 	}
 	return template.HTML(htmlv)
-}
-
-func (d DSL) Abbrevs() *Abbrevs {
-	return d.abbrevs
 }

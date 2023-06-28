@@ -8,29 +8,7 @@ import (
 )
 
 type HTML struct {
-	id      string
-	indexID string
-	aliases []string
-	title   string
-}
-
-func (d HTML) ID() string {
-	return d.id
-}
-
-func (d HTML) IndexID() string {
-	if d.indexID == "" {
-		return d.id
-	}
-	return d.indexID
-}
-
-func (d HTML) Aliases() []string {
-	return d.aliases
-}
-
-func (d HTML) Title() string {
-	return d.title
+	Common
 }
 
 func (d HTML) ToHTML(content string) template.HTML {
@@ -44,8 +22,4 @@ func (d HTML) ToHTML(content string) template.HTML {
 	content = norm.NFC.String(content)
 
 	return template.HTML(content)
-}
-
-func (d HTML) Abbrevs() *Abbrevs {
-	return nil
 }

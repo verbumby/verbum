@@ -5,17 +5,19 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
-	"math"
 	"os"
+	"path"
 	"regexp"
 	"strings"
 	"time"
 
 	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
 	"github.com/verbumby/verbum/backend/ctl/dictimport/dictparser"
 	"github.com/verbumby/verbum/backend/ctl/dictimport/dictparser/dsl"
 	"github.com/verbumby/verbum/backend/ctl/dictimport/dictparser/html"
 	"github.com/verbumby/verbum/backend/ctl/dictimport/dictparser/stardict"
+	"github.com/verbumby/verbum/backend/dictionary"
 	"github.com/verbumby/verbum/backend/storage"
 	"github.com/verbumby/verbum/backend/textutil"
 )
@@ -30,54 +32,75 @@ func Command() *cobra.Command {
 		Run:   c.Run,
 	}
 
-	result.PersistentFlags().StringVar(&c.filename, "filename", "", "filename/dictionary of the dict")
-	result.PersistentFlags().StringVar(&c.format, "format", "", "dsl|stardict|html")
+	result.PersistentFlags().StringVar(&c.dictID, "dict-id", "", "dict id")
 	result.PersistentFlags().StringVar(&c.indexID, "index-id", "", "storage index id")
-	result.PersistentFlags().StringVar(&c.romanizer, "romanizer", "", "<blank>|belarusian|russian|polish|german")
 	result.PersistentFlags().BoolVar(&c.dryrun, "dryrun", true, "true/false")
-	result.PersistentFlags().IntVar(&c.limit, "limit", 1000, "limits the number of articles processed, -1 disables the limit")
 	result.PersistentFlags().BoolVarP(&c.verbose, "verbose", "v", false, "verbose output: true/false")
-	result.PersistentFlags().BoolVarP(&c.putTitleInContent, "put-title-in-content", "", false, "whether to put the title in the content: true/false")
 
 	return result
 }
 
 type commandController struct {
-	filename          string
-	format            string
-	indexID           string
-	romanizer         string
-	dryrun            bool
-	limit             int
-	verbose           bool
-	putTitleInContent bool
+	dictID  string
+	dict    dictionary.Dictionary
+	indexID string
+	dryrun  bool
+	verbose bool
 }
 
 func (c *commandController) Run(cmd *cobra.Command, args []string) {
-	if !c.dryrun || c.limit == -1 {
-		c.limit = math.MaxInt32
-	}
 	if c.dryrun {
 		log.Println("dryrun mode enabled")
 	}
-	log.Println("processing ", c.filename)
 	if err := c.run(); err != nil {
 		log.Fatal(err)
 	}
 }
 
+func (c *commandController) getFilename() (string, error) {
+	dir := viper.GetString("dicts.repo.path") + "/" + c.dictID
+
+	files, err := os.ReadDir(dir)
+	if err != nil {
+		return "", fmt.Errorf("read %s: %w", dir, err)
+	}
+
+	for _, f := range files {
+		if strings.HasPrefix(f.Name(), c.dictID+".") {
+			return dir + "/" + f.Name(), nil
+		}
+	}
+
+	return "", fmt.Errorf("couldn't find the file of %s dictionary", c.dictID)
+}
+
 func (c *commandController) run() error {
+	c.dict = dictionary.GetByID(c.dictID)
+	if c.dict == nil {
+		return fmt.Errorf("unknown dict id %s", c.dictID)
+	}
+
 	var err error
 	var d dictparser.Dictionary
-	switch c.format {
-	case "dsl":
-		d, err = dsl.ParseDSLFile(c.filename)
-	case "html":
-		d, err = html.ParseFile(c.filename)
-	case "stardict":
-		d, err = stardict.LoadArticles(c.filename)
+
+	filename, err := c.getFilename()
+	if err != nil {
+		return err
+	}
+	format := path.Ext(filename)
+
+	log.Println("processing ", filename)
+	switch format {
+	case ".dsl":
+		d, err = dsl.ParseDSLFile(filename)
+	case ".html":
+		d, err = html.ParseFile(filename)
+	case ".dict":
+		fallthrough
+	case ".stardict":
+		d, err = stardict.LoadArticles(filename)
 	default:
-		err = fmt.Errorf("unsupported format %s", c.format)
+		err = fmt.Errorf("unsupported format %s", format)
 	}
 	if err != nil {
 		return fmt.Errorf("parse dictionary: %w", err)
@@ -108,10 +131,6 @@ func (c *commandController) indexArticles(d dictparser.Dictionary) error {
 
 	buff := &bytes.Buffer{}
 	for i, a := range d.Articles {
-		if i == c.limit {
-			break
-		}
-
 		suggests := []map[string]interface{}{}
 		prefixes := []map[string]string{}
 
@@ -129,13 +148,13 @@ func (c *commandController) indexArticles(d dictparser.Dictionary) error {
 			})
 
 			prefix := map[string]string{}
-			i := 0
+			j := 0
 			for _, r := range phw {
-				if i > 4 {
+				if j > 4 {
 					break
 				}
-				prefix[fmt.Sprintf("Letter%d", i+1)] = string(r)
-				i++
+				prefix[fmt.Sprintf("Letter%d", j+1)] = string(r)
+				j++
 			}
 			prefixes = append(prefixes, prefix)
 		}
@@ -156,7 +175,7 @@ func (c *commandController) indexArticles(d dictparser.Dictionary) error {
 		}
 
 		content := a.Body
-		if c.putTitleInContent {
+		if c.dict.PrependContentWithTitle() {
 			content = "<p><v-hw>" + a.Title + "</v-hw></p>\n" + content
 		}
 
@@ -212,7 +231,7 @@ func (c *commandController) indexArticles(d dictparser.Dictionary) error {
 func (c *commandController) assembleID(firstHW string) (string, error) {
 	hw := firstHW
 	var romanized string
-	switch c.romanizer {
+	switch c.dict.Slugifier() {
 	case "belarusian":
 		romanized = textutil.RomanizeBelarusian(hw)
 	case "russian":
@@ -224,7 +243,7 @@ func (c *commandController) assembleID(firstHW string) (string, error) {
 	case "":
 		romanized = hw
 	default:
-		return "", fmt.Errorf("unknown romanizing strategy: %s", c.romanizer)
+		return "", fmt.Errorf("unknown romanizing strategy: %s", c.dict.Slugifier())
 	}
 	result := romanized
 	return textutil.Slugify(result), nil
