@@ -128,10 +128,11 @@ func InitDictionaries() error {
 	})
 	dictionaries = append(dictionaries, DSL{
 		Common: Common{
-			id:        "pbs",
-			indexID:   "pbs",
-			title:     "Польска-беларускі слоўнік (Я. Волкава, В. Авілава, 2004, правапіс да 2008 г.)",
-			slugifier: "polish",
+			id:                      "pbs",
+			indexID:                 "pbs",
+			title:                   "Польска-беларускі слоўнік (Я. Волкава, В. Авілава, 2004, правапіс да 2008 г.)",
+			slugifier:               "polish",
+			prependContentWithTitle: true,
 		},
 	})
 	dictionaries = append(dictionaries, DSL{
