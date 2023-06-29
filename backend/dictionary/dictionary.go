@@ -105,7 +105,7 @@ func InitDictionaries() error {
 	dictionaries = append(dictionaries, Stardict{
 		Common: Common{
 			id:        "rus-bel",
-			indexID:   "rus-bel-2",
+			indexID:   "rus-bel",
 			title:     "Руска-беларускі слоўнік НАН Беларусі, 8-е выданне (другая версія, правапіс да 2008 г.)",
 			slugifier: "russian",
 		},
