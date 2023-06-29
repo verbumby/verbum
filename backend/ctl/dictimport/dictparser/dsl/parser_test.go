@@ -99,8 +99,8 @@ func TestParse(t *testing.T) {
 		t.Error(err)
 	}
 
-	if len(actual.Articles) != 4 {
-		t.Fatalf("expected 4 articles, got %d", len(actual.Articles))
+	if len(actual.Articles) != 5 {
+		t.Fatalf("expected 5 articles, got %d", len(actual.Articles))
 	}
 
 	if actual.Articles[0].Body != "[m1][p]a[/p] сл[']і[/']зкі як вуг[']о[/']р; выкр[']у[/']тлівы[/m]\n" {
@@ -127,6 +127,10 @@ func TestParse(t *testing.T) {
 		{
 			title: "(the) Milky Way",
 			hws:   []string{"Milky Way", "the Milky Way"},
+		},
+		{
+			title: "вярхоўны, Вярхоўны Савет БССР, Вярхоўны Суд БССР",
+			hws:   []string{"вярхоўны"},
 		},
 	}
 
