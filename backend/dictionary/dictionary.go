@@ -95,7 +95,7 @@ func InitDictionaries() error {
 	dictionaries = append(dictionaries, DSL{
 		Common: Common{
 			id:                      "rbs",
-			indexID:                 "rbs-2",
+			indexID:                 "rbs",
 			title:                   "Руска-беларускі слоўнік НАН Беларусі, 8-е выданне (правапіс да 2008 г.)",
 			abbrevs:                 abbrevs,
 			prependContentWithTitle: true,
