@@ -41,7 +41,15 @@ func ParseReader(r io.Reader) (chan dictparser.Article, chan error) {
 
 			if len(t) > 0 && t[0] != '\t' {
 				if hwsSealed {
-					articlesCh <- prepareArticle(hws, body.String())
+					a, err := prepareArticle(hws, body.String())
+					if err != nil {
+						close(articlesCh)
+						errCh <- err
+						close(errCh)
+						return
+					}
+					articlesCh <- a
+
 					hws = hws[0:0]
 					body.Reset()
 					hwsSealed = false
@@ -56,7 +64,15 @@ func ParseReader(r io.Reader) (chan dictparser.Article, chan error) {
 			}
 		}
 
-		articlesCh <- prepareArticle(hws, body.String())
+		a, err := prepareArticle(hws, body.String())
+		if err != nil {
+			close(articlesCh)
+			errCh <- err
+			close(errCh)
+			return
+		}
+
+		articlesCh <- a
 		close(articlesCh)
 		errCh <- sc.Err()
 		close(errCh)
@@ -65,28 +81,33 @@ func ParseReader(r io.Reader) (chan dictparser.Article, chan error) {
 	return articlesCh, errCh
 }
 
-func prepareArticle(hwsRaw []string, body string) dictparser.Article {
-	bodyLower := strings.ToLower(body)
-	bodyFirstLine := firstLine(bodyLower)
+var reTags = regexp.MustCompile(`\[.*?\]`)
 
-	hws := []string{}
-	hwsalt := []string{}
+func prepareArticle(hwsRaw []string, body string) (dictparser.Article, error) {
+	bodyFirstLine := strings.ToLower(firstLine(body))
+	bodyFirstLine = reTags.ReplaceAllLiteralString(bodyFirstLine, "")
+
+	var hws []string
+	var hwsalt []string
 
 	for _, hw := range prepareHeadwordsForIndexing(hwsRaw) {
 		hwLower := strings.ToLower(hw)
-		ex := fmt.Sprintf("[ex][lang id=1049][c steelblue]%s[/c][/lang][/ex]", hwLower)
-		exContains := strings.Contains(bodyLower, ex)
 		hwInFirstLine := strings.Contains(bodyFirstLine, hwLower)
-		if exContains && !hwInFirstLine {
+		if !hwInFirstLine {
 			hwsalt = append(hwsalt, hw)
 		} else {
 			hws = append(hws, hw)
 		}
 	}
 
-	// if len(hws) == 0 {
-	// 	return d, fmt.Errorf("no headwords for article %v found", a)
-	// }
+	if len(hws) == 0 {
+		hws = hwsalt
+		hwsalt = nil
+	}
+
+	if len(hws) == 0 {
+		return dictparser.Article{}, fmt.Errorf("no headwords for article %v %s found", hwsRaw, body)
+	}
 
 	return dictparser.Article{
 		Title:        assembleTitleFromHeadwords(hwsRaw),
@@ -94,7 +115,7 @@ func prepareArticle(hwsRaw []string, body string) dictparser.Article {
 		HeadwordsAlt: hwsalt,
 		Phrases:      []string{},
 		Body:         body,
-	}
+	}, nil
 }
 
 func firstLine(s string) string {
