@@ -2,12 +2,12 @@ package stardict
 
 import (
 	"bufio"
-	"bytes"
 	"fmt"
 	"io"
 	"strings"
 
 	"github.com/verbumby/verbum/backend/ctl/dictimport/dictparser"
+	"github.com/verbumby/verbum/backend/textutil"
 )
 
 func LoadArticles(r io.Reader) (chan dictparser.Article, chan error) {
@@ -16,24 +16,7 @@ func LoadArticles(r io.Reader) (chan dictparser.Article, chan error) {
 
 	go func() {
 		sc := bufio.NewScanner(r)
-		sc.Split(func(data []byte, atEOF bool) (advance int, token []byte, err error) {
-			if atEOF && len(data) == 0 {
-				return 0, nil, nil
-			}
-
-			delim := []byte("<k>")
-
-			if i := bytes.Index(data, delim); i >= 0 {
-				return i + len(delim), data[0:i], nil
-			}
-
-			if atEOF {
-				return len(data), data, nil
-			}
-
-			return 0, nil, nil
-		})
-
+		sc.Split(textutil.GetDelimSplitFunc("<k>"))
 		for sc.Scan() {
 			articleSource := sc.Text()
 			if strings.TrimSpace(articleSource) == "" {

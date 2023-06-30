@@ -9,6 +9,7 @@ import (
 	"strings"
 
 	"github.com/verbumby/verbum/backend/ctl/dictimport/dictparser"
+	"github.com/verbumby/verbum/backend/textutil"
 )
 
 func ParseReader(r io.Reader) (chan dictparser.Article, chan error) {
@@ -17,46 +18,32 @@ func ParseReader(r io.Reader) (chan dictparser.Article, chan error) {
 
 	go func() {
 		sc := bufio.NewScanner(r)
-		body := strings.Builder{}
+		sc.Split(textutil.GetDelimSplitFunc("<hr/>\n"))
 		firstArticle := true
 
 		for sc.Scan() {
-			if sc.Text() == "<hr/>" {
-				bodyStr := body.String()
+			bodyStr := sc.Text()
 
-				if firstArticle {
-					firstArticle = false
+			if firstArticle {
+				firstArticle = false
 
-					stylesEnd := "</style>\n\n"
-					stylesEndPos := strings.LastIndex(bodyStr, stylesEnd)
-					if stylesEndPos > -1 {
-						bodyStr = bodyStr[stylesEndPos+len(stylesEnd):]
-					}
+				stylesEnd := "</style>\n\n"
+				stylesEndPos := strings.LastIndex(bodyStr, stylesEnd)
+				if stylesEndPos > -1 {
+					bodyStr = bodyStr[stylesEndPos+len(stylesEnd):]
 				}
-
-				a, err := parseArticle(bodyStr)
-				if err != nil {
-					close(articlesCh)
-					errCh <- fmt.Errorf("parse article %s: %w", bodyStr, err)
-					close(errCh)
-					return
-				}
-				articlesCh <- a
-				body.Reset()
-			} else {
-				body.WriteString(sc.Text())
-				body.WriteRune('\n')
 			}
+
+			a, err := parseArticle(bodyStr)
+			if err != nil {
+				close(articlesCh)
+				errCh <- fmt.Errorf("parse article %s: %w", bodyStr, err)
+				close(errCh)
+				return
+			}
+			articlesCh <- a
 		}
 
-		a, err := parseArticle(body.String())
-		if err != nil {
-			close(articlesCh)
-			errCh <- fmt.Errorf("parse article %s: %w", body.String(), err)
-			close(errCh)
-			return
-		}
-		articlesCh <- a
 		close(articlesCh)
 		close(errCh)
 	}()
