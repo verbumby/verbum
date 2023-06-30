@@ -2,6 +2,7 @@ package dsl
 
 import (
 	"bufio"
+	"fmt"
 	"io"
 	"regexp"
 	"strings"
@@ -40,7 +41,15 @@ func ParseReader(r io.Reader) (chan dictparser.Article, chan error) {
 
 			if len(t) > 0 && t[0] != '\t' {
 				if hwsSealed {
-					articlesCh <- prepareArticle(hws, body.String())
+					a, err := prepareArticle(hws, body.String())
+					if err != nil {
+						close(articlesCh)
+						errCh <- err
+						close(errCh)
+						return
+					}
+					articlesCh <- a
+
 					hws = hws[0:0]
 					body.Reset()
 					hwsSealed = false
@@ -55,7 +64,15 @@ func ParseReader(r io.Reader) (chan dictparser.Article, chan error) {
 			}
 		}
 
-		articlesCh <- prepareArticle(hws, body.String())
+		a, err := prepareArticle(hws, body.String())
+		if err != nil {
+			close(articlesCh)
+			errCh <- err
+			close(errCh)
+			return
+		}
+
+		articlesCh <- a
 		close(articlesCh)
 		errCh <- sc.Err()
 		close(errCh)
@@ -66,7 +83,7 @@ func ParseReader(r io.Reader) (chan dictparser.Article, chan error) {
 
 var reTags = regexp.MustCompile(`\[.*?\]`)
 
-func prepareArticle(hwsRaw []string, body string) dictparser.Article {
+func prepareArticle(hwsRaw []string, body string) (dictparser.Article, error) {
 	bodyFirstLine := strings.ToLower(firstLine(body))
 	bodyFirstLine = reTags.ReplaceAllLiteralString(bodyFirstLine, "")
 
@@ -88,9 +105,9 @@ func prepareArticle(hwsRaw []string, body string) dictparser.Article {
 		hwsalt = nil
 	}
 
-	// if len(hws) == 0 {
-	// 	return d, fmt.Errorf("no headwords for article %v found", a)
-	// }
+	if len(hws) == 0 {
+		return dictparser.Article{}, fmt.Errorf("no headwords for article %v %s found", hwsRaw, body)
+	}
 
 	return dictparser.Article{
 		Title:        assembleTitleFromHeadwords(hwsRaw),
@@ -98,7 +115,7 @@ func prepareArticle(hwsRaw []string, body string) dictparser.Article {
 		HeadwordsAlt: hwsalt,
 		Phrases:      []string{},
 		Body:         body,
-	}
+	}, nil
 }
 
 func firstLine(s string) string {
