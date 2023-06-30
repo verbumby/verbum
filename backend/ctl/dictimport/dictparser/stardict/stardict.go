@@ -1,46 +1,76 @@
 package stardict
 
 import (
+	"bufio"
+	"bytes"
 	"fmt"
-	"os"
+	"io"
 	"strings"
 
 	"github.com/verbumby/verbum/backend/ctl/dictimport/dictparser"
 )
 
-func LoadArticles(filename string) (dictparser.Dictionary, error) {
-	contentBytes, err := os.ReadFile(filename)
-	if err != nil {
-		return dictparser.Dictionary{}, fmt.Errorf("read file %s: %w", filename, err)
-	}
+func LoadArticles(r io.Reader) (chan dictparser.Article, chan error) {
+	articlesCh := make(chan dictparser.Article, 64)
+	errCh := make(chan error)
 
-	content := string(contentBytes)
-	articles := []dictparser.Article{}
+	go func() {
+		sc := bufio.NewScanner(r)
+		sc.Split(func(data []byte, atEOF bool) (advance int, token []byte, err error) {
+			if atEOF && len(data) == 0 {
+				return 0, nil, nil
+			}
 
-	articleSources := strings.Split(content, "<k>")
-	for _, articleSource := range articleSources {
-		if strings.TrimSpace(articleSource) == "" {
-			continue
-		}
+			delim := []byte("<k>")
 
-		title, body, found := strings.Cut(articleSource, "</k>")
-		if !found {
-			return dictparser.Dictionary{}, fmt.Errorf("expected a key-body separator </k> in article: %s", articleSource)
-		}
+			if i := bytes.Index(data, delim); i >= 0 {
+				return i + len(delim), data[0:i], nil
+			}
 
-		hws := strings.Split(title, ",")
-		for i, hw := range hws {
-			hws[i] = strings.TrimSpace(hw)
-		}
+			if atEOF {
+				return len(data), data, nil
+			}
 
-		articles = append(articles, dictparser.Article{
-			Title:     title,
-			Headwords: hws,
-			Body:      "<k>" + title + "</k>\n" + body,
+			return 0, nil, nil
 		})
+
+		for sc.Scan() {
+			articleSource := sc.Text()
+			if strings.TrimSpace(articleSource) == "" {
+				continue
+			}
+
+			a, err := parseArticle(articleSource)
+			if err != nil {
+				close(articlesCh)
+				errCh <- err
+				close(errCh)
+				return
+			}
+			articlesCh <- a
+		}
+
+		close(articlesCh)
+		close(errCh)
+	}()
+
+	return articlesCh, errCh
+}
+
+func parseArticle(body string) (dictparser.Article, error) {
+	title, body, found := strings.Cut(body, "</k>")
+	if !found {
+		return dictparser.Article{}, fmt.Errorf("expected a key-body separator </k> in article: %s", body)
 	}
 
-	return dictparser.Dictionary{
-		Articles: articles,
+	hws := strings.Split(title, ",")
+	for i, hw := range hws {
+		hws[i] = strings.TrimSpace(hw)
+	}
+
+	return dictparser.Article{
+		Title:     title,
+		Headwords: hws,
+		Body:      "<k>" + title + "</k>\n" + strings.TrimSpace(body),
 	}, nil
 }

@@ -1,71 +1,67 @@
 package html
 
 import (
+	"bufio"
 	"fmt"
 	"html"
-	"log"
-	"os"
+	"io"
 	"regexp"
 	"strings"
 
 	"github.com/verbumby/verbum/backend/ctl/dictimport/dictparser"
 )
 
-func ParseFile(filename string) (dictparser.Dictionary, error) {
-	bytes, err := os.ReadFile(filename)
-	if err != nil {
-		return dictparser.Dictionary{}, fmt.Errorf("read %s: %w", filename, err)
-	}
-	return ParseString(string(bytes))
-}
+func ParseReader(r io.Reader) (chan dictparser.Article, chan error) {
+	articlesCh := make(chan dictparser.Article, 64)
+	errCh := make(chan error)
 
-func ParseString(content string) (dictparser.Dictionary, error) {
-	stylesEnd := "</style>\n\n"
-	stylesEndPos := strings.LastIndex(content, stylesEnd)
-	if stylesEndPos > -1 {
-		content = content[stylesEndPos+len(stylesEnd):]
-	}
+	go func() {
+		sc := bufio.NewScanner(r)
+		body := strings.Builder{}
+		firstArticle := true
 
-	if content[len(content)-1] == '\n' {
-		content = content[:len(content)-1]
-	}
+		for sc.Scan() {
+			if sc.Text() == "<hr/>" {
+				bodyStr := body.String()
 
-	bodies := strings.Split(content, "\n<hr/>\n")
+				if firstArticle {
+					firstArticle = false
 
-	articles := []dictparser.Article{}
-	for _, b := range bodies {
-		id, title, hws, hwsalt, err := parseArticleAttributes(b)
+					stylesEnd := "</style>\n\n"
+					stylesEndPos := strings.LastIndex(bodyStr, stylesEnd)
+					if stylesEndPos > -1 {
+						bodyStr = bodyStr[stylesEndPos+len(stylesEnd):]
+					}
+				}
+
+				a, err := parseArticle(bodyStr)
+				if err != nil {
+					close(articlesCh)
+					errCh <- fmt.Errorf("parse article %s: %w", bodyStr, err)
+					close(errCh)
+					return
+				}
+				articlesCh <- a
+				body.Reset()
+			} else {
+				body.WriteString(sc.Text())
+				body.WriteRune('\n')
+			}
+		}
+
+		a, err := parseArticle(body.String())
 		if err != nil {
-			return dictparser.Dictionary{}, fmt.Errorf("parse article attributes %s: %w", b, err)
+			close(articlesCh)
+			errCh <- fmt.Errorf("parse article %s: %w", body.String(), err)
+			close(errCh)
+			return
 		}
-		b = strings.ReplaceAll(b, "<sup>", "\u200b<sup>")
-		articles = append(articles, dictparser.Article{
-			ID:           id,
-			Title:        title,
-			Headwords:    hws,
-			HeadwordsAlt: hwsalt,
-			Body:         b,
-		})
-	}
+		articlesCh <- a
+		close(articlesCh)
+		close(errCh)
+	}()
 
-	dup := map[string]dictparser.Article{}
-	dups := false
-	for _, a := range articles {
-		if otherA, ok := dup[a.ID]; ok {
-			dups = true
-			log.Printf("duplicate id of article %v and %v", otherA, a)
-		}
-		dup[a.ID] = a
-	}
-
-	if dups {
-		return dictparser.Dictionary{}, fmt.Errorf("there are duplicate ids")
-	}
-
-	return dictparser.Dictionary{
-		IDsProvided: true,
-		Articles:    articles,
-	}, nil
+	return articlesCh, errCh
 }
 
 var (
@@ -73,12 +69,14 @@ var (
 	reIndex = regexp.MustCompile(`<sup>(\d+)</sup>`)
 )
 
-func parseArticleAttributes(body string) (id, title string, hws, hwsalt []string, err error) {
+func parseArticle(body string) (dictparser.Article, error) {
 	ms := reHW.FindAllStringSubmatch(body, -1)
 	if len(ms) == 0 {
-		err = fmt.Errorf("can't find any attributes in %s", body)
-		return
+		return dictparser.Article{}, fmt.Errorf("can't find any attributes in %s", body)
 	}
+
+	hws := []string{}
+	var hwsalt []string
 
 	for _, m := range ms {
 		hw := m[2]
@@ -94,16 +92,15 @@ func parseArticleAttributes(body string) (id, title string, hws, hwsalt []string
 	}
 
 	if len(hws) == 0 {
-		err = fmt.Errorf("no headwords found in %s", body)
-		return
+		return dictparser.Article{}, fmt.Errorf("no headwords found in %s", body)
 	}
 
-	title = strings.Join(hws, ", ")
+	title := strings.Join(hws, ", ")
 
 	hws = expandHeadwords(hws)
 	hwsalt = expandHeadwords(hwsalt)
 
-	id = hws[0]
+	id := hws[0]
 
 	idx := ""
 	if m := reIndex.FindStringSubmatch(body); m != nil {
@@ -115,7 +112,14 @@ func parseArticleAttributes(body string) (id, title string, hws, hwsalt []string
 		title += " " + idx
 	}
 
-	return
+	body = strings.ReplaceAll(body, "<sup>", "\u200b<sup>")
+	return dictparser.Article{
+		ID:           id,
+		Title:        title,
+		Headwords:    hws,
+		HeadwordsAlt: hwsalt,
+		Body:         body,
+	}, nil
 }
 
 var reExpandParentheses = regexp.MustCompile(`\(([^)]*)\)`)

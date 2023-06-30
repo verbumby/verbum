@@ -2,12 +2,12 @@ package storage
 
 import "fmt"
 
-func CreateDictIndex(dictID string, maxResultWindow int) error {
+func CreateDictIndex(dictID string) error {
 	err := Put("/dict-"+dictID, map[string]any{
 		"settings": map[string]any{
 			"number_of_shards":   1,
 			"number_of_replicas": 0,
-			"max_result_window":  maxResultWindow,
+			"max_result_window":  400_000,
 			"analysis": map[string]any{
 				"analyzer": map[string]any{
 					"headword": map[string]any{
@@ -97,7 +97,6 @@ func CreateDictIndex(dictID string, maxResultWindow int) error {
 			},
 		},
 	}, nil)
-
 	if err != nil {
 		return fmt.Errorf("storage put: %w", err)
 	}

@@ -46,13 +46,10 @@ func main() {
 			RunE:  bootstrapServer,
 		},
 		dictimport.Command(),
-		ctl.ReindexCommand(),
 		ctl.ExportCommand(),
 		ctl.MigrateRvblrWrongHeadwords(),
 		ctl.MigrateStardictFixPrefixCase(),
 		ctl.MigrateModifiedAt(),
-		ctl.MigrateTitleToContentCommand(),
-		ctl.MigrateZeroWidthSpaceBeforeSupCommand(),
 	)
 
 	if err := rootCmd.Execute(); err != nil {
