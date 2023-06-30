@@ -2,7 +2,6 @@ package dsl
 
 import (
 	"bufio"
-	"fmt"
 	"io"
 	"regexp"
 	"strings"
@@ -65,23 +64,28 @@ func ParseReader(r io.Reader) (chan dictparser.Article, chan error) {
 	return articlesCh, errCh
 }
 
-func prepareArticle(hwsRaw []string, body string) dictparser.Article {
-	bodyLower := strings.ToLower(body)
-	bodyFirstLine := firstLine(bodyLower)
+var reTags = regexp.MustCompile(`\[.*?\]`)
 
-	hws := []string{}
-	hwsalt := []string{}
+func prepareArticle(hwsRaw []string, body string) dictparser.Article {
+	bodyFirstLine := strings.ToLower(firstLine(body))
+	bodyFirstLine = reTags.ReplaceAllLiteralString(bodyFirstLine, "")
+
+	var hws []string
+	var hwsalt []string
 
 	for _, hw := range prepareHeadwordsForIndexing(hwsRaw) {
 		hwLower := strings.ToLower(hw)
-		ex := fmt.Sprintf("[ex][lang id=1049][c steelblue]%s[/c][/lang][/ex]", hwLower)
-		exContains := strings.Contains(bodyLower, ex)
 		hwInFirstLine := strings.Contains(bodyFirstLine, hwLower)
-		if exContains && !hwInFirstLine {
+		if !hwInFirstLine {
 			hwsalt = append(hwsalt, hw)
 		} else {
 			hws = append(hws, hw)
 		}
+	}
+
+	if len(hws) == 0 {
+		hws = hwsalt
+		hwsalt = nil
 	}
 
 	// if len(hws) == 0 {

@@ -118,8 +118,9 @@ func TestParse(t *testing.T) {
 			hws:   []string{"Milky Way", "the Milky Way"},
 		},
 		{
-			title: "вярхоўны, Вярхоўны Савет БССР, Вярхоўны Суд БССР",
-			hws:   []string{"вярхоўны"},
+			title:  "вярхоўны, Вярхоўны Савет БССР, Вярхоўны Суд БССР",
+			hws:    []string{"вярхоўны"},
+			hwsalt: []string{"Вярхоўны Савет БССР", "Вярхоўны Суд БССР"},
 		},
 	}
 
@@ -138,6 +139,9 @@ func TestParse(t *testing.T) {
 		}
 		if !reflect.DeepEqual(expected.hws, a.Headwords) {
 			t.Errorf("article %d: Headwords don't match: expected %v, got %v", i, expected.hws, a.Headwords)
+		}
+		if !reflect.DeepEqual(expected.hwsalt, a.HeadwordsAlt) {
+			t.Errorf("article %d: HeadwordsAlt don't match: expected %v, got %v", i, expected.hwsalt, a.HeadwordsAlt)
 		}
 		i++
 	}
