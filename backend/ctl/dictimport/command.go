@@ -188,6 +188,7 @@ func (c *commandController) createIndex() error {
 
 func (c *commandController) indexArticles(articlesCh chan dictparser.Article) error {
 	idcache := map[string]int{}
+	iddups := map[string]int{}
 
 	buff := &bytes.Buffer{}
 	i := -1
@@ -224,6 +225,10 @@ func (c *commandController) indexArticles(articlesCh chan dictparser.Article) er
 		id := strings.ToLower(a.Headwords[0])
 		if c.useDictIDs {
 			id = a.ID
+			iddups[id]++
+			if iddups[id] > 1 {
+				return fmt.Errorf("duplicate id: %s", id)
+			}
 		}
 		var err error
 		id, err = c.assembleID(id)
