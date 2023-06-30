@@ -42,11 +42,12 @@ func Command() *cobra.Command {
 }
 
 type commandController struct {
-	dictID  string
-	dict    dictionary.Dictionary
-	indexID string
-	dryrun  bool
-	verbose bool
+	dictID     string
+	dict       dictionary.Dictionary
+	indexID    string
+	dryrun     bool
+	verbose    bool
+	useDictIDs bool
 }
 
 func (c *commandController) Run(cmd *cobra.Command, args []string) {
@@ -124,24 +125,32 @@ func (c *commandController) run() error {
 	}
 	log.Printf("indexing into %s", c.indexID)
 
-	var d dictparser.Dictionary
-
 	filename, err := c.getFilename()
 	if err != nil {
 		return err
 	}
 	format := path.Ext(filename)
 
+	var articlesCh chan dictparser.Article
+	var errCh chan error
+
 	log.Println("processing ", filename)
+	file, err := os.Open(filename)
+	if err != nil {
+		return fmt.Errorf("open %s", filename)
+	}
+	defer file.Close()
+
 	switch format {
 	case ".dsl":
-		d, err = dsl.ParseDSLFile(filename)
+		articlesCh, errCh = dsl.ParseReader(file)
 	case ".html":
-		d, err = html.ParseFile(filename)
+		c.useDictIDs = true
+		articlesCh, errCh = html.ParseReader(file)
 	case ".dict":
 		fallthrough
 	case ".stardict":
-		d, err = stardict.LoadArticles(filename)
+		articlesCh, errCh = stardict.LoadArticles(file)
 	default:
 		err = fmt.Errorf("unsupported format %s", format)
 	}
@@ -149,15 +158,19 @@ func (c *commandController) run() error {
 		return fmt.Errorf("parse dictionary: %w", err)
 	}
 
-	log.Printf("found %d articles in the dictionary", len(d.Articles))
-
-	if err := c.createIndex(len(d.Articles) + 50000); err != nil {
+	if err := c.createIndex(); err != nil {
 		return fmt.Errorf("create index: %w", err)
 	}
 
-	if err := c.indexArticles(d); err != nil {
+	if err := c.indexArticles(articlesCh); err != nil {
 		return fmt.Errorf("index articles: %w", err)
 	}
+
+	if err := <-errCh; err != nil {
+		return err
+	}
+
+	log.Println("all articles indexed")
 
 	if err := c.updateAlias(); err != nil {
 		return fmt.Errorf("update alias: %w", err)
@@ -166,18 +179,20 @@ func (c *commandController) run() error {
 	return nil
 }
 
-func (c *commandController) createIndex(maxResultWindow int) error {
+func (c *commandController) createIndex() error {
 	if c.dryrun {
 		return nil
 	}
-	return storage.CreateDictIndex(c.indexID, maxResultWindow)
+	return storage.CreateDictIndex(c.indexID)
 }
 
-func (c *commandController) indexArticles(d dictparser.Dictionary) error {
+func (c *commandController) indexArticles(articlesCh chan dictparser.Article) error {
 	idcache := map[string]int{}
 
 	buff := &bytes.Buffer{}
-	for i, a := range d.Articles {
+	i := -1
+	for a := range articlesCh {
+		i++
 		suggests := []map[string]interface{}{}
 		prefixes := []map[string]string{}
 
@@ -207,7 +222,7 @@ func (c *commandController) indexArticles(d dictparser.Dictionary) error {
 		}
 
 		id := strings.ToLower(a.Headwords[0])
-		if d.IDsProvided {
+		if c.useDictIDs {
 			id = a.ID
 		}
 		var err error
@@ -270,7 +285,6 @@ func (c *commandController) indexArticles(d dictparser.Dictionary) error {
 	if err := c.flushBuffer(buff); err != nil {
 		return fmt.Errorf("flush buffer: %w", err)
 	}
-	log.Println("all articles indexed")
 
 	return nil
 }

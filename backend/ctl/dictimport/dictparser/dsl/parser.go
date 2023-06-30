@@ -1,67 +1,100 @@
 package dsl
 
 import (
+	"bufio"
 	"fmt"
 	"io"
-	"os"
 	"regexp"
 	"strings"
 
 	"github.com/verbumby/verbum/backend/ctl/dictimport/dictparser"
 )
 
-func ParseDSLFile(filename string) (dictparser.Dictionary, error) {
-	f, err := os.Open(filename)
-	if err != nil {
-		return dictparser.Dictionary{}, fmt.Errorf("open %s file: %w", filename, err)
+func ParseReader(r io.Reader) (chan dictparser.Article, chan error) {
+	sc := bufio.NewScanner(r)
+
+	hws := []string{}
+
+	for sc.Scan() {
+		t := sc.Text()
+		if strings.TrimSpace(t) == "" {
+			continue
+		}
+
+		if t[0] == '#' {
+			continue
+		}
+
+		hws = append(hws, t)
+		break
 	}
-	defer f.Close()
 
-	return ParseDSLReader(filename, f)
-}
+	articlesCh := make(chan dictparser.Article, 64)
+	errCh := make(chan error)
 
-func ParseDSLReader(filename string, r io.Reader) (dictparser.Dictionary, error) {
-	ditf, err := ParseReader(filename, r)
-	if err != nil {
-		return dictparser.Dictionary{}, err
-	}
+	go func() {
+		hwsSealed := false
+		body := strings.Builder{}
 
-	indentRe := regexp.MustCompile(`(?m)^\t`)
+		for sc.Scan() {
+			t := sc.Text()
 
-	d := ditf.(dictparser.Dictionary)
-
-	for i, a := range d.Articles {
-		a.Body = indentRe.ReplaceAllLiteralString(a.Body, "")
-		bodyLower := strings.ToLower(a.Body)
-		bodyFirstLine := firstLine(bodyLower)
-
-		hws := []string{}
-		hwsalt := []string{}
-
-		for _, hw := range prepareHeadwordsForIndexing(a.Headwords) {
-			hwLower := strings.ToLower(hw)
-			ex := fmt.Sprintf("[ex][lang id=1049][c steelblue]%s[/c][/lang][/ex]", hwLower)
-			exContains := strings.Contains(bodyLower, ex)
-			hwInFirstLine := strings.Contains(bodyFirstLine, hwLower)
-			if exContains && !hwInFirstLine {
-				hwsalt = append(hwsalt, hw)
+			if len(t) > 0 && t[0] != '\t' {
+				if hwsSealed {
+					articlesCh <- prepareArticle(hws, body.String())
+					hws = hws[0:0]
+					body.Reset()
+					hwsSealed = false
+				}
+				hws = append(hws, t)
 			} else {
-				hws = append(hws, hw)
+				hwsSealed = true
+				if len(t) > 0 {
+					body.WriteString(t[1:])
+				}
+				body.WriteRune('\n')
 			}
 		}
 
-		if len(hws) == 0 {
-			return d, fmt.Errorf("no headwords for article %v found", a)
-		}
+		articlesCh <- prepareArticle(hws, body.String())
+		close(articlesCh)
+		errCh <- sc.Err()
+		close(errCh)
+	}()
 
-		d.Articles[i].Title = assembleTitleFromHeadwords(a.Headwords)
-		d.Articles[i].Headwords = hws
-		d.Articles[i].HeadwordsAlt = hwsalt
-		d.Articles[i].Phrases = []string{}
-		d.Articles[i].Body = a.Body
+	return articlesCh, errCh
+}
+
+func prepareArticle(hwsRaw []string, body string) dictparser.Article {
+	bodyLower := strings.ToLower(body)
+	bodyFirstLine := firstLine(bodyLower)
+
+	hws := []string{}
+	hwsalt := []string{}
+
+	for _, hw := range prepareHeadwordsForIndexing(hwsRaw) {
+		hwLower := strings.ToLower(hw)
+		ex := fmt.Sprintf("[ex][lang id=1049][c steelblue]%s[/c][/lang][/ex]", hwLower)
+		exContains := strings.Contains(bodyLower, ex)
+		hwInFirstLine := strings.Contains(bodyFirstLine, hwLower)
+		if exContains && !hwInFirstLine {
+			hwsalt = append(hwsalt, hw)
+		} else {
+			hws = append(hws, hw)
+		}
 	}
 
-	return d, nil
+	// if len(hws) == 0 {
+	// 	return d, fmt.Errorf("no headwords for article %v found", a)
+	// }
+
+	return dictparser.Article{
+		Title:        assembleTitleFromHeadwords(hwsRaw),
+		Headwords:    hws,
+		HeadwordsAlt: hwsalt,
+		Phrases:      []string{},
+		Body:         body,
+	}
 }
 
 func firstLine(s string) string {

@@ -3,6 +3,7 @@ package html
 import (
 	_ "embed"
 	"reflect"
+	"strings"
 	"testing"
 )
 
@@ -10,21 +11,10 @@ import (
 var testHTML string
 
 var thirdArticleHTML = `<p><strong class="hw">A</strong>` + "\u200b" + `<sup>2</sup> <v-trx>[eɪ]</v-trx> <em>n.</em> «выда́тна» (<em>самая высокая акадэмічная адзнака ў Англіі</em>);</p>
-<p class="ms-5"><v-ex><em>He got an A in chemistry.</em> Ён атрымаў «выдатна» па хіміі.</v-ex></p>`
+<p class="ms-5"><v-ex><em>He got an A in chemistry.</em> Ён атрымаў «выдатна» па хіміі.</v-ex></p>` + "\n"
 
 func TestParse(t *testing.T) {
-	actual, err := ParseString(testHTML)
-	if err != nil {
-		t.Fatalf("parse string: %v", err)
-	}
-
-	if len(actual.Articles) != 10 {
-		t.Fatalf("expected 10 articles, got %d", len(actual.Articles))
-	}
-
-	if actual.Articles[2].Body != thirdArticleHTML {
-		t.Fatal("the body of 3rd article doesn't match")
-	}
+	articlesCh, errCh := ParseReader(strings.NewReader(testHTML))
 
 	expecteds := []struct {
 		id     string
@@ -85,8 +75,14 @@ func TestParse(t *testing.T) {
 		},
 	}
 
-	for i, expected := range expecteds {
-		a := actual.Articles[i]
+	i := 0
+	for a := range articlesCh {
+		expected := expecteds[i]
+		if i == 2 {
+			if a.Body != thirdArticleHTML {
+				t.Fatal("the body of 3rd article doesn't match")
+			}
+		}
 
 		if expected.id != a.ID {
 			t.Errorf("article %d: ID doesn't match: expected %s, got %s", i, expected.id, a.ID)
@@ -100,5 +96,15 @@ func TestParse(t *testing.T) {
 		if !reflect.DeepEqual(expected.hwsalt, a.HeadwordsAlt) {
 			t.Errorf("article %d: HeadwordsAlt don't match: expected %v, got %v", i, expected.hwsalt, a.HeadwordsAlt)
 		}
+		i++
+	}
+
+	if i != 10 {
+		t.Fatalf("expected 10 articles, got %d", i)
+	}
+
+	err := <-errCh
+	if err != nil {
+		t.Fatal(err)
 	}
 }

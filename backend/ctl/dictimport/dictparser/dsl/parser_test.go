@@ -94,18 +94,7 @@ func TestAssembleTitleFromHeadwords(t *testing.T) {
 var testDSL string
 
 func TestParse(t *testing.T) {
-	actual, err := ParseDSLReader("test.dsl", strings.NewReader(testDSL))
-	if err != nil {
-		t.Error(err)
-	}
-
-	if len(actual.Articles) != 5 {
-		t.Fatalf("expected 5 articles, got %d", len(actual.Articles))
-	}
-
-	if actual.Articles[0].Body != "[m1][p]a[/p] сл[']і[/']зкі як вуг[']о[/']р; выкр[']у[/']тлівы[/m]\n" {
-		t.Fatal("the body of 0 article doesn't match")
-	}
+	articlesCh, errCh := ParseReader(strings.NewReader(testDSL))
 
 	expecteds := []struct {
 		title  string
@@ -134,8 +123,15 @@ func TestParse(t *testing.T) {
 		},
 	}
 
-	for i, expected := range expecteds {
-		a := actual.Articles[i]
+	i := 0
+	for a := range articlesCh {
+		expected := expecteds[i]
+
+		if i == 0 {
+			if a.Body != "[m1][p]a[/p] сл[']і[/']зкі як вуг[']о[/']р; выкр[']у[/']тлівы[/m]\n\n" {
+				t.Fatal("the body of 0 article doesn't match")
+			}
+		}
 
 		if expected.title != a.Title {
 			t.Errorf("article %d: Title doesn't match: expected %s, got %s", i, expected.title, a.Title)
@@ -143,5 +139,15 @@ func TestParse(t *testing.T) {
 		if !reflect.DeepEqual(expected.hws, a.Headwords) {
 			t.Errorf("article %d: Headwords don't match: expected %v, got %v", i, expected.hws, a.Headwords)
 		}
+		i++
+	}
+
+	if i != 5 {
+		t.Fatalf("expected 5 articles, got %d", i)
+	}
+
+	err := <-errCh
+	if err != nil {
+		t.Fatal(err)
 	}
 }
