@@ -16,27 +16,6 @@ import (
 	"golang.org/x/text/unicode/norm"
 )
 
-var transcriptionMap = map[rune]string{
-    'Ћ': "Ө",
-    'Ђ': "i:",
-    '\'': "ˈ",
-    'э': "ɪ",
-    'Ѓ': "ɑ:",
-    '†': "ə",
-    '‡': "æ",
-    '…': "ʌ",
-    'Њ': "ŋ",
-    'ю': "ɜ:",
-    '‚': "ɔ",
-    'ѓ': "u:",
-    '¶': "ʊ",
-    '€': "ɔ",
-    '‹': "dʒ",
-    'Џ': "ʃ",
-    ' ': "tʃ", // ʧ
-    '‰': "ð",
-    'Љ': "ʒ",
-}
 }
 All ⟵ b:Body EOF {
     return b.(string), nil
@@ -79,11 +58,7 @@ Transcription ⟵ "[t]" ps:( EscapeSequence / [^[] )+ "[/t]" {
             if r == utf8.RuneError {
                 return nil, fmt.Errorf("decode rune from %v", p)
             }
-            if rm, ok := transcriptionMap[r]; ok {
-                result.WriteString(rm)
-            } else {
-                result.WriteRune(r)
-            }
+            result.WriteRune(r)
         default:
             return nil, fmt.Errorf("unknown transcription type %T of %v", p, p)
         }
