@@ -16,6 +16,7 @@ func APIDictionariesList(w http.ResponseWriter, rctx *chttp.Context) error {
 		Aliases    []string
 		Title      string
 		HasAbbrevs bool
+		Unlisted   bool
 	}
 	toencode := []dictview{}
 	for _, d := range dictionary.GetAll() {
@@ -24,6 +25,7 @@ func APIDictionariesList(w http.ResponseWriter, rctx *chttp.Context) error {
 			Aliases:    d.Aliases(),
 			Title:      d.Title(),
 			HasAbbrevs: d.Abbrevs() != nil,
+			Unlisted:   d.Unlisted(),
 		})
 	}
 	if err := json.NewEncoder(w).Encode(toencode); err != nil {

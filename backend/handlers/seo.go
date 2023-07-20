@@ -4,6 +4,7 @@ import (
 	"encoding/xml"
 	"fmt"
 	"net/http"
+	"net/url"
 	"strconv"
 
 	"github.com/go-chi/chi/v5"
@@ -29,7 +30,7 @@ Sitemap: %s/sitemap-index.xml
 
 // SitemapIndex handles sitemap index request
 func SitemapIndex(w http.ResponseWriter, rctx *chttp.Context) error {
-	dicts := dictionary.GetAll()
+	dicts := dictionary.GetAllListed()
 
 	type Sitemap struct {
 		Loc string `xml:"loc"`
@@ -98,8 +99,8 @@ func SitemapOfDictionary(w http.ResponseWriter, rctx *chttp.Context) error {
 			} `json:"hits"`
 		} `json:"hits"`
 	}{}
-	url := fmt.Sprintf("/dict-%s/_search", d.IndexID())
-	if err := storage.Post(url, reqbody, &respbody); err != nil {
+	surl := fmt.Sprintf("/dict-%s/_search", d.IndexID())
+	if err := storage.Post(surl, reqbody, &respbody); err != nil {
 		return fmt.Errorf("sotrage post: %w", err)
 	}
 
@@ -120,7 +121,7 @@ func SitemapOfDictionary(w http.ResponseWriter, rctx *chttp.Context) error {
 
 	for _, a := range respbody.Hits.Hits {
 		result.URL = append(result.URL, urlt{
-			Loc:        fmt.Sprintf("%s/%s/%s", viper.GetString("https.canonicalAddr"), d.ID(), a.ID),
+			Loc:        fmt.Sprintf("%s/%s/%s", viper.GetString("https.canonicalAddr"), d.ID(), url.PathEscape(a.ID)),
 			Changefreq: "yearly",
 			Lastmod:    a.Source.ModifiedAt,
 		})

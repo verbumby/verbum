@@ -40,6 +40,10 @@ export function useDicts(): DictsState {
     return useSelector<DictsState>(state => state.dicts)
 }
 
+export function useListedDicts(): DictsState {
+    return useDicts().filter(d => !d.Unlisted)
+}
+
 export function useDict(id: string): [Dict, boolean] {
     let d = useDicts().find(d => d.ID === id)
     if (d) {

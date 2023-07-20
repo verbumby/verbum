@@ -21,7 +21,7 @@ func Slugify(s string) string {
 		log.Printf("failed to remove diacritics when slugifying %s", s)
 	}
 
-	r := regexp.MustCompile("[^a-zA-Z0-9-]")
+	r := regexp.MustCompile("[^a-zA-Z0-9'-]")
 	s = r.ReplaceAllString(s, "-")
 
 	for strings.Contains(s, "--") {

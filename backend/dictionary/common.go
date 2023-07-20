@@ -8,6 +8,7 @@ type Common struct {
 	abbrevs                 *Abbrevs
 	prependContentWithTitle bool
 	slugifier               string
+	unlisted                bool
 }
 
 func (d Common) ID() string {
@@ -39,4 +40,8 @@ func (d Common) PrependContentWithTitle() bool {
 
 func (d Common) Slugifier() string {
 	return d.slugifier
+}
+
+func (d Common) Unlisted() bool {
+	return d.unlisted
 }

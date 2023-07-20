@@ -59,11 +59,16 @@ textarea, input[type="text"], input[type="button"], input[type="submit"] {
 .article p {margin: 0;}
 .article.rvblr p {margin: 0.5rem 0;}
 .article.hsbm img {max-width:100%;}
+.article.grammardb em {color:darkgrey;}
 .article .buttons {float: right;}
 .article .buttons .btn {color: darkgray; padding: 0; outline: none; box-shadow: none; font-size:20px;}
 .article highlight {background-color: #ffffc6; box-shadow: 0 0 5px 3px #ffffc6; z-index: -100; position: relative;}
 .article v-abbr {color: darkgreen;}
 .article v-abbr[data-bs-toggle="tooltip"] {cursor: default;}
+.article table, .article tr, .article td, .article th { border: 1px solid lightgrey; vertical-align: top; padding: 0.2rem;}
+.article th {text-align:center; font-weight: normal; background-color: #d3d3d31f;}
+.article table {border-collapse: collapse; margin: 0.5em 0;}
+
 
 .logo {color:darkgrey; padding: 6px 0; font-weight: bold;}
 .logo h1 {display: inline; font-weight: bold;}

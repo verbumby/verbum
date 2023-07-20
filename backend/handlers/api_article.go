@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"net/url"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/verbumby/verbum/backend/article"
@@ -19,6 +20,11 @@ func APIArticle(w http.ResponseWriter, rctx *chttp.Context) error {
 	}
 
 	aID := chi.URLParam(rctx.R, "article")
+	var err error
+	aID, err = url.QueryUnescape(aID)
+	if err != nil {
+		return fmt.Errorf("unescape aID: %w", err)
+	}
 
 	a, err := article.Get(d, aID)
 	if err != nil {

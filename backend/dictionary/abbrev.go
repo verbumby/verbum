@@ -95,7 +95,9 @@ func loadDSLAbbrevs(filename string) (*Abbrevs, error) {
 			}
 			kr[0] = unicode.ToUpper(kr[0])
 			k = string(kr)
-			cache[k] = c
+			if _, ok := cache[k]; !ok {
+				cache[k] = c
+			}
 		}
 	}
 

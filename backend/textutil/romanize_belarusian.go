@@ -40,7 +40,7 @@ var tableBelarusian = map[rune]interface{}{
 	'Е':  makeSoftBelarusianVowelRomanizer("Je", "ie"),
 	'е':  makeSoftBelarusianVowelRomanizer("je", "ie"),
 	'Ё':  makeSoftBelarusianVowelRomanizer("Jo", "io"),
-	'ё':  makeSoftBelarusianVowelRomanizer("Jo", "io"),
+	'ё':  makeSoftBelarusianVowelRomanizer("jo", "io"),
 	'Ж':  "Zh",
 	'ж':  "zh",
 	'З':  'Z',
@@ -92,10 +92,26 @@ var tableBelarusian = map[rune]interface{}{
 	'Ю':  makeSoftBelarusianVowelRomanizer("Ju", "iu"),
 	'ю':  makeSoftBelarusianVowelRomanizer("ju", "iu"),
 	'Я':  makeSoftBelarusianVowelRomanizer("Ja", "ia"),
-	'я':  makeSoftBelarusianVowelRomanizer("Ja", "ia"),
+	'я':  makeSoftBelarusianVowelRomanizer("ja", "ia"),
 }
 
-// RomanizeBelarusian romanizes belarusian text
+var tableBelarusianV2 map[rune]any = map[rune]any{}
+
+func init() {
+	for k, v := range tableBelarusian {
+		tableBelarusianV2[k] = v
+	}
+
+	tableBelarusianV2['Х'] = "Kh"
+	tableBelarusianV2['х'] = "kh"
+	tableBelarusianV2['Ь'] = "'"
+	tableBelarusianV2['ь'] = "'"
+}
+
 func RomanizeBelarusian(s string) string {
 	return romanize(s, tableBelarusian)
+}
+
+func RomanizeBelarusianV2(s string) string {
+	return romanize(s, tableBelarusianV2)
 }

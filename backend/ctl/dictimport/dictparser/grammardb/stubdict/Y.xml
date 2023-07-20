@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Wordlist>
+    <Paradigm pdgId="1140009" lemma="ку-ка-рэ+-ку" tag="Y">
+        <Variant id="a" lemma="ку-ка-рэ+-ку" slouniki="piskunou2012:87903" pravapis="A1957, A2008">
+            <Form tag="" slouniki="sbm2012,krapivabr2012">ку-ка-рэ+-ку</Form>
+            <Form tag="" slouniki="sbm2012,krapivabr2012,tsbm1984">ку-ка-рэ-ку+</Form>
+        </Variant>
+    </Paradigm>
+</Wordlist>

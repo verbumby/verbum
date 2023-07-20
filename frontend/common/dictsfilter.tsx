@@ -2,7 +2,7 @@ import * as React from 'react'
 import { useEffect, useState, useCallback } from 'react'
 
 import { IconFunnel } from '../icons'
-import { useDicts } from '../store'
+import { useListedDicts } from '../store'
 
 type DictsFilterProps = {
     state: string
@@ -10,7 +10,7 @@ type DictsFilterProps = {
 }
 
 const DictsFilter: React.FC<DictsFilterProps> = ({ state, onChange }) => {
-    const dicts = useDicts()
+    const dicts = useListedDicts()
     let checkedDicts: string[]
     if (state == '') {
         checkedDicts = dicts.map(d => d.ID)
