@@ -4,7 +4,7 @@ import { useDispatch } from '../../common'
 import { Link, useRouteMatch } from 'react-router-dom'
 import { Helmet } from "react-helmet"
 
-import { useDicts, useSearchState } from '../../store'
+import { useListedDicts, useSearchState } from '../../store'
 import { search, searchReset, useURLSearch } from './search'
 import { DictsList } from './DictsList'
 import { ArticleView, PaginationView, SearchControl } from '../../common'
@@ -15,7 +15,7 @@ export const IndexPage: React.FC = () => {
     const q = urlSearch.get('q')
     const inDicts = urlSearch.get('in')
     const page = urlSearch.get('page')
-    const dicts = useDicts()
+    const dicts = useListedDicts()
     const searchState = useSearchState()
 
     const dispatch = useDispatch()

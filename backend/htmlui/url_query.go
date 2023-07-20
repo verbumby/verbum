@@ -188,7 +188,7 @@ type InDictsQueryParam struct {
 
 // NewStringQueryParam creates new StringURLQueryParam
 func NewInDictsQueryParam(name string) *InDictsQueryParam {
-	dicts := dictionary.GetAll()
+	dicts := dictionary.GetAllListed()
 	def := make([]string, len(dicts))
 	for i, d := range dicts {
 		def[i] = d.ID()

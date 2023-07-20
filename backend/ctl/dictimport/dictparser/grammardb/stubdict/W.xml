@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Wordlist>
+    <Paradigm pdgId="1210811" lemma="гато+ў" tag="W">
+        <Variant id="a" lemma="гато+ў" pravapis="A1957,A2008">
+            <Form tag="" slouniki="krapivabr2012">гато+ў</Form>
+            <Form tag="" slouniki="sbm2012,krapivabr2012">гато+ва</Form>
+            <Form tag="" slouniki="tsblm1996,tsbm1984,sbm2012,krapivabr2012">гато+вы</Form>
+        </Variant>
+    </Paradigm>
+    <Paradigm pdgId="1210812" lemma="гугу+" tag="W">
+        <Variant id="a" lemma="гугу+" pravapis="A1957,A2008">
+            <Form tag="" slouniki="sbm2012,tsblm1996,krapivabr2012">гугу+</Form>
+        </Variant>
+    </Paradigm>
+</Wordlist>

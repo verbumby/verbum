@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"log"
 	"os"
-	"path"
 	"regexp"
 	"strconv"
 	"strings"
@@ -16,6 +15,7 @@ import (
 	"github.com/spf13/viper"
 	"github.com/verbumby/verbum/backend/ctl/dictimport/dictparser"
 	"github.com/verbumby/verbum/backend/ctl/dictimport/dictparser/dsl"
+	"github.com/verbumby/verbum/backend/ctl/dictimport/dictparser/grammardb"
 	"github.com/verbumby/verbum/backend/ctl/dictimport/dictparser/html"
 	"github.com/verbumby/verbum/backend/ctl/dictimport/dictparser/stardict"
 	"github.com/verbumby/verbum/backend/dictionary"
@@ -61,6 +61,10 @@ func (c *commandController) Run(cmd *cobra.Command, args []string) {
 
 func (c *commandController) getFilename() (string, error) {
 	dir := viper.GetString("dicts.repo.path") + "/" + c.dictID
+
+	if c.dictID == "grammardb" {
+		return dir, nil
+	}
 
 	files, err := os.ReadDir(dir)
 	if err != nil {
@@ -129,30 +133,46 @@ func (c *commandController) run() error {
 	if err != nil {
 		return err
 	}
-	format := path.Ext(filename)
+	log.Println("processing ", filename)
 
 	var articlesCh chan dictparser.Article
 	var errCh chan error
 
-	log.Println("processing ", filename)
-	file, err := os.Open(filename)
-	if err != nil {
-		return fmt.Errorf("open %s", filename)
-	}
-	defer file.Close()
+	switch c.dict.(type) {
+	case dictionary.GrammarDB:
+		articlesCh, errCh = grammardb.ParseDirectory(filename)
+		c.useDictIDs = true
 
-	switch format {
-	case ".dsl":
+	case dictionary.DSL:
+		file, err := os.Open(filename)
+		if err != nil {
+			return fmt.Errorf("open %s", filename)
+		}
+		defer file.Close()
+
 		articlesCh, errCh = dsl.ParseReader(file)
-	case ".html":
+
+	case dictionary.HTML:
+		file, err := os.Open(filename)
+		if err != nil {
+			return fmt.Errorf("open %s", filename)
+		}
+		defer file.Close()
+
 		c.useDictIDs = true
 		articlesCh, errCh = html.ParseReader(file)
-	case ".dict":
-		fallthrough
-	case ".stardict":
+
+	case dictionary.Stardict:
+		file, err := os.Open(filename)
+		if err != nil {
+			return fmt.Errorf("open %s", filename)
+		}
+		defer file.Close()
+
 		articlesCh, errCh = stardict.LoadArticles(file)
+
 	default:
-		err = fmt.Errorf("unsupported format %s", format)
+		err = fmt.Errorf("unsupported format %T", c.dict)
 	}
 	if err != nil {
 		return fmt.Errorf("parse dictionary: %w", err)
@@ -300,6 +320,8 @@ func (c *commandController) assembleID(firstHW string) (string, error) {
 	switch c.dict.Slugifier() {
 	case "belarusian":
 		romanized = textutil.RomanizeBelarusian(hw)
+	case "none":
+		return firstHW, nil
 	case "russian":
 		romanized = textutil.RomanizeRussian(hw)
 	case "polish":

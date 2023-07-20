@@ -40,7 +40,7 @@ const IconCopyLinkController: React.FC<{ a: Article }> = ({ a }) => {
 
     const onClick = () => {
         const { protocol, host } = window.location
-        navigator.clipboard.writeText(`${protocol}//${host}/${a.DictionaryID}/${a.ID}`)
+        navigator.clipboard.writeText(`${protocol}//${host}/${a.DictionaryID}/${encodeURIComponent(a.ID)}`)
         setActivated(true)
         window.setTimeout(() => { setActivated(false) }, 1500)
     }

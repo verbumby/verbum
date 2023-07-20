@@ -3,4 +3,5 @@ export type Dict = {
     Aliases: string[]
     Title: string
 	HasAbbrevs: boolean
+    Unlisted: boolean
 }

@@ -22,6 +22,16 @@ func GetAll() []Dictionary {
 	return dictionaries
 }
 
+func GetAllListed() []Dictionary {
+	result := []Dictionary{}
+	for _, d := range GetAll() {
+		if !d.Unlisted() {
+			result = append(result, d)
+		}
+	}
+	return result
+}
+
 func GetByID(id string) Dictionary {
 	for _, d := range dictionaries {
 		if id == d.ID() {
