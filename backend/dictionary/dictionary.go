@@ -124,6 +124,7 @@ func InitDictionaries() error {
 			indexID:   "rus-bel",
 			title:     "Руска-беларускі слоўнік НАН Беларусі, 8-е выданне (другая версія, правапіс да 2008 г.)",
 			slugifier: "russian",
+			unlisted:  true,
 		},
 	})
 	dictionaries = append(dictionaries, DSL{
