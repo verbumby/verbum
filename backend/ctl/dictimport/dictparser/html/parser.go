@@ -52,8 +52,8 @@ func ParseReader(r io.Reader) (chan dictparser.Article, chan error) {
 }
 
 var (
-	reHW    = regexp.MustCompile(`<strong class="(hw(?:-alt)?)">([^<]*)</strong>`)
-	reIndex = regexp.MustCompile(`<sup>(\d+)</sup>`)
+	reHW    = regexp.MustCompile(`<(?:strong|b) class="(hw(?:-alt)?)"[^>]*>([^<]*)</(?:strong|b)>`)
+	reIndex = regexp.MustCompile(`<sup[^>]*>([\dIVX-]+)</sup>`)
 )
 
 func parseArticle(body string) (dictparser.Article, error) {
@@ -69,6 +69,7 @@ func parseArticle(body string) (dictparser.Article, error) {
 		hw := m[2]
 		hw = html.UnescapeString(hw)
 		hw = strings.TrimSpace(hw)
+		hw = strings.ReplaceAll(hw, "\u0301", "")
 
 		switch m[1] {
 		case "hw":
@@ -99,7 +100,7 @@ func parseArticle(body string) (dictparser.Article, error) {
 		title += " " + idx
 	}
 
-	body = strings.ReplaceAll(body, "<sup>", "\u200b<sup>")
+	body = strings.ReplaceAll(body, "<sup", "\u200b<sup")
 	return dictparser.Article{
 		ID:           id,
 		Title:        title,
