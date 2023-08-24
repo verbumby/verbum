@@ -104,6 +104,21 @@ func InitDictionaries() error {
 		},
 	})
 
+	abbrevs, err = loadDSLAbbrevs("rbs10/rbs10_abbr.txt")
+	if err != nil {
+		return fmt.Errorf("load rbs10 abbrevs: %w", err)
+	}
+	dictionaries = append(dictionaries, HTML{
+		Common: Common{
+			id:        "rbs10",
+			indexID:   "rbs10",
+			title:     "Руска-беларускі слоўнік НАН Беларусі, 10-е выданне (актуальны правапіс)",
+			abbrevs:   abbrevs,
+			slugifier: "none",
+			unlisted:  true,
+		},
+	})
+
 	abbrevs, err = loadDSLAbbrevs("rbs/rbs_abrv.dsl")
 	if err != nil {
 		return fmt.Errorf("load rbs abbrevs: %w", err)
