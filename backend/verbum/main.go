@@ -48,9 +48,6 @@ func main() {
 		dictimport.Command(),
 		ctl.CleanupCommand(),
 		ctl.ExportCommand(),
-		ctl.MigrateRvblrWrongHeadwords(),
-		ctl.MigrateStardictFixPrefixCase(),
-		ctl.MigrateModifiedAt(),
 	)
 
 	if err := rootCmd.Execute(); err != nil {

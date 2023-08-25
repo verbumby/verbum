@@ -15,7 +15,6 @@ import (
 	"github.com/spf13/viper"
 	"github.com/verbumby/verbum/backend/ctl/dictimport/dictparser"
 	"github.com/verbumby/verbum/backend/ctl/dictimport/dictparser/dsl"
-	"github.com/verbumby/verbum/backend/ctl/dictimport/dictparser/grammardb"
 	"github.com/verbumby/verbum/backend/ctl/dictimport/dictparser/html"
 	"github.com/verbumby/verbum/backend/ctl/dictimport/dictparser/stardict"
 	"github.com/verbumby/verbum/backend/dictionary"
@@ -61,10 +60,6 @@ func (c *commandController) Run(cmd *cobra.Command, args []string) {
 
 func (c *commandController) getFilename() (string, error) {
 	dir := viper.GetString("dicts.repo.path") + "/" + c.dictID
-
-	if c.dictID == "grammardb" {
-		return dir, nil
-	}
 
 	files, err := os.ReadDir(dir)
 	if err != nil {
@@ -139,10 +134,6 @@ func (c *commandController) run() error {
 	var errCh chan error
 
 	switch c.dict.(type) {
-	case dictionary.GrammarDB:
-		articlesCh, errCh = grammardb.ParseDirectory(filename)
-		c.useDictIDs = true
-
 	case dictionary.DSL:
 		file, err := os.Open(filename)
 		if err != nil {
