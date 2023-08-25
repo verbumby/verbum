@@ -46,6 +46,7 @@ func main() {
 			RunE:  bootstrapServer,
 		},
 		dictimport.Command(),
+		ctl.CleanupCommand(),
 		ctl.ExportCommand(),
 		ctl.MigrateRvblrWrongHeadwords(),
 		ctl.MigrateStardictFixPrefixCase(),
