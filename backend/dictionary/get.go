@@ -41,7 +41,7 @@ func GetByID(id string) Dictionary {
 	return nil
 }
 
-var reIndexToID = regexp.MustCompile(`(?m)^dict-(.+?)(!?-\d+)?$`)
+var reIndexToID = regexp.MustCompile(`^(?:dict|sugg)-(.+?)(!?-\d+)?$`)
 
 func GetByIndex(index string) Dictionary {
 	match := reIndexToID.FindStringSubmatch(index)
