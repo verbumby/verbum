@@ -108,3 +108,36 @@ func CreateDictIndex(dictID string) error {
 	}
 	return nil
 }
+
+func CreateSuggestIndex(dictID string) error {
+	err := Put("/sugg-"+dictID, map[string]any{
+		"settings": map[string]any{
+			"number_of_shards":   1,
+			"number_of_replicas": 0,
+			"analysis": map[string]any{
+				"analyzer": map[string]any{
+					"headword": map[string]any{
+						"filter":    []string{"lowercase"},
+						"type":      "custom",
+						"tokenizer": "keyword",
+					},
+				},
+			},
+		},
+		"mappings": map[string]any{
+			"properties": map[string]any{
+				"Suggest": map[string]any{
+					"type":                         "completion",
+					"analyzer":                     "headword",
+					"preserve_separators":          true,
+					"preserve_position_increments": true,
+					"max_input_length":             50,
+				},
+			},
+		},
+	}, nil)
+	if err != nil {
+		return fmt.Errorf("storage put: %w", err)
+	}
+	return nil
+}

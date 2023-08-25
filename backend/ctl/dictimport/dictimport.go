@@ -192,8 +192,12 @@ func (c *commandController) run() error {
 
 	log.Println("all articles indexed")
 
-	if err := c.updateAlias(); err != nil {
+	if err := c.updateDictAlias(); err != nil {
 		return fmt.Errorf("update alias: %w", err)
+	}
+
+	if err := c.updateSuggAlias(); err != nil {
+		return fmt.Errorf("update sugg alias: %w", err)
 	}
 
 	return nil
@@ -203,7 +207,15 @@ func (c *commandController) createIndex() error {
 	if c.dryrun {
 		return nil
 	}
-	return storage.CreateDictIndex(c.indexID)
+	if err := storage.CreateDictIndex(c.indexID); err != nil {
+		return fmt.Errorf("create dict index %s: %w", c.indexID, err)
+	}
+
+	if err := storage.CreateSuggestIndex(c.indexID); err != nil {
+		return fmt.Errorf("create suggest index %s: %w", c.indexID, err)
+	}
+
+	return nil
 }
 
 func (c *commandController) indexArticles(articlesCh chan dictparser.Article) error {
@@ -211,25 +223,38 @@ func (c *commandController) indexArticles(articlesCh chan dictparser.Article) er
 	iddups := map[string]int{}
 
 	buff := &bytes.Buffer{}
+	buffjenc := json.NewEncoder(buff)
+	buffsugg := &bytes.Buffer{}
+	buffsuggjenc := json.NewEncoder(buffsugg)
 	i := -1
 	for a := range articlesCh {
 		i++
 		suggests := []map[string]interface{}{}
 		prefixes := []map[string]string{}
 
-		for _, phw := range a.HeadwordsAlt {
-			suggests = append(suggests, map[string]interface{}{
-				"input":  phw,
-				"weight": 2,
-			})
+		hwl := []struct {
+			weight int
+			list   []string
+		}{
+			{weight: 2, list: a.HeadwordsAlt},
+			{weight: 4, list: a.Headwords},
+		}
+
+		for _, hws := range hwl {
+			for _, hw := range hws.list {
+				s := map[string]any{"input": hw, "weight": hws.weight}
+				suggests = append(suggests, s)
+
+				if err := buffsuggjenc.Encode(map[string]any{"create": map[string]any{}}); err != nil {
+					return fmt.Errorf("encode bulk insert meta for hw %s: %w", hw, err)
+				}
+				if err := buffsuggjenc.Encode(map[string]any{"Suggest": s}); err != nil {
+					return fmt.Errorf("encode hw %s doc: %w", hw, err)
+				}
+			}
 		}
 
 		for _, phw := range a.Headwords {
-			suggests = append(suggests, map[string]interface{}{
-				"input":  phw,
-				"weight": 4,
-			})
-
 			prefix := map[string]string{}
 			j := 0
 			for _, r := range phw {
@@ -280,13 +305,11 @@ func (c *commandController) indexArticles(articlesCh chan dictparser.Article) er
 			"ModifiedAt":  time.Now().UTC().Format(time.RFC3339),
 		}
 
-		if err := json.NewEncoder(buff).Encode(map[string]interface{}{
-			"create": map[string]any{"_id": id},
-		}); err != nil {
+		if err := buffjenc.Encode(map[string]any{"create": map[string]any{"_id": id}}); err != nil {
 			return fmt.Errorf("encode bulk insert meta for id %s: %w", id, err)
 		}
 
-		if err := json.NewEncoder(buff).Encode(doc); err != nil {
+		if err := buffjenc.Encode(doc); err != nil {
 			return fmt.Errorf("encode %s doc: %w", id, err)
 		}
 
@@ -302,8 +325,12 @@ func (c *commandController) indexArticles(articlesCh chan dictparser.Article) er
 			if err := c.flushBuffer(buff); err != nil {
 				return fmt.Errorf("flush buffer: %w", err)
 			}
+			if err := c.flushSuggBuffer(buffsugg); err != nil {
+				return fmt.Errorf("flush sugg buffer: %w", err)
+			}
 			log.Printf("%d articles indexed", i)
-			buff = &bytes.Buffer{}
+			buff.Reset()
+			buffsugg.Reset()
 		}
 	}
 
@@ -349,9 +376,29 @@ func (c *commandController) flushBuffer(buff *bytes.Buffer) error {
 	return resp.Error()
 }
 
-func (c *commandController) updateAlias() error {
-	alias := "dict-" + c.dictID
-	path := fmt.Sprintf("/dict-%s-*", c.dictID)
+func (c *commandController) flushSuggBuffer(buff *bytes.Buffer) error {
+	if c.dryrun {
+		return nil
+	}
+
+	var resp storage.BulkResponse
+	if err := storage.Post("/sugg-"+c.indexID+"/_bulk", buff, &resp); err != nil {
+		return fmt.Errorf("bulk post to storage: %w", err)
+	}
+	return resp.Error()
+}
+
+func (c *commandController) updateDictAlias() error {
+	return c.updateAlias("dict-")
+}
+
+func (c *commandController) updateSuggAlias() error {
+	return c.updateAlias("sugg-")
+}
+
+func (c *commandController) updateAlias(prefix string) error {
+	alias := prefix + c.dictID
+	path := fmt.Sprintf("/%s%s-*", prefix, c.dictID)
 	resp := map[string]struct {
 		Aliases map[string]any `json:"aliases"`
 	}{}
@@ -367,7 +414,7 @@ func (c *commandController) updateAlias() error {
 		}
 	}
 
-	toBeAdded := "dict-" + c.indexID
+	toBeAdded := prefix + c.indexID
 
 	log.Printf("removing %v and adding %s to %s alias", toBeRemoved, toBeAdded, alias)
 

@@ -16,6 +16,7 @@ type Dictionary interface {
 	PrependContentWithTitle() bool
 	Slugifier() string
 	Unlisted() bool
+	SuggIndex() string
 }
 
 var dictionaries []Dictionary
@@ -110,12 +111,13 @@ func InitDictionaries() error {
 	}
 	dictionaries = append(dictionaries, HTML{
 		Common: Common{
-			id:        "rbs10",
-			indexID:   "rbs10",
-			title:     "Руска-беларускі слоўнік НАН Беларусі, 10-е выданне (актуальны правапіс)",
-			abbrevs:   abbrevs,
-			slugifier: "none",
-			unlisted:  true,
+			id:                     "rbs10",
+			indexID:                "rbs10",
+			title:                  "Руска-беларускі слоўнік НАН Беларусі, 10-е выданне (актуальны правапіс)",
+			abbrevs:                abbrevs,
+			slugifier:              "none",
+			unlisted:               true,
+			suggsFromSeparateIndex: true,
 		},
 	})
 

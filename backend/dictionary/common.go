@@ -9,6 +9,7 @@ type Common struct {
 	prependContentWithTitle bool
 	slugifier               string
 	unlisted                bool
+	suggsFromSeparateIndex  bool
 }
 
 func (d Common) ID() string {
@@ -20,6 +21,14 @@ func (d Common) IndexID() string {
 		return d.id
 	}
 	return d.indexID
+}
+
+func (d Common) SuggIndex() string {
+	if d.suggsFromSeparateIndex {
+		return "sugg-" + d.IndexID()
+	} else {
+		return "dict-" + d.IndexID()
+	}
 }
 
 func (d Common) Aliases() []string {
