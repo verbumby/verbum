@@ -47,14 +47,6 @@ fe-build:
 	cp frontend/index.html frontend/dist/index.html
 	cp frontend/favicon.png frontend/dist/public/favicon.png
 
-.PHONY: es-sync
-es-sync:
-	aws --profile verbum s3 sync s3://verbumby-backup elastic/backup --delete
-
-.PHONY: es-restore-last
-es-restore-last:
-	elastic/restore-last-backup.bash
-
 .PHONY: es-run
 es-run:
 	elastic/elasticsearch/bin/elasticsearch \
@@ -64,10 +56,4 @@ es-run:
 		-Ecluster.name=verbum-dev \
 		-Enode.name=verbum-1 \
 		-Ecluster.initial_master_nodes=verbum-1 \
-		-Epath.data=$$(pwd)/elastic/data \
-		-Epath.repo=$$(pwd)/elastic/backup
-
-.PHONY: es-setup-backup-repo
-es-setup-backup-repo:
-	elastic/setup-snapshot.bash $$(pwd)/elastic/backup
-
+		-Epath.data=$$(pwd)/elastic/data
