@@ -220,7 +220,6 @@ func (c *commandController) indexArticles(articlesCh chan dictparser.Article) er
 	i := -1
 	for a := range articlesCh {
 		i++
-		suggests := []map[string]interface{}{}
 		prefixes := []map[string]string{}
 
 		hwl := []struct {
@@ -234,7 +233,6 @@ func (c *commandController) indexArticles(articlesCh chan dictparser.Article) er
 		for _, hws := range hwl {
 			for _, hw := range hws.list {
 				s := map[string]any{"input": hw, "weight": hws.weight}
-				suggests = append(suggests, s)
 
 				if err := buffsuggjenc.Encode(map[string]any{"create": map[string]any{}}); err != nil {
 					return fmt.Errorf("encode bulk insert meta for hw %s: %w", hw, err)
@@ -290,7 +288,6 @@ func (c *commandController) indexArticles(articlesCh chan dictparser.Article) er
 			"Headword":    a.Headwords,
 			"HeadwordAlt": a.HeadwordsAlt,
 			"Phrases":     a.Phrases,
-			"Suggest":     suggests,
 			"Prefix":      prefixes,
 			"Content":     content,
 			"ModifiedAt":  time.Now().UTC().Format(time.RFC3339),

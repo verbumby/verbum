@@ -86,13 +86,6 @@ func CreateDictIndex(dictID string) error {
 						"Letter5": map[string]any{"type": "keyword"},
 					},
 				},
-				"Suggest": map[string]any{
-					"type":                         "completion",
-					"analyzer":                     "headword",
-					"preserve_separators":          true,
-					"preserve_position_increments": true,
-					"max_input_length":             50,
-				},
 				"Content": map[string]any{
 					"type":     "text",
 					"analyzer": "body",
