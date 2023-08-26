@@ -20,7 +20,6 @@ import (
 	"github.com/verbumby/verbum/backend/dictionary"
 	"github.com/verbumby/verbum/backend/handlers"
 	"github.com/verbumby/verbum/backend/serverrender"
-	"github.com/verbumby/verbum/backend/storage"
 	"github.com/verbumby/verbum/frontend"
 )
 
@@ -116,7 +115,6 @@ func bootstrapServer(cmd *cobra.Command, args []string) error {
 	r.Mount("/", chttp.MakeHandler(serverRenderer.ServeHTTP))
 
 	chttp.InitCookieManager()
-	go storage.PruneOldBackups()
 
 	if viper.IsSet("http.addr") {
 		go func() {
