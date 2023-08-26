@@ -31,9 +31,9 @@ func APISuggest(w http.ResponseWriter, rctx *chttp.Context) error {
 	inDictsStr := ""
 	for _, d := range inDicts {
 		if len(inDictsStr) == 0 {
-			inDictsStr = dictionary.Get(d).SuggIndex()
+			inDictsStr = "sugg-" + dictionary.Get(d).IndexID()
 		} else {
-			inDictsStr += "," + dictionary.Get(d).SuggIndex()
+			inDictsStr += ",sugg-" + dictionary.Get(d).IndexID()
 		}
 	}
 
