@@ -52,7 +52,7 @@ func ParseReader(r io.Reader) (chan dictparser.Article, chan error) {
 }
 
 var (
-	reHW    = regexp.MustCompile(`<(?:strong|b) class="(hw(?:-alt)?)"[^>]*>([^<]*)</(?:strong|b)>`)
+	reHW    = regexp.MustCompile(`<(?:strong|b) class="(hw(?:-alt)?)"(?: id="([^"]+)")?[^>]*>([^<]*)</(?:strong|b)>`)
 	reIndex = regexp.MustCompile(`<sup[^>]*>([\dIVX-]+)</sup>`)
 )
 
@@ -63,11 +63,11 @@ func parseArticle(body string) (dictparser.Article, error) {
 	}
 
 	hws := []string{}
+	idAttr := ""
 	var hwsalt []string
 
 	for _, m := range ms {
-		hw := m[2]
-		hw = html.UnescapeString(hw)
+		hw := m[3]
 		hw = strings.TrimSpace(hw)
 		hw = strings.ReplaceAll(hw, "\u0301", "")
 
@@ -76,6 +76,10 @@ func parseArticle(body string) (dictparser.Article, error) {
 			hws = append(hws, hw)
 		case "hw-alt":
 			hwsalt = append(hwsalt, hw)
+		}
+
+		if m[2] != "" {
+			idAttr = m[2]
 		}
 	}
 
@@ -88,16 +92,26 @@ func parseArticle(body string) (dictparser.Article, error) {
 	hws = expandHeadwords(hws)
 	hwsalt = expandHeadwords(hwsalt)
 
-	id := hws[0]
-
-	idx := ""
-	if m := reIndex.FindStringSubmatch(body); m != nil {
-		idx = m[1]
+	for i := range hws {
+		hws[i] = html.UnescapeString(hws[i])
+	}
+	for i := range hwsalt {
+		hwsalt[i] = html.UnescapeString(hwsalt[i])
 	}
 
-	if idx != "" {
-		id += "-" + idx
-		title += " " + idx
+	id := idAttr
+	if id == "" {
+		id = hws[0]
+
+		idx := ""
+		if m := reIndex.FindStringSubmatch(body); m != nil {
+			idx = m[1]
+		}
+
+		if idx != "" {
+			id += "-" + idx
+			title += " " + idx
+		}
 	}
 
 	body = strings.ReplaceAll(body, "<sup", "\u200b<sup")
