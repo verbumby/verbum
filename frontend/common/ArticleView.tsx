@@ -90,9 +90,9 @@ export const ArticleView: React.FC<ArticleViewProps> = ({ a, showExternalButton,
                 <IconCopyLinkController a={a} />
             </div>
             <div dangerouslySetInnerHTML={{ __html: a.Content }} />
-            {showSource && (<div className="source">
+            {showSource && (<div className="source"><p>
                 {dicts.find(d => d.ID === a.DictionaryID).Title}
-            </div>)}
+            </p></div>)}
         </div>
     )
 }
