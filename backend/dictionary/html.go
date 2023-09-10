@@ -3,6 +3,7 @@ package dictionary
 import (
 	"html/template"
 	"regexp"
+	"strings"
 
 	"golang.org/x/text/unicode/norm"
 )
@@ -22,6 +23,8 @@ func (d HTML) ToHTML(content string) template.HTML {
 	content = renderAbbrevs(content, d.abbrevs)
 
 	content = norm.NFC.String(content)
+
+	content = strings.ReplaceAll(content, `href="#`, `target="_blank" href="/`+d.ID()+`/`)
 
 	return template.HTML(content)
 }
