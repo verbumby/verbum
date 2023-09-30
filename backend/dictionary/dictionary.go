@@ -100,7 +100,6 @@ func InitDictionaries() error {
 			title:     "Руска-беларускі слоўнік НАН Беларусі, 10-е выданне (актуальны правапіс)",
 			abbrevs:   abbrevs,
 			slugifier: "none",
-			unlisted:  true,
 		},
 	})
 
@@ -116,6 +115,7 @@ func InitDictionaries() error {
 			abbrevs:                 abbrevs,
 			prependContentWithTitle: true,
 			slugifier:               "russian",
+			unlisted:                true,
 		},
 	})
 	dictionaries = append(dictionaries, Stardict{
