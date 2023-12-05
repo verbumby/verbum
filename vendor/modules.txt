@@ -26,9 +26,6 @@ github.com/go-sourcemap/sourcemap/internal/base64vlq
 # github.com/google/pprof v0.0.0-20230207041349-798e818bf904
 ## explicit; go 1.19
 github.com/google/pprof/profile
-# github.com/gorilla/securecookie v1.1.2
-## explicit; go 1.20
-github.com/gorilla/securecookie
 # github.com/hashicorp/hcl v1.0.0
 ## explicit
 github.com/hashicorp/hcl

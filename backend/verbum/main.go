@@ -60,14 +60,6 @@ func initConfig() error {
 	viper.SetDefault("https.keyFile", "key.pem")
 	viper.SetDefault("https.canonicalAddr", "https://localhost:8443")
 
-	viper.SetDefault("cookie.name", "vadm")
-	viper.SetDefault("cookie.nameState", "vadm-state")
-	viper.SetDefault("cookie.maxAge", 604800)
-
-	viper.SetDefault("oauth.endpointToken", "https://www.googleapis.com/oauth2/v4/token")
-	viper.SetDefault("oauth.endpointUserinfo", "https://www.googleapis.com/oauth2/v3/userinfo")
-	viper.SetDefault("oauth.endpointAuth", "https://accounts.google.com/o/oauth2/v2/auth")
-
 	viper.SetDefault("elastic.addr", "http://localhost:9200")
 
 	viper.SetDefault("images.path", "./images")
@@ -113,8 +105,6 @@ func bootstrapServer(cmd *cobra.Command, args []string) error {
 		return fmt.Errorf("create server renderer: %w", err)
 	}
 	r.Mount("/", chttp.MakeHandler(serverRenderer.ServeHTTP))
-
-	chttp.InitCookieManager()
 
 	if viper.IsSet("http.addr") {
 		go func() {

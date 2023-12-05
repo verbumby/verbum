@@ -26,5 +26,5 @@ func MakeHandler(f HandlerFunc, middlewares ...middlewareFunc) http.HandlerFunc 
 
 // MakeAPIHandler creates api handler with content type and auth middlewares
 func MakeAPIHandler(f HandlerFunc) http.HandlerFunc {
-	return MakeHandler(f, ContentTypeJSONMiddleware, AuthMiddleware)
+	return MakeHandler(f, ContentTypeJSONMiddleware)
 }

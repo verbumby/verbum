@@ -5,7 +5,6 @@ go 1.21
 require (
 	github.com/dop251/goja v0.0.0-20231027120936-b396bb4c349d
 	github.com/go-chi/chi/v5 v5.0.10
-	github.com/gorilla/securecookie v1.1.2
 	github.com/spf13/cobra v1.8.0
 	github.com/spf13/viper v1.17.0
 	golang.org/x/net v0.19.0
