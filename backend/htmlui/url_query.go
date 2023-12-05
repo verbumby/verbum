@@ -2,10 +2,9 @@ package htmlui
 
 import (
 	"net/url"
+	"slices"
 	"strconv"
 	"strings"
-
-	"golang.org/x/exp/slices"
 
 	"github.com/verbumby/verbum/backend/dictionary"
 )
