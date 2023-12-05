@@ -2,8 +2,7 @@ package dictionary
 
 import (
 	"regexp"
-
-	"golang.org/x/exp/slices"
+	"slices"
 )
 
 func Get(idOrAlias string) Dictionary {
