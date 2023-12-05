@@ -12,7 +12,7 @@ import (
 	"strings"
 	"unicode"
 
-	"github.com/spf13/viper"
+	"github.com/verbumby/verbum/backend/config"
 )
 
 type Abbrevs struct {
@@ -30,7 +30,7 @@ type Abbrev struct {
 }
 
 func loadDSLAbbrevs(filename string) (*Abbrevs, error) {
-	filename = viper.GetString("dicts.repo.path") + "/" + filename
+	filename = config.DictsRepoPath() + "/" + filename
 	f, err := os.Open(filename)
 	if err != nil {
 		return nil, fmt.Errorf("open %s: %w", filename, err)

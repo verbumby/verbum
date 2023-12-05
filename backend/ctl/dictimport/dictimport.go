@@ -12,7 +12,7 @@ import (
 	"time"
 
 	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
+	"github.com/verbumby/verbum/backend/config"
 	"github.com/verbumby/verbum/backend/ctl/dictimport/dictparser"
 	"github.com/verbumby/verbum/backend/ctl/dictimport/dictparser/dsl"
 	"github.com/verbumby/verbum/backend/ctl/dictimport/dictparser/html"
@@ -59,7 +59,7 @@ func (c *commandController) Run(cmd *cobra.Command, args []string) {
 }
 
 func (c *commandController) getFilename() (string, error) {
-	dir := viper.GetString("dicts.repo.path") + "/" + c.dictID
+	dir := config.DictsRepoPath() + "/" + c.dictID
 
 	files, err := os.ReadDir(dir)
 	if err != nil {

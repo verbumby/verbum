@@ -8,7 +8,7 @@ import (
 	"strconv"
 
 	"github.com/go-chi/chi/v5"
-	"github.com/spf13/viper"
+	"github.com/verbumby/verbum/backend/config"
 	"github.com/verbumby/verbum/backend/dictionary"
 	"github.com/verbumby/verbum/backend/storage"
 
@@ -20,7 +20,7 @@ func RobotsTXT(w http.ResponseWriter, rctx *chttp.Context) error {
 	tmpl := `User-agent: *
 Sitemap: %s/sitemap-index.xml
 `
-	body := fmt.Sprintf(tmpl, viper.GetString("https.canonicalAddr"))
+	body := fmt.Sprintf(tmpl, config.HTTPSCanonicalAddr())
 	w.Header().Set("Content-Type", "text/plain")
 	if _, err := w.Write([]byte(body)); err != nil {
 		return fmt.Errorf("write response body: %w", err)
@@ -56,7 +56,7 @@ func SitemapIndex(w http.ResponseWriter, rctx *chttp.Context) error {
 
 		for i := uint64(0); i <= countresp.Count/10000; i++ {
 			result.Sitemap = append(result.Sitemap, Sitemap{
-				Loc: fmt.Sprintf("%s/%s/sitemap-%d.xml", viper.GetString("https.canonicalAddr"), d.ID(), i),
+				Loc: fmt.Sprintf("%s/%s/sitemap-%d.xml", config.HTTPSCanonicalAddr(), d.ID(), i),
 			})
 		}
 		// fmt.Println(d.ID)
@@ -121,7 +121,7 @@ func SitemapOfDictionary(w http.ResponseWriter, rctx *chttp.Context) error {
 
 	for _, a := range respbody.Hits.Hits {
 		result.URL = append(result.URL, urlt{
-			Loc:        fmt.Sprintf("%s/%s/%s", viper.GetString("https.canonicalAddr"), d.ID(), url.PathEscape(a.ID)),
+			Loc:        fmt.Sprintf("%s/%s/%s", config.HTTPSCanonicalAddr(), d.ID(), url.PathEscape(a.ID)),
 			Changefreq: "yearly",
 			Lastmod:    a.Source.ModifiedAt,
 		})

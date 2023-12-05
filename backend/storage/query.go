@@ -5,11 +5,10 @@ import (
 	"errors"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"net/http"
 	"strings"
 
-	"github.com/spf13/viper"
+	"github.com/verbumby/verbum/backend/config"
 )
 
 var ErrNotFound = errors.New("not found")
@@ -32,7 +31,7 @@ func Query(method, path string, reqbody, respbody interface{}) error {
 		reqbodystream = strings.NewReader(string(reqbodybytes))
 	}
 
-	url := viper.GetString("elastic.addr") + path
+	url := config.ElasticAddr() + path
 	req, err := http.NewRequest(method, url, reqbodystream)
 	if err != nil {
 		return fmt.Errorf("new request: %w", err)
@@ -52,7 +51,7 @@ func Query(method, path string, reqbody, respbody interface{}) error {
 			return ErrNotFound
 		}
 
-		respbytes, _ := ioutil.ReadAll(resp.Body)
+		respbytes, _ := io.ReadAll(resp.Body)
 		return fmt.Errorf(
 			"invalid response code: expected %d, got %d: %s",
 			http.StatusOK,
