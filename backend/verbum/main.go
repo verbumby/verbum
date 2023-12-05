@@ -13,8 +13,8 @@ import (
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
 	"github.com/verbumby/verbum/backend/chttp"
+	"github.com/verbumby/verbum/backend/config"
 	"github.com/verbumby/verbum/backend/ctl"
 	"github.com/verbumby/verbum/backend/ctl/dictimport"
 	"github.com/verbumby/verbum/backend/dictionary"
@@ -24,8 +24,8 @@ import (
 )
 
 func main() {
-	if err := initConfig(); err != nil {
-		log.Fatal(err)
+	if err := config.ReadConfig(); err != nil {
+		log.Fatal("read config: ", err)
 	}
 
 	if err := dictionary.InitDictionaries(); err != nil {
@@ -54,37 +54,6 @@ func main() {
 	}
 }
 
-func initConfig() error {
-	viper.SetDefault("https.addr", ":8443")
-	viper.SetDefault("https.certFile", "cert.pem")
-	viper.SetDefault("https.keyFile", "key.pem")
-	viper.SetDefault("https.canonicalAddr", "https://localhost:8443")
-
-	viper.SetDefault("cookie.name", "vadm")
-	viper.SetDefault("cookie.nameState", "vadm-state")
-	viper.SetDefault("cookie.maxAge", 604800)
-
-	viper.SetDefault("oauth.endpointToken", "https://www.googleapis.com/oauth2/v4/token")
-	viper.SetDefault("oauth.endpointUserinfo", "https://www.googleapis.com/oauth2/v3/userinfo")
-	viper.SetDefault("oauth.endpointAuth", "https://accounts.google.com/o/oauth2/v2/auth")
-
-	viper.SetDefault("elastic.addr", "http://localhost:9200")
-
-	viper.SetDefault("images.path", "./images")
-
-	viper.SetDefault("dicts.repo.path", "../slouniki")
-
-	viper.SetConfigName("config")
-	viper.AddConfigPath(".")
-	viper.AddConfigPath("/usr/local/share/verbum")
-
-	if err := viper.ReadInConfig(); err != nil {
-		return fmt.Errorf("read in config: %w", err)
-	}
-
-	return nil
-}
-
 func bootstrapServer(cmd *cobra.Command, args []string) error {
 	r := chi.NewRouter()
 	r.Use(middleware.Recoverer)
@@ -97,7 +66,7 @@ func bootstrapServer(cmd *cobra.Command, args []string) error {
 	r.HandleFunc("/api/search", chttp.MakeHandler(handlers.APISearch, chttp.ContentTypeJSONMiddleware))
 	r.HandleFunc("/api/suggest", chttp.MakeHandler(handlers.APISuggest, chttp.ContentTypeJSONMiddleware))
 	r.Mount("/api/", chttp.MakeHandler(handlers.APINotFound))
-	imagesServer := http.FileServer(http.Dir(viper.GetString("images.path")))
+	imagesServer := http.FileServer(http.Dir(config.ImagesPath()))
 	r.Mount("/images/", http.StripPrefix("/images", imagesServer))
 	staticsServer := http.FileServer(http.FS(frontend.DistPublic))
 	staticsHander := http.StripPrefix("/statics", staticsServer)
@@ -114,31 +83,29 @@ func bootstrapServer(cmd *cobra.Command, args []string) error {
 	}
 	r.Mount("/", chttp.MakeHandler(serverRenderer.ServeHTTP))
 
-	chttp.InitCookieManager()
-
-	if viper.IsSet("http.addr") {
+	if config.HTTPAddr() != "" {
 		go func() {
-			statics := http.FileServer(http.Dir(viper.GetString("http.acmeChallengeRoot")))
+			statics := http.FileServer(http.Dir(config.HTTPAcmeChallengeRoot()))
 			r := http.NewServeMux()
 			r.Handle("/.well-known/acme-challenge/", http.StripPrefix("/.well-known/acme-challenge/", statics))
 			r.HandleFunc("/", handlers.ToHTTPS)
-			log.Printf("listening on %s", viper.GetString("http.addr"))
-			http.ListenAndServe(viper.GetString("http.addr"), r)
+			log.Printf("listening on %s", config.HTTPAddr())
+			http.ListenAndServe(config.HTTPAddr(), r)
 		}()
 	}
 
 	publicServer := &http.Server{
-		Addr:         viper.GetString("https.addr"),
+		Addr:         config.HTTPSAddr(),
 		Handler:      r,
 		ReadTimeout:  30 * time.Second,
 		WriteTimeout: 90 * time.Second,
 	}
 
 	go func() {
-		log.Printf("listening on %s", viper.GetString("https.addr"))
+		log.Printf("listening on %s", config.HTTPSAddr())
 		err := publicServer.ListenAndServeTLS(
-			viper.GetString("https.certFile"),
-			viper.GetString("https.keyFile"),
+			config.HTTPSCertFile(),
+			config.HTTPSKeyFile(),
 		)
 		if err != http.ErrServerClosed {
 			log.Printf("public server listen and serve tls: %v", err)
