@@ -46,6 +46,7 @@ fe-build:
 
 	cp frontend/index.html frontend/dist/index.html
 	cp frontend/favicon.png frontend/dist/public/favicon.png
+	cp frontend/favicon_squared.png frontend/dist/public/favicon_squared.png
 
 .PHONY: es-run
 es-run:
