@@ -11,7 +11,7 @@ import { Helmet } from "react-helmet"
 const App: React.FC = () => (
     <>
         <Helmet>
-            <meta property="og:image" content="/statics/favicon.png?v1" />
+            <meta property="og:image" content="/statics/favicon_squared.png" />
         </Helmet>
         <LoadingBarContainer />
         <div className="content">
