@@ -9,6 +9,7 @@ export interface VerbumAPIClient {
     getArticle(dictID: string, articleID: string): Promise<Article>
     getLetterFilter(dictID: string, prefix: string): Promise<LetterFilter>
     getDictArticles(dictID: string, prefix: string, page: number): Promise<ArticleList>
+    getIndexHTML(): Promise<string>
 }
 
 declare global {
@@ -25,6 +26,7 @@ export abstract class VerbumAPIClientImpl implements VerbumAPIClient {
     }
 
     abstract call<T>(path: string): Promise<T>
+    abstract callString(path: string): Promise<string>
 
     async getDictionaries(): Promise<Dict[]> {
         return this.call<Dict[]>('/api/dictionaries')
@@ -63,5 +65,9 @@ export abstract class VerbumAPIClientImpl implements VerbumAPIClient {
     async getAbbr(dictID: string): Promise<Abbrevs> {
         dictID = encodeURIComponent(dictID)
         return this.call<Abbrevs>(`/api/dictionaries/${dictID}/abbrevs`)
+    }
+
+    async getIndexHTML(): Promise<string> {
+        return this.callString(`/api/index.html`)
     }
 }

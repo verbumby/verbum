@@ -1,40 +1,41 @@
-import 'fastestsmallesttextencoderdecoder'
-import 'core-js/actual/url'
-import 'core-js/actual/url-search-params'
-
 import * as React from 'react'
 import { renderToString } from 'react-dom/server'
+import Koa from 'koa'
 import { matchPath, StaticRouter, StaticRouterContext } from 'react-router'
 import { configureStore } from '@reduxjs/toolkit'
 import { Provider } from 'react-redux'
 import { Helmet } from "react-helmet";
 
-import { VerbumAPIClientV8Bridge } from './verbum/v8_bridge'
+import { VerbumAPIClientServer } from './verbum/server'
 import { App } from './App'
 import { rootReducer } from './store'
 import { routes } from './routes'
 
-declare global {
-    var verbumV8Bridge: (url: string) => any
-    var render: any
-    var console: Console
+globalThis.verbumClient = new VerbumAPIClientServer({ apiURL: 'http://127.0.0.1:8080' })
+
+let indexhtml: string
+async function getIndexHTML(): Promise<string> {
+    if (indexhtml) {
+        return Promise.resolve(indexhtml)
+    }
+
+    const r = await verbumClient.getIndexHTML()
+    indexhtml = r
+    return Promise.resolve(indexhtml)
 }
 
-globalThis.verbumClient = new VerbumAPIClientV8Bridge({ bridge: verbumV8Bridge })
-
-export async function render(rawUrl: string) {
-    let url = new URL(rawUrl)
-
+const k = new Koa()
+k.use(async ctx => {
     const store = configureStore({
         reducer: rootReducer,
     })
 
     const promises: Promise<void>[] = []
     routes.some(route => {
-        const match = matchPath(url.pathname, route)
+        const match = matchPath(ctx.URL.pathname, route)
         if (match) {
             for (const dataLoader of route.dataLoaders) {
-                promises.push(store.dispatch(dataLoader(match, url.searchParams)))
+                promises.push(store.dispatch(dataLoader(match, ctx.URL.searchParams)))
             }
         }
         return match
@@ -44,10 +45,9 @@ export async function render(rawUrl: string) {
     const preloadedState = store.getState()
 
     const routerContext: StaticRouterContext = {}
-    const location = { pathname: url.pathname, search: url.search }
     const reactRendered = renderToString(
         <Provider store={store}>
-            <StaticRouter location={location} context={routerContext}>
+            <StaticRouter location={ctx.url} context={routerContext}>
                 <App />
             </StaticRouter>
         </Provider>
@@ -55,20 +55,21 @@ export async function render(rawUrl: string) {
     const helmet = Helmet.renderStatic()
 
     if (routerContext.url) {
-		return {
-			Location: routerContext.url
-		}
+        ctx.status = 301
+        ctx.redirect(routerContext.url)
+        return
+    }
+    if (routerContext.statusCode) {
+        ctx.response.status = routerContext.statusCode
     }
 
-	return{
-		StatusCode: routerContext.statusCode ? routerContext.statusCode : -1,
-		Title: helmet.title.toString(),
-		Meta: helmet.meta.toString(),
-		State: JSON.stringify(preloadedState).replace(/</g, '\\u003c'),
-		Body: reactRendered,
-	}
-}
+    let body = await getIndexHTML()
+    body = body.replace('HEAD_TITLE_PLACEHOLDER', helmet.title.toString())
+    body = body.replace('HEAD_META_PLACEHOLDER', helmet.meta.toString())
+    body = body.replace('PRELOADED_STATE_PLACEHOLDER', JSON.stringify(preloadedState).replace(/</g, '\\u003c'))
+    body = body.replace('BODY_PLACEHOLDER', reactRendered)
+    ctx.body = body
+})
 
-globalThis.render = render
-
-globalThis.console = {log: () => {}} as Console
+console.log('listening on 127.0.0.1:8079')
+k.listen(8079, '127.0.0.1')
