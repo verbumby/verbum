@@ -44,8 +44,8 @@ func ReadConfig() error {
 	config.HTTPS.Addr = ":8443"
 	config.HTTPS.CertFile = "cert.pem"
 	config.HTTPS.KeyFile = "key.pem"
-	config.HTTPS.CanonicalAddr = "https://localhost:8443"
-	config.Elastic.Addr = "http://localhost:9200"
+	config.HTTPS.CanonicalAddr = "https://127.0.0.1:8443"
+	config.Elastic.Addr = "http://127.0.0.1:9200"
 	config.Images.Path = "./images"
 	config.Dicts.Repo.Path = "../slouniki"
 

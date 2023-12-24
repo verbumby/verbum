@@ -5,7 +5,10 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"net/http/httputil"
+	"net/url"
 	"os"
+	"os/exec"
 	"os/signal"
 	"syscall"
 	"time"
@@ -19,7 +22,6 @@ import (
 	"github.com/verbumby/verbum/backend/ctl/dictimport"
 	"github.com/verbumby/verbum/backend/dictionary"
 	"github.com/verbumby/verbum/backend/handlers"
-	"github.com/verbumby/verbum/backend/serverrender"
 	"github.com/verbumby/verbum/frontend"
 )
 
@@ -65,6 +67,7 @@ func bootstrapServer(cmd *cobra.Command, args []string) error {
 	r.HandleFunc("/api/dictionaries", chttp.MakeHandler(handlers.APIDictionariesList, chttp.ContentTypeJSONMiddleware))
 	r.HandleFunc("/api/search", chttp.MakeHandler(handlers.APISearch, chttp.ContentTypeJSONMiddleware))
 	r.HandleFunc("/api/suggest", chttp.MakeHandler(handlers.APISuggest, chttp.ContentTypeJSONMiddleware))
+	r.HandleFunc("/api/index.html", chttp.MakeHandler(handlers.IndexHTML))
 	r.Mount("/api/", chttp.MakeHandler(handlers.APINotFound))
 	imagesServer := http.FileServer(http.Dir(config.ImagesPath()))
 	r.Mount("/images/", http.StripPrefix("/images", imagesServer))
@@ -77,11 +80,8 @@ func bootstrapServer(cmd *cobra.Command, args []string) error {
 	r.HandleFunc("/robots.txt", chttp.MakeHandler(handlers.RobotsTXT))
 	r.HandleFunc("/sitemap-index.xml", chttp.MakeHandler(handlers.SitemapIndex))
 	r.HandleFunc("/{dictionary:[a-z0-9-]+}/sitemap-{n:[0-9]+}.xml", chttp.MakeHandler(handlers.SitemapOfDictionary))
-	serverRenderer, err := serverrender.New(r)
-	if err != nil {
-		return fmt.Errorf("create server renderer: %w", err)
-	}
-	r.Mount("/", chttp.MakeHandler(serverRenderer.ServeHTTP))
+	rp := httputil.NewSingleHostReverseProxy(&url.URL{Scheme: "http", Host: "127.0.0.1:8079"})
+	r.Mount("/", rp)
 
 	if config.HTTPAddr() != "" {
 		go func() {
@@ -93,6 +93,21 @@ func bootstrapServer(cmd *cobra.Command, args []string) error {
 			http.ListenAndServe(config.HTTPAddr(), r)
 		}()
 	}
+
+	privateServer := &http.Server{
+		Addr:         "127.0.0.1:8080",
+		Handler:      r,
+		ReadTimeout:  30 * time.Second,
+		WriteTimeout: 90 * time.Second,
+	}
+
+	go func() {
+		log.Printf("listening on %s", privateServer.Addr)
+		err := privateServer.ListenAndServe()
+		if err != http.ErrServerClosed {
+			log.Printf("private server listen and serve: %v", err)
+		}
+	}()
 
 	publicServer := &http.Server{
 		Addr:         config.HTTPSAddr(),
@@ -112,6 +127,19 @@ func bootstrapServer(cmd *cobra.Command, args []string) error {
 		}
 	}()
 
+	node := exec.Command("node", "-")
+	serverJS, err := frontend.Dist.Open("dist/server.js")
+	if err != nil {
+		return fmt.Errorf("open server.js: %w", err)
+	}
+	defer serverJS.Close()
+	node.Stdin = serverJS
+	node.Stdout = os.Stdout
+	node.Stderr = os.Stderr
+	if err := node.Start(); err != nil {
+		return fmt.Errorf("start server.js: %w", err)
+	}
+
 	termChan := make(chan os.Signal, 1)
 	signal.Notify(termChan, syscall.SIGINT, syscall.SIGTERM)
 	<-termChan
@@ -121,8 +149,16 @@ func bootstrapServer(cmd *cobra.Command, args []string) error {
 	shutdownCtx, shutdownCancel := context.WithTimeout(context.Background(), 30*time.Second)
 	defer shutdownCancel()
 
+	if err := node.Wait(); err != nil {
+		log.Printf("server.js terminated: %v", err)
+	}
+
 	if err := publicServer.Shutdown(shutdownCtx); err != nil {
 		log.Printf("public server shutdown: %v", err)
+	}
+
+	if err := privateServer.Shutdown(shutdownCtx); err != nil {
+		log.Printf("private server shutdown: %v", err)
 	}
 
 	log.Println("see ya!")

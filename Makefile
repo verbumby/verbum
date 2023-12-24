@@ -26,9 +26,8 @@ fe-build:
 		--define:global='globalThis' \
 		--minify \
 		--sourcemap=inline \
-		--format=iife \
-		--platform=browser \
-		--target=es2017 \
+		--platform=node \
+		--target=node20 \
 		--outdir=frontend/dist
 	rm frontend/dist/server.css
 
