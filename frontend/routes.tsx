@@ -10,24 +10,24 @@ type DataLoader = (match: match, urlSearch: URLSearchParams) => AppThunkAction
 
 type Route = {
     path: string,
-    component: React.ComponentType<any>,
+    children: React.ReactElement,
     dataLoaders: DataLoader[],
 }
 
 export const routes: Route[] = [
     {
         path: '/:dictID/:articleID',
-        component: ArticlePage,
+        children: <ArticlePage />,
         dataLoaders: [dictsFetch, articleFetchServer],
     },
     {
         path: '/:dictID',
-        component: DictPage,
+        children: <DictPage />,
         dataLoaders: [dictsFetch, letterFilterFetchServer, dictArticlesFetchServer, abbrFetchServer],
     },
     {
         path: '/',
-        component: IndexPage,
+        children: <IndexPage />,
         dataLoaders: [dictsFetch, searchServer],
     },
 ]
