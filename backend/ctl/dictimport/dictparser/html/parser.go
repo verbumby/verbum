@@ -18,6 +18,7 @@ func ParseReader(r io.Reader) (chan dictparser.Article, chan error) {
 
 	go func() {
 		sc := bufio.NewScanner(r)
+		sc.Buffer(make([]byte, 16*1024), bufio.MaxScanTokenSize*4)
 		sc.Split(textutil.GetDelimSplitFunc("<hr/>\n"))
 		firstArticle := true
 
