@@ -128,6 +128,12 @@ OpenTag ⟵ '[' tnitf:Tagname targ:Tagarg? ']' {
     case "*":
         return ``, nil
     case "ref":
+        if targ == nil {
+            targ = ""
+        }
+        if c.globalStore["renderRefs"].(bool) {
+            return fmt.Sprintf(`<a href="#%s">`, targ), nil
+        }
         return ``, nil
     default:
         return "unknowntag:"+tn, nil
@@ -164,6 +170,9 @@ CloseTag ⟵ "[/" tnitf:Tagname ']' {
     case "*":
         return ``, nil
     case "ref":
+        if c.globalStore["renderRefs"].(bool) {
+            return `</a>`, nil
+        }
         return ``, nil
     default:
         return "unknowntag:"+tn, nil
