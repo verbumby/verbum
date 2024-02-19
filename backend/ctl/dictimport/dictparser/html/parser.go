@@ -10,6 +10,7 @@ import (
 
 	"github.com/verbumby/verbum/backend/ctl/dictimport/dictparser"
 	"github.com/verbumby/verbum/backend/textutil"
+	"golang.org/x/text/unicode/norm"
 )
 
 func ParseReader(r io.Reader) (chan dictparser.Article, chan error) {
@@ -70,7 +71,9 @@ func parseArticle(body string) (dictparser.Article, error) {
 	for _, m := range ms {
 		hw := m[3]
 		hw = strings.TrimSpace(hw)
+		hw = norm.NFD.String(hw)
 		hw = strings.ReplaceAll(hw, "\u0301", "")
+		hw = norm.NFC.String(hw)
 
 		switch m[1] {
 		case "hw":
