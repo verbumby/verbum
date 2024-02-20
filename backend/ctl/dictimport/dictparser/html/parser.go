@@ -73,6 +73,8 @@ func parseArticle(body string) (dictparser.Article, error) {
 		hw = strings.TrimSpace(hw)
 		hw = norm.NFD.String(hw)
 		hw = strings.ReplaceAll(hw, "\u0301", "")
+		hw = strings.ReplaceAll(hw, "\u0311", "")
+		hw = strings.ReplaceAll(hw, "\u030c", "")
 		hw = norm.NFC.String(hw)
 
 		switch m[1] {
