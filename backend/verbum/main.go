@@ -49,6 +49,7 @@ func main() {
 		dictimport.Command(),
 		ctl.CleanupCommand(),
 		ctl.ExportCommand(),
+		ctl.FixCommand(),
 	)
 
 	if err := rootCmd.Execute(); err != nil {

@@ -90,9 +90,6 @@ func CreateDictIndex(dictID string) error {
 					"type":     "text",
 					"analyzer": "body",
 				},
-				"ModifiedAt": map[string]any{
-					"type": "date",
-				},
 			},
 		},
 	}, nil)

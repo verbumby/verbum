@@ -9,7 +9,6 @@ import (
 	"regexp"
 	"strconv"
 	"strings"
-	"time"
 
 	"github.com/spf13/cobra"
 	"github.com/verbumby/verbum/backend/config"
@@ -290,7 +289,6 @@ func (c *commandController) indexArticles(articlesCh chan dictparser.Article) er
 			"Phrases":     a.Phrases,
 			"Prefix":      prefixes,
 			"Content":     content,
-			"ModifiedAt":  time.Now().UTC().Format(time.RFC3339),
 		}
 
 		if err := buffjenc.Encode(map[string]any{"create": map[string]any{"_id": id}}); err != nil {
