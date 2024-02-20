@@ -13,9 +13,9 @@ type Dictionary interface {
 	Title() string
 	ToHTML(content string) template.HTML
 	Abbrevs() *Abbrevs
-	PrependContentWithTitle() bool
 	Slugifier() string
 	Unlisted() bool
+	IndexSettings() IndexSettings
 }
 
 var dictionaries []Dictionary
@@ -52,12 +52,14 @@ func InitDictionaries() error {
 	}
 	dictionaries = append(dictionaries, DSL{
 		Common: Common{
-			id:                      "hsbm",
-			indexID:                 "hsbm",
-			title:                   "Гістарычны слоўнік беларускай мовы (1982–2017, часткова)",
-			abbrevs:                 abbrevs,
-			prependContentWithTitle: true,
-			slugifier:               "russian",
+			id:        "hsbm",
+			indexID:   "hsbm",
+			title:     "Гістарычны слоўнік беларускай мовы (1982–2017, часткова)",
+			abbrevs:   abbrevs,
+			slugifier: "russian",
+			indexSettings: IndexSettings{
+				PrependContentWithTitle: true,
+			},
 		},
 	})
 
@@ -65,13 +67,16 @@ func InitDictionaries() error {
 	if err != nil {
 		return fmt.Errorf("load esbm abbrevs: %w", err)
 	}
-	dictionaries = append(dictionaries, DSL{
+	dictionaries = append(dictionaries, HTML{
 		Common: Common{
 			id:        "esbm",
 			indexID:   "esbm",
 			title:     "Этымалагічны слоўнік беларускай мовы (1978-2017)",
 			abbrevs:   abbrevs,
-			slugifier: "belarusian",
+			slugifier: "none",
+			indexSettings: IndexSettings{
+				ConvertHeadwordsToLowercase: true,
+			},
 		},
 	})
 
@@ -109,13 +114,15 @@ func InitDictionaries() error {
 	}
 	dictionaries = append(dictionaries, DSL{
 		Common: Common{
-			id:                      "rbs",
-			indexID:                 "rbs",
-			title:                   "Руска-беларускі слоўнік НАН Беларусі, 8-е выданне (правапіс да 2008 г.)",
-			abbrevs:                 abbrevs,
-			prependContentWithTitle: true,
-			slugifier:               "russian",
-			unlisted:                true,
+			id:        "rbs",
+			indexID:   "rbs",
+			title:     "Руска-беларускі слоўнік НАН Беларусі, 8-е выданне (правапіс да 2008 г.)",
+			abbrevs:   abbrevs,
+			slugifier: "russian",
+			unlisted:  true,
+			indexSettings: IndexSettings{
+				PrependContentWithTitle: true,
+			},
 		},
 	})
 	dictionaries = append(dictionaries, Stardict{
@@ -129,11 +136,13 @@ func InitDictionaries() error {
 	})
 	dictionaries = append(dictionaries, DSL{
 		Common: Common{
-			id:                      "abs",
-			indexID:                 "abs",
-			aliases:                 []string{"pashkievich"},
-			title:                   "Ангельска-беларускі слоўнік (В. Пашкевіч, 2006, класічны правапіс)",
-			prependContentWithTitle: true,
+			id:      "abs",
+			indexID: "abs",
+			aliases: []string{"pashkievich"},
+			title:   "Ангельска-беларускі слоўнік (В. Пашкевіч, 2006, класічны правапіс)",
+			indexSettings: IndexSettings{
+				PrependContentWithTitle: true,
+			},
 		},
 	})
 	dictionaries = append(dictionaries, HTML{
@@ -145,20 +154,24 @@ func InitDictionaries() error {
 	})
 	dictionaries = append(dictionaries, DSL{
 		Common: Common{
-			id:                      "pbs",
-			indexID:                 "pbs",
-			title:                   "Польска-беларускі слоўнік (Я. Волкава, В. Авілава, 2004, правапіс да 2008 г.)",
-			slugifier:               "polish",
-			prependContentWithTitle: true,
+			id:        "pbs",
+			indexID:   "pbs",
+			title:     "Польска-беларускі слоўнік (Я. Волкава, В. Авілава, 2004, правапіс да 2008 г.)",
+			slugifier: "polish",
+			indexSettings: IndexSettings{
+				PrependContentWithTitle: true,
+			},
 		},
 	})
 	dictionaries = append(dictionaries, DSL{
 		Common: Common{
-			id:                      "kurjanka",
-			indexID:                 "kurjanka",
-			title:                   "Нямецка-беларускі слоўнік (М. Кур'янка, 2006, правапіс да 2008 г.)",
-			prependContentWithTitle: true,
-			slugifier:               "german",
+			id:        "kurjanka",
+			indexID:   "kurjanka",
+			title:     "Нямецка-беларускі слоўнік (М. Кур'янка, 2006, правапіс да 2008 г.)",
+			slugifier: "german",
+			indexSettings: IndexSettings{
+				PrependContentWithTitle: true,
+			},
 		},
 	})
 	return nil

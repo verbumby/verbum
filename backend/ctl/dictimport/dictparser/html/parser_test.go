@@ -5,6 +5,8 @@ import (
 	"reflect"
 	"strings"
 	"testing"
+
+	"github.com/verbumby/verbum/backend/dictionary"
 )
 
 //go:embed test.html
@@ -14,7 +16,7 @@ var thirdArticleHTML = `<p><strong class="hw">A</strong>` + "\u200b" + `<sup>2</
 <p class="ms-5"><v-ex><em>He got an A in chemistry.</em> Ён атрымаў «выдатна» па хіміі.</v-ex></p>` + "\n"
 
 func TestParse(t *testing.T) {
-	articlesCh, errCh := ParseReader(strings.NewReader(testHTML))
+	articlesCh, errCh := ParseReader(strings.NewReader(testHTML), dictionary.IndexSettings{})
 
 	expecteds := []struct {
 		id     string

@@ -9,11 +9,12 @@ import (
 	"strings"
 
 	"github.com/verbumby/verbum/backend/ctl/dictimport/dictparser"
+	"github.com/verbumby/verbum/backend/dictionary"
 	"github.com/verbumby/verbum/backend/textutil"
 	"golang.org/x/text/unicode/norm"
 )
 
-func ParseReader(r io.Reader) (chan dictparser.Article, chan error) {
+func ParseReader(r io.Reader, settings dictionary.IndexSettings) (chan dictparser.Article, chan error) {
 	articlesCh := make(chan dictparser.Article, 64)
 	errCh := make(chan error)
 
@@ -36,7 +37,7 @@ func ParseReader(r io.Reader) (chan dictparser.Article, chan error) {
 				}
 			}
 
-			a, err := parseArticle(bodyStr)
+			a, err := parseArticle(bodyStr, settings)
 			if err != nil {
 				close(articlesCh)
 				errCh <- fmt.Errorf("parse article %s: %w", bodyStr, err)
@@ -58,7 +59,7 @@ var (
 	reIndex = regexp.MustCompile(`<sup[^>]*>([\dIVX-]+)</sup>`)
 )
 
-func parseArticle(body string) (dictparser.Article, error) {
+func parseArticle(body string, settings dictionary.IndexSettings) (dictparser.Article, error) {
 	ms := reHW.FindAllStringSubmatch(body, -1)
 	if len(ms) == 0 {
 		return dictparser.Article{}, fmt.Errorf("can't find any attributes in %s", body)
@@ -117,6 +118,15 @@ func parseArticle(body string) (dictparser.Article, error) {
 		if idx != "" {
 			id += "-" + idx
 			title += " " + idx
+		}
+	}
+
+	if settings.ConvertHeadwordsToLowercase {
+		for i := range hws {
+			hws[i] = strings.ToLower(hws[i])
+		}
+		for i := range hwsalt {
+			hwsalt[i] = strings.ToLower(hwsalt[i])
 		}
 	}
 
