@@ -3,6 +3,7 @@ package dictionary
 type Common struct {
 	id            string
 	indexID       string
+	boost         float32
 	aliases       []string
 	title         string
 	abbrevs       *Abbrevs
@@ -20,6 +21,10 @@ func (d Common) IndexID() string {
 		return d.id
 	}
 	return d.indexID
+}
+
+func (d Common) Boost() float32 {
+	return d.boost
 }
 
 func (d Common) Aliases() []string {
