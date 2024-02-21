@@ -10,6 +10,7 @@ import (
 // DSL dictionary
 type DSL struct {
 	Common
+	RenderRefs bool
 }
 
 // ToHTML implements Dictionary interface
@@ -18,6 +19,7 @@ func (d DSL) ToHTML(content string) template.HTML {
 		"article",
 		[]byte(content),
 		dslparser.GlobalStore("dictID", d.ID()),
+		dslparser.GlobalStore("renderRefs", d.RenderRefs),
 	)
 	if err != nil {
 		panic(fmt.Errorf("parse article: %w", err))

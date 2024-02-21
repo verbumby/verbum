@@ -8,7 +8,6 @@ import (
 	"errors"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"math"
 	"net/url"
 	"os"
@@ -32,7 +31,7 @@ var g = &grammar{
 				run: (*parser).callonAll1,
 				expr: &seqExpr{
 					pos: position{line: 20, col: 7, offset: 207},
-					exprs: []interface{}{
+					exprs: []any{
 						&labeledExpr{
 							pos:   position{line: 20, col: 7, offset: 207},
 							label: "b",
@@ -73,7 +72,7 @@ var g = &grammar{
 			pos:  position{line: 32, col: 1, offset: 430},
 			expr: &choiceExpr{
 				pos: position{line: 32, col: 8, offset: 439},
-				alternatives: []interface{}{
+				alternatives: []any{
 					&ruleRefExpr{
 						pos:  position{line: 32, col: 8, offset: 439},
 						name: "EscapeSequence",
@@ -121,7 +120,7 @@ var g = &grammar{
 				run: (*parser).callonEscapeSequence1,
 				expr: &seqExpr{
 					pos: position{line: 34, col: 18, offset: 562},
-					exprs: []interface{}{
+					exprs: []any{
 						&litMatcher{
 							pos:        position{line: 34, col: 18, offset: 562},
 							val:        "\\",
@@ -133,7 +132,7 @@ var g = &grammar{
 							label: "ch",
 							expr: &choiceExpr{
 								pos: position{line: 34, col: 27, offset: 571},
-								alternatives: []interface{}{
+								alternatives: []any{
 									&litMatcher{
 										pos:        position{line: 34, col: 27, offset: 571},
 										val:        "[",
@@ -181,7 +180,7 @@ var g = &grammar{
 				run: (*parser).callonAccent1,
 				expr: &seqExpr{
 					pos: position{line: 42, col: 10, offset: 685},
-					exprs: []interface{}{
+					exprs: []any{
 						&litMatcher{
 							pos:        position{line: 42, col: 10, offset: 685},
 							val:        "[']",
@@ -213,7 +212,7 @@ var g = &grammar{
 				run: (*parser).callonTranscription1,
 				expr: &seqExpr{
 					pos: position{line: 49, col: 17, offset: 908},
-					exprs: []interface{}{
+					exprs: []any{
 						&litMatcher{
 							pos:        position{line: 49, col: 17, offset: 908},
 							val:        "[t]",
@@ -227,7 +226,7 @@ var g = &grammar{
 								pos: position{line: 49, col: 26, offset: 917},
 								expr: &choiceExpr{
 									pos: position{line: 49, col: 28, offset: 919},
-									alternatives: []interface{}{
+									alternatives: []any{
 										&ruleRefExpr{
 											pos:  position{line: 49, col: 28, offset: 919},
 											name: "EscapeSequence",
@@ -261,7 +260,7 @@ var g = &grammar{
 				run: (*parser).callonImage1,
 				expr: &seqExpr{
 					pos: position{line: 70, col: 9, offset: 1554},
-					exprs: []interface{}{
+					exprs: []any{
 						&litMatcher{
 							pos:        position{line: 70, col: 9, offset: 1554},
 							val:        "[s]",
@@ -275,7 +274,7 @@ var g = &grammar{
 								pos: position{line: 70, col: 21, offset: 1566},
 								expr: &choiceExpr{
 									pos: position{line: 70, col: 23, offset: 1568},
-									alternatives: []interface{}{
+									alternatives: []any{
 										&ruleRefExpr{
 											pos:  position{line: 70, col: 23, offset: 1568},
 											name: "EscapeSequence",
@@ -309,7 +308,7 @@ var g = &grammar{
 				run: (*parser).callonOpenTag1,
 				expr: &seqExpr{
 					pos: position{line: 94, col: 11, offset: 2302},
-					exprs: []interface{}{
+					exprs: []any{
 						&litMatcher{
 							pos:        position{line: 94, col: 11, offset: 2302},
 							val:        "[",
@@ -347,29 +346,29 @@ var g = &grammar{
 		},
 		{
 			name: "CloseTag",
-			pos:  position{line: 137, col: 1, offset: 3271},
+			pos:  position{line: 143, col: 1, offset: 3446},
 			expr: &actionExpr{
-				pos: position{line: 137, col: 12, offset: 3284},
+				pos: position{line: 143, col: 12, offset: 3459},
 				run: (*parser).callonCloseTag1,
 				expr: &seqExpr{
-					pos: position{line: 137, col: 12, offset: 3284},
-					exprs: []interface{}{
+					pos: position{line: 143, col: 12, offset: 3459},
+					exprs: []any{
 						&litMatcher{
-							pos:        position{line: 137, col: 12, offset: 3284},
+							pos:        position{line: 143, col: 12, offset: 3459},
 							val:        "[/",
 							ignoreCase: false,
 							want:       "\"[/\"",
 						},
 						&labeledExpr{
-							pos:   position{line: 137, col: 17, offset: 3289},
+							pos:   position{line: 143, col: 17, offset: 3464},
 							label: "tnitf",
 							expr: &ruleRefExpr{
-								pos:  position{line: 137, col: 23, offset: 3295},
+								pos:  position{line: 143, col: 23, offset: 3470},
 								name: "Tagname",
 							},
 						},
 						&litMatcher{
-							pos:        position{line: 137, col: 31, offset: 3303},
+							pos:        position{line: 143, col: 31, offset: 3478},
 							val:        "]",
 							ignoreCase: false,
 							want:       "\"]\"",
@@ -380,120 +379,120 @@ var g = &grammar{
 		},
 		{
 			name: "Tagname",
-			pos:  position{line: 173, col: 1, offset: 3996},
+			pos:  position{line: 182, col: 1, offset: 4260},
 			expr: &actionExpr{
-				pos: position{line: 173, col: 11, offset: 4008},
+				pos: position{line: 182, col: 11, offset: 4272},
 				run: (*parser).callonTagname1,
 				expr: &labeledExpr{
-					pos:   position{line: 173, col: 11, offset: 4008},
+					pos:   position{line: 182, col: 11, offset: 4272},
 					label: "n",
 					expr: &choiceExpr{
-						pos: position{line: 173, col: 14, offset: 4011},
-						alternatives: []interface{}{
+						pos: position{line: 182, col: 14, offset: 4275},
+						alternatives: []any{
 							&litMatcher{
-								pos:        position{line: 173, col: 14, offset: 4011},
+								pos:        position{line: 182, col: 14, offset: 4275},
 								val:        "m1",
 								ignoreCase: false,
 								want:       "\"m1\"",
 							},
 							&litMatcher{
-								pos:        position{line: 173, col: 21, offset: 4018},
+								pos:        position{line: 182, col: 21, offset: 4282},
 								val:        "m2",
 								ignoreCase: false,
 								want:       "\"m2\"",
 							},
 							&litMatcher{
-								pos:        position{line: 173, col: 28, offset: 4025},
+								pos:        position{line: 182, col: 28, offset: 4289},
 								val:        "m3",
 								ignoreCase: false,
 								want:       "\"m3\"",
 							},
 							&litMatcher{
-								pos:        position{line: 173, col: 35, offset: 4032},
+								pos:        position{line: 182, col: 35, offset: 4296},
 								val:        "m",
 								ignoreCase: false,
 								want:       "\"m\"",
 							},
 							&litMatcher{
-								pos:        position{line: 173, col: 41, offset: 4038},
+								pos:        position{line: 182, col: 41, offset: 4302},
 								val:        "b",
 								ignoreCase: false,
 								want:       "\"b\"",
 							},
 							&litMatcher{
-								pos:        position{line: 173, col: 47, offset: 4044},
+								pos:        position{line: 182, col: 47, offset: 4308},
 								val:        "com",
 								ignoreCase: false,
 								want:       "\"com\"",
 							},
 							&litMatcher{
-								pos:        position{line: 173, col: 55, offset: 4052},
+								pos:        position{line: 182, col: 55, offset: 4316},
 								val:        "c",
 								ignoreCase: false,
 								want:       "\"c\"",
 							},
 							&litMatcher{
-								pos:        position{line: 173, col: 61, offset: 4058},
+								pos:        position{line: 182, col: 61, offset: 4322},
 								val:        "'",
 								ignoreCase: false,
 								want:       "\"'\"",
 							},
 							&litMatcher{
-								pos:        position{line: 173, col: 67, offset: 4064},
+								pos:        position{line: 182, col: 67, offset: 4328},
 								val:        "sup",
 								ignoreCase: false,
 								want:       "\"sup\"",
 							},
 							&litMatcher{
-								pos:        position{line: 173, col: 75, offset: 4072},
+								pos:        position{line: 182, col: 75, offset: 4336},
 								val:        "sub",
 								ignoreCase: false,
 								want:       "\"sub\"",
 							},
 							&litMatcher{
-								pos:        position{line: 173, col: 83, offset: 4080},
+								pos:        position{line: 182, col: 83, offset: 4344},
 								val:        "p",
 								ignoreCase: false,
 								want:       "\"p\"",
 							},
 							&litMatcher{
-								pos:        position{line: 173, col: 89, offset: 4086},
+								pos:        position{line: 182, col: 89, offset: 4350},
 								val:        "ex",
 								ignoreCase: false,
 								want:       "\"ex\"",
 							},
 							&litMatcher{
-								pos:        position{line: 173, col: 96, offset: 4093},
+								pos:        position{line: 182, col: 96, offset: 4357},
 								val:        "lang",
 								ignoreCase: false,
 								want:       "\"lang\"",
 							},
 							&litMatcher{
-								pos:        position{line: 173, col: 105, offset: 4102},
+								pos:        position{line: 182, col: 105, offset: 4366},
 								val:        "i",
 								ignoreCase: false,
 								want:       "\"i\"",
 							},
 							&litMatcher{
-								pos:        position{line: 173, col: 111, offset: 4108},
+								pos:        position{line: 182, col: 111, offset: 4372},
 								val:        "trn",
 								ignoreCase: false,
 								want:       "\"trn\"",
 							},
 							&litMatcher{
-								pos:        position{line: 173, col: 119, offset: 4116},
+								pos:        position{line: 182, col: 119, offset: 4380},
 								val:        "!trs",
 								ignoreCase: false,
 								want:       "\"!trs\"",
 							},
 							&litMatcher{
-								pos:        position{line: 173, col: 128, offset: 4125},
+								pos:        position{line: 182, col: 128, offset: 4389},
 								val:        "*",
 								ignoreCase: false,
 								want:       "\"*\"",
 							},
 							&litMatcher{
-								pos:        position{line: 173, col: 134, offset: 4131},
+								pos:        position{line: 182, col: 134, offset: 4395},
 								val:        "ref",
 								ignoreCase: false,
 								want:       "\"ref\"",
@@ -505,26 +504,26 @@ var g = &grammar{
 		},
 		{
 			name: "Tagarg",
-			pos:  position{line: 177, col: 1, offset: 4178},
+			pos:  position{line: 186, col: 1, offset: 4442},
 			expr: &actionExpr{
-				pos: position{line: 177, col: 10, offset: 4189},
+				pos: position{line: 186, col: 10, offset: 4453},
 				run: (*parser).callonTagarg1,
 				expr: &seqExpr{
-					pos: position{line: 177, col: 10, offset: 4189},
-					exprs: []interface{}{
+					pos: position{line: 186, col: 10, offset: 4453},
+					exprs: []any{
 						&litMatcher{
-							pos:        position{line: 177, col: 10, offset: 4189},
+							pos:        position{line: 186, col: 10, offset: 4453},
 							val:        " ",
 							ignoreCase: false,
 							want:       "\" \"",
 						},
 						&labeledExpr{
-							pos:   position{line: 177, col: 14, offset: 4193},
+							pos:   position{line: 186, col: 14, offset: 4457},
 							label: "v",
 							expr: &oneOrMoreExpr{
-								pos: position{line: 177, col: 16, offset: 4195},
+								pos: position{line: 186, col: 16, offset: 4459},
 								expr: &charClassMatcher{
-									pos:        position{line: 177, col: 16, offset: 4195},
+									pos:        position{line: 186, col: 16, offset: 4459},
 									val:        "[a-z0-9=]",
 									chars:      []rune{'='},
 									ranges:     []rune{'a', 'z', '0', '9'},
@@ -539,12 +538,12 @@ var g = &grammar{
 		},
 		{
 			name: "Newline",
-			pos:  position{line: 185, col: 1, offset: 4361},
+			pos:  position{line: 194, col: 1, offset: 4625},
 			expr: &actionExpr{
-				pos: position{line: 185, col: 11, offset: 4373},
+				pos: position{line: 194, col: 11, offset: 4637},
 				run: (*parser).callonNewline1,
 				expr: &litMatcher{
-					pos:        position{line: 185, col: 11, offset: 4373},
+					pos:        position{line: 194, col: 11, offset: 4637},
 					val:        "\n",
 					ignoreCase: false,
 					want:       "\"\\n\"",
@@ -553,43 +552,43 @@ var g = &grammar{
 		},
 		{
 			name: "Anything",
-			pos:  position{line: 189, col: 1, offset: 4406},
+			pos:  position{line: 198, col: 1, offset: 4670},
 			expr: &actionExpr{
-				pos: position{line: 189, col: 12, offset: 4419},
+				pos: position{line: 198, col: 12, offset: 4683},
 				run: (*parser).callonAnything1,
 				expr: &labeledExpr{
-					pos:   position{line: 189, col: 12, offset: 4419},
+					pos:   position{line: 198, col: 12, offset: 4683},
 					label: "ch",
 					expr: &anyMatcher{
-						line: 189, col: 15, offset: 4422,
+						line: 198, col: 15, offset: 4686,
 					},
 				},
 			},
 		},
 		{
 			name: "EOF",
-			pos:  position{line: 193, col: 1, offset: 4465},
+			pos:  position{line: 202, col: 1, offset: 4729},
 			expr: &notExpr{
-				pos: position{line: 193, col: 7, offset: 4473},
+				pos: position{line: 202, col: 7, offset: 4737},
 				expr: &anyMatcher{
-					line: 193, col: 8, offset: 4474,
+					line: 202, col: 8, offset: 4738,
 				},
 			},
 		},
 	},
 }
 
-func (c *current) onAll1(b interface{}) (interface{}, error) {
+func (c *current) onAll1(b any) (any, error) {
 	return b.(string), nil
 }
 
-func (p *parser) callonAll1() (interface{}, error) {
+func (p *parser) callonAll1() (any, error) {
 	stack := p.vstack[len(p.vstack)-1]
 	_ = stack
 	return p.cur.onAll1(stack["b"])
 }
 
-func (c *current) onBody1(ps interface{}) (interface{}, error) {
+func (c *current) onBody1(ps any) (any, error) {
 	var result strings.Builder
 	for _, pitf := range ps.([]interface{}) {
 		result.WriteString(pitf.(string))
@@ -597,46 +596,46 @@ func (c *current) onBody1(ps interface{}) (interface{}, error) {
 	return result.String(), nil
 }
 
-func (p *parser) callonBody1() (interface{}, error) {
+func (p *parser) callonBody1() (any, error) {
 	stack := p.vstack[len(p.vstack)-1]
 	_ = stack
 	return p.cur.onBody1(stack["ps"])
 }
 
-func (c *current) onEscapeSequence1(ch interface{}) (interface{}, error) {
+func (c *current) onEscapeSequence1(ch any) (any, error) {
 	return string(ch.([]byte)), nil
 }
 
-func (p *parser) callonEscapeSequence1() (interface{}, error) {
+func (p *parser) callonEscapeSequence1() (any, error) {
 	stack := p.vstack[len(p.vstack)-1]
 	_ = stack
 	return p.cur.onEscapeSequence1(stack["ch"])
 }
 
-func (c *current) onDoublePipe1() (interface{}, error) {
+func (c *current) onDoublePipe1() (any, error) {
 	return "|", nil
 }
 
-func (p *parser) callonDoublePipe1() (interface{}, error) {
+func (p *parser) callonDoublePipe1() (any, error) {
 	stack := p.vstack[len(p.vstack)-1]
 	_ = stack
 	return p.cur.onDoublePipe1()
 }
 
-func (c *current) onAccent1(ch interface{}) (interface{}, error) {
+func (c *current) onAccent1(ch any) (any, error) {
 	buff := norm.NFD.Bytes(ch.([]byte))
 	buff = norm.NFD.AppendString(buff, "\u0301")
 	buff = norm.NFC.Bytes(buff)
 	return fmt.Sprintf(`<v-accent>%s</v-accent>`, buff), nil
 }
 
-func (p *parser) callonAccent1() (interface{}, error) {
+func (p *parser) callonAccent1() (any, error) {
 	stack := p.vstack[len(p.vstack)-1]
 	_ = stack
 	return p.cur.onAccent1(stack["ch"])
 }
 
-func (c *current) onTranscription1(ps interface{}) (interface{}, error) {
+func (c *current) onTranscription1(ps any) (any, error) {
 	var result strings.Builder
 	result.WriteString(`<v-trx>`)
 	for _, pitf := range ps.([]interface{}) {
@@ -657,13 +656,13 @@ func (c *current) onTranscription1(ps interface{}) (interface{}, error) {
 	return result.String(), nil
 }
 
-func (p *parser) callonTranscription1() (interface{}, error) {
+func (p *parser) callonTranscription1() (any, error) {
 	stack := p.vstack[len(p.vstack)-1]
 	_ = stack
 	return p.cur.onTranscription1(stack["ps"])
 }
 
-func (c *current) onImage1(fnitf interface{}) (interface{}, error) {
+func (c *current) onImage1(fnitf any) (any, error) {
 	// TODO: extract function: []interface{} to string convertion
 	var result strings.Builder
 	for _, vitf := range fnitf.([]interface{}) {
@@ -687,13 +686,13 @@ func (c *current) onImage1(fnitf interface{}) (interface{}, error) {
 	), nil
 }
 
-func (p *parser) callonImage1() (interface{}, error) {
+func (p *parser) callonImage1() (any, error) {
 	stack := p.vstack[len(p.vstack)-1]
 	_ = stack
 	return p.cur.onImage1(stack["fnitf"])
 }
 
-func (c *current) onOpenTag1(tnitf, targ interface{}) (interface{}, error) {
+func (c *current) onOpenTag1(tnitf, targ any) (any, error) {
 	tn := tnitf.(string)
 	switch tn {
 	case "c":
@@ -730,19 +729,25 @@ func (c *current) onOpenTag1(tnitf, targ interface{}) (interface{}, error) {
 	case "*":
 		return ``, nil
 	case "ref":
+		if targ == nil {
+			targ = ""
+		}
+		if c.globalStore["renderRefs"].(bool) {
+			return fmt.Sprintf(`<a href="#%s">`, targ), nil
+		}
 		return ``, nil
 	default:
 		return "unknowntag:" + tn, nil
 	}
 }
 
-func (p *parser) callonOpenTag1() (interface{}, error) {
+func (p *parser) callonOpenTag1() (any, error) {
 	stack := p.vstack[len(p.vstack)-1]
 	_ = stack
 	return p.cur.onOpenTag1(stack["tnitf"], stack["targ"])
 }
 
-func (c *current) onCloseTag1(tnitf interface{}) (interface{}, error) {
+func (c *current) onCloseTag1(tnitf any) (any, error) {
 	tn := tnitf.(string)
 	switch tn {
 	case "c":
@@ -772,29 +777,32 @@ func (c *current) onCloseTag1(tnitf interface{}) (interface{}, error) {
 	case "*":
 		return ``, nil
 	case "ref":
+		if c.globalStore["renderRefs"].(bool) {
+			return `</a>`, nil
+		}
 		return ``, nil
 	default:
 		return "unknowntag:" + tn, nil
 	}
 }
 
-func (p *parser) callonCloseTag1() (interface{}, error) {
+func (p *parser) callonCloseTag1() (any, error) {
 	stack := p.vstack[len(p.vstack)-1]
 	_ = stack
 	return p.cur.onCloseTag1(stack["tnitf"])
 }
 
-func (c *current) onTagname1(n interface{}) (interface{}, error) {
+func (c *current) onTagname1(n any) (any, error) {
 	return string(n.([]byte)), nil
 }
 
-func (p *parser) callonTagname1() (interface{}, error) {
+func (p *parser) callonTagname1() (any, error) {
 	stack := p.vstack[len(p.vstack)-1]
 	_ = stack
 	return p.cur.onTagname1(stack["n"])
 }
 
-func (c *current) onTagarg1(v interface{}) (interface{}, error) {
+func (c *current) onTagarg1(v any) (any, error) {
 	var result strings.Builder
 	for _, vitf := range v.([]interface{}) {
 		result.Write(vitf.([]byte))
@@ -802,27 +810,27 @@ func (c *current) onTagarg1(v interface{}) (interface{}, error) {
 	return result.String(), nil
 }
 
-func (p *parser) callonTagarg1() (interface{}, error) {
+func (p *parser) callonTagarg1() (any, error) {
 	stack := p.vstack[len(p.vstack)-1]
 	_ = stack
 	return p.cur.onTagarg1(stack["v"])
 }
 
-func (c *current) onNewline1() (interface{}, error) {
+func (c *current) onNewline1() (any, error) {
 	return `</p>`, nil
 }
 
-func (p *parser) callonNewline1() (interface{}, error) {
+func (p *parser) callonNewline1() (any, error) {
 	stack := p.vstack[len(p.vstack)-1]
 	_ = stack
 	return p.cur.onNewline1()
 }
 
-func (c *current) onAnything1(ch interface{}) (interface{}, error) {
+func (c *current) onAnything1(ch any) (any, error) {
 	return string(ch.([]byte)), nil
 }
 
-func (p *parser) callonAnything1() (interface{}, error) {
+func (p *parser) callonAnything1() (any, error) {
 	stack := p.vstack[len(p.vstack)-1]
 	_ = stack
 	return p.cur.onAnything1(stack["ch"])
@@ -966,7 +974,7 @@ func Recover(b bool) Option {
 
 // GlobalStore creates an Option to set a key to a certain value in
 // the globalStore.
-func GlobalStore(key string, value interface{}) Option {
+func GlobalStore(key string, value any) Option {
 	return func(p *parser) Option {
 		old := p.cur.globalStore[key]
 		p.cur.globalStore[key] = value
@@ -976,7 +984,7 @@ func GlobalStore(key string, value interface{}) Option {
 
 // InitState creates an Option to set a key to a certain value in
 // the global "state" store.
-func InitState(key string, value interface{}) Option {
+func InitState(key string, value any) Option {
 	return func(p *parser) Option {
 		old := p.cur.state[key]
 		p.cur.state[key] = value
@@ -985,7 +993,7 @@ func InitState(key string, value interface{}) Option {
 }
 
 // ParseFile parses the file identified by filename.
-func ParseFile(filename string, opts ...Option) (i interface{}, err error) {
+func ParseFile(filename string, opts ...Option) (i any, err error) {
 	f, err := os.Open(filename)
 	if err != nil {
 		return nil, err
@@ -1000,8 +1008,8 @@ func ParseFile(filename string, opts ...Option) (i interface{}, err error) {
 
 // ParseReader parses the data from r using filename as information in the
 // error messages.
-func ParseReader(filename string, r io.Reader, opts ...Option) (interface{}, error) {
-	b, err := ioutil.ReadAll(r)
+func ParseReader(filename string, r io.Reader, opts ...Option) (any, error) {
+	b, err := io.ReadAll(r)
 	if err != nil {
 		return nil, err
 	}
@@ -1011,7 +1019,7 @@ func ParseReader(filename string, r io.Reader, opts ...Option) (interface{}, err
 
 // Parse parses the data from b using filename as information in the
 // error messages.
-func Parse(filename string, b []byte, opts ...Option) (interface{}, error) {
+func Parse(filename string, b []byte, opts ...Option) (any, error) {
 	return newParser(filename, b, opts...).parse(g)
 }
 
@@ -1049,7 +1057,7 @@ type current struct {
 	globalStore storeDict
 }
 
-type storeDict map[string]interface{}
+type storeDict map[string]any
 
 // the AST types...
 
@@ -1062,30 +1070,30 @@ type rule struct {
 	pos         position
 	name        string
 	displayName string
-	expr        interface{}
+	expr        any
 }
 
 type choiceExpr struct {
 	pos          position
-	alternatives []interface{}
+	alternatives []any
 }
 
 type actionExpr struct {
 	pos  position
-	expr interface{}
-	run  func(*parser) (interface{}, error)
+	expr any
+	run  func(*parser) (any, error)
 }
 
 type recoveryExpr struct {
 	pos          position
-	expr         interface{}
-	recoverExpr  interface{}
+	expr         any
+	recoverExpr  any
 	failureLabel []string
 }
 
 type seqExpr struct {
 	pos   position
-	exprs []interface{}
+	exprs []any
 }
 
 type throwExpr struct {
@@ -1096,19 +1104,21 @@ type throwExpr struct {
 type labeledExpr struct {
 	pos   position
 	label string
-	expr  interface{}
+	expr  any
 }
 
 type expr struct {
 	pos  position
-	expr interface{}
+	expr any
 }
 
-type andExpr expr
-type notExpr expr
-type zeroOrOneExpr expr
-type zeroOrMoreExpr expr
-type oneOrMoreExpr expr
+type (
+	andExpr        expr
+	notExpr        expr
+	zeroOrOneExpr  expr
+	zeroOrMoreExpr expr
+	oneOrMoreExpr  expr
+)
 
 type ruleRefExpr struct {
 	pos  position
@@ -1249,7 +1259,7 @@ func (p *parser) setOptions(opts []Option) {
 }
 
 type resultTuple struct {
-	v   interface{}
+	v   any
 	b   bool
 	end savepoint
 }
@@ -1293,12 +1303,12 @@ type parser struct {
 	memoize bool
 	// memoization table for the packrat algorithm:
 	// map[offset in source] map[expression or rule] {value, match}
-	memo map[int]map[interface{}]resultTuple
+	memo map[int]map[any]resultTuple
 
 	// rules table, maps the rule identifier to the rule node
 	rules map[string]*rule
 	// variables stack, map of label to value
-	vstack []map[string]interface{}
+	vstack []map[string]any
 	// rule stack, allows identification of the current rule in errors
 	rstack []*rule
 
@@ -1318,7 +1328,7 @@ type parser struct {
 
 	choiceNoMatch string
 	// recovery expression stack, keeps track of the currently available recovery expression, these are traversed in reverse
-	recoveryStack []map[string]interface{}
+	recoveryStack []map[string]any
 }
 
 // push a variable set on the vstack.
@@ -1338,7 +1348,7 @@ func (p *parser) pushV() {
 		return
 	}
 
-	m = make(map[string]interface{})
+	m = make(map[string]any)
 	p.vstack[len(p.vstack)-1] = m
 }
 
@@ -1354,7 +1364,7 @@ func (p *parser) popV() {
 }
 
 // push a recovery expression with its labels to the recoveryStack
-func (p *parser) pushRecovery(labels []string, expr interface{}) {
+func (p *parser) pushRecovery(labels []string, expr any) {
 	if cap(p.recoveryStack) == len(p.recoveryStack) {
 		// create new empty slot in the stack
 		p.recoveryStack = append(p.recoveryStack, nil)
@@ -1363,7 +1373,7 @@ func (p *parser) pushRecovery(labels []string, expr interface{}) {
 		p.recoveryStack = p.recoveryStack[:len(p.recoveryStack)+1]
 	}
 
-	m := make(map[string]interface{}, len(labels))
+	m := make(map[string]any, len(labels))
 	for _, fl := range labels {
 		m[fl] = expr
 	}
@@ -1388,14 +1398,19 @@ func (p *parser) print(prefix, s string) string {
 	return s
 }
 
+func (p *parser) printIndent(mark string, s string) string {
+	return p.print(strings.Repeat(" ", p.depth)+mark, s)
+}
+
 func (p *parser) in(s string) string {
+	res := p.printIndent(">", s)
 	p.depth++
-	return p.print(strings.Repeat(" ", p.depth)+">", s)
+	return res
 }
 
 func (p *parser) out(s string) string {
 	p.depth--
-	return p.print(strings.Repeat(" ", p.depth)+"<", s)
+	return p.printIndent("<", s)
 }
 
 func (p *parser) addErr(err error) {
@@ -1483,11 +1498,11 @@ func (p *parser) restore(pt savepoint) {
 // copies of the state to allow the parser to properly restore the state in
 // the case of backtracking.
 type Cloner interface {
-	Clone() interface{}
+	Clone() any
 }
 
 var statePool = &sync.Pool{
-	New: func() interface{} { return make(storeDict) },
+	New: func() any { return make(storeDict) },
 }
 
 func (sd storeDict) Discard() {
@@ -1529,7 +1544,7 @@ func (p *parser) sliceFrom(start savepoint) []byte {
 	return p.data[start.position.offset:p.pt.position.offset]
 }
 
-func (p *parser) getMemoized(node interface{}) (resultTuple, bool) {
+func (p *parser) getMemoized(node any) (resultTuple, bool) {
 	if len(p.memo) == 0 {
 		return resultTuple{}, false
 	}
@@ -1541,13 +1556,13 @@ func (p *parser) getMemoized(node interface{}) (resultTuple, bool) {
 	return res, ok
 }
 
-func (p *parser) setMemoized(pt savepoint, node interface{}, tuple resultTuple) {
+func (p *parser) setMemoized(pt savepoint, node any, tuple resultTuple) {
 	if p.memo == nil {
-		p.memo = make(map[int]map[interface{}]resultTuple)
+		p.memo = make(map[int]map[any]resultTuple)
 	}
 	m := p.memo[pt.offset]
 	if m == nil {
-		m = make(map[interface{}]resultTuple)
+		m = make(map[any]resultTuple)
 		p.memo[pt.offset] = m
 	}
 	m[node] = tuple
@@ -1560,7 +1575,7 @@ func (p *parser) buildRulesTable(g *grammar) {
 	}
 }
 
-func (p *parser) parse(g *grammar) (val interface{}, err error) {
+func (p *parser) parse(g *grammar) (val any, err error) {
 	if len(g.rules) == 0 {
 		p.addErr(errNoRule)
 		return nil, p.errs.err()
@@ -1596,7 +1611,7 @@ func (p *parser) parse(g *grammar) (val interface{}, err error) {
 	}
 
 	p.read() // advance to first rune
-	val, ok = p.parseRule(startRule)
+	val, ok = p.parseRuleWrap(startRule)
 	if !ok {
 		if len(*p.errs) == 0 {
 			// If parsing fails, but no errors have been recorded, the expected values
@@ -1637,36 +1652,52 @@ func listJoin(list []string, sep string, lastSep string) string {
 	}
 }
 
-func (p *parser) parseRule(rule *rule) (interface{}, bool) {
+func (p *parser) parseRuleMemoize(rule *rule) (any, bool) {
+	res, ok := p.getMemoized(rule)
+	if ok {
+		p.restore(res.end)
+		return res.v, res.b
+	}
+
+	startMark := p.pt
+	val, ok := p.parseRule(rule)
+	p.setMemoized(startMark, rule, resultTuple{val, ok, p.pt})
+
+	return val, ok
+}
+
+func (p *parser) parseRuleWrap(rule *rule) (any, bool) {
 	if p.debug {
 		defer p.out(p.in("parseRule " + rule.name))
 	}
+	var (
+		val       any
+		ok        bool
+		startMark = p.pt
+	)
 
 	if p.memoize {
-		res, ok := p.getMemoized(rule)
-		if ok {
-			p.restore(res.end)
-			return res.v, res.b
-		}
+		val, ok = p.parseRuleMemoize(rule)
+	} else {
+		val, ok = p.parseRule(rule)
 	}
 
-	start := p.pt
-	p.rstack = append(p.rstack, rule)
-	p.pushV()
-	val, ok := p.parseExpr(rule.expr)
-	p.popV()
-	p.rstack = p.rstack[:len(p.rstack)-1]
 	if ok && p.debug {
-		p.print(strings.Repeat(" ", p.depth)+"MATCH", string(p.sliceFrom(start)))
-	}
-
-	if p.memoize {
-		p.setMemoized(start, rule, resultTuple{val, ok, p.pt})
+		p.printIndent("MATCH", string(p.sliceFrom(startMark)))
 	}
 	return val, ok
 }
 
-func (p *parser) parseExpr(expr interface{}) (interface{}, bool) {
+func (p *parser) parseRule(rule *rule) (any, bool) {
+	p.rstack = append(p.rstack, rule)
+	p.pushV()
+	val, ok := p.parseExprWrap(rule.expr)
+	p.popV()
+	p.rstack = p.rstack[:len(p.rstack)-1]
+	return val, ok
+}
+
+func (p *parser) parseExprWrap(expr any) (any, bool) {
 	var pt savepoint
 
 	if p.memoize {
@@ -1678,12 +1709,21 @@ func (p *parser) parseExpr(expr interface{}) (interface{}, bool) {
 		pt = p.pt
 	}
 
+	val, ok := p.parseExpr(expr)
+
+	if p.memoize {
+		p.setMemoized(pt, expr, resultTuple{val, ok, p.pt})
+	}
+	return val, ok
+}
+
+func (p *parser) parseExpr(expr any) (any, bool) {
 	p.ExprCnt++
 	if p.ExprCnt > p.maxExprCnt {
 		panic(errMaxExprCnt)
 	}
 
-	var val interface{}
+	var val any
 	var ok bool
 	switch expr := expr.(type) {
 	case *actionExpr:
@@ -1725,19 +1765,16 @@ func (p *parser) parseExpr(expr interface{}) (interface{}, bool) {
 	default:
 		panic(fmt.Sprintf("unknown expression type %T", expr))
 	}
-	if p.memoize {
-		p.setMemoized(pt, expr, resultTuple{val, ok, p.pt})
-	}
 	return val, ok
 }
 
-func (p *parser) parseActionExpr(act *actionExpr) (interface{}, bool) {
+func (p *parser) parseActionExpr(act *actionExpr) (any, bool) {
 	if p.debug {
 		defer p.out(p.in("parseActionExpr"))
 	}
 
 	start := p.pt
-	val, ok := p.parseExpr(act.expr)
+	val, ok := p.parseExprWrap(act.expr)
 	if ok {
 		p.cur.pos = start.position
 		p.cur.text = p.sliceFrom(start)
@@ -1751,12 +1788,12 @@ func (p *parser) parseActionExpr(act *actionExpr) (interface{}, bool) {
 		val = actVal
 	}
 	if ok && p.debug {
-		p.print(strings.Repeat(" ", p.depth)+"MATCH", string(p.sliceFrom(start)))
+		p.printIndent("MATCH", string(p.sliceFrom(start)))
 	}
 	return val, ok
 }
 
-func (p *parser) parseAndCodeExpr(and *andCodeExpr) (interface{}, bool) {
+func (p *parser) parseAndCodeExpr(and *andCodeExpr) (any, bool) {
 	if p.debug {
 		defer p.out(p.in("parseAndCodeExpr"))
 	}
@@ -1772,7 +1809,7 @@ func (p *parser) parseAndCodeExpr(and *andCodeExpr) (interface{}, bool) {
 	return nil, ok
 }
 
-func (p *parser) parseAndExpr(and *andExpr) (interface{}, bool) {
+func (p *parser) parseAndExpr(and *andExpr) (any, bool) {
 	if p.debug {
 		defer p.out(p.in("parseAndExpr"))
 	}
@@ -1780,7 +1817,7 @@ func (p *parser) parseAndExpr(and *andExpr) (interface{}, bool) {
 	pt := p.pt
 	state := p.cloneState()
 	p.pushV()
-	_, ok := p.parseExpr(and.expr)
+	_, ok := p.parseExprWrap(and.expr)
 	p.popV()
 	p.restoreState(state)
 	p.restore(pt)
@@ -1788,7 +1825,7 @@ func (p *parser) parseAndExpr(and *andExpr) (interface{}, bool) {
 	return nil, ok
 }
 
-func (p *parser) parseAnyMatcher(any *anyMatcher) (interface{}, bool) {
+func (p *parser) parseAnyMatcher(any *anyMatcher) (any, bool) {
 	if p.debug {
 		defer p.out(p.in("parseAnyMatcher"))
 	}
@@ -1804,7 +1841,7 @@ func (p *parser) parseAnyMatcher(any *anyMatcher) (interface{}, bool) {
 	return p.sliceFrom(start), true
 }
 
-func (p *parser) parseCharClassMatcher(chr *charClassMatcher) (interface{}, bool) {
+func (p *parser) parseCharClassMatcher(chr *charClassMatcher) (any, bool) {
 	if p.debug {
 		defer p.out(p.in("parseCharClassMatcher"))
 	}
@@ -1885,7 +1922,7 @@ func (p *parser) incChoiceAltCnt(ch *choiceExpr, altI int) {
 	m[alt]++
 }
 
-func (p *parser) parseChoiceExpr(ch *choiceExpr) (interface{}, bool) {
+func (p *parser) parseChoiceExpr(ch *choiceExpr) (any, bool) {
 	if p.debug {
 		defer p.out(p.in("parseChoiceExpr"))
 	}
@@ -1897,7 +1934,7 @@ func (p *parser) parseChoiceExpr(ch *choiceExpr) (interface{}, bool) {
 		state := p.cloneState()
 
 		p.pushV()
-		val, ok := p.parseExpr(alt)
+		val, ok := p.parseExprWrap(alt)
 		p.popV()
 		if ok {
 			p.incChoiceAltCnt(ch, altI)
@@ -1909,13 +1946,13 @@ func (p *parser) parseChoiceExpr(ch *choiceExpr) (interface{}, bool) {
 	return nil, false
 }
 
-func (p *parser) parseLabeledExpr(lab *labeledExpr) (interface{}, bool) {
+func (p *parser) parseLabeledExpr(lab *labeledExpr) (any, bool) {
 	if p.debug {
 		defer p.out(p.in("parseLabeledExpr"))
 	}
 
 	p.pushV()
-	val, ok := p.parseExpr(lab.expr)
+	val, ok := p.parseExprWrap(lab.expr)
 	p.popV()
 	if ok && lab.label != "" {
 		m := p.vstack[len(p.vstack)-1]
@@ -1924,7 +1961,7 @@ func (p *parser) parseLabeledExpr(lab *labeledExpr) (interface{}, bool) {
 	return val, ok
 }
 
-func (p *parser) parseLitMatcher(lit *litMatcher) (interface{}, bool) {
+func (p *parser) parseLitMatcher(lit *litMatcher) (any, bool) {
 	if p.debug {
 		defer p.out(p.in("parseLitMatcher"))
 	}
@@ -1946,7 +1983,7 @@ func (p *parser) parseLitMatcher(lit *litMatcher) (interface{}, bool) {
 	return p.sliceFrom(start), true
 }
 
-func (p *parser) parseNotCodeExpr(not *notCodeExpr) (interface{}, bool) {
+func (p *parser) parseNotCodeExpr(not *notCodeExpr) (any, bool) {
 	if p.debug {
 		defer p.out(p.in("parseNotCodeExpr"))
 	}
@@ -1962,7 +1999,7 @@ func (p *parser) parseNotCodeExpr(not *notCodeExpr) (interface{}, bool) {
 	return nil, !ok
 }
 
-func (p *parser) parseNotExpr(not *notExpr) (interface{}, bool) {
+func (p *parser) parseNotExpr(not *notExpr) (any, bool) {
 	if p.debug {
 		defer p.out(p.in("parseNotExpr"))
 	}
@@ -1971,7 +2008,7 @@ func (p *parser) parseNotExpr(not *notExpr) (interface{}, bool) {
 	state := p.cloneState()
 	p.pushV()
 	p.maxFailInvertExpected = !p.maxFailInvertExpected
-	_, ok := p.parseExpr(not.expr)
+	_, ok := p.parseExprWrap(not.expr)
 	p.maxFailInvertExpected = !p.maxFailInvertExpected
 	p.popV()
 	p.restoreState(state)
@@ -1980,16 +2017,16 @@ func (p *parser) parseNotExpr(not *notExpr) (interface{}, bool) {
 	return nil, !ok
 }
 
-func (p *parser) parseOneOrMoreExpr(expr *oneOrMoreExpr) (interface{}, bool) {
+func (p *parser) parseOneOrMoreExpr(expr *oneOrMoreExpr) (any, bool) {
 	if p.debug {
 		defer p.out(p.in("parseOneOrMoreExpr"))
 	}
 
-	var vals []interface{}
+	var vals []any
 
 	for {
 		p.pushV()
-		val, ok := p.parseExpr(expr.expr)
+		val, ok := p.parseExprWrap(expr.expr)
 		p.popV()
 		if !ok {
 			if len(vals) == 0 {
@@ -2002,19 +2039,19 @@ func (p *parser) parseOneOrMoreExpr(expr *oneOrMoreExpr) (interface{}, bool) {
 	}
 }
 
-func (p *parser) parseRecoveryExpr(recover *recoveryExpr) (interface{}, bool) {
+func (p *parser) parseRecoveryExpr(recover *recoveryExpr) (any, bool) {
 	if p.debug {
 		defer p.out(p.in("parseRecoveryExpr (" + strings.Join(recover.failureLabel, ",") + ")"))
 	}
 
 	p.pushRecovery(recover.failureLabel, recover.recoverExpr)
-	val, ok := p.parseExpr(recover.expr)
+	val, ok := p.parseExprWrap(recover.expr)
 	p.popRecovery()
 
 	return val, ok
 }
 
-func (p *parser) parseRuleRefExpr(ref *ruleRefExpr) (interface{}, bool) {
+func (p *parser) parseRuleRefExpr(ref *ruleRefExpr) (any, bool) {
 	if p.debug {
 		defer p.out(p.in("parseRuleRefExpr " + ref.name))
 	}
@@ -2028,20 +2065,20 @@ func (p *parser) parseRuleRefExpr(ref *ruleRefExpr) (interface{}, bool) {
 		p.addErr(fmt.Errorf("undefined rule: %s", ref.name))
 		return nil, false
 	}
-	return p.parseRule(rule)
+	return p.parseRuleWrap(rule)
 }
 
-func (p *parser) parseSeqExpr(seq *seqExpr) (interface{}, bool) {
+func (p *parser) parseSeqExpr(seq *seqExpr) (any, bool) {
 	if p.debug {
 		defer p.out(p.in("parseSeqExpr"))
 	}
 
-	vals := make([]interface{}, 0, len(seq.exprs))
+	vals := make([]any, 0, len(seq.exprs))
 
 	pt := p.pt
 	state := p.cloneState()
 	for _, expr := range seq.exprs {
-		val, ok := p.parseExpr(expr)
+		val, ok := p.parseExprWrap(expr)
 		if !ok {
 			p.restoreState(state)
 			p.restore(pt)
@@ -2052,7 +2089,7 @@ func (p *parser) parseSeqExpr(seq *seqExpr) (interface{}, bool) {
 	return vals, true
 }
 
-func (p *parser) parseStateCodeExpr(state *stateCodeExpr) (interface{}, bool) {
+func (p *parser) parseStateCodeExpr(state *stateCodeExpr) (any, bool) {
 	if p.debug {
 		defer p.out(p.in("parseStateCodeExpr"))
 	}
@@ -2064,14 +2101,14 @@ func (p *parser) parseStateCodeExpr(state *stateCodeExpr) (interface{}, bool) {
 	return nil, true
 }
 
-func (p *parser) parseThrowExpr(expr *throwExpr) (interface{}, bool) {
+func (p *parser) parseThrowExpr(expr *throwExpr) (any, bool) {
 	if p.debug {
 		defer p.out(p.in("parseThrowExpr"))
 	}
 
 	for i := len(p.recoveryStack) - 1; i >= 0; i-- {
 		if recoverExpr, ok := p.recoveryStack[i][expr.label]; ok {
-			if val, ok := p.parseExpr(recoverExpr); ok {
+			if val, ok := p.parseExprWrap(recoverExpr); ok {
 				return val, ok
 			}
 		}
@@ -2080,16 +2117,16 @@ func (p *parser) parseThrowExpr(expr *throwExpr) (interface{}, bool) {
 	return nil, false
 }
 
-func (p *parser) parseZeroOrMoreExpr(expr *zeroOrMoreExpr) (interface{}, bool) {
+func (p *parser) parseZeroOrMoreExpr(expr *zeroOrMoreExpr) (any, bool) {
 	if p.debug {
 		defer p.out(p.in("parseZeroOrMoreExpr"))
 	}
 
-	var vals []interface{}
+	var vals []any
 
 	for {
 		p.pushV()
-		val, ok := p.parseExpr(expr.expr)
+		val, ok := p.parseExprWrap(expr.expr)
 		p.popV()
 		if !ok {
 			return vals, true
@@ -2098,13 +2135,13 @@ func (p *parser) parseZeroOrMoreExpr(expr *zeroOrMoreExpr) (interface{}, bool) {
 	}
 }
 
-func (p *parser) parseZeroOrOneExpr(expr *zeroOrOneExpr) (interface{}, bool) {
+func (p *parser) parseZeroOrOneExpr(expr *zeroOrOneExpr) (any, bool) {
 	if p.debug {
 		defer p.out(p.in("parseZeroOrOneExpr"))
 	}
 
 	p.pushV()
-	val, _ := p.parseExpr(expr.expr)
+	val, _ := p.parseExprWrap(expr.expr)
 	p.popV()
 	// whether it matched or not, consider it a match
 	return val, true

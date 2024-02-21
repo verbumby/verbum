@@ -9,17 +9,7 @@ import { loadingBarReducer } from 'react-redux-loading-bar'
 
 type AllActions = DictsActions | SearchActions | ArticleActions | LetterFilterActions | DictArticlesActions | AbbrActions
 
-export type RootState = {
-    dicts: DictsState
-    search: SearchState
-    article: ArticleState
-    letterFilter: LetterFilterState
-    dictArticles: DictArticlesState
-    abbr: AbbrState
-    loadingBar: any
-}
-
-export const rootReducer = combineReducers<RootState, AllActions>({
+export const rootReducer = combineReducers({
     dicts: dictsReducer,
     search: searchReducer,
     article: articleReducer,
@@ -28,6 +18,8 @@ export const rootReducer = combineReducers<RootState, AllActions>({
     abbr: abbrReducer,
     loadingBar: loadingBarReducer,
 })
+
+export type RootState = ReturnType<typeof rootReducer>
 
 export function useSelector<TSelected = unknown>(
     selector: (state: RootState) => TSelected,

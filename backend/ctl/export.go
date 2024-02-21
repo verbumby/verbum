@@ -64,11 +64,14 @@ func (c *exportController) run() error {
 	}
 
 	sort.Slice(hits, func(i, j int) bool {
-		return hits[i].ID < hits[j].ID
+		return hits[i].Source.Headword[0] < hits[j].Source.Headword[0]
 	})
 
 	for _, a := range hits {
-		r := a.Source.Dictionary.ToHTML(a.Source.Content)
+		content := a.Source.Content
+		// content = strings.ReplaceAll(content, "<", "&lt;")
+		// content = strings.ReplaceAll(content, ">", "&gt;")
+		r := a.Source.Dictionary.ToHTML(content)
 		rs := string(r)
 
 		if first {
@@ -76,6 +79,8 @@ func (c *exportController) run() error {
 		} else {
 			fmt.Println("<hr/>")
 		}
+
+		rs = strings.Replace(rs, "<strong>", `<strong class="hw" id="`+a.ID+`">`, 1)
 
 		if strings.HasSuffix(rs, "\n") {
 			fmt.Print(rs)

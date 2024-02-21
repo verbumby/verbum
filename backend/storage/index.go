@@ -24,7 +24,7 @@ func CreateDictIndex(dictID string) error {
 						"type":        "custom",
 						"tokenizer":   "standard",
 						"char_filter": []string{"html_strip", "dsl_strip"},
-						"filter":      []string{"lowercase", "strip_excess_accents"},
+						"filter":      []string{"lowercase", "strip_diacritics"},
 					},
 				},
 				"tokenizer": map[string]any{
@@ -40,9 +40,9 @@ func CreateDictIndex(dictID string) error {
 					},
 				},
 				"filter": map[string]any{
-					"strip_excess_accents": map[string]any{
+					"strip_diacritics": map[string]any{
 						"type": "icu_transform",
-						"id":   "NFC; [\\u0301] Remove;",
+						"id":   "NFD; [\\u0301\\u030C\\u0311] Remove; NFC;",
 					},
 				},
 			},
@@ -89,9 +89,6 @@ func CreateDictIndex(dictID string) error {
 				"Content": map[string]any{
 					"type":     "text",
 					"analyzer": "body",
-				},
-				"ModifiedAt": map[string]any{
-					"type": "date",
 				},
 			},
 		},

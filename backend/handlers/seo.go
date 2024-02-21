@@ -92,10 +92,7 @@ func SitemapOfDictionary(w http.ResponseWriter, rctx *chttp.Context) error {
 	respbody := struct {
 		Hits struct {
 			Hits []struct {
-				ID     string `json:"_id"`
-				Source struct {
-					ModifiedAt string
-				} `json:"_source"`
+				ID string `json:"_id"`
 			} `json:"hits"`
 		} `json:"hits"`
 	}{}
@@ -107,7 +104,6 @@ func SitemapOfDictionary(w http.ResponseWriter, rctx *chttp.Context) error {
 	type urlt struct {
 		Loc        string `xml:"loc"`
 		Changefreq string `xml:"changefreq"`
-		Lastmod    string `xml:"lastmod"`
 	}
 	type urlset struct {
 		XMLNS string `xml:"xmlns,attr"`
@@ -123,7 +119,6 @@ func SitemapOfDictionary(w http.ResponseWriter, rctx *chttp.Context) error {
 		result.URL = append(result.URL, urlt{
 			Loc:        fmt.Sprintf("%s/%s/%s", config.HTTPSCanonicalAddr(), d.ID(), url.PathEscape(a.ID)),
 			Changefreq: "yearly",
-			Lastmod:    a.Source.ModifiedAt,
 		})
 	}
 

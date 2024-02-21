@@ -1,14 +1,14 @@
 package dictionary
 
 type Common struct {
-	id                      string
-	indexID                 string
-	aliases                 []string
-	title                   string
-	abbrevs                 *Abbrevs
-	prependContentWithTitle bool
-	slugifier               string
-	unlisted                bool
+	id            string
+	indexID       string
+	aliases       []string
+	title         string
+	abbrevs       *Abbrevs
+	slugifier     string
+	unlisted      bool
+	indexSettings IndexSettings
 }
 
 func (d Common) ID() string {
@@ -34,14 +34,14 @@ func (d Common) Abbrevs() *Abbrevs {
 	return d.abbrevs
 }
 
-func (d Common) PrependContentWithTitle() bool {
-	return d.prependContentWithTitle
-}
-
 func (d Common) Slugifier() string {
 	return d.slugifier
 }
 
 func (d Common) Unlisted() bool {
 	return d.unlisted
+}
+
+func (d Common) IndexSettings() IndexSettings {
+	return d.indexSettings
 }

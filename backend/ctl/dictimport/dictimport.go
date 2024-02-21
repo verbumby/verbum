@@ -9,7 +9,6 @@ import (
 	"regexp"
 	"strconv"
 	"strings"
-	"time"
 
 	"github.com/spf13/cobra"
 	"github.com/verbumby/verbum/backend/config"
@@ -151,7 +150,7 @@ func (c *commandController) run() error {
 		defer file.Close()
 
 		c.useDictIDs = true
-		articlesCh, errCh = html.ParseReader(file)
+		articlesCh, errCh = html.ParseReader(file, c.dict.IndexSettings())
 
 	case dictionary.Stardict:
 		file, err := os.Open(filename)
@@ -276,7 +275,7 @@ func (c *commandController) indexArticles(articlesCh chan dictparser.Article) er
 		}
 
 		content := a.Body
-		if c.dict.PrependContentWithTitle() {
+		if c.dict.IndexSettings().PrependContentWithTitle {
 			content = "<p><v-hw>" + a.Title + "</v-hw></p>\n" + content
 		}
 
@@ -290,7 +289,6 @@ func (c *commandController) indexArticles(articlesCh chan dictparser.Article) er
 			"Phrases":     a.Phrases,
 			"Prefix":      prefixes,
 			"Content":     content,
-			"ModifiedAt":  time.Now().UTC().Format(time.RFC3339),
 		}
 
 		if err := buffjenc.Encode(map[string]any{"create": map[string]any{"_id": id}}); err != nil {
