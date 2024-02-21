@@ -36,12 +36,18 @@ func APISearch(w http.ResponseWriter, rctx *chttp.Context) error {
 	inDicts := urlQuery.Get("in").(*htmlui.InDictsQueryParam).Value()
 
 	inDictsStr := ""
-	for _, d := range inDicts {
+	indicesBoost := []map[string]float32{}
+	for _, dn := range inDicts {
+		d := dictionary.Get(dn)
+		indexName := "dict-" + d.IndexID()
 		if len(inDictsStr) == 0 {
-			inDictsStr = "dict-" + dictionary.Get(d).IndexID()
+			inDictsStr = indexName
 		} else {
-			inDictsStr += ",dict-" + dictionary.Get(d).IndexID()
+			inDictsStr += "," + indexName
 		}
+		indicesBoost = append(indicesBoost, map[string]float32{
+			indexName: d.Boost(),
+		})
 	}
 
 	const pageSize = 10
@@ -57,11 +63,12 @@ func APISearch(w http.ResponseWriter, rctx *chttp.Context) error {
 					"HeadwordAlt^3",
 					"HeadwordAlt.Smaller^2",
 					"Phrases^1",
-					"Content^0",
+					"Content^1",
 				},
 				"default_operator": "AND",
 			},
 		},
+		"indices_boost": indicesBoost,
 		"highlight": map[string]any{
 			"fields": map[string]any{
 				"Content": map[string]any{},
