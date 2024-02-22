@@ -11,12 +11,12 @@ func CreateDictIndex(dictID string) error {
 			"analysis": map[string]any{
 				"analyzer": map[string]any{
 					"headword": map[string]any{
-						"filter":    []string{"lowercase"},
+						"filter":    []string{"lowercase", "folding"},
 						"type":      "custom",
 						"tokenizer": "keyword",
 					},
 					"headword_smaller": map[string]any{
-						"filter":    []string{"lowercase"},
+						"filter":    []string{"lowercase", "folding"},
 						"type":      "custom",
 						"tokenizer": "headword_smaller",
 					},
@@ -24,7 +24,7 @@ func CreateDictIndex(dictID string) error {
 						"type":        "custom",
 						"tokenizer":   "standard",
 						"char_filter": []string{"html_strip", "dsl_strip"},
-						"filter":      []string{"lowercase", "strip_diacritics"},
+						"filter":      []string{"lowercase", "strip_diacritics", "folding"},
 					},
 				},
 				"tokenizer": map[string]any{
@@ -43,6 +43,10 @@ func CreateDictIndex(dictID string) error {
 					"strip_diacritics": map[string]any{
 						"type": "icu_transform",
 						"id":   "NFD; [\\u0301\\u030C\\u0311] Remove; NFC;",
+					},
+					"folding": map[string]any{
+						"type":               "icu_folding",
+						"unicode_set_filter": "[Ґґ]",
 					},
 				},
 			},
@@ -107,9 +111,15 @@ func CreateSuggestIndex(dictID string) error {
 			"analysis": map[string]any{
 				"analyzer": map[string]any{
 					"headword": map[string]any{
-						"filter":    []string{"lowercase"},
+						"filter":    []string{"lowercase", "folding"},
 						"type":      "custom",
 						"tokenizer": "keyword",
+					},
+				},
+				"filter": map[string]any{
+					"folding": map[string]any{
+						"type":               "icu_folding",
+						"unicode_set_filter": "[Ґґ]",
 					},
 				},
 			},
