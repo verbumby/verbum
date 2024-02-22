@@ -5,6 +5,7 @@ export const Footer: React.VoidFunctionComponent = () => (
         <a className="btn btn-link btn-sm text-secondary" href="mailto:vramanenka@gmail.com">
             vramanenka@gmail.com
         </a>
+        {' '}
         <a className="btn btn-link btn-sm text-secondary" target="_blank" href="https://daviedka.bnkorpus.info">
             Моўная даведка Інстытута мовазнаўства
         </a>
