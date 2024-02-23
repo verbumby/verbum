@@ -13,6 +13,7 @@ import (
 	"unicode"
 
 	"github.com/verbumby/verbum/backend/config"
+	"golang.org/x/text/unicode/norm"
 )
 
 type Abbrevs struct {
@@ -65,7 +66,7 @@ func loadDSLAbbrevs(filename string) (*Abbrevs, error) {
 				keysSealed = false
 			}
 
-			key := strings.TrimSpace(line)
+			key := norm.NFC.String(strings.TrimSpace(line))
 			c.Keys = append(c.Keys, key)
 		}
 	}
@@ -115,6 +116,7 @@ var (
 func renderAbbrevs(content string, abbrevs *Abbrevs) string {
 	return reAbbrev.ReplaceAllStringFunc(content, func(m string) string {
 		text := reStripHtml.ReplaceAllLiteralString(m, "")
+		text = norm.NFC.String(text)
 		if v, ok := abbrevs.cache[text]; ok {
 			tt := `<v-abbr data-bs-toggle="tooltip" data-bs-title="%s" tabindex="0">`
 			m = strings.Replace(m, "<v-abbr>", fmt.Sprintf(tt, html.EscapeString(v.Value)), 1)
