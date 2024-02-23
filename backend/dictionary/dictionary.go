@@ -159,7 +159,7 @@ func InitDictionaries() error {
 		Common: Common{
 			id:      "susha",
 			indexID: "susha",
-			boost:   1,
+			boost:   1.2,
 			title:   "Англійска-беларускі слоўнік (Т. Суша, 2013, актуальны правапіс)",
 		},
 	})
