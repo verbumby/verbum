@@ -27,7 +27,11 @@ func IndexHTML(w http.ResponseWriter, ctx *chttp.Context) error {
 	csss := []string{}
 	for _, p := range publicAssets {
 		if strings.HasSuffix(p.Name(), ".js") {
-			jss = append(jss, fmt.Sprintf(`<script defer="defer" src="/statics/%s"></script>`, p.Name()))
+			dfr := `defer="defer"`
+			if strings.HasPrefix(p.Name(), "theme-") {
+				dfr = ""
+			}
+			jss = append(jss, fmt.Sprintf(`<script %s src="/statics/%s"></script>`, dfr, p.Name()))
 		}
 		if strings.HasSuffix(p.Name(), ".css") {
 			csss = append(csss, fmt.Sprintf(`<link href="/statics/%s" rel="stylesheet">`, p.Name()))
