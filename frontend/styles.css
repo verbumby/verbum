@@ -12,6 +12,7 @@ textarea, input[type="text"], input[type="button"], input[type="submit"] {
 .search-input {margin: 0 0 0 0; display: flex; align-items: stretch; height: 35px}
 .search-input input[type=text] {flex: 2; margin: 0; padding: 0 0 0 5px; width: 100%;
   border: 1px solid lightgrey; border-right: none; font-size: 1.2rem;}
+[data-bs-theme=dark] .search-input input[type=text] {border-color: gray; background-color: var(--bs-body-bg);}
 .search-input .btn {border: none; border-radius: 0; cursor: pointer; }
 .search-input .button-search {color:white; background: red; margin: 0; padding:3px 10px;font-size: 1.2rem;}
 .search-input .button-search:disabled {background: grey;}
@@ -19,6 +20,7 @@ textarea, input[type="text"], input[type="button"], input[type="submit"] {
 .search-input .button-search-small {display:none; padding: 5px 8px; font-size: 25px;}
 .search-input .button-control {color:grey; padding: 4px 0px 4px 7px;
   font-size: 25px; line-height: 0; border: 1px solid lightgrey; border-right: none; border-left: none;}
+[data-bs-theme=dark] .search-input .button-control {border-color: gray;}
 .search-input .button-funnel {padding-right: 7px;}
 .search-input .button-control:active {color:red;}
 .search-input .button-control:active svg { transform:scale(1.3);
@@ -28,11 +30,14 @@ textarea, input[type="text"], input[type="button"], input[type="submit"] {
 .suggestions {position: absolute; width: 100%; box-sizing: border-box; z-index: 1000;
   background: white; padding: 0; margin: 0; list-style: none; cursor: pointer;
   border: 1px solid lightgrey; border-top: none; box-shadow: 0 2px 4px rgba(0,0,0,0.1)}
+[data-bs-theme=dark] .suggestions {border-color: gray; background: var(--bs-body-bg)}
 .suggestions li {padding: 5px;}
 .suggestions li.active {background-color: #e3e3e3;}
+[data-bs-theme=dark] .suggestions li.active {background-color: gray;}
 
 .dicts-filter {position: absolute; width: 100%; box-sizing: border-box; z-index: 1000; padding: 10px;
   background: white; border: 1px solid lightgrey; border-top: none; box-shadow: 0 2px 4px rgba(0,0,0,0.1)}
+[data-bs-theme=dark] .dicts-filter {border-color: gray; background: var(--bs-body-bg)}
 .dicts-filter ul {list-style: none; padding: 0; margin: 0;}
 .dicts-filter li { padding: 5px 0;}
 .dicts-filter li:last-child { padding-bottom: 0;}
@@ -44,9 +49,11 @@ textarea, input[type="text"], input[type="button"], input[type="submit"] {
 .no-results {padding: 6px;}
 
 .article {padding: 6px; border-bottom: 1px solid lightgrey; min-height:45px;}
+[data-bs-theme=dark] .article {border-bottom-color: gray;}
 .article:last-child {border-bottom: none;}
 .article v-hw {font-weight: bold;}
 .article v-ex {color: darkgrey;}
+[data-bs-theme=dark] .article v-ex {color: gray;}
 .article v-trx {
   color: darkgrey;
   font-size: 0.8em;
@@ -54,20 +61,27 @@ textarea, input[type="text"], input[type="button"], input[type="submit"] {
   font-family: SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace !important;
 }
 .article v-accent {color: brown;}
+[data-bs-theme=dark] .article v-accent {color: inherit;}
 .article v-ex v-accent {color: rgba(165, 42, 42, 0.5);}
+[data-bs-theme=dark] .article v-ex v-accent {color: inherit;}
 .article .source {text-align: right; color: darkgrey; font-size: 0.9em; padding-top: 3px}
 .article p {margin: 0;}
-.article.rvblr p {margin: 0.5rem 0;}
+.article.tsblm p {margin: 0.5rem 0;}
 .article.hsbm img {max-width:100%;}
 .article .buttons {float: right;}
 .article .buttons .btn {color: darkgray; padding: 0; outline: none; box-shadow: none; font-size:20px;}
 .article highlight {background-color: #ffffc6; box-shadow: 0 0 5px 3px #ffffc6; z-index: -100; position: relative;}
+[data-bs-theme=dark] .article highlight {background-color: #353535; box-shadow: 0 0 5px 3px #353535;}
 .article v-abbr {color: darkgreen;}
+[data-bs-theme=dark] .article v-abbr {color: green;}
 .article v-abbr[data-bs-toggle="tooltip"] {cursor: default;}
 .article table, .article tr, .article td, .article th { border: 1px solid lightgrey; vertical-align: top; padding: 0.2rem;}
 .article th {text-align:center; font-weight: normal; background-color: #d3d3d31f;}
 .article table {border-collapse: collapse; margin: 0.5em 0;}
-
+[data-bs-theme=dark] .article [style='color: darkblue'],
+[data-bs-theme=dark] .article [style='color: midnightblue'] {color: steelblue !important;}
+[data-bs-theme=dark] .article [style='color: brown'] {color: #b59696 !important;}
+[data-bs-theme=dark] .article [style='color: darkmagenta'] {color: #b17eb1 !important;}
 
 .logo {color:darkgrey; padding: 6px 0; font-weight: bold;}
 .logo h1 {display: inline; font-weight: bold;}
@@ -79,6 +93,7 @@ textarea, input[type="text"], input[type="button"], input[type="submit"] {
 }
 
 .letter-filter-level {border-bottom: 1px solid lightgray;}
+[data-bs-theme=dark] .letter-filter-level {border-bottom-color: gray;}
 .letter-filter-level:last-child {border-bottom:none;}
 
 .pagination {flex-wrap: wrap;}
