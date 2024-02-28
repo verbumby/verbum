@@ -66,7 +66,6 @@ textarea, input[type="text"], input[type="button"], input[type="submit"] {
 [data-bs-theme=dark] .article v-ex v-accent {color: inherit;}
 .article .source {text-align: right; color: darkgrey; font-size: 0.9em; padding-top: 3px}
 .article p {margin: 0;}
-.article.tsblm p {margin: 0.5rem 0;}
 .article.hsbm img {max-width:100%;}
 .article .buttons {float: right;}
 .article .buttons .btn {color: darkgray; padding: 0; outline: none; box-shadow: none; font-size:20px;}
