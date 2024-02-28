@@ -32,7 +32,7 @@ fe-build:
 	rm frontend/dist/server.css
 
 	rm -f frontend/dist/public/*.{js,js.map,css,css.map}
-	npx esbuild frontend/browser.tsx \
+	npx esbuild frontend/browser.tsx frontend/theme.ts \
 		--bundle \
 		--define:process.env.NODE_ENV='"production"' \
 		--minify \

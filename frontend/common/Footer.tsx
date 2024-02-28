@@ -1,8 +1,11 @@
 import * as React from 'react'
 import { IconGitHub } from '../icons'
+import ThemeSelector from './ThemeSelector'
 
-export const Footer: React.VoidFunctionComponent = () => (
+export const Footer: React.FunctionComponent = () => (
     <footer className="text-center" style={{ marginTop: 'auto' }}>
+        <ThemeSelector />
+        {' '}
         <a className="btn btn-link btn-sm text-secondary" target="_blank" href="https://github.com/verbumby/verbum">
             <IconGitHub />
         </a>
