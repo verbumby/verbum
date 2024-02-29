@@ -31,7 +31,7 @@ fe-build:
 		--outdir=frontend/dist
 	rm frontend/dist/server.css
 
-	rm -f frontend/dist/public/*.{js,js.map,css,css.map}
+	rm -f frontend/dist/public/*.{js,js.map,css,css.map,png}
 	npx esbuild frontend/browser.tsx frontend/theme.ts \
 		--bundle \
 		--define:process.env.NODE_ENV='"production"' \
@@ -43,9 +43,8 @@ fe-build:
 		--entry-names=[name]-[hash] \
 		--loader:.png=file
 
-	cp frontend/index.html frontend/dist/index.html
-	cp frontend/favicon.png frontend/dist/public/favicon.png
-	cp frontend/favicon_squared.png frontend/dist/public/favicon_squared.png
+	cp -v frontend/index.html frontend/dist/index.html
+	cp -v frontend/*.png frontend/dist/public/
 
 .PHONY: es-run
 es-run:
