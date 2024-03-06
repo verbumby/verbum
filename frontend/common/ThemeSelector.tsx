@@ -36,6 +36,14 @@ function ThemeSelector() {
 		window.updateStoredTheme(theme)
 	}, [theme])
 
+	useEffect(() => {
+		window.addEventListener('storage', e => {
+			if (e.key == 'theme') {
+				setTheme(window.getStoredTheme())
+			}
+		})
+	}, [])
+
 	if (!theme) {
 		return <></>
 	}
