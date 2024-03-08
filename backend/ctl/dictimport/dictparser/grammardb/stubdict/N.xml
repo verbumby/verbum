@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Wordlist>
+	<Paradigm pdgId="1042547" lemma="ра+нча" tag="N">
+        <Variant id="a" lemma="ра+нча" tag="CIINN0" slouniki="piskunou2012:163743" pravapis="A1957,A2008">
+            <Form tag="NS" slouniki="nazounik2008,sbm2012,tsblm1996,tsbm1984,krapivabr2012">ра+нча</Form>
+            <Form tag="GS" slouniki="nazounik2008">ра+нча</Form>
+            <Form tag="DS" slouniki="nazounik2008">ра+нча</Form>
+            <Form tag="AS" slouniki="nazounik2008">ра+нча</Form>
+            <Form tag="IS" slouniki="nazounik2008">ра+нча</Form>
+            <Form tag="LS" slouniki="nazounik2008">ра+нча</Form>
+            <Form tag="NP" slouniki="nazounik2008,tsblm1996,tsbm1984,sbm2012,krapivabr2012">ра+нча</Form>
+            <Form tag="GP" slouniki="nazounik2008">ра+нча</Form>
+            <Form tag="DP" slouniki="nazounik2008">ра+нча</Form>
+            <Form tag="AP" slouniki="nazounik2008">ра+нча</Form>
+            <Form tag="IP" slouniki="nazounik2008">ра+нча</Form>
+            <Form tag="LP" slouniki="nazounik2008">ра+нча</Form>
+        </Variant>
+        <Variant id="b" lemma="ра+нча" tag="CIINN1" slouniki="piskunou2012:163743" pravapis="A1957,A2008">
+            <Form tag="NS">ра+нча</Form>
+            <Form tag="GS">ра+нча</Form>
+            <Form tag="DS">ра+нчу</Form>
+            <Form tag="AS">ра+нча</Form>
+            <Form tag="IS">ра+нчам</Form>
+            <Form tag="LS">ра+нчы</Form>
+            <Form tag="NP">ра+нчы</Form>
+            <Form tag="GP">ра+нчаў</Form>
+            <Form tag="DP">ра+нчам</Form>
+            <Form tag="AP">ра+нчы</Form>
+            <Form tag="IP">ра+нчамі</Form>
+            <Form tag="LP">ра+нчах</Form>
+        </Variant>
+	</Paradigm>
+    <Paradigm pdgId="1198136" lemma="абвінава+чаны" tag="NCAPNS5">
+        <Variant id="a" lemma="абвінава+чаны" pravapis="A1957,A2008">
+            <Form tag="MNS" slouniki="tsblm1996,tsbm1984,sbm2012,krapivabr2012">абвінава+чаны</Form>
+            <Form tag="MGS">абвінава+чанага</Form>
+            <Form tag="MDS">абвінава+чанаму</Form>
+            <Form tag="MAS">абвінава+чанага</Form>
+            <Form tag="MIS">абвінава+чаным</Form>
+            <Form tag="MLS">абвінава+чаным</Form>
+            <Form tag="FNS" slouniki="tsblm1996">абвінава+чаная</Form>
+            <Form tag="FGS">абвінава+чанай</Form>
+            <Form tag="FDS">абвінава+чанай</Form>
+            <Form tag="FAS">абвінава+чаную</Form>
+            <Form tag="FIS">абвінава+чанай</Form>
+            <Form tag="FIS">абвінава+чанаю</Form>
+            <Form tag="FLS">абвінава+чанай</Form>
+            <Form tag="PNP">абвінава+чаныя</Form>
+            <Form tag="PGP">абвінава+чаных</Form>
+            <Form tag="PDP">абвінава+чаным</Form>
+            <Form tag="PAP">абвінава+чаных</Form>
+            <Form tag="PIP">абвінава+чанымі</Form>
+            <Form tag="PLP">абвінава+чаных</Form>
+        </Variant>
+    </Paradigm>
+    <Paradigm pdgId="1313504" lemma="аджы+ўшае" tag="NCIINS5">
+        <Variant id="a" lemma="аджы+ўшае" pravapis="A1957,A2008">
+            <Form tag="NNS" slouniki="tsbm1984">аджы+ўшае</Form>
+            <Form tag="NGS">аджы+ўшага</Form>
+            <Form tag="NDS">аджы+ўшаму</Form>
+            <Form tag="NAS">аджы+ўшае</Form>
+            <Form tag="NIS">аджы+ўшым</Form>
+            <Form tag="NLS">аджы+ўшым</Form>
+        </Variant>
+    </Paradigm>
+    <Paradigm pdgId="1127101" lemma="беглы" tag="NCAPNS5">
+        <Variant id="a" lemma="беглы">
+            <Form tag="MNS">беглы</Form>
+            <Form tag="MGS">беглага</Form>
+            <Form tag="MDS">бегламу</Form>
+            <Form tag="MAS">беглага</Form>
+            <Form tag="MIS">беглым</Form>
+            <Form tag="MLS">беглым</Form>
+            <Form tag="NNS">беглага</Form>
+            <Form tag="NGS">беглага</Form>
+            <Form tag="NDS">бегламу</Form>
+            <Form tag="NAS">беглае</Form>
+            <Form tag="NIS">беглым</Form>
+            <Form tag="NLS">беглым</Form>
+            <Form tag="FNS">беглая</Form>
+            <Form tag="FGS">беглай</Form>
+            <Form tag="FDS">беглай</Form>
+            <Form tag="FAS">беглую</Form>
+            <Form tag="FIS">беглай</Form>
+            <Form tag="FIS">беглаю</Form>
+            <Form tag="FLS">беглай</Form>
+            <Form tag="PNP">беглыя</Form>
+            <Form tag="PGP">беглых</Form>
+            <Form tag="PDP">беглым</Form>
+            <Form tag="PAP">беглых</Form>
+            <Form tag="PIP">беглымі</Form>
+            <Form tag="PLP">беглых</Form>
+        </Variant>
+    </Paradigm>
+    <Paradigm pdgId="1028876" lemma="галга+н" tag="NCAPNM1">
+        <Variant id="a" lemma="галга+н" slouniki="piskunou2012:40988" pravapis="A1957,A2008">
+            <Form tag="NS" slouniki="tsbm1984,krapivabr2012">галга+н</Form>
+            <Form tag="GS" slouniki="tsbm1984">галга+на</Form>
+            <Form tag="GS" type="potential">галгана+</Form>
+            <Form tag="DS">галга+ну</Form>
+            <Form tag="DS" type="potential">галгану+</Form>
+            <Form tag="AS">галга+на</Form>
+            <Form tag="AS" type="potential">галгана+</Form>
+            <Form tag="IS">галга+нам</Form>
+            <Form tag="IS" type="potential">галга+ном</Form>
+            <Form tag="LS">галга+не</Form>
+            <Form tag="LS" type="potential">галгане+</Form>
+            <Form tag="VS">галга+не</Form>
+            <Form tag="NP">галга+ны</Form>
+            <Form tag="NP" type="potential">галганы+</Form>
+            <Form tag="GP">галга+наў</Form>
+            <Form tag="GP" type="potential">галгано+ў</Form>
+            <Form tag="DP">галга+нам</Form>
+            <Form tag="DP" type="potential">галгана+м</Form>
+            <Form tag="AP">галга+наў</Form>
+            <Form tag="AP" type="potential">галгано+ў</Form>
+            <Form tag="IP">галга+намі</Form>
+            <Form tag="IP" type="potential">галганамі+</Form>
+            <Form tag="LP">галга+нах</Form>
+            <Form tag="LP" type="potential">галгана+х</Form>
+        </Variant>
+    </Paradigm>
+    <Paradigm pdgId="1127153" lemma="аб'е+дкі" tag="NCIINP7">
+        <Variant id="a" lemma="аб'е+дкі" slouniki="piskunou2012:1074" pravapis="A1957,A2008">
+            <Form tag="NP" slouniki="nazounik2008,sbm2012,tsblm1996,tsbm1984,krapivabr2012">аб'е+дкі</Form>
+            <Form tag="GP" slouniki="nazounik2008,sbm2012">аб'е+дкаў</Form>
+            <Form tag="DP" slouniki="nazounik2008">аб'е+дкам</Form>
+            <Form tag="AP" slouniki="nazounik2008">аб'е+дкі</Form>
+            <Form tag="IP" slouniki="nazounik2008">аб'е+дкамі</Form>
+            <Form tag="LP" slouniki="nazounik2008">аб'е+дках</Form>
+        </Variant>
+    </Paradigm>
+</Wordlist>

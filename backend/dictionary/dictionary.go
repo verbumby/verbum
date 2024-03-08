@@ -22,6 +22,21 @@ type Dictionary interface {
 var dictionaries []Dictionary
 
 func InitDictionaries() error {
+	abbrevs, err := loadDSLAbbrevs("grammardb/grammardb_abrv.dsl")
+	if err != nil {
+		return fmt.Errorf("load grammardb abbrevs: %w", err)
+	}
+	dictionaries = append(dictionaries, GrammarDB{
+		Common: Common{
+			id:        "grammardb",
+			indexID:   "grammardb",
+			title:     "Граматычная база Інстытута мовазнаўства НАН Беларусі",
+			abbrevs:   abbrevs,
+			slugifier: "none",
+			unlisted:  true,
+		},
+	})
+
 	dictionaries = append(dictionaries, HTML{
 		Common: Common{
 			id:        "tsblm",
@@ -33,7 +48,7 @@ func InitDictionaries() error {
 		},
 	})
 
-	abbrevs, err := loadDSLAbbrevs("tsbm/tsbm_abrv.dsl")
+	abbrevs, err = loadDSLAbbrevs("tsbm/tsbm_abrv.dsl")
 	if err != nil {
 		return fmt.Errorf("load tsbm abbrevs: %w", err)
 	}
