@@ -153,7 +153,7 @@ func ParseDirectory(dirname string) (chan dictparser.Article, chan error) {
 		defer idsf.Close()
 		idssc := bufio.NewScanner(idsf)
 
-		files, err := os.ReadDir(dirname + "/grammardb")
+		files, err := os.ReadDir(dirname)
 		if err != nil {
 			retErr("read dir %s: %w", dirname, err)
 			return
@@ -166,7 +166,7 @@ func ParseDirectory(dirname string) (chan dictparser.Article, chan error) {
 				continue
 			}
 
-			filename := dirname + "/grammardb/" + file.Name()
+			filename := dirname + "/" + file.Name()
 			fmt.Println(filename)
 
 			f, err := os.Open(filename)
