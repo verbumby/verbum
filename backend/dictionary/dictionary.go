@@ -30,6 +30,7 @@ func InitDictionaries() error {
 		Common: Common{
 			id:        "grammardb",
 			indexID:   "grammardb",
+			boost:     1,
 			title:     "Граматычная база Інстытута мовазнаўства НАН Беларусі (2023)",
 			abbrevs:   abbrevs,
 			slugifier: "none",
