@@ -72,7 +72,6 @@ func InitDictionaries() error {
 			boost:     1,
 			title:     "Слоўнік сінонімаў і блізказначных слоў, 2-е выданне (М. Клышка, правапіс да 2008 г.)",
 			slugifier: "none",
-			unlisted:  true,
 		},
 	})
 
