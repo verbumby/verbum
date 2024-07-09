@@ -65,6 +65,17 @@ func InitDictionaries() error {
 		},
 	})
 
+	dictionaries = append(dictionaries, HTML{
+		Common: Common{
+			id:        "klyshka",
+			indexID:   "klyshka",
+			boost:     1,
+			title:     "Слоўнік сінонімаў і блізказначных слоў, 2-е выданне (М. Клышка, правапіс да 2008 г.)",
+			slugifier: "none",
+			unlisted:  true,
+		},
+	})
+
 	abbrevs, err = loadDSLAbbrevs("hsbm/hsbm_abrv.dsl")
 	if err != nil {
 		return fmt.Errorf("load hsbm abbrevs: %w", err)
