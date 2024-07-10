@@ -169,6 +169,11 @@ func InitDictionaries() error {
 			unlisted:  true,
 		},
 	})
+
+	abbrevs, err = loadDSLAbbrevs("abs/abs_abrv.dsl")
+	if err != nil {
+		return fmt.Errorf("load abs abbrevs: %w", err)
+	}
 	dictionaries = append(dictionaries, DSL{
 		Common: Common{
 			id:      "abs",
@@ -176,11 +181,13 @@ func InitDictionaries() error {
 			boost:   1,
 			aliases: []string{"pashkievich"},
 			title:   "Ангельска-беларускі слоўнік (В. Пашкевіч, 2006, класічны правапіс)",
+			abbrevs: abbrevs,
 			indexSettings: IndexSettings{
 				PrependContentWithTitle: true,
 			},
 		},
 	})
+
 	dictionaries = append(dictionaries, HTML{
 		Common: Common{
 			id:      "susha",
@@ -189,6 +196,11 @@ func InitDictionaries() error {
 			title:   "Англійска-беларускі слоўнік (Т. Суша, 2013, актуальны правапіс)",
 		},
 	})
+
+	abbrevs, err = loadDSLAbbrevs("pbs/pbs_abrv.dsl")
+	if err != nil {
+		return fmt.Errorf("load pbs abbrevs: %w", err)
+	}
 	dictionaries = append(dictionaries, DSL{
 		Common: Common{
 			id:        "pbs",
@@ -196,11 +208,17 @@ func InitDictionaries() error {
 			boost:     1,
 			title:     "Польска-беларускі слоўнік (Я. Волкава, В. Авілава, 2004, правапіс да 2008 г.)",
 			slugifier: "polish",
+			abbrevs:   abbrevs,
 			indexSettings: IndexSettings{
 				PrependContentWithTitle: true,
 			},
 		},
 	})
+
+	abbrevs, err = loadDSLAbbrevs("kurjanka/kurjanka_abrv.dsl")
+	if err != nil {
+		return fmt.Errorf("load kurjanka abbrevs: %w", err)
+	}
 	dictionaries = append(dictionaries, DSL{
 		Common: Common{
 			id:        "kurjanka",
@@ -208,6 +226,7 @@ func InitDictionaries() error {
 			boost:     1,
 			title:     "Нямецка-беларускі слоўнік (М. Кур'янка, 2006, правапіс да 2008 г.)",
 			slugifier: "german",
+			abbrevs:   abbrevs,
 			indexSettings: IndexSettings{
 				PrependContentWithTitle: true,
 			},
