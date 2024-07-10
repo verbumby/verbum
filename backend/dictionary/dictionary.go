@@ -188,12 +188,17 @@ func InitDictionaries() error {
 		},
 	})
 
+	abbrevs, err = loadDSLAbbrevs("susha/susha_abbr.txt")
+	if err != nil {
+		return fmt.Errorf("load susha abbrevs: %w", err)
+	}
 	dictionaries = append(dictionaries, HTML{
 		Common: Common{
 			id:      "susha",
 			indexID: "susha",
 			boost:   1.2,
 			title:   "Англійска-беларускі слоўнік (Т. Суша, 2013, актуальны правапіс)",
+			abbrevs: abbrevs,
 		},
 	})
 
