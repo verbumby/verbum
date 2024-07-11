@@ -70,7 +70,7 @@ textarea, input[type="text"], input[type="button"], input[type="submit"] {
 .article.grammardb em {color:darkgrey;}
 .article .buttons {float: right;}
 .article .buttons .btn {color: darkgray; padding: 0; outline: none; box-shadow: none; font-size:20px;}
-.article highlight {background-color: #ffffc6; box-shadow: 0 0 5px 3px #ffffc6; z-index: -100; position: relative;}
+.article highlight {background-color: #ffffc6; box-shadow: 0 0 5px 3px #ffffc6; position: relative;}
 [data-bs-theme=dark] .article highlight {background-color: #353535; box-shadow: 0 0 5px 3px #353535;}
 .article v-abbr {color: darkgreen;}
 [data-bs-theme=dark] .article v-abbr {color: green;}
