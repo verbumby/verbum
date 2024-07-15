@@ -51,6 +51,7 @@ textarea, input[type="text"], input[type="button"], input[type="submit"] {
 .article {padding: 6px; border-bottom: 1px solid lightgrey; min-height:45px;}
 [data-bs-theme=dark] .article {border-bottom-color: gray;}
 .article:last-child {border-bottom: none;}
+.article a {text-decoration: underline;}
 .article v-hw {font-weight: bold;}
 .article v-ex {color: darkgrey;}
 [data-bs-theme=dark] .article v-ex {color: gray;}
