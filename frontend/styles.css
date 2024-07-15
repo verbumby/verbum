@@ -74,7 +74,7 @@ textarea, input[type="text"], input[type="button"], input[type="submit"] {
 [data-bs-theme=dark] .article highlight {background-color: #353535; box-shadow: 0 0 5px 3px #353535;}
 .article v-abbr {color: darkgreen;}
 [data-bs-theme=dark] .article v-abbr {color: green;}
-.article v-abbr[data-bs-toggle="tooltip"] {cursor: default;}
+.article v-abbr[data-bs-toggle="tooltip"] {cursor: default; text-decoration: underline; text-decoration-style: dotted;}
 .article table, .article tr, .article td, .article th { border: 1px solid lightgrey; vertical-align: top; padding: 0.2rem;}
 .article th {text-align:center; font-weight: normal; background-color: #d3d3d31f;}
 .article table {border-collapse: collapse; margin: 0.5em 0;}
