@@ -65,7 +65,7 @@ textarea, input[type="text"], input[type="button"], input[type="submit"] {
 [data-bs-theme=dark] .article v-accent {color: inherit;}
 .article v-ex v-accent {color: rgba(165, 42, 42, 0.5);}
 [data-bs-theme=dark] .article v-ex v-accent {color: inherit;}
-.article .source {text-align: right; color: darkgrey; font-size: 0.9em; padding-top: 3px}
+.article > .source {text-align: right; color: darkgrey; font-size: 0.9em; padding-top: 3px}
 .article p {margin: 0;}
 .article.hsbm img {max-width:100%;}
 .article.grammardb em {color:darkgrey;}
@@ -75,6 +75,9 @@ textarea, input[type="text"], input[type="button"], input[type="submit"] {
 [data-bs-theme=dark] .article highlight {background-color: #353535; box-shadow: 0 0 5px 3px #353535;}
 .article v-abbr {color: darkgreen;}
 [data-bs-theme=dark] .article v-abbr {color: green;}
+.article.esbm v-abbr.source {color: darkmagenta;}
+.article.tsbm [style='color: crimson'] v-abbr {color: crimson;}
+.article.tsbm [style='color: midnightblue'] v-abbr {color: midnightblue;}
 .article v-abbr[data-bs-toggle="tooltip"] {cursor: default; text-decoration: underline; text-decoration-style: dotted;}
 .article table, .article tr, .article td, .article th { border: 1px solid lightgrey; vertical-align: top; padding: 0.2rem;}
 .article th {text-align:center; font-weight: normal; background-color: #d3d3d31f;}
