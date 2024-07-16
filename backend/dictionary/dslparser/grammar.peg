@@ -112,6 +112,9 @@ OpenTag ⟵ '[' tnitf:Tagname targ:Tagarg? ']' {
     case "sub":
         return `<sub>`, nil
     case "p":
+        if targ != nil {
+            return fmt.Sprintf(`<v-abbr class="%s">`, targ), nil
+        }
         return `<v-abbr>`, nil
     case "ex":
         return `<v-ex>`, nil

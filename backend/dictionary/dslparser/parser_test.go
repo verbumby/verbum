@@ -29,6 +29,16 @@ func TestKrapivaParser(t *testing.T) {
 			want:    `<p class="ms-0"><strong>Том:</strong> 2, <strong>старонка:</strong> 26.</p><img src="/images/dict-id-1/02/02-026_0079_%5Bno_name%5D.jpg" alt="02-026_0079_%5Bno_name%5D.jpg"/></p>`,
 			wantErr: false,
 		},
+		{
+			name:    "abbrev",
+			content: "[p]v[/p]",
+			want:    `<v-abbr>v</v-abbr>`,
+		},
+		{
+			name:    "abbrevWithClass",
+			content: "[p source]v[/p]",
+			want:    `<v-abbr class="source">v</v-abbr>`,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

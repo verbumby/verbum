@@ -109,7 +109,7 @@ func loadDSLAbbrevs(filename string) (*Abbrevs, error) {
 }
 
 var (
-	reAbbrev    = regexp.MustCompile(`(?U)<v-abbr>.*</v-abbr>`)
+	reAbbrev    = regexp.MustCompile(`(?U)<v-abbr.*</v-abbr>`)
 	reStripHtml = regexp.MustCompile(`(?U)</?.*>`)
 )
 
@@ -118,8 +118,8 @@ func renderAbbrevs(content string, abbrevs *Abbrevs) string {
 		text := reStripHtml.ReplaceAllLiteralString(m, "")
 		text = norm.NFC.String(text)
 		if v, ok := abbrevs.cache[text]; ok {
-			tt := `<v-abbr data-bs-toggle="tooltip" data-bs-title="%s" tabindex="0">`
-			m = strings.Replace(m, "<v-abbr>", fmt.Sprintf(tt, html.EscapeString(v.Value)), 1)
+			tt := `<v-abbr data-bs-toggle="tooltip" data-bs-title="%s" tabindex="0"`
+			m = strings.Replace(m, "<v-abbr", fmt.Sprintf(tt, html.EscapeString(v.Value)), 1)
 		}
 		return m
 	})
