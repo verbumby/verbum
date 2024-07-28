@@ -220,6 +220,22 @@ func InitDictionaries() error {
 		},
 	})
 
+	abbrevs, err = loadDSLAbbrevs("beldeu/beldeu_abbr.txt")
+	if err != nil {
+		return fmt.Errorf("load beldeu abbrevs: %w", err)
+	}
+	dictionaries = append(dictionaries, HTML{
+		Common: Common{
+			id:        "beldeu",
+			indexID:   "beldeu",
+			boost:     1,
+			title:     "Беларуска-нямецкі слоўнік (М. Кур'янка, 2010, актуальны правапіс)",
+			abbrevs:   abbrevs,
+			slugifier: "none",
+			unlisted:  true,
+		},
+	})
+
 	abbrevs, err = loadDSLAbbrevs("kurjanka/kurjanka_abrv.dsl")
 	if err != nil {
 		return fmt.Errorf("load kurjanka abbrevs: %w", err)
