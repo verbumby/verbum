@@ -232,7 +232,6 @@ func InitDictionaries() error {
 			title:     "Беларуска-нямецкі слоўнік (М. Кур'янка, 2010, актуальны правапіс)",
 			abbrevs:   abbrevs,
 			slugifier: "none",
-			unlisted:  true,
 		},
 	})
 
