@@ -84,7 +84,7 @@ func InitDictionaries() error {
 			id:        "hsbm",
 			indexID:   "hsbm",
 			boost:     0.9,
-			title:     "Гістарычны слоўнік беларускай мовы (1982–2017, часткова)",
+			title:     "Гістарычны слоўнік беларускай мовы (1982–2017)",
 			abbrevs:   abbrevs,
 			slugifier: "russian",
 			indexSettings: IndexSettings{
