@@ -259,3 +259,14 @@
 	{{- end}}.
 </p>
 {{- end -}}
+
+{{ if .Sources -}}
+<p>Крыніцы:
+	{{$first := true -}}
+	{{range $v := .Sources -}}
+		{{- if not $first}},{{end}}
+		<v-abbr>{{$v}}</v-abbr>
+		{{- $first = false -}}
+	{{- end}}.
+</p>
+{{- end -}}

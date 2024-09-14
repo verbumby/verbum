@@ -9,6 +9,7 @@ import (
 	"os"
 	"path"
 	"regexp"
+	"slices"
 	"strings"
 
 	xmlparser "github.com/tamerh/xml-stream-parser"
@@ -115,6 +116,7 @@ type renderDataT struct {
 	Meaning       string
 	OtherVariants []string
 	Forms         []*renderDataFormT
+	Sources       []string
 }
 
 func ParseDirectory(dirname string) (chan dictparser.Article, chan error) {
@@ -231,6 +233,34 @@ func ParseDirectory(dirname string) (chan dictparser.Article, chan error) {
 								})
 							}
 							return
+						}(),
+						Sources: func() []string {
+							sourceLists := []string{variantXML.Attrs["slouniki"]}
+							for _, formXML := range variantXML.Childs["Form"] {
+								sourceLists = append(sourceLists, formXML.Attrs["slouniki"])
+							}
+
+							set := map[string]bool{}
+							for _, list := range sourceLists {
+								for _, s := range strings.Split(list, ",") {
+									s = strings.TrimSpace(s)
+									if s == "" {
+										continue
+									}
+									if strings.Contains(s, ":") {
+										sp := strings.Split(s, ":")
+										s = sp[0]
+									}
+									set[s] = true
+								}
+							}
+
+							result := []string{}
+							for k := range set {
+								result = append(result, k)
+							}
+							slices.Sort(result)
+							return result
 						}(),
 					}
 					if err := bodyTemplate.Execute(body, data); err != nil {
