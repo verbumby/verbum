@@ -38,6 +38,10 @@ func InitDictionaries() error {
 		},
 	})
 
+	abbrevs, err = loadDSLAbbrevs("tsblm/tsblm_abbr.txt")
+	if err != nil {
+		return fmt.Errorf("load tsblm abbrevs: %w", err)
+	}
 	dictionaries = append(dictionaries, HTML{
 		Common: Common{
 			id:        "tsblm",
@@ -45,6 +49,7 @@ func InitDictionaries() error {
 			boost:     1.6,
 			aliases:   []string{"rvblr"},
 			title:     "Тлумачальны слоўнік беларускай літаратурнай мовы (2002, правапіс да 2008 г.)",
+			abbrevs:   abbrevs,
 			slugifier: "belarusian",
 		},
 	})
