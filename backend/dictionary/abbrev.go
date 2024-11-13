@@ -114,6 +114,10 @@ var (
 )
 
 func renderAbbrevs(content string, abbrevs *Abbrevs) string {
+	if abbrevs == nil {
+		return content
+	}
+
 	return reAbbrev.ReplaceAllStringFunc(content, func(m string) string {
 		text := reStripHtml.ReplaceAllLiteralString(m, "")
 		text = norm.NFC.String(text)
