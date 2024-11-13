@@ -80,6 +80,17 @@ func InitDictionaries() error {
 		},
 	})
 
+	dictionaries = append(dictionaries, HTML{
+		Common: Common{
+			id:        "proverbia",
+			indexID:   "proverbia",
+			boost:     1,
+			title:     "Шасцімоўны слоўнік прыказак, прымавак і крылатых слоў (1993, правапіс да 2008 г.)",
+			slugifier: "none",
+			unlisted:  true,
+		},
+	})
+
 	abbrevs, err = loadDSLAbbrevs("hsbm/hsbm_abrv.dsl")
 	if err != nil {
 		return fmt.Errorf("load hsbm abbrevs: %w", err)
