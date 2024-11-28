@@ -71,10 +71,10 @@ textarea, input[type="text"], input[type="button"], input[type="submit"] {
   font-weight:lighter;
   font-family: SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace !important;
 }
-.article v-accent {color: brown;}
-[data-bs-theme=dark] .article v-accent {color: inherit;}
-.article v-ex v-accent {color: rgba(165, 42, 42, 0.5);}
-[data-bs-theme=dark] .article v-ex v-accent {color: inherit;}
+.article .accent {color: brown;}
+[data-bs-theme=dark] .article .accent {color: inherit;}
+.article v-ex .accent {color: rgba(165, 42, 42, 0.5);}
+[data-bs-theme=dark] .article v-ex .accent {color: inherit;}
 .article > .source {text-align: right; color: darkgrey; font-size: 0.9em; padding-top: 3px}
 .article p {margin: 0;}
 .article.hsbm img {max-width:100%;}

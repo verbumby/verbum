@@ -12,7 +12,7 @@ type GrammarDB struct {
 
 func (d GrammarDB) ToHTML(content string) template.HTML {
 	re := regexp.MustCompile(`.\x{0301}`)
-	substitution := "<v-accent>$0</v-accent>"
+	substitution := `<span class="accent">$0</span>`
 
 	content = re.ReplaceAllString(content, substitution)
 
