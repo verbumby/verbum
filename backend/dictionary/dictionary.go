@@ -80,6 +80,22 @@ func InitDictionaries() error {
 		},
 	})
 
+	abbrevs, err = loadDSLAbbrevs("bhn1971/bhn1971_abbr.txt")
+	if err != nil {
+		return fmt.Errorf("load tsblm abbrevs: %w", err)
+	}
+	dictionaries = append(dictionaries, HTML{
+		Common: Common{
+			id:        "bhn1971",
+			indexID:   "bhn1971",
+			boost:     1,
+			title:     "Беларускія геаграфічныя назвы. Тапаграфія. Гідралогія. (І. Яшкін, 1971, правапіс да 2008 г.)",
+			slugifier: "none",
+			abbrevs:   abbrevs,
+			unlisted:  true,
+		},
+	})
+
 	dictionaries = append(dictionaries, HTML{
 		Common: Common{
 			id:        "proverbia",
