@@ -92,7 +92,6 @@ func InitDictionaries() error {
 			title:     "Беларускія геаграфічныя назвы. Тапаграфія. Гідралогія. (І. Яшкін, 1971, правапіс да 2008 г.)",
 			slugifier: "none",
 			abbrevs:   abbrevs,
-			unlisted:  true,
 		},
 	})
 
