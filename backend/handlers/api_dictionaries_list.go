@@ -15,6 +15,7 @@ func APIDictionariesList(w http.ResponseWriter, rctx *chttp.Context) error {
 		ID         string
 		Aliases    []string
 		Title      string
+		HasPreface bool
 		HasAbbrevs bool
 		Unlisted   bool
 	}
@@ -24,6 +25,7 @@ func APIDictionariesList(w http.ResponseWriter, rctx *chttp.Context) error {
 			ID:         d.ID(),
 			Aliases:    d.Aliases(),
 			Title:      d.Title(),
+			HasPreface: d.Preface() != "",
 			HasAbbrevs: d.Abbrevs() != nil,
 			Unlisted:   d.Unlisted(),
 		})

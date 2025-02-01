@@ -4,6 +4,7 @@ import { NotFound } from '../../common'
 import { useDict } from '../../store'
 import { AbbrSection } from './AbbrSection'
 import { DefaultSection } from './DefaultSection'
+import { PrefaceSection } from './PrefaceSection'
 import { MatchParams, useURLSearch } from './dict'
 
 export const DictPage: React.FC = ({ }) => {
@@ -20,6 +21,10 @@ export const DictPage: React.FC = ({ }) => {
 
     if (urlSearch.get('section') == 'abbr') {
         return <AbbrSection />
+    }
+
+    if (urlSearch.get('section') == 'preface') {
+        return <PrefaceSection />
     }
 
     return <DefaultSection />

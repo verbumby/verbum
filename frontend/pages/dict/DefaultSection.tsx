@@ -46,10 +46,18 @@ export const DefaultSection: FC = ({}) => {
                 <meta name="description" content={dict.Title} />
                 <meta property="og:title" content={dict.Title} />
                 <meta property="og:description" content={dict.Title} />
-                <meta name="robots" content="index, follow" />
+                <meta name="robots" content={`${ urlSearch.allDefault() ? '' : 'no' }index, follow`} />
             </Helmet>
             <div className='mx-1 mb-3'>
                 <h4>{dict.Title}</h4>
+                {dict.HasPreface && <Link to={{
+                    pathname: match.url,
+                    search: urlSearch.clone()
+                        .resetAll()
+                        .set('section', 'preface')
+                        .encode()
+                }}>Прадмова</Link>}
+                {' '}
                 {dict.HasAbbrevs && <Link to={{
                     pathname: match.url,
                     search: urlSearch.clone()

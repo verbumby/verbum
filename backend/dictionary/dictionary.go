@@ -3,6 +3,9 @@ package dictionary
 import (
 	"fmt"
 	"html/template"
+	"os"
+
+	"github.com/verbumby/verbum/backend/config"
 )
 
 // Dictionary represents a dictionary
@@ -13,6 +16,7 @@ type Dictionary interface {
 	Aliases() []string
 	Title() string
 	ToHTML(content string) template.HTML
+	Preface() string
 	Abbrevs() *Abbrevs
 	Slugifier() string
 	Unlisted() bool
@@ -82,8 +86,9 @@ func InitDictionaries() error {
 
 	abbrevs, err = loadDSLAbbrevs("bhn1971/bhn1971_abbr.txt")
 	if err != nil {
-		return fmt.Errorf("load tsblm abbrevs: %w", err)
+		return fmt.Errorf("load bhn1971 abbrevs: %w", err)
 	}
+	preface, err := loadPreface("bhn1971/bhn1971_pradmova.html")
 	dictionaries = append(dictionaries, HTML{
 		Common: Common{
 			id:        "bhn1971",
@@ -91,6 +96,7 @@ func InitDictionaries() error {
 			boost:     1,
 			title:     "Беларускія геаграфічныя назвы. Тапаграфія. Гідралогія. (І. Яшкін, 1971, правапіс да 2008 г.)",
 			slugifier: "none",
+			preface:   preface,
 			abbrevs:   abbrevs,
 		},
 	})
@@ -284,4 +290,12 @@ func InitDictionaries() error {
 		},
 	})
 	return nil
+}
+
+func loadPreface(path string) (string, error) {
+	bytes, err := os.ReadFile(config.DictsRepoPath() + "/" + path)
+	if err != nil {
+		return "", fmt.Errorf("reading preface in %s failed: %w", path, err)
+	}
+	return string(bytes), nil
 }

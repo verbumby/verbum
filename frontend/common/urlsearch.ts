@@ -30,6 +30,15 @@ export class URLSearch<Entries extends URLSearchEntries = {}> {
         return this
     }
 
+    allDefault(): boolean {
+        for (const k in this.defaults) {
+            if (this.values[k] != this.defaults[k]) {
+                return false
+            }
+        }
+        return true
+    }
+
     reset<T extends keyof Entries>(k: T): URLSearch<Entries> {
         this.values[k] = this.defaults[k]
         return this

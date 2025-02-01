@@ -6,6 +6,7 @@ type Common struct {
 	boost         float32
 	aliases       []string
 	title         string
+	preface       string
 	abbrevs       *Abbrevs
 	slugifier     string
 	unlisted      bool
@@ -33,6 +34,10 @@ func (d Common) Aliases() []string {
 
 func (d Common) Title() string {
 	return d.title
+}
+
+func (d Common) Preface() string {
+	return d.preface
 }
 
 func (d Common) Abbrevs() *Abbrevs {
