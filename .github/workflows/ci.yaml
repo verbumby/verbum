@@ -13,7 +13,7 @@ jobs:
     - run: npm ci
     - run: make fe-lint
     - run: make fe-build
-    - uses: actions/upload-artifact@v3
+    - uses: actions/upload-artifact@v4
       with:
         name: frontend-bundle
         path: frontend/dist/
@@ -28,13 +28,13 @@ jobs:
     - uses: actions/setup-go@v3
       with:
         go-version: '1.22'
-    - uses: actions/download-artifact@v3
+    - uses: actions/download-artifact@v4
       with:
         name: frontend-bundle
         path: frontend/dist/
     - run: go test -v ./...
     - run: make build-ci
-    - uses: actions/upload-artifact@v3
+    - uses: actions/upload-artifact@v4
       with:
         name: binaries
         path: |
@@ -48,15 +48,15 @@ jobs:
     - build-frontend
     steps:
     - uses: actions/checkout@v2
-    - uses: actions/download-artifact@v3
+    - uses: actions/download-artifact@v4
       with:
         name: binaries
-    - uses: actions/download-artifact@v3
+    - uses: actions/download-artifact@v4
       with:
         name: frontend-bundle
         path: frontend/dist/
     - run: deploy/deb.bash
-    - uses: actions/upload-artifact@v3
+    - uses: actions/upload-artifact@v4
       with:
         name: verbum.deb
         path: deploy/verbum.deb
@@ -69,7 +69,7 @@ jobs:
     environment: prod
     steps:
     - uses: actions/checkout@v3
-    - uses: actions/download-artifact@v3
+    - uses: actions/download-artifact@v4
       with:
         name: verbum.deb
         path: deploy/

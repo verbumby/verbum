@@ -1,6 +1,7 @@
 import { Abbrevs, Article, ArticleList, Dict, LetterFilter, SearchResult, Suggestion } from '../common'
 
 export interface VerbumAPIClient {
+    getPreface(dictID: string): Promise<string>
     getAbbr(dictID: string): any
     withSignal(signal: AbortSignal): this
     getDictionaries(): Promise<Dict[]>
@@ -65,6 +66,11 @@ export abstract class VerbumAPIClientImpl implements VerbumAPIClient {
     async getAbbr(dictID: string): Promise<Abbrevs> {
         dictID = encodeURIComponent(dictID)
         return this.call<Abbrevs>(`/api/dictionaries/${dictID}/abbrevs`)
+    }
+
+    async getPreface(dictID: string): Promise<string> {
+        dictID = encodeURIComponent(dictID)
+        return this.call<string>(`/api/dictionaries/${dictID}/preface`)
     }
 
     async getIndexHTML(): Promise<string> {

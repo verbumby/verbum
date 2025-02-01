@@ -4,10 +4,14 @@ import { SearchActions, SearchState, searchReducer } from './pages/index/index'
 import { Dict, Article, DictsActions, DictsState, dictsReducer } from './common'
 import { ThunkAction } from '@reduxjs/toolkit'
 import { ArticleState, ArticleActions, articleReducer } from './pages/article'
-import { DictArticlesActions, LetterFilterActions, letterFilterReducer, LetterFilterState, DictArticlesState, dictArticlesReducer, AbbrActions, AbbrState, abbrReducer } from './pages/dict'
+import { DictArticlesState, DictArticlesActions, dictArticlesReducer,
+    LetterFilterState, LetterFilterActions, letterFilterReducer,
+    AbbrActions, AbbrState, abbrReducer,
+    PrefaceActions, PrefaceState, prefaceReducer
+} from './pages/dict'
 import { loadingBarReducer } from 'react-redux-loading-bar'
 
-type AllActions = DictsActions | SearchActions | ArticleActions | LetterFilterActions | DictArticlesActions | AbbrActions
+type AllActions = DictsActions | SearchActions | ArticleActions | LetterFilterActions | DictArticlesActions | AbbrActions | PrefaceActions
 
 export const rootReducer = combineReducers({
     dicts: dictsReducer,
@@ -16,6 +20,7 @@ export const rootReducer = combineReducers({
     letterFilter: letterFilterReducer,
     dictArticles: dictArticlesReducer,
     abbr: abbrReducer,
+    preface: prefaceReducer,
     loadingBar: loadingBarReducer,
 })
 
@@ -70,6 +75,10 @@ export function useDictArticles(): DictArticlesState {
 
 export function useAbbr(): AbbrState {
     return useSelector<AbbrState>(state => state.abbr)
+}
+
+export function usePreface(): PrefaceState {
+    return useSelector<PrefaceState>(state => state.preface)
 }
 
 export type AppThunkAction<ReturnType = void> = ThunkAction<Promise<ReturnType>, RootState, unknown, AllActions>
