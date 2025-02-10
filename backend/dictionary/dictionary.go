@@ -96,7 +96,6 @@ func InitDictionaries() error {
 			title:     "Слоўнік іншамоўных слоў (А. Бірыла, 1999, правапіс да 2008 г., часткова)",
 			slugifier: "none",
 			abbrevs:   abbrevs,
-			unlisted:  true,
 		},
 	})
 
