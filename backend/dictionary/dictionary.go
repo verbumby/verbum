@@ -84,11 +84,30 @@ func InitDictionaries() error {
 		},
 	})
 
+	abbrevs, err = loadDSLAbbrevs("sis1999/sis1999_abbr.txt")
+	if err != nil {
+		return fmt.Errorf("load sis1999 abbrevs: %w", err)
+	}
+	dictionaries = append(dictionaries, HTML{
+		Common: Common{
+			id:        "sis1999",
+			indexID:   "sis1999",
+			boost:     1,
+			title:     "Слоўнік іншамоўных слоў (А. Бірыла, 1999, правапіс да 2008 г., часткова)",
+			slugifier: "none",
+			abbrevs:   abbrevs,
+			unlisted:  true,
+		},
+	})
+
 	abbrevs, err = loadDSLAbbrevs("bhn1971/bhn1971_abbr.txt")
 	if err != nil {
 		return fmt.Errorf("load bhn1971 abbrevs: %w", err)
 	}
 	preface, err := loadPreface("bhn1971/bhn1971_pradmova.html")
+	if err != nil {
+		return fmt.Errorf("load bhn1971 preface: %w", err)
+	}
 	dictionaries = append(dictionaries, HTML{
 		Common: Common{
 			id:        "bhn1971",

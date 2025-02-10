@@ -96,6 +96,7 @@ textarea, input[type="text"], input[type="button"], input[type="submit"] {
 [data-bs-theme=dark] .article [style='color: darkblue'],
 [data-bs-theme=dark] .article [style='color: midnightblue'] {color: var(--color-midnightblue) !important;}
 [data-bs-theme=dark] .article [style='color: brown'] {color: #b59696 !important;}
+.article v-illustration {letter-spacing: 0.4em;}
 
 .logo {color:darkgrey; padding: 6px 0; font-weight: bold;}
 .logo h1 {display: inline; font-weight: bold;}
