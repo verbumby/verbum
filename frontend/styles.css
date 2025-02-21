@@ -78,7 +78,7 @@ textarea, input[type="text"], input[type="button"], input[type="submit"] {
 [data-bs-theme=dark] .article a .accent {color: #8dc9ff;}
 .article v-ex .accent {color: #cca9a9;}
 [data-bs-theme=dark] .article v-ex .accent {color: #939393;}
-.article > .source {text-align: right; color: darkgrey; font-size: 0.9em; padding-top: 3px}
+.article > .source {text-align: right; color: darkgrey; font-size: 0.9em; padding-top: 9px}
 .article p {margin: 0;}
 .article.hsbm img {max-width:100%;}
 .article.grammardb em {color:darkgrey;}
@@ -90,6 +90,7 @@ textarea, input[type="text"], input[type="button"], input[type="submit"] {
 [data-bs-theme=dark] .article v-abbr {color: green;}
 .article v-abbr.source {color: var(--color-darkmagenta);}
 .article v-abbr.geo {color: teal;}
+.article.tsblm ul, .article.tsblm ol {margin-bottom: 0;}
 .article.tsbm [style='color: crimson'] v-abbr {color: crimson;}
 .article.tsbm [style='color: midnightblue'] v-abbr {color: var(--color-midnightblue);}
 .article v-abbr[data-bs-toggle="tooltip"] {cursor: default; text-decoration: underline; text-decoration-style: dotted;}
