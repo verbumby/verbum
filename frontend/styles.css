@@ -30,9 +30,10 @@ textarea, input[type="text"], input[type="button"], input[type="submit"] {
 .search-input .button-search-small {display:none; padding: 5px 8px; font-size: 25px;}
 .search-input .button-control {color:grey; padding: 4px 0px 4px 7px;
   font-size: 25px; line-height: 0; border: 1px solid lightgrey; border-right: none; border-left: none;}
-[data-bs-theme=dark] .search-input .button-control {border-color: gray;}
+[data-bs-theme=dark] .search-input .button-control,
+[data-bs-theme=dark] .search-input .button-control:active {border-color: gray;}
 .search-input .button-funnel {padding-right: 7px;}
-.search-input .button-control:active {color:red;}
+.search-input .button-control:active {color:grey; border: 1px solid lightgrey; border-right: none; border-left: none;}
 .search-input .button-control:active svg { transform:scale(1.3);
   animation-name: search-input-button-control-active; animation-duration: 0.1s;}
 @keyframes search-input-button-control-active {from {transform:scale(1);} to {transform:scale(1.3);}}
