@@ -30,9 +30,10 @@ textarea, input[type="text"], input[type="button"], input[type="submit"] {
 .search-input .button-search-small {display:none; padding: 5px 8px; font-size: 25px;}
 .search-input .button-control {color:grey; padding: 4px 0px 4px 7px;
   font-size: 25px; line-height: 0; border: 1px solid lightgrey; border-right: none; border-left: none;}
-[data-bs-theme=dark] .search-input .button-control {border-color: gray;}
+[data-bs-theme=dark] .search-input .button-control,
+[data-bs-theme=dark] .search-input .button-control:active {border-color: gray;}
 .search-input .button-funnel {padding-right: 7px;}
-.search-input .button-control:active {color:red;}
+.search-input .button-control:active {color:grey; border: 1px solid lightgrey; border-right: none; border-left: none;}
 .search-input .button-control:active svg { transform:scale(1.3);
   animation-name: search-input-button-control-active; animation-duration: 0.1s;}
 @keyframes search-input-button-control-active {from {transform:scale(1);} to {transform:scale(1.3);}}
@@ -71,11 +72,13 @@ textarea, input[type="text"], input[type="button"], input[type="submit"] {
   font-weight:lighter;
   font-family: SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace !important;
 }
-.article .accent {color: brown;}
-[data-bs-theme=dark] .article .accent {color: inherit;}
-.article v-ex .accent {color: rgba(165, 42, 42, 0.5);}
-[data-bs-theme=dark] .article v-ex .accent {color: inherit;}
-.article > .source {text-align: right; color: darkgrey; font-size: 0.9em; padding-top: 3px}
+.article .accent {color: #660000;}
+[data-bs-theme=dark] .article .accent {color: #fafafa;}
+.article a .accent {color: #aa0000;}
+[data-bs-theme=dark] .article a .accent {color: #8dc9ff;}
+.article v-ex .accent {color: #cca9a9;}
+[data-bs-theme=dark] .article v-ex .accent {color: #939393;}
+.article > .source {text-align: right; color: darkgrey; font-size: 0.9em; padding-top: 9px}
 .article p {margin: 0;}
 .article.hsbm img {max-width:100%;}
 .article.grammardb em {color:darkgrey;}
@@ -87,6 +90,7 @@ textarea, input[type="text"], input[type="button"], input[type="submit"] {
 [data-bs-theme=dark] .article v-abbr {color: green;}
 .article v-abbr.source {color: var(--color-darkmagenta);}
 .article v-abbr.geo {color: teal;}
+.article.tsblm ul, .article.tsblm ol {margin-bottom: 0;}
 .article.tsbm [style='color: crimson'] v-abbr {color: crimson;}
 .article.tsbm [style='color: midnightblue'] v-abbr {color: var(--color-midnightblue);}
 .article v-abbr[data-bs-toggle="tooltip"] {cursor: default; text-decoration: underline; text-decoration-style: dotted;}
