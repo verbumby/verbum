@@ -285,7 +285,7 @@ func (c *commandController) indexArticles(articlesCh chan dictparser.Article) er
 
 		content := a.Body
 		if c.dict.IndexSettings().PrependContentWithTitle {
-			content = "<p><v-hw>" + a.Title + "</v-hw></p>\n" + content
+			content = `<p><strong class="hw">` + a.Title + "</strong></p>\n" + content
 		}
 
 		reBrace := regexp.MustCompile(`\[.*?\]`)

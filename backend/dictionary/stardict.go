@@ -12,7 +12,7 @@ type Stardict struct {
 
 // ToHTML implements Dictionary interface
 func (d Stardict) ToHTML(content string) template.HTML {
-	content = strings.ReplaceAll(content, "<k>", "<p><v-hw>")
-	content = strings.ReplaceAll(content, "</k>", "</v-hw></p>")
+	content = strings.ReplaceAll(content, "<k>", `<p><strong class="hw">`)
+	content = strings.ReplaceAll(content, "</k>", "</strong></p>")
 	return template.HTML(content)
 }

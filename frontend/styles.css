@@ -1,4 +1,5 @@
 :root {
+  --color-darkblue: darkblue;
   --color-darkmagenta: darkmagenta;
   --color-midnightblue: midnightblue;
 }
@@ -6,6 +7,7 @@
 [data-bs-theme=dark] {
   --color-darkmagenta: #b17eb1;
   --color-midnightblue: steelblue;
+  --color-darkblue: steelblue;
 }
 
 html, body, .root {height: 100%;}
@@ -63,7 +65,8 @@ textarea, input[type="text"], input[type="button"], input[type="submit"] {
 [data-bs-theme=dark] .article {border-bottom-color: gray;}
 .article:last-child {border-bottom: none;}
 .article a {text-decoration: underline;}
-.article v-hw {font-weight: bold;}
+.article v-hw,
+.article .hw {color: var(--color-darkblue); font-weight: bold;}
 .article v-ex {color: darkgrey;}
 [data-bs-theme=dark] .article v-ex {color: gray;}
 .article v-trx {
@@ -73,11 +76,9 @@ textarea, input[type="text"], input[type="button"], input[type="submit"] {
   font-family: SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace !important;
 }
 .article .accent {color: #660000;}
-[data-bs-theme=dark] .article .accent {color: #fafafa;}
+[data-bs-theme=dark] .article .accent {color: inherit; filter: brightness(1.2);}
 .article a .accent {color: #aa0000;}
-[data-bs-theme=dark] .article a .accent {color: #8dc9ff;}
 .article v-ex .accent {color: #cca9a9;}
-[data-bs-theme=dark] .article v-ex .accent {color: #939393;}
 .article > .source {text-align: right; color: darkgrey; font-size: 0.9em; padding-top: 9px}
 .article p {margin: 0;}
 .article.hsbm img {max-width:100%;}
