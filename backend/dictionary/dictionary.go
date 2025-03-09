@@ -111,7 +111,6 @@ func InitDictionaries() error {
 			title:     "Слоўнік іншамоўных слоў. Актуальная лексіка (А. Булыка, 2005, правапіс да 2008 г.)",
 			slugifier: "none",
 			abbrevs:   abbrevs,
-			unlisted:  true,
 		},
 	})
 
