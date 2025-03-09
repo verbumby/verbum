@@ -6,7 +6,7 @@
 
 [data-bs-theme=dark] {
   --color-darkmagenta: #b17eb1;
-  --color-midnightblue: steelblue;
+  --color-midnightblue: #97c2e7;
   --color-darkblue: steelblue;
 }
 
@@ -66,7 +66,7 @@ textarea, input[type="text"], input[type="button"], input[type="submit"] {
 .article:last-child {border-bottom: none;}
 .article a {text-decoration: underline;}
 .article v-hw,
-.article .hw {color: var(--color-darkblue); font-weight: bold;}
+.article .hw {color: var(--color-midnightblue); font-weight: bold;}
 .article v-ex {color: darkgrey;}
 [data-bs-theme=dark] .article v-ex {color: gray;}
 .article v-trx {

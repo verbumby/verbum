@@ -99,6 +99,22 @@ func InitDictionaries() error {
 		},
 	})
 
+	abbrevs, err = loadDSLAbbrevs("sis2005/sis2005_abbr.txt")
+	if err != nil {
+		return fmt.Errorf("load sis2005 abbrevs: %w", err)
+	}
+	dictionaries = append(dictionaries, HTML{
+		Common: Common{
+			id:        "sis2005",
+			indexID:   "sis2005",
+			boost:     1,
+			title:     "Слоўнік іншамоўных слоў. Актуальная лексіка (А. Булыка, 2005, правапіс да 2008 г.)",
+			slugifier: "none",
+			abbrevs:   abbrevs,
+			unlisted:  true,
+		},
+	})
+
 	abbrevs, err = loadDSLAbbrevs("bhn1971/bhn1971_abbr.txt")
 	if err != nil {
 		return fmt.Errorf("load bhn1971 abbrevs: %w", err)
