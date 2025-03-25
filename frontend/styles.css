@@ -2,12 +2,14 @@
   --color-darkblue: darkblue;
   --color-darkmagenta: darkmagenta;
   --color-midnightblue: midnightblue;
+  --color-example: darkgrey;
 }
 
 [data-bs-theme=dark] {
   --color-darkmagenta: #b17eb1;
   --color-midnightblue: #97c2e7;
   --color-darkblue: steelblue;
+  --color-example: gray;
 }
 
 html, body, .root {height: 100%;}
@@ -67,8 +69,7 @@ textarea, input[type="text"], input[type="button"], input[type="submit"] {
 .article a {text-decoration: underline;}
 .article v-hw,
 .article .hw {color: var(--color-midnightblue); font-weight: bold;}
-.article v-ex {color: darkgrey;}
-[data-bs-theme=dark] .article v-ex {color: gray;}
+.article v-ex, .article .ex {color: var(--color-example);}
 .article v-trx {
   color: darkgrey;
   font-size: 0.8em;
