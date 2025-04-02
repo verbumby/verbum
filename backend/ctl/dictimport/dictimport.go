@@ -41,12 +41,11 @@ func Command() *cobra.Command {
 }
 
 type commandController struct {
-	dictID     string
-	dict       dictionary.Dictionary
-	indexID    string
-	dryrun     bool
-	verbose    bool
-	useDictIDs bool
+	dictID  string
+	dict    dictionary.Dictionary
+	indexID string
+	dryrun  bool
+	verbose bool
 }
 
 func (c *commandController) Run(cmd *cobra.Command, args []string) {
@@ -140,7 +139,6 @@ func (c *commandController) run() error {
 	switch c.dict.(type) {
 	case dictionary.GrammarDB:
 		articlesCh, errCh = grammardb.ParseDirectory(filename)
-		c.useDictIDs = true
 
 	case dictionary.DSL:
 		file, err := os.Open(filename)
@@ -158,7 +156,6 @@ func (c *commandController) run() error {
 		}
 		defer file.Close()
 
-		c.useDictIDs = true
 		articlesCh, errCh = html.ParseReader(file, c.dict.IndexSettings())
 
 	case dictionary.Stardict:
@@ -265,10 +262,10 @@ func (c *commandController) indexArticles(articlesCh chan dictparser.Article) er
 		}
 
 		id := strings.ToLower(a.Headwords[0])
-		if c.useDictIDs {
+		if c.dict.IndexSettings().DictProvidesIDs {
 			id = a.ID
 			iddups[id]++
-			if iddups[id] > 1 {
+			if c.dict.IndexSettings().DictProvidesIDsWithoutDuplicates && iddups[id] > 1 {
 				return fmt.Errorf("duplicate id: %s", id)
 			}
 		}
