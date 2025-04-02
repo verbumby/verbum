@@ -78,6 +78,19 @@ func parseArticle(body string, settings dictionary.IndexSettings) (dictparser.Ar
 		hw = strings.ReplaceAll(hw, "\u030c", "")
 		hw = norm.NFC.String(hw)
 
+		parenthesisBalance := 0
+		for _, r := range hw {
+			switch r {
+			case '(':
+				parenthesisBalance++
+			case ')':
+				parenthesisBalance--
+			}
+		}
+		if parenthesisBalance != 0 {
+			return dictparser.Article{}, fmt.Errorf("headword `%s` has unbalanced parenthesis", hw)
+		}
+
 		switch m[1] {
 		case "hw":
 			hws = append(hws, hw)
