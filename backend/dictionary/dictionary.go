@@ -39,6 +39,10 @@ func InitDictionaries() error {
 			abbrevs:   abbrevs,
 			slugifier: "none",
 			unlisted:  true,
+			indexSettings: IndexSettings{
+				DictProvidesIDs:                  true,
+				DictProvidesIDsWithoutDuplicates: true,
+			},
 		},
 	})
 
@@ -55,6 +59,10 @@ func InitDictionaries() error {
 			title:     "Тлумачальны слоўнік беларускай літаратурнай мовы (2002, правапіс да 2008 г.)",
 			abbrevs:   abbrevs,
 			slugifier: "belarusian",
+			indexSettings: IndexSettings{
+				DictProvidesIDs:                  true,
+				DictProvidesIDsWithoutDuplicates: true,
+			},
 		},
 	})
 
@@ -81,6 +89,10 @@ func InitDictionaries() error {
 			boost:     1,
 			title:     "Слоўнік сінонімаў і блізказначных слоў, 2-е выданне (М. Клышка, правапіс да 2008 г.)",
 			slugifier: "none",
+			indexSettings: IndexSettings{
+				DictProvidesIDs:                  true,
+				DictProvidesIDsWithoutDuplicates: true,
+			},
 		},
 	})
 
@@ -96,6 +108,9 @@ func InitDictionaries() error {
 			title:     "Слоўнік іншамоўных слоў (А. Булыка, 1999, правапіс да 2008 г., часткова)",
 			slugifier: "none",
 			abbrevs:   abbrevs,
+			indexSettings: IndexSettings{
+				DictProvidesIDs: true,
+			},
 		},
 	})
 
@@ -111,6 +126,10 @@ func InitDictionaries() error {
 			title:     "Слоўнік іншамоўных слоў. Актуальная лексіка (А. Булыка, 2005, правапіс да 2008 г.)",
 			slugifier: "none",
 			abbrevs:   abbrevs,
+			indexSettings: IndexSettings{
+				DictProvidesIDs:                  true,
+				DictProvidesIDsWithoutDuplicates: true,
+			},
 		},
 	})
 
@@ -131,6 +150,10 @@ func InitDictionaries() error {
 			slugifier: "none",
 			preface:   preface,
 			abbrevs:   abbrevs,
+			indexSettings: IndexSettings{
+				DictProvidesIDs:                  true,
+				DictProvidesIDsWithoutDuplicates: true,
+			},
 		},
 	})
 
@@ -142,6 +165,10 @@ func InitDictionaries() error {
 			title:     "Шасцімоўны слоўнік прыказак, прымавак і крылатых слоў (1993, правапіс да 2008 г.)",
 			slugifier: "none",
 			unlisted:  true,
+			indexSettings: IndexSettings{
+				DictProvidesIDs:                  true,
+				DictProvidesIDsWithoutDuplicates: true,
+			},
 		},
 	})
 
@@ -176,7 +203,9 @@ func InitDictionaries() error {
 			abbrevs:   abbrevs,
 			slugifier: "none",
 			indexSettings: IndexSettings{
-				ConvertHeadwordsToLowercase: true,
+				ConvertHeadwordsToLowercase:      true,
+				DictProvidesIDs:                  true,
+				DictProvidesIDsWithoutDuplicates: true,
 			},
 		},
 	})
@@ -208,6 +237,10 @@ func InitDictionaries() error {
 			title:     "Руска-беларускі слоўнік НАН Беларусі, 10-е выданне (актуальны правапіс)",
 			abbrevs:   abbrevs,
 			slugifier: "none",
+			indexSettings: IndexSettings{
+				DictProvidesIDs:                  true,
+				DictProvidesIDsWithoutDuplicates: true,
+			},
 		},
 	})
 
@@ -269,6 +302,10 @@ func InitDictionaries() error {
 			boost:   1.2,
 			title:   "Англійска-беларускі слоўнік (Т. Суша, 2013, актуальны правапіс)",
 			abbrevs: abbrevs,
+			indexSettings: IndexSettings{
+				DictProvidesIDs:                  true,
+				DictProvidesIDsWithoutDuplicates: true,
+			},
 		},
 	})
 
@@ -302,6 +339,10 @@ func InitDictionaries() error {
 			title:     "Беларуска-нямецкі слоўнік (М. Кур'янка, 2010, актуальны правапіс)",
 			abbrevs:   abbrevs,
 			slugifier: "none",
+			indexSettings: IndexSettings{
+				DictProvidesIDs:                  true,
+				DictProvidesIDsWithoutDuplicates: true,
+			},
 		},
 	})
 

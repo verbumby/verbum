@@ -110,3 +110,15 @@ func TestParse(t *testing.T) {
 		t.Fatal(err)
 	}
 }
+
+func TestUnbalancedParenthesis(t *testing.T) {
+	sourceHTML := `<p><strong class="hw">эпіс́омы (ад</strong></p>`
+	articlesCh, errCh := ParseReader(strings.NewReader(sourceHTML), dictionary.IndexSettings{})
+	for a := range articlesCh {
+		t.Fatalf("Expected no articles to be returned, got %v", a)
+	}
+	err := <-errCh
+	if err == nil {
+		t.Fatal("Expected unbalanced parenthesis to be detected")
+	}
+}
