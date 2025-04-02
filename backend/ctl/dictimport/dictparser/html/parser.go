@@ -79,6 +79,7 @@ func parseArticle(body string, settings dictionary.IndexSettings) (dictparser.Ar
 		hw = norm.NFC.String(hw)
 
 		parenthesisBalance := 0
+		errParenthesisUnbalanced := fmt.Errorf("headword `%s` has unbalanced or out of order parenthesis", hw)
 		for _, r := range hw {
 			switch r {
 			case '(':
@@ -86,9 +87,12 @@ func parseArticle(body string, settings dictionary.IndexSettings) (dictparser.Ar
 			case ')':
 				parenthesisBalance--
 			}
+			if parenthesisBalance < 0 {
+				return dictparser.Article{}, errParenthesisUnbalanced
+			}
 		}
 		if parenthesisBalance != 0 {
-			return dictparser.Article{}, fmt.Errorf("headword `%s` has unbalanced parenthesis", hw)
+			return dictparser.Article{}, errParenthesisUnbalanced
 		}
 
 		switch m[1] {
