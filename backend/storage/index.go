@@ -23,7 +23,7 @@ func CreateDictIndex(dictID string) error {
 					"body": map[string]any{
 						"type":        "custom",
 						"tokenizer":   "standard",
-						"char_filter": []string{"html_strip", "dsl_strip"},
+						"char_filter": []string{"html_strip", "dsl_strip", "special_strip"},
 						"filter":      []string{"lowercase", "strip_diacritics", "folding"},
 					},
 				},
@@ -37,6 +37,10 @@ func CreateDictIndex(dictID string) error {
 					"dsl_strip": map[string]any{
 						"type":    "pattern_replace",
 						"pattern": "\\[/?.*?\\]",
+					},
+					"special_strip": map[string]any{
+						"type":    "pattern_replace",
+						"pattern": "[¦]",
 					},
 				},
 				"filter": map[string]any{
