@@ -127,8 +127,7 @@ func InitDictionaries() error {
 			slugifier: "none",
 			abbrevs:   abbrevs,
 			indexSettings: IndexSettings{
-				DictProvidesIDs:                  true,
-				DictProvidesIDsWithoutDuplicates: true,
+				DictProvidesIDs: true,
 			},
 		},
 	})
