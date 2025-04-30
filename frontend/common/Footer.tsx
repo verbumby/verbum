@@ -1,6 +1,7 @@
 import * as React from 'react'
 import { IconGitHub } from '../icons'
 import ThemeSelector from './ThemeSelector'
+import { Link } from 'react-router-dom'
 
 export const Footer: React.FunctionComponent = () => (
     <footer className="text-center" style={{ marginTop: 'auto' }}>
@@ -14,8 +15,10 @@ export const Footer: React.FunctionComponent = () => (
             vramanenka@gmail.com
         </a>
         {' '}
+        <Link className='btn btn-link btn-sm text-secondary' to={'/support'}>Падтрымаць</Link>
+        {' '}
         <a className="btn btn-link btn-sm text-secondary" target="_blank" href="https://daviedka.bnkorpus.info">
-            Моўная даведка Інстытута мовазнаўства
+            Моўная даведка
         </a>
     </footer>
 )
