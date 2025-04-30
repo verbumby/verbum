@@ -5,6 +5,7 @@ import { IndexPage, searchServer } from './pages/index/index'
 import { AppThunkAction } from './store'
 import { dictsFetch } from './common'
 import { DictPage, letterFilterFetchServer, dictArticlesFetchServer, abbrFetchServer, prefaceFetchServer } from './pages/dict'
+import { SupportPage } from './pages/support/SupportPage'
 
 type DataLoader = (match: match, urlSearch: URLSearchParams) => AppThunkAction
 
@@ -19,6 +20,11 @@ export const routes: Route[] = [
         path: '/:dictID/:articleID',
         children: <ArticlePage />,
         dataLoaders: [dictsFetch, articleFetchServer],
+    },
+    {
+        path: '/support',
+        children: <SupportPage />,
+        dataLoaders: [dictsFetch],
     },
     {
         path: '/:dictID',
