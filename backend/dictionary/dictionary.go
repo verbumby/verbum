@@ -61,7 +61,7 @@ func InitDictionaries() error {
 			slugifier: "belarusian",
 			indexSettings: IndexSettings{
 				DictProvidesIDs:                  true,
-				DictProvidesIDsWithoutDuplicates: true,
+				DictProvidesIDsWithoutDuplicates: false,
 			},
 		},
 	})
