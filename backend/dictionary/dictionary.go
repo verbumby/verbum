@@ -46,6 +46,31 @@ func InitDictionaries() error {
 		},
 	})
 
+	abbrevs, err = loadDSLAbbrevs("tsblm2022/tsblm2022_abbr.txt")
+	if err != nil {
+		return fmt.Errorf("load tsblm2022 abbrevs: %w", err)
+	}
+	preface, err := loadPreface("tsblm2022/tsblm2022_pradmova.html")
+	if err != nil {
+		return fmt.Errorf("load tsblm2022 preface: %w", err)
+	}
+	dictionaries = append(dictionaries, HTML{
+		Common: Common{
+			id:        "tsblm2022",
+			indexID:   "tsblm2022",
+			boost:     1.6,
+			title:     "Тлумачальны слоўнік беларускай літаратурнай мовы (пад рэд. І. Л. Капылова, 2022, актуальны правапіс, часткова)",
+			abbrevs:   abbrevs,
+			preface:   preface,
+			slugifier: "none",
+			indexSettings: IndexSettings{
+				DictProvidesIDs:                  true,
+				DictProvidesIDsWithoutDuplicates: false,
+			},
+			unlisted: true,
+		},
+	})
+
 	abbrevs, err = loadDSLAbbrevs("tsblm/tsblm_abbr.txt")
 	if err != nil {
 		return fmt.Errorf("load tsblm abbrevs: %w", err)
@@ -136,7 +161,7 @@ func InitDictionaries() error {
 	if err != nil {
 		return fmt.Errorf("load bhn1971 abbrevs: %w", err)
 	}
-	preface, err := loadPreface("bhn1971/bhn1971_pradmova.html")
+	preface, err = loadPreface("bhn1971/bhn1971_pradmova.html")
 	if err != nil {
 		return fmt.Errorf("load bhn1971 preface: %w", err)
 	}
