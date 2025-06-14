@@ -10,7 +10,7 @@ import { dictArticlesFetch, MatchParams, dictArticlesReset, useURLSearch } from 
 import { LetterFilterView } from './LetterFilterView'
 import { useURLSearch as useIndexURLSearch } from '../index/search'
 
-export const DefaultSection: FC = ({}) => {
+export const DefaultSection: FC = ({ }) => {
     const match = useRouteMatch<MatchParams>()
     const urlSearch = useURLSearch()
 
@@ -39,6 +39,42 @@ export const DefaultSection: FC = ({}) => {
         return <></>
     }
 
+    const topLinks: React.JSX.Element[] = []
+    const pushToTopLinks = (node: React.JSX.Element, key: string) => {
+        if (topLinks.length > 0) {
+            topLinks.push(<span
+                key={`separator-${key}`}
+                style={{ color: 'darkgray' }}> ∙ </span>)
+        }
+        topLinks.push(React.cloneElement(node, { key }))
+    }
+
+    if (dict.HasPreface) {
+        pushToTopLinks(<Link to={{
+            pathname: match.url,
+            search: urlSearch.clone()
+                .resetAll()
+                .set('section', 'preface')
+                .encode()
+        }}>Прадмова</Link>, 'preface')
+    }
+
+
+    if (dict.HasAbbrevs) {
+        pushToTopLinks(<Link to={{
+            pathname: match.url,
+            search: urlSearch.clone()
+                .resetAll()
+                .set('section', 'abbr')
+                .encode()
+        }}>Скарачэнні</Link>, 'abbr')
+    }
+
+
+    if (dict.ScanURL) {
+        pushToTopLinks(<a href={dict.ScanURL} target='_blank' rel='noopener noreferrer'>Скан</a>, 'scan')
+    }
+
     return (
         <>
             <Helmet>
@@ -46,25 +82,11 @@ export const DefaultSection: FC = ({}) => {
                 <meta name="description" content={dict.Title} />
                 <meta property="og:title" content={dict.Title} />
                 <meta property="og:description" content={dict.Title} />
-                <meta name="robots" content={`${ urlSearch.allDefault() ? '' : 'no' }index, follow`} />
+                <meta name="robots" content={`${urlSearch.allDefault() ? '' : 'no'}index, follow`} />
             </Helmet>
             <div className='mx-1 mb-3'>
                 <h4>{dict.Title}</h4>
-                {dict.HasPreface && <Link to={{
-                    pathname: match.url,
-                    search: urlSearch.clone()
-                        .resetAll()
-                        .set('section', 'preface')
-                        .encode()
-                }}>Прадмова</Link>}
-                {' '}
-                {dict.HasAbbrevs && <Link to={{
-                    pathname: match.url,
-                    search: urlSearch.clone()
-                        .resetAll()
-                        .set('section', 'abbr')
-                        .encode()
-                }}>Скарачэнні</Link>}
+                {topLinks}
             </div>
             <div className="mb-3">
                 <SearchControl

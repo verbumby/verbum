@@ -18,6 +18,7 @@ type Dictionary interface {
 	ToHTML(content string) template.HTML
 	Preface() string
 	Abbrevs() *Abbrevs
+	ScanURL() string
 	Slugifier() string
 	Unlisted() bool
 	IndexSettings() IndexSettings
@@ -102,6 +103,7 @@ func InitDictionaries() error {
 			aliases:   []string{"krapiva"},
 			title:     "Тлумачальны слоўнік беларускай мовы (1977-84, правапіс да 2008 г.)",
 			abbrevs:   abbrevs,
+			scanURL:   "https://knihi.com/none/Tlumacalny_slounik_bielaruskaj_movy_zip.html",
 			slugifier: "belarusian",
 		},
 	})
@@ -132,6 +134,7 @@ func InitDictionaries() error {
 			title:     "Слоўнік іншамоўных слоў (А. Булыка, 1999, правапіс да 2008 г., часткова)",
 			slugifier: "none",
 			abbrevs:   abbrevs,
+			scanURL:   "https://knihi.com/Alaksandar_Bulyka/Slounik_insamounych_slou_1999_pdf.zip.html",
 			indexSettings: IndexSettings{
 				DictProvidesIDs: true,
 			},
@@ -150,6 +153,7 @@ func InitDictionaries() error {
 			title:     "Слоўнік іншамоўных слоў. Актуальная лексіка (А. Булыка, 2005, правапіс да 2008 г.)",
 			slugifier: "none",
 			abbrevs:   abbrevs,
+			scanURL:   "https://knihi.com/Alaksandar_Bulyka/Slounik_insamounych_slou_Aktualnaja_leksika_2005.html",
 			indexSettings: IndexSettings{
 				DictProvidesIDs: true,
 			},
@@ -173,6 +177,7 @@ func InitDictionaries() error {
 			slugifier: "none",
 			preface:   preface,
 			abbrevs:   abbrevs,
+			scanURL:   "https://knihi.com/Ivan_Jaskin/Bielaruskija_hieahraficnyja_nazvy_1971.html",
 			indexSettings: IndexSettings{
 				DictProvidesIDs:                  true,
 				DictProvidesIDsWithoutDuplicates: true,
@@ -206,6 +211,7 @@ func InitDictionaries() error {
 			boost:     0.9,
 			title:     "Гістарычны слоўнік беларускай мовы (1982–2017)",
 			abbrevs:   abbrevs,
+			scanURL:   "https://knihi.com/none/Histarycny_slounik_bielaruskaj_movy_zip.html",
 			slugifier: "russian",
 			indexSettings: IndexSettings{
 				PrependContentWithTitle: true,
@@ -224,6 +230,7 @@ func InitDictionaries() error {
 			boost:     0.9,
 			title:     "Этымалагічны слоўнік беларускай мовы (1978-2017)",
 			abbrevs:   abbrevs,
+			scanURL:   "https://knihi.com/none/Etymalahicny_slounik_bielaruskaj_movy_zip.html",
 			slugifier: "none",
 			indexSettings: IndexSettings{
 				ConvertHeadwordsToLowercase:      true,
@@ -308,6 +315,7 @@ func InitDictionaries() error {
 			aliases: []string{"pashkievich"},
 			title:   "Ангельска-беларускі слоўнік (В. Пашкевіч, 2006, класічны правапіс)",
 			abbrevs: abbrevs,
+			scanURL: "https://knihi.com/Valancina_Paskievic/Anhielska-bielaruski_slounik.html",
 			indexSettings: IndexSettings{
 				PrependContentWithTitle: true,
 			},
@@ -325,6 +333,7 @@ func InitDictionaries() error {
 			boost:   1.2,
 			title:   "Англійска-беларускі слоўнік (Т. Суша, 2013, актуальны правапіс)",
 			abbrevs: abbrevs,
+			scanURL: "https://knihi.com/Tamara_Susa/Anhlijska-bielaruski_slounik.html",
 			indexSettings: IndexSettings{
 				DictProvidesIDs:                  true,
 				DictProvidesIDsWithoutDuplicates: true,
@@ -344,6 +353,7 @@ func InitDictionaries() error {
 			title:     "Польска-беларускі слоўнік (Я. Волкава, В. Авілава, 2004, правапіс да 2008 г.)",
 			slugifier: "polish",
 			abbrevs:   abbrevs,
+			scanURL:   "https://knihi.com/none/Polska-bielaruski_slounik_2004.html",
 			indexSettings: IndexSettings{
 				PrependContentWithTitle: true,
 			},
@@ -361,6 +371,7 @@ func InitDictionaries() error {
 			boost:     1,
 			title:     "Беларуска-нямецкі слоўнік (М. Кур'янка, 2010, актуальны правапіс)",
 			abbrevs:   abbrevs,
+			scanURL:   "https://knihi.com/none/Bielaruska-niamiecki_slounik.html",
 			slugifier: "none",
 			indexSettings: IndexSettings{
 				DictProvidesIDs:                  true,
@@ -381,6 +392,7 @@ func InitDictionaries() error {
 			title:     "Нямецка-беларускі слоўнік (М. Кур'янка, 2006, правапіс да 2008 г.)",
 			slugifier: "german",
 			abbrevs:   abbrevs,
+			scanURL:   "https://knihi.com/Mikalaj_Kurjanka/Niamiecka-bielaruski_slounik_2006.html",
 			indexSettings: IndexSettings{
 				PrependContentWithTitle: true,
 			},

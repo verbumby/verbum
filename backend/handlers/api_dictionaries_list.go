@@ -17,6 +17,7 @@ func APIDictionariesList(w http.ResponseWriter, rctx *chttp.Context) error {
 		Title      string
 		HasPreface bool
 		HasAbbrevs bool
+		ScanURL    string
 		Unlisted   bool
 	}
 	toencode := []dictview{}
@@ -27,6 +28,7 @@ func APIDictionariesList(w http.ResponseWriter, rctx *chttp.Context) error {
 			Title:      d.Title(),
 			HasPreface: d.Preface() != "",
 			HasAbbrevs: d.Abbrevs() != nil,
+			ScanURL:    d.ScanURL(),
 			Unlisted:   d.Unlisted(),
 		})
 	}

@@ -4,5 +4,6 @@ export type Dict = {
     Title: string
     HasPreface: boolean
     HasAbbrevs: boolean
+    ScanURL: string
     Unlisted: boolean
 }
