@@ -8,6 +8,7 @@ type Common struct {
 	title         string
 	preface       string
 	abbrevs       *Abbrevs
+	scanURL       string
 	slugifier     string
 	unlisted      bool
 	indexSettings IndexSettings
@@ -42,6 +43,10 @@ func (d Common) Preface() string {
 
 func (d Common) Abbrevs() *Abbrevs {
 	return d.abbrevs
+}
+
+func (d Common) ScanURL() string {
+	return d.scanURL
 }
 
 func (d Common) Slugifier() string {
