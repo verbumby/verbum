@@ -72,7 +72,7 @@ export const DefaultSection: FC = ({ }) => {
 
 
     if (dict.ScanURL) {
-        pushToTopLinks(<a href={dict.ScanURL} target='_blank' rel='noopener noreferrer'>Скан</a>, 'scan')
+        pushToTopLinks(<a href={dict.ScanURL} target='_blank' rel='noopener noreferrer'>Кніга ў PDF/DjVu</a>, 'scan')
     }
 
     return (
