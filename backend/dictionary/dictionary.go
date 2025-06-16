@@ -126,12 +126,17 @@ func InitDictionaries() error {
 	if err != nil {
 		return fmt.Errorf("load sis1999 abbrevs: %w", err)
 	}
+	preface, err = loadPreface("sis1999/sis1999_pradmova.html")
+	if err != nil {
+		return fmt.Errorf("load sis1999 preface: %w", err)
+	}
 	dictionaries = append(dictionaries, HTML{
 		Common: Common{
 			id:        "sis1999",
 			indexID:   "sis1999",
 			boost:     1,
 			title:     "Слоўнік іншамоўных слоў (А. Булыка, 1999, правапіс да 2008 г., часткова)",
+			preface:   preface,
 			slugifier: "none",
 			abbrevs:   abbrevs,
 			scanURL:   "https://knihi.com/Alaksandar_Bulyka/Slounik_insamounych_slou_1999_pdf.zip.html",
@@ -185,12 +190,17 @@ func InitDictionaries() error {
 		},
 	})
 
+	preface, err = loadPreface("proverbia/proverbia_pradmova.html")
+	if err != nil {
+		return fmt.Errorf("load proverbia preface: %w", err)
+	}
 	dictionaries = append(dictionaries, HTML{
 		Common: Common{
 			id:        "proverbia",
 			indexID:   "proverbia",
 			boost:     1,
 			title:     "Шасцімоўны слоўнік прыказак, прымавак і крылатых слоў (1993, правапіс да 2008 г.)",
+			preface:   preface,
 			slugifier: "none",
 			unlisted:  true,
 			indexSettings: IndexSettings{
@@ -204,12 +214,17 @@ func InitDictionaries() error {
 	if err != nil {
 		return fmt.Errorf("load hsbm abbrevs: %w", err)
 	}
+	preface, err = loadPreface("hsbm/hsbm_pradmova.html")
+	if err != nil {
+		return fmt.Errorf("load hsbm preface: %w", err)
+	}
 	dictionaries = append(dictionaries, DSL{
 		Common: Common{
 			id:        "hsbm",
 			indexID:   "hsbm",
 			boost:     0.9,
 			title:     "Гістарычны слоўнік беларускай мовы (1982–2017)",
+			preface:   preface,
 			abbrevs:   abbrevs,
 			scanURL:   "https://knihi.com/none/Histarycny_slounik_bielaruskaj_movy_zip.html",
 			slugifier: "russian",
@@ -244,12 +259,17 @@ func InitDictionaries() error {
 	if err != nil {
 		return fmt.Errorf("load brs abbrevs: %w", err)
 	}
+	preface, err = loadPreface("brs/brs_pradmova.html")
+	if err != nil {
+		return fmt.Errorf("load brs preface: %w", err)
+	}
 	dictionaries = append(dictionaries, DSL{
 		Common: Common{
 			id:        "brs",
 			indexID:   "brs",
 			boost:     1.3,
 			title:     "Беларуска-рускі слоўнік, 4-е выданне (актуальны правапіс)",
+			preface:   preface,
 			abbrevs:   abbrevs,
 			slugifier: "belarusian",
 		},
@@ -259,12 +279,17 @@ func InitDictionaries() error {
 	if err != nil {
 		return fmt.Errorf("load rbs10 abbrevs: %w", err)
 	}
+	preface, err = loadPreface("rbs10/rbs10_pradmova.html")
+	if err != nil {
+		return fmt.Errorf("load rbs10 preface: %w", err)
+	}
 	dictionaries = append(dictionaries, HTML{
 		Common: Common{
 			id:        "rbs10",
 			indexID:   "rbs10",
 			boost:     1.3,
 			title:     "Руска-беларускі слоўнік НАН Беларусі, 10-е выданне (актуальны правапіс)",
+			preface:   preface,
 			abbrevs:   abbrevs,
 			slugifier: "none",
 			indexSettings: IndexSettings{
@@ -307,6 +332,10 @@ func InitDictionaries() error {
 	if err != nil {
 		return fmt.Errorf("load abs abbrevs: %w", err)
 	}
+	preface, err = loadPreface("abs/abs_pradmova.html")
+	if err != nil {
+		return fmt.Errorf("load abs preface: %w", err)
+	}
 	dictionaries = append(dictionaries, DSL{
 		Common: Common{
 			id:      "abs",
@@ -314,6 +343,7 @@ func InitDictionaries() error {
 			boost:   1,
 			aliases: []string{"pashkievich"},
 			title:   "Ангельска-беларускі слоўнік (В. Пашкевіч, 2006, класічны правапіс)",
+			preface: preface,
 			abbrevs: abbrevs,
 			scanURL: "https://knihi.com/Valancina_Paskievic/Anhielska-bielaruski_slounik.html",
 			indexSettings: IndexSettings{
@@ -326,12 +356,17 @@ func InitDictionaries() error {
 	if err != nil {
 		return fmt.Errorf("load susha abbrevs: %w", err)
 	}
+	preface, err = loadPreface("susha/susha_pradmova.html")
+	if err != nil {
+		return fmt.Errorf("load susha preface: %w", err)
+	}
 	dictionaries = append(dictionaries, HTML{
 		Common: Common{
 			id:      "susha",
 			indexID: "susha",
 			boost:   1.2,
 			title:   "Англійска-беларускі слоўнік (Т. Суша, 2013, актуальны правапіс)",
+			preface: preface,
 			abbrevs: abbrevs,
 			scanURL: "https://knihi.com/Tamara_Susa/Anhlijska-bielaruski_slounik.html",
 			indexSettings: IndexSettings{
@@ -345,12 +380,17 @@ func InitDictionaries() error {
 	if err != nil {
 		return fmt.Errorf("load pbs abbrevs: %w", err)
 	}
+	preface, err = loadPreface("pbs/pbs_pradmova.html")
+	if err != nil {
+		return fmt.Errorf("load pbs preface: %w", err)
+	}
 	dictionaries = append(dictionaries, DSL{
 		Common: Common{
 			id:        "pbs",
 			indexID:   "pbs",
 			boost:     1,
 			title:     "Польска-беларускі слоўнік (Я. Волкава, В. Авілава, 2004, правапіс да 2008 г.)",
+			preface:   preface,
 			slugifier: "polish",
 			abbrevs:   abbrevs,
 			scanURL:   "https://knihi.com/none/Polska-bielaruski_slounik_2004.html",
@@ -384,12 +424,17 @@ func InitDictionaries() error {
 	if err != nil {
 		return fmt.Errorf("load kurjanka abbrevs: %w", err)
 	}
+	preface, err = loadPreface("kurjanka/kurjanka_pradmova.html")
+	if err != nil {
+		return fmt.Errorf("load kurjanka preface: %w", err)
+	}
 	dictionaries = append(dictionaries, DSL{
 		Common: Common{
 			id:        "kurjanka",
 			indexID:   "kurjanka",
 			boost:     1,
 			title:     "Нямецка-беларускі слоўнік (М. Кур'янка, 2006, правапіс да 2008 г.)",
+			preface:   preface,
 			slugifier: "german",
 			abbrevs:   abbrevs,
 			scanURL:   "https://knihi.com/Mikalaj_Kurjanka/Niamiecka-bielaruski_slounik_2006.html",

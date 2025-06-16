@@ -36,8 +36,6 @@ export const PrefaceSection: FC = ({}) => {
                 <meta name="robots" content="index, follow" />
             </Helmet>
             <div className='mx-1 mb-3'>
-                <h4>{dict.Title}</h4>
-				<h5>Прадмова</h5>
 				<div dangerouslySetInnerHTML={{ __html: preface }} />
             </div>
 		</>
