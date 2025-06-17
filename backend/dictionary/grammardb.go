@@ -2,7 +2,6 @@ package dictionary
 
 import (
 	"html/template"
-	"regexp"
 	"strings"
 )
 
@@ -11,10 +10,7 @@ type GrammarDB struct {
 }
 
 func (d GrammarDB) ToHTML(content string) template.HTML {
-	re := regexp.MustCompile(`.\x{0301}`)
-	substitution := `<span class="accent">$0</span>`
-
-	content = re.ReplaceAllString(content, substitution)
+	content = wrapAccentedChars(content)
 
 	content = strings.ReplaceAll(content, `<table`, `<div class="table-responsive"><table`)
 	content = strings.ReplaceAll(content, `</table>`, `</table></div>`)
