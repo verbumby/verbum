@@ -42,8 +42,7 @@ DoublePipe ⟵ "||" {
 Accent ⟵ "[']" ch:. "[/']" {
     buff := norm.NFD.Bytes(ch.([]byte))
     buff = norm.NFD.AppendString(buff, "\u0301")
-    buff = norm.NFC.Bytes(buff)
-    return fmt.Sprintf(`<span class="accent">%s</span>`, buff), nil
+    return string(norm.NFC.Bytes(buff)), nil
 }
 
 Transcription ⟵ "[t]" ps:( EscapeSequence / [^[] )+ "[/t]" {

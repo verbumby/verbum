@@ -13,7 +13,7 @@ func TestKrapivaParser(t *testing.T) {
 		{
 			name:    "escape sequence 1",
 			content: "\\[\\][c darkblue][m1][']а[/']",
-			want:    `[]<span style="color: darkblue"><p class="ms-0"><span class="accent">а́</span>`,
+			want:    `[]<span style="color: darkblue"><p class="ms-0">а́`,
 			wantErr: false,
 		},
 		{

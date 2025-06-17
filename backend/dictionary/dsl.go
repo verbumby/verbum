@@ -28,5 +28,8 @@ func (d DSL) ToHTML(content string) template.HTML {
 	if d.abbrevs != nil {
 		htmlv = renderAbbrevs(htmlv, d.abbrevs)
 	}
+
+	htmlv = wrapAccentedChars(htmlv)
+
 	return template.HTML(htmlv)
 }
