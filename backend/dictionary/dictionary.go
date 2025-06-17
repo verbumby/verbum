@@ -202,7 +202,6 @@ func InitDictionaries() error {
 			title:     "Шасцімоўны слоўнік прыказак, прымавак і крылатых слоў (1993, правапіс да 2008 г.)",
 			preface:   preface,
 			slugifier: "none",
-			unlisted:  true,
 			indexSettings: IndexSettings{
 				DictProvidesIDs:                  true,
 				DictProvidesIDsWithoutDuplicates: true,
