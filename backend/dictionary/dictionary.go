@@ -95,6 +95,10 @@ func InitDictionaries() error {
 	if err != nil {
 		return fmt.Errorf("load tsbm abbrevs: %w", err)
 	}
+	preface, err = loadPreface("tsbm/tsbm_pradmova.html")
+	if err != nil {
+		return fmt.Errorf("load tsbm preface: %w", err)
+	}
 	dictionaries = append(dictionaries, DSL{
 		Common: Common{
 			id:        "tsbm",
@@ -102,6 +106,7 @@ func InitDictionaries() error {
 			boost:     1.1,
 			aliases:   []string{"krapiva"},
 			title:     "Тлумачальны слоўнік беларускай мовы (1977-84, правапіс да 2008 г.)",
+			preface:   preface,
 			abbrevs:   abbrevs,
 			scanURL:   "https://knihi.com/none/Tlumacalny_slounik_bielaruskaj_movy_zip.html",
 			slugifier: "belarusian",
