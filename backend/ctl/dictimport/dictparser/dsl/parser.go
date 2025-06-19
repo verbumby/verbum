@@ -86,6 +86,7 @@ var reTags = regexp.MustCompile(`\[.*?\]`)
 func prepareArticle(hwsRaw []string, body string) (dictparser.Article, error) {
 	bodyFirstLine := strings.ToLower(firstLine(body))
 	bodyFirstLine = reTags.ReplaceAllLiteralString(bodyFirstLine, "")
+	bodyFirstLine = strings.ReplaceAll(bodyFirstLine, "\u0301", "")
 
 	var hws []string
 	var hwsalt []string
