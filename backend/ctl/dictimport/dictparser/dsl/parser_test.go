@@ -122,6 +122,11 @@ func TestParse(t *testing.T) {
 			hws:    []string{"вярхоўны"},
 			hwsalt: []string{"Вярхоўны Савет БССР", "Вярхоўны Суд БССР"},
 		},
+		{
+			title:  "абняць, (як) вокам (зрокам, позіркам) абняць",
+			hws:    []string{"абняць"},
+			hwsalt: []string{"(як) вокам (зрокам, позіркам) абняць"},
+		},
 	}
 
 	i := 0
@@ -146,8 +151,8 @@ func TestParse(t *testing.T) {
 		i++
 	}
 
-	if i != 5 {
-		t.Fatalf("expected 5 articles, got %d", i)
+	if i != 6 {
+		t.Fatalf("expected 6 articles, got %d", i)
 	}
 
 	err := <-errCh
