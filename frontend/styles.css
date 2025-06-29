@@ -3,6 +3,8 @@
   --color-darkmagenta: darkmagenta;
   --color-midnightblue: midnightblue;
   --color-example: darkgrey;
+  --color-border: lightgray;
+  --border-radius: 3px;
 }
 
 [data-bs-theme=dark] {
@@ -10,6 +12,7 @@
   --color-midnightblue: #97c2e7;
   --color-darkblue: steelblue;
   --color-example: gray;
+  --color-border: gray;
 }
 
 html, body, .root {height: 100%;}
@@ -23,36 +26,34 @@ textarea, input[type="text"], input[type="button"], input[type="submit"] {
 .content {max-width: 800px; margin: 0 auto; padding: 5px; display: flex; flex-direction: column; min-height: 100%;}
 
 #search {position:relative;}
-.search-input {margin: 0 0 0 0; display: flex; align-items: stretch; height: 35px}
-.search-input input[type=text] {flex: 2; margin: 0; padding: 0 0 0 5px; width: 100%;
-  border: 1px solid lightgrey; border-right: none; font-size: 1.2rem;}
-[data-bs-theme=dark] .search-input input[type=text] {border-color: gray; background-color: var(--bs-body-bg);}
+.search-input {margin: 0 0 0 0; display: flex; align-items: stretch; height: 35px;
+  border: 1px solid var(--color-border); border-radius: var(--border-radius);}
+.search-input input[type=text] {flex: 2; margin: 0; padding: 0 0 0 5px; width: 100%; border: none; background: none; font-size: 1.2rem; }
 .search-input .btn {border: none; border-radius: 0; cursor: pointer; }
-.search-input .button-search {color:white; background: red; margin: 0; padding:3px 10px;font-size: 1.2rem;}
+.search-input .button-search {color:white; background: red; margin: -1px; padding:3px 10px; font-size: 1.2rem; border-radius: var(--border-radius);}
 .search-input .button-search:disabled {background: grey;}
 .search-input .button-search:active {background: black;}
 .search-input .button-search-small {display:none; padding: 5px 8px; font-size: 25px;}
-.search-input .button-control {color:grey; padding: 4px 0px 4px 7px;
-  font-size: 25px; line-height: 0; border: 1px solid lightgrey; border-right: none; border-left: none;}
-[data-bs-theme=dark] .search-input .button-control,
-[data-bs-theme=dark] .search-input .button-control:active {border-color: gray;}
+.search-input .button-control {color:grey; padding: 4px 0px 4px 7px; font-size: 25px; line-height: 0;}
 .search-input .button-funnel {padding-right: 7px;}
-.search-input .button-control:active {color:grey; border: 1px solid lightgrey; border-right: none; border-left: none;}
+.search-input .button-control:active {color:grey;}
 .search-input .button-control:active svg { transform:scale(1.3);
   animation-name: search-input-button-control-active; animation-duration: 0.1s;}
 @keyframes search-input-button-control-active {from {transform:scale(1);} to {transform:scale(1.3);}}
 
 .suggestions {position: absolute; width: 100%; box-sizing: border-box; z-index: 1000;
   background: white; padding: 0; margin: 0; list-style: none; cursor: pointer;
-  border: 1px solid lightgrey; border-top: none; box-shadow: 0 2px 4px rgba(0,0,0,0.1)}
-[data-bs-theme=dark] .suggestions {border-color: gray; background: var(--bs-body-bg)}
+  border: 1px solid var(--color-border); border-top: none; box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  border-radius: var(--border-radius); overflow: hidden;}
+[data-bs-theme=dark] .suggestions {background: var(--bs-body-bg)}
 .suggestions li {padding: 5px;}
 .suggestions li.active {background-color: #e3e3e3;}
 [data-bs-theme=dark] .suggestions li.active {background-color: gray;}
 
 .dicts-filter {position: absolute; width: 100%; box-sizing: border-box; z-index: 1000; padding: 10px;
-  background: white; border: 1px solid lightgrey; border-top: none; box-shadow: 0 2px 4px rgba(0,0,0,0.1)}
-[data-bs-theme=dark] .dicts-filter {border-color: gray; background: var(--bs-body-bg)}
+  background: white; border: 1px solid var(--color-border); border-top: none; box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  border-radius: var(--border-radius); overflow: hidden;}
+[data-bs-theme=dark] .dicts-filter {background: var(--bs-body-bg)}
 .dicts-filter ul {list-style: none; padding: 0; margin: 0;}
 .dicts-filter li { padding: 5px 0;}
 .dicts-filter li:last-child { padding-bottom: 0;}
@@ -113,8 +114,7 @@ textarea, input[type="text"], input[type="button"], input[type="submit"] {
   .search-input .button-search-wide {display: none;}
 }
 
-.letter-filter-level {border-bottom: 1px solid lightgray;}
-[data-bs-theme=dark] .letter-filter-level {border-bottom-color: gray;}
+.letter-filter-level {border-bottom: 1px solid var(--color-border);}
 .letter-filter-level:last-child {border-bottom:none;}
 
 .pagination {flex-wrap: wrap;}
