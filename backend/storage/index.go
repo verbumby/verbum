@@ -102,6 +102,7 @@ func CreateDictIndex(dictID string) error {
 					"type":     "text",
 					"analyzer": "body",
 				},
+				"SortKey": map[string]any{"type": "keyword"},
 			},
 		},
 	}, nil)
