@@ -42,8 +42,8 @@ func APIDictionaryArticles(w http.ResponseWriter, rctx *chttp.Context) error {
 		"track_total_hits": true,
 		"from":             (urlQuery.Get("page").(*htmlui.IntegerQueryParam).Value() - 1) * pageSize,
 		"size":             pageSize,
-		"sort": []interface{}{
-			"Title",
+		"sort": []any{
+			"SortKey",
 		},
 		"query": map[string]interface{}{
 			"nested": map[string]interface{}{
