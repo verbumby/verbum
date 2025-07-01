@@ -288,13 +288,16 @@ func (c *commandController) indexArticles(articlesCh chan dictparser.Article) er
 		reBrace := regexp.MustCompile(`\[.*?\]`)
 		a.Title = reBrace.ReplaceAllString(a.Title, "")
 
-		doc := map[string]interface{}{
+		sortKey := createSortKey(a.Headwords[0])
+
+		doc := map[string]any{
 			"Title":       a.Title,
 			"Headword":    a.Headwords,
 			"HeadwordAlt": a.HeadwordsAlt,
 			"Phrases":     a.Phrases,
 			"Prefix":      prefixes,
 			"Content":     content,
+			"SortKey":     sortKey,
 		}
 
 		if err := buffjenc.Encode(map[string]any{"create": map[string]any{"_id": id}}); err != nil {
