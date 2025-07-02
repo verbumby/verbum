@@ -1,4 +1,4 @@
-package dictimport
+package textutil
 
 import "testing"
 
@@ -11,7 +11,7 @@ func TestSortKey(t *testing.T) {
 
 	for _, p := range pairs {
 		a, b := p[0], p[1]
-		ak, bk := createSortKey(a), createSortKey(b)
+		ak, bk := CreateSortKey(a), CreateSortKey(b)
 		if ak >= bk {
 			t.Errorf("Invalid order: %s (%s) must be smaller than %s (%s)", a, ak, b, bk)
 		}

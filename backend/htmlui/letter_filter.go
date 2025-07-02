@@ -1,7 +1,10 @@
 package htmlui
 
 import (
+	"slices"
 	"strconv"
+
+	"github.com/verbumby/verbum/backend/textutil"
 )
 
 // LetterFilter letter filter used on dictionary page
@@ -13,6 +16,9 @@ type LetterFilter struct {
 
 // AddLevel adds filter level
 func (lf *LetterFilter) AddLevel(level []LetterFilterEntity) {
+	slices.SortFunc(level, func(a, b LetterFilterEntity) int {
+		return textutil.RuneOrderCmp(a.Key, b.Key)
+	})
 	lf.levels = append(lf.levels, level)
 }
 
