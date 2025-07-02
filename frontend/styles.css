@@ -70,7 +70,8 @@ textarea, input[type="text"], input[type="button"], input[type="submit"] {
 .article a {text-decoration: underline;}
 .article v-hw,
 .article .hw {color: var(--color-midnightblue); font-weight: bold;}
-.article v-ex, .article .ex {color: var(--color-example);}
+.article v-ex, .article .ex {color: var(--color-example); list-style-type: none;}
+.article .idiom {list-style-type: none;}
 .article v-trx {
   color: darkgrey;
   font-size: 0.8em;
