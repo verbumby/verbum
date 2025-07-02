@@ -249,6 +249,7 @@ func (c *commandController) indexArticles(articlesCh chan dictparser.Article) er
 		}
 
 		for _, phw := range a.Headwords {
+			phw = strings.ToLower(phw)
 			prefix := map[string]string{}
 			j := 0
 			for _, r := range phw {
@@ -288,7 +289,7 @@ func (c *commandController) indexArticles(articlesCh chan dictparser.Article) er
 		reBrace := regexp.MustCompile(`\[.*?\]`)
 		a.Title = reBrace.ReplaceAllString(a.Title, "")
 
-		sortKey := createSortKey(a.Headwords[0])
+		sortKey := textutil.CreateSortKey(a.Headwords[0])
 
 		doc := map[string]any{
 			"Title":       a.Title,
