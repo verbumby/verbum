@@ -11,7 +11,10 @@ import (
 	"golang.org/x/text/unicode/norm"
 )
 
-var transformRemoveDiacritics = transform.Chain(norm.NFD, runes.Remove(runes.In(unicode.Mn)), norm.NFC)
+var (
+	transformRemoveDiacritics = transform.Chain(norm.NFD, runes.Remove(runes.In(unicode.Mn)), norm.NFC)
+	reSlugInvalidChars        = regexp.MustCompile(`[^a-zA-Z0-9'.-]`)
+)
 
 // Slugify creates a url slug from the s string
 func Slugify(s string) string {
@@ -21,8 +24,7 @@ func Slugify(s string) string {
 		log.Printf("failed to remove diacritics when slugifying %s", s)
 	}
 
-	r := regexp.MustCompile("[^a-zA-Z0-9'-]")
-	s = r.ReplaceAllString(s, "-")
+	s = reSlugInvalidChars.ReplaceAllString(s, "-")
 
 	for strings.Contains(s, "--") {
 		s = strings.ReplaceAll(s, "--", "-")
