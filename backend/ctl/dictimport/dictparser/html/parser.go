@@ -138,14 +138,6 @@ func parseArticle(body string, settings dictionary.IndexSettings) (dictparser.Ar
 		}
 	}
 
-	if settings.ConvertHeadwordsToLowercase {
-		for i := range hws {
-			hws[i] = strings.ToLower(hws[i])
-		}
-		for i := range hwsalt {
-			hwsalt[i] = strings.ToLower(hwsalt[i])
-		}
-	}
 
 	body = strings.ReplaceAll(body, "<sup", "\u200b<sup")
 	return dictparser.Article{

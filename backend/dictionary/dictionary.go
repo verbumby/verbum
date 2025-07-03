@@ -252,7 +252,6 @@ func InitDictionaries() error {
 			scanURL:   "https://knihi.com/none/Etymalahicny_slounik_bielaruskaj_movy_zip.html",
 			slugifier: "none",
 			indexSettings: IndexSettings{
-				ConvertHeadwordsToLowercase:      true,
 				DictProvidesIDs:                  true,
 				DictProvidesIDsWithoutDuplicates: true,
 			},
