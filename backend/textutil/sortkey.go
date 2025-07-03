@@ -6,7 +6,7 @@ import (
 )
 
 const runeOrder = " aäąàbcćdeęfghijklłmnńoöópqrsßśtuüvwxyzźż" +
-	"абвгдеёжзіийклмнопрстуўфхцчшщъыьэюя"
+	"абвгґдеёжзіийклмнопрстуўфхцчшщъыьэюя"
 
 var runeOrderMap = map[rune]byte{}
 
