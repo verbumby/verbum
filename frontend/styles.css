@@ -68,8 +68,7 @@ textarea, input[type="text"], input[type="button"], input[type="submit"] {
 [data-bs-theme=dark] .article {border-bottom-color: gray;}
 .article:last-child {border-bottom: none;}
 .article a {text-decoration: underline;}
-.article v-hw,
-.article .hw {color: var(--color-midnightblue); font-weight: bold;}
+.article .hw, .article .hw-alt, .article .phr {color: var(--color-midnightblue); font-weight: bold;}
 .article v-ex, .article .ex {color: var(--color-example); list-style-type: none;}
 .article .idiom {list-style-type: none;}
 .article v-trx {
