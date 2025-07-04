@@ -58,7 +58,10 @@ func loadDSLAbbrevs(filename string) (*Abbrevs, error) {
 		if strings.HasPrefix(line, "\t") || strings.HasPrefix(line, " ") {
 			keysSealed = true
 			line = strings.TrimSpace(line)
-			c.Value += line + "\n"
+			if c.Value != "" {
+				c.Value += "\n"
+			}
+			c.Value += line
 		} else {
 			if keysSealed {
 				list = append(list, c)
