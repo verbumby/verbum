@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
-	"sort"
+	"regexp"
 	"strings"
 
 	"github.com/spf13/cobra"
@@ -12,6 +12,8 @@ import (
 	"github.com/verbumby/verbum/backend/dictionary"
 	"github.com/verbumby/verbum/backend/storage"
 )
+
+var reStrongSpanDarkBlue = regexp.MustCompile(`<strong><span style="color: darkblue">([^<]*)</span></strong>`)
 
 func ExportCommand() *cobra.Command {
 	c := &exportController{}
@@ -63,10 +65,6 @@ func (c *exportController) run() error {
 		return fmt.Errorf("scroll through the source index: %w", err)
 	}
 
-	sort.Slice(hits, func(i, j int) bool {
-		return hits[i].Source.Headword[0] < hits[j].Source.Headword[0]
-	})
-
 	for _, a := range hits {
 		content := a.Source.Content
 		// content = strings.ReplaceAll(content, "<", "&lt;")
@@ -80,7 +78,10 @@ func (c *exportController) run() error {
 			fmt.Println("<hr/>")
 		}
 
-		rs = strings.Replace(rs, "<strong>", `<strong class="hw" id="`+a.ID+`">`, 1)
+		rs = reStrongSpanDarkBlue.ReplaceAllString(rs, `<strong class="hw">$1</strong>`)
+
+		rs = strings.Replace(rs, `<strong class="hw">`, `<strong class="hw" id="`+a.ID+`">`, 1)
+		rs = strings.ReplaceAll(rs, `</p><p`, "</p>\n<p")
 
 		if strings.HasSuffix(rs, "\n") {
 			fmt.Print(rs)
