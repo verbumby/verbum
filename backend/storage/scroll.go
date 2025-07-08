@@ -16,7 +16,7 @@ func Scroll(index string, reqbody map[string]interface{}, cb ScrollCallback) err
 	}
 
 	if _, ok := reqbody["sort"]; !ok {
-		reqbody["sort"] = []string{"_doc"}
+		reqbody["sort"] = []string{"SortKey"}
 	}
 
 	if _, ok := reqbody["size"]; !ok {

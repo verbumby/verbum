@@ -99,7 +99,7 @@ func InitDictionaries() error {
 	if err != nil {
 		return fmt.Errorf("load tsbm preface: %w", err)
 	}
-	dictionaries = append(dictionaries, DSL{
+	dictionaries = append(dictionaries, HTML{
 		Common: Common{
 			id:        "tsbm",
 			indexID:   "tsbm",
@@ -110,6 +110,10 @@ func InitDictionaries() error {
 			abbrevs:   abbrevs,
 			scanURL:   "https://knihi.com/none/Tlumacalny_slounik_bielaruskaj_movy_zip.html",
 			slugifier: "belarusian",
+			indexSettings: IndexSettings{
+				DictProvidesIDs:                  true,
+				DictProvidesIDsWithoutDuplicates: true,
+			},
 		},
 	})
 
