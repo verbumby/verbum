@@ -552,26 +552,26 @@ var g = &grammar{
 		},
 		{
 			name: "Anything",
-			pos:  position{line: 200, col: 1, offset: 4722},
+			pos:  position{line: 200, col: 1, offset: 4724},
 			expr: &actionExpr{
-				pos: position{line: 200, col: 12, offset: 4735},
+				pos: position{line: 200, col: 12, offset: 4737},
 				run: (*parser).callonAnything1,
 				expr: &labeledExpr{
-					pos:   position{line: 200, col: 12, offset: 4735},
+					pos:   position{line: 200, col: 12, offset: 4737},
 					label: "ch",
 					expr: &anyMatcher{
-						line: 200, col: 15, offset: 4738,
+						line: 200, col: 15, offset: 4740,
 					},
 				},
 			},
 		},
 		{
 			name: "EOF",
-			pos:  position{line: 204, col: 1, offset: 4781},
+			pos:  position{line: 204, col: 1, offset: 4783},
 			expr: &notExpr{
-				pos: position{line: 204, col: 7, offset: 4789},
+				pos: position{line: 204, col: 7, offset: 4791},
 				expr: &anyMatcher{
-					line: 204, col: 8, offset: 4790,
+					line: 204, col: 8, offset: 4792,
 				},
 			},
 		},
@@ -819,7 +819,7 @@ func (p *parser) callonTagarg1() (any, error) {
 }
 
 func (c *current) onNewline1() (any, error) {
-	return `</p>`, nil
+	return "</p>\n", nil
 }
 
 func (p *parser) callonNewline1() (any, error) {

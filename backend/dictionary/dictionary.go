@@ -435,18 +435,18 @@ func InitDictionaries() error {
 	if err != nil {
 		return fmt.Errorf("load kurjanka preface: %w", err)
 	}
-	dictionaries = append(dictionaries, DSL{
+	dictionaries = append(dictionaries, HTML{
 		Common: Common{
-			id:        "kurjanka",
-			indexID:   "kurjanka",
-			boost:     1,
-			title:     "Нямецка-беларускі слоўнік (М. Кур'янка, 2006, правапіс да 2008 г.)",
-			preface:   preface,
-			slugifier: "german",
-			abbrevs:   abbrevs,
-			scanURL:   "https://knihi.com/Mikalaj_Kurjanka/Niamiecka-bielaruski_slounik_2006.html",
+			id:      "kurjanka",
+			indexID: "kurjanka",
+			boost:   1,
+			title:   "Нямецка-беларускі слоўнік (М. Кур'янка, 2006, правапіс да 2008 г.)",
+			preface: preface,
+			abbrevs: abbrevs,
+			scanURL: "https://knihi.com/Mikalaj_Kurjanka/Niamiecka-bielaruski_slounik_2006.html",
 			indexSettings: IndexSettings{
-				PrependContentWithTitle: true,
+				DictProvidesIDs:                  true,
+				DictProvidesIDsWithoutDuplicates: true,
 			},
 		},
 	})

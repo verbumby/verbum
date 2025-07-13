@@ -194,7 +194,7 @@ Tagarg ⟵ ' ' v:[a-z0-9=]+ {
 }
 
 Newline ⟵ "\n" {
-    return `</p>`, nil
+    return "</p>\n", nil
 }
 
 Anything ⟵ ch:. {
