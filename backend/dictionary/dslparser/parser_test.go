@@ -19,14 +19,16 @@ func TestKrapivaParser(t *testing.T) {
 		{
 			name:    "case1",
 			content: "[m1][b][c darkblue]непрыгляднасць,[/c][/b][c brown] ‑і, [p]ж.[/p][/c]\n[m2]\\[Вася\\] Уласцівасць непрыгляднага; непрывабнасць.\n",
-			want:    `<p class="ms-0"><strong><span style="color: darkblue">непрыгляднасць,</span></strong><span style="color: brown"> ‑і, <v-abbr>ж.</v-abbr></span></p><p class="ms-2">[Вася] Уласцівасць непрыгляднага; непрывабнасць.</p>`,
+			want: `<p class="ms-0"><strong><span style="color: darkblue">непрыгляднасць,</span></strong><span style="color: brown"> ‑і, <v-abbr>ж.</v-abbr></span></p>` + "\n" +
+				`<p class="ms-2">[Вася] Уласцівасць непрыгляднага; непрывабнасць.</p>` + "\n",
 			wantErr: false,
 		},
 		{
 			name:    "case2",
 			content: "[m1][b]Том:[/b] 2, [b]старонка:[/b] 26.[/m]\n[s]02-026_0079_\\[no_name\\].jpg[/s]\n",
 			opts:    []Option{GlobalStore("dictID", "dict-id-1")},
-			want:    `<p class="ms-0"><strong>Том:</strong> 2, <strong>старонка:</strong> 26.</p><img src="/images/dict-id-1/02/02-026_0079_%5Bno_name%5D.jpg" alt="02-026_0079_%5Bno_name%5D.jpg"/></p>`,
+			want: `<p class="ms-0"><strong>Том:</strong> 2, <strong>старонка:</strong> 26.</p>` + "\n" +
+				`<img src="/images/dict-id-1/02/02-026_0079_%5Bno_name%5D.jpg" alt="02-026_0079_%5Bno_name%5D.jpg"/></p>` + "\n",
 			wantErr: false,
 		},
 		{

@@ -78,7 +78,7 @@ func (c *exportController) run() error {
 			fmt.Println("<hr/>")
 		}
 
-		rs = reStrongSpanDarkBlue.ReplaceAllString(rs, `<strong class="hw">$1</strong>`)
+		// rs = reStrongSpanDarkBlue.ReplaceAllString(rs, `<strong class="hw">$1</strong>`)
 
 		rs = strings.Replace(rs, `<strong class="hw">`, `<strong class="hw" id="`+a.ID+`">`, 1)
 		rs = strings.ReplaceAll(rs, `</p><p`, "</p>\n<p")
