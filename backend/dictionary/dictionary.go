@@ -60,7 +60,7 @@ func InitDictionaries() error {
 			id:        "tsblm2022",
 			indexID:   "tsblm2022",
 			boost:     1.6,
-			title:     "Тлумачальны слоўнік беларускай літаратурнай мовы (пад рэд. І. Л. Капылова, 2022, актуальны правапіс, часткова)",
+			title:     "Тлумачальны слоўнік беларускай літаратурнай мовы (пад рэд. І. Л. Капылова, 2022, актуальны правапіс)",
 			abbrevs:   abbrevs,
 			preface:   preface,
 			slugifier: "none",
@@ -79,7 +79,7 @@ func InitDictionaries() error {
 		Common: Common{
 			id:        "tsblm",
 			indexID:   "tsblm",
-			boost:     1.6,
+			boost:     1,
 			aliases:   []string{"rvblr"},
 			title:     "Тлумачальны слоўнік беларускай літаратурнай мовы (2002, правапіс да 2008 г.)",
 			abbrevs:   abbrevs,
