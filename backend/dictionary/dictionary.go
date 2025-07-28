@@ -79,7 +79,7 @@ func InitDictionaries() error {
 		Common: Common{
 			id:        "tsblm",
 			indexID:   "tsblm",
-			boost:     1.6,
+			boost:     1,
 			aliases:   []string{"rvblr"},
 			title:     "Тлумачальны слоўнік беларускай літаратурнай мовы (2002, правапіс да 2008 г.)",
 			abbrevs:   abbrevs,
