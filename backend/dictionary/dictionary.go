@@ -88,6 +88,7 @@ func InitDictionaries() error {
 				DictProvidesIDs:                  true,
 				DictProvidesIDsWithoutDuplicates: false,
 			},
+			unlisted: true,
 		},
 	})
 
