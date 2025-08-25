@@ -425,6 +425,7 @@ func InitDictionaries() error {
 				DictProvidesIDs:                  true,
 				DictProvidesIDsWithoutDuplicates: true,
 			},
+			unlisted: true,
 		},
 	})
 
@@ -449,6 +450,7 @@ func InitDictionaries() error {
 				DictProvidesIDs:                  true,
 				DictProvidesIDsWithoutDuplicates: true,
 			},
+			unlisted: true,
 		},
 	})
 	return nil
