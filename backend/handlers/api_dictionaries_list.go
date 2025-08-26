@@ -20,9 +20,16 @@ func APIDictionariesList(w http.ResponseWriter, rctx *chttp.Context) error {
 		ScanURL    string
 		Unlisted   bool
 	}
-	toencode := []dictview{}
+
+	resp := struct {
+		Dicts    []dictview
+		Sections []dictionary.Section
+	}{
+		Sections: dictionary.GetAllSections(),
+	}
+
 	for _, d := range dictionary.GetAll() {
-		toencode = append(toencode, dictview{
+		resp.Dicts = append(resp.Dicts, dictview{
 			ID:         d.ID(),
 			Aliases:    d.Aliases(),
 			Title:      d.Title(),
@@ -32,7 +39,8 @@ func APIDictionariesList(w http.ResponseWriter, rctx *chttp.Context) error {
 			Unlisted:   d.Unlisted(),
 		})
 	}
-	if err := json.NewEncoder(w).Encode(toencode); err != nil {
+
+	if err := json.NewEncoder(w).Encode(resp); err != nil {
 		return fmt.Errorf("encode response: %w", err)
 	}
 	return nil

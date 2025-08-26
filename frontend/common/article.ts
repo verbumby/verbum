@@ -9,8 +9,10 @@ export type Article = {
 }
 
 export type ArticleList = {
-    DictID: string
+    DictIDs: string[]
+    Q: string
     Prefix: string
     Articles: Article[]
+    TermSuggestions: string[]
     Pagination: Pagination
 }

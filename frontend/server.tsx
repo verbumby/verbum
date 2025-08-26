@@ -10,6 +10,8 @@ import { VerbumAPIClientServer } from './verbum/server'
 import { App } from './App'
 import { rootReducer } from './store'
 import { routes } from './routes'
+import { DictsMetadata, dictsSet } from './common'
+import { sectionsSet } from './common/sections'
 
 globalThis.verbumClient = new VerbumAPIClientServer({ apiURL: 'http://127.0.0.1:8080' })
 
@@ -24,11 +26,25 @@ async function getIndexHTML(): Promise<string> {
     return Promise.resolve(indexhtml)
 }
 
+let dictsMetadata: DictsMetadata
+async function getDictsMetadata(): Promise<DictsMetadata> {
+    if (dictsMetadata) {
+        return Promise.resolve(dictsMetadata)
+    }
+
+    const r = await verbumClient.getDictionaries()
+    dictsMetadata = r
+    return Promise.resolve(dictsMetadata)
+}
+
 const k = new Koa()
 k.use(async ctx => {
     const store = configureStore({
         reducer: rootReducer,
     })
+    const dm = await getDictsMetadata()
+    store.dispatch(dictsSet(dm.Dicts))
+    store.dispatch(sectionsSet(dm.Sections))
 
     const promises: Promise<void>[] = []
     routes.some(route => {

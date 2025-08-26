@@ -3,7 +3,6 @@ package handlers
 import (
 	"encoding/json"
 	"fmt"
-	"log"
 	"math"
 	"net/http"
 	"strings"
@@ -16,14 +15,27 @@ import (
 	"github.com/verbumby/verbum/backend/textutil"
 )
 
+var searchFields = []string{
+	"Headword^5",
+	"Headword.Smaller^4",
+	"HeadwordAlt^3",
+	"HeadwordAlt.Smaller^2",
+	"Phrases^1",
+	"Content^1",
+}
+
 // APISearch search endpoint
 func APISearch(w http.ResponseWriter, rctx *chttp.Context) error {
 	urlQuery := htmlui.Query([]htmlui.QueryParam{
 		htmlui.NewStringQueryParam("q", ""),
 		htmlui.NewInDictsQueryParam("in"),
 		htmlui.NewIntegerQueryParam("page", 1),
+		htmlui.NewStringQueryParam("prefix", ""),
+		htmlui.NewBoolQueryParam("track_total_hits", false),
 	})
 	urlQuery.From(rctx.R.URL.Query())
+
+	queryBoolMusts := []map[string]any{}
 
 	q := urlQuery.Get("q").(*htmlui.StringQueryParam).Value()
 	if len(q) > 1000 {
@@ -31,6 +43,16 @@ func APISearch(w http.ResponseWriter, rctx *chttp.Context) error {
 		return nil
 	}
 	q = textutil.NormalizeQuery(q)
+
+	if q != "" {
+		queryBoolMusts = append(queryBoolMusts, map[string]any{
+			"simple_query_string": map[string]any{
+				"query":            q,
+				"fields":           searchFields,
+				"default_operator": "AND",
+			},
+		})
+	}
 
 	page := urlQuery.Get("page").(*htmlui.IntegerQueryParam).Value()
 	inDicts := urlQuery.Get("in").(*htmlui.InDictsQueryParam).Value()
@@ -50,22 +72,38 @@ func APISearch(w http.ResponseWriter, rctx *chttp.Context) error {
 		})
 	}
 
+	prefix := []rune(urlQuery.Get("prefix").(*htmlui.StringQueryParam).Value())
+	prefix = prefix[:min(3, len(prefix))]
+
+	if len(prefix) > 0 {
+		prefixMusts := []any{}
+		for i, p := range prefix {
+			prefixMusts = append(prefixMusts, map[string]any{
+				"term": map[string]any{
+					fmt.Sprintf("Prefix.Letter%d", i+1): string(p),
+				},
+			})
+		}
+
+		queryBoolMusts = append(queryBoolMusts, map[string]any{
+			"nested": map[string]any{
+				"path": "Prefix",
+				"query": map[string]any{
+					"bool": map[string]any{
+						"must": prefixMusts,
+					},
+				},
+			},
+		})
+	}
+
 	const pageSize = 10
-	reqbody := map[string]interface{}{
+	reqbody := map[string]any{
 		"from": (page - 1) * pageSize,
 		"size": pageSize,
-		"query": map[string]interface{}{
-			"simple_query_string": map[string]any{
-				"query": q,
-				"fields": []string{
-					"Headword^5",
-					"Headword.Smaller^4",
-					"HeadwordAlt^3",
-					"HeadwordAlt.Smaller^2",
-					"Phrases^1",
-					"Content^1",
-				},
-				"default_operator": "AND",
+		"query": map[string]any{
+			"bool": map[string]any{
+				"must": queryBoolMusts,
 			},
 		},
 		"indices_boost": indicesBoost,
@@ -78,37 +116,45 @@ func APISearch(w http.ResponseWriter, rctx *chttp.Context) error {
 			"pre_tags":  []string{"<highlight>"},
 			"post_tags": []string{"</highlight>"},
 		},
-		"suggest": map[string]interface{}{
+		"suggest": map[string]any{
 			"text": q,
-			"OverHeadword": map[string]interface{}{
-				"term": map[string]interface{}{
+			"OverHeadword": map[string]any{
+				"term": map[string]any{
 					"field":         "Headword",
 					"size":          5,
 					"prefix_length": 0,
 				},
 			},
-			"OverHeadwordSmaller": map[string]interface{}{
-				"term": map[string]interface{}{
+			"OverHeadwordSmaller": map[string]any{
+				"term": map[string]any{
 					"field":         "Headword.Smaller",
 					"size":          5,
 					"prefix_length": 0,
 				},
 			},
-			"OverHeadwordAltSmaller": map[string]interface{}{
-				"term": map[string]interface{}{
+			"OverHeadwordAltSmaller": map[string]any{
+				"term": map[string]any{
 					"field":         "HeadwordAlt.Smaller",
 					"size":          5,
 					"prefix_length": 0,
 				},
 			},
-			"OverHeadwordAlt": map[string]interface{}{
-				"term": map[string]interface{}{
+			"OverHeadwordAlt": map[string]any{
+				"term": map[string]any{
 					"field":         "HeadwordAlt",
 					"size":          5,
 					"prefix_length": 0,
 				},
 			},
 		},
+	}
+
+	if q == "" {
+		reqbody["sort"] = []any{"SortKey"}
+	}
+
+	if urlQuery.Get("track_total_hits").(*htmlui.BoolQueryParam).Value() {
+		reqbody["track_total_hits"] = true
 	}
 
 	respbody := struct {
@@ -152,11 +198,7 @@ func APISearch(w http.ResponseWriter, rctx *chttp.Context) error {
 
 		content := hit.Source.Content
 
-		if len(hit.Highlight.Content) == 0 {
-			log.Printf("APISearch: no highlights for %s/%s queried with `%s` in %s ", hit.Index, hit.ID, q, inDictsStr)
-		} else if len(hit.Highlight.Content) > 1 {
-			log.Printf("APISearch: more than 1 highlight for %s/%s queried with %s in %s ", hit.Index, hit.ID, q, inDictsStr)
-		} else {
+		if len(hit.Highlight.Content) == 1 {
 			content = hit.Highlight.Content[0]
 			content = strings.ReplaceAll(content, "[']<highlight>", "<highlight>[']")
 		}
@@ -196,10 +238,16 @@ func APISearch(w http.ResponseWriter, rctx *chttp.Context) error {
 	}
 
 	if err := json.NewEncoder(w).Encode(struct {
+		DictIDs         []string
+		Q               string
+		Prefix          string
 		Articles        []articleview
 		TermSuggestions []string
 		Pagination      paginationview
 	}{
+		DictIDs:         inDicts,
+		Q:               q,
+		Prefix:          string(prefix),
 		Articles:        articleviews,
 		TermSuggestions: termSuggestions,
 		Pagination: paginationview{

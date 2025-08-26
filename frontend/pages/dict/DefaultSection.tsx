@@ -3,12 +3,11 @@ import { FC, useEffect } from 'react'
 
 import { Helmet } from 'react-helmet'
 import { Link, useRouteMatch } from 'react-router-dom'
-import { ArticleView, PaginationView, SearchControl, useDispatch } from '../../common'
+import { ArticleView, NoSearchResults, PaginationView, SearchControl, useDispatch } from '../../common'
 import { useDict, useDictArticles, useLetterFilter } from '../../store'
 import { letterFilterFetch, letterFilterReset } from './letterfilter'
 import { dictArticlesFetch, MatchParams, dictArticlesReset, useURLSearch } from './dict'
 import { LetterFilterView } from './LetterFilterView'
-import { useURLSearch as useIndexURLSearch } from '../index/search'
 
 export const DefaultSection: FC = ({ }) => {
     const match = useRouteMatch<MatchParams>()
@@ -20,8 +19,7 @@ export const DefaultSection: FC = ({ }) => {
     const dictArticles = useDictArticles()
     const dispatch = useDispatch()
 
-    const indexURLSearch = useIndexURLSearch()
-
+    const q = urlSearch.get('q')
     const prefix = urlSearch.get('prefix')
     const page = urlSearch.get('page')
 
@@ -33,7 +31,7 @@ export const DefaultSection: FC = ({ }) => {
     useEffect(() => {
         dispatch(dictArticlesFetch(match, urlSearch))
         return () => { dispatch(dictArticlesReset()) }
-    }, [match.params.dictID, prefix, page])
+    }, [match.params.dictID, prefix, page, q])
 
     if (!letterFilter) {
         return <></>
@@ -59,7 +57,6 @@ export const DefaultSection: FC = ({ }) => {
         }}>Прадмова</Link>, 'preface')
     }
 
-
     if (dict.HasAbbrevs) {
         pushToTopLinks(<Link to={{
             pathname: match.url,
@@ -69,7 +66,6 @@ export const DefaultSection: FC = ({ }) => {
                 .encode()
         }}>Скарачэнні</Link>, 'abbr')
     }
-
 
     if (dict.ScanURL) {
         pushToTopLinks(<a href={dict.ScanURL} target='_blank' rel='noopener noreferrer'>Кніга ў PDF/DjVu</a>, 'scan')
@@ -90,15 +86,18 @@ export const DefaultSection: FC = ({ }) => {
             </div>
             <div className="mb-3">
                 <SearchControl
-                    urlQ=""
+                    inBound={[dict]}
+                    urlQ={q}
                     urlIn={dict.ID}
+                    filterEnabled={false}
                     calculateSearchURL={
-                        (q, inDicts) => indexURLSearch
-                            .clone()
-                            .set('q', q)
-                            .set('in', inDicts)
-                            .set('page', 1)
-                            .encode()
+                        (q, inDicts) => ({
+                            search: urlSearch
+                                .clone()
+                                .set('q', q)
+                                .set('page', 1)
+                                .encode()
+                        })
                     }
                 />
             </div>
@@ -112,7 +111,7 @@ export const DefaultSection: FC = ({ }) => {
                         .encode()
                 })}
             />
-            {dictArticles && <>
+            {dictArticles && dictArticles.Articles.length > 0 && <>
                 <div>
                     {dictArticles.Articles.map(a => (
                         <ArticleView
@@ -134,6 +133,9 @@ export const DefaultSection: FC = ({ }) => {
                     })}
                 />
             </>}
+            {dictArticles && dictArticles.Articles.length == 0
+                && <NoSearchResults q={q} suggestions={dictArticles.TermSuggestions}
+                    calculateSuggestionURL={s => ({ search: urlSearch.clone().set('q', s).encode() })} />}
         </>
     )
 }
