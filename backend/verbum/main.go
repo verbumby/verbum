@@ -63,7 +63,6 @@ func bootstrapServer(cmd *cobra.Command, args []string) error {
 	r.Use(middleware.Compress(5))
 	r.HandleFunc("/api/dictionaries/{dictionary:[a-z0-9-]+}/articles/{article}", chttp.MakeHandler(handlers.APIArticle, chttp.ContentTypeJSONMiddleware))
 	r.HandleFunc("/api/dictionaries/{dictionary:[a-z0-9-]+}/letterfilter", chttp.MakeHandler(handlers.APILetterFilter, chttp.ContentTypeJSONMiddleware))
-	r.HandleFunc("/api/dictionaries/{dictionary:[a-z0-9-]+}/articles", chttp.MakeHandler(handlers.APIDictionaryArticles, chttp.ContentTypeJSONMiddleware))
 	r.HandleFunc("/api/dictionaries/{dictionary:[a-z0-9-]+}/abbrevs", chttp.MakeHandler(handlers.APIDictionaryAbbrevs, chttp.ContentTypeJSONMiddleware))
 	r.HandleFunc("/api/dictionaries/{dictionary:[a-z0-9-]+}/preface", chttp.MakeHandler(handlers.APIDictionaryPreface, chttp.ContentTypeJSONMiddleware))
 	r.HandleFunc("/api/dictionaries", chttp.MakeHandler(handlers.APIDictionariesList, chttp.ContentTypeJSONMiddleware))

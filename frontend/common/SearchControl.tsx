@@ -1,20 +1,23 @@
 import * as React from 'react'
 import { useEffect, useState, useRef } from 'react'
+import { LocationDescriptor } from 'history'
 
 import { Suggestions } from './Suggestions'
 import { IconBackspace, IconSearch } from '../icons'
-import { Suggestion, useDelayed, useDispatch } from '.'
+import { Dict, Suggestion, useDelayed, useDispatch } from '.'
 import { useHistory } from 'react-router-dom'
 import { hideLoading, showLoading } from 'react-redux-loading-bar'
 import { useDictsFilter } from './dictsfilter'
 
 type SearchControlProps = {
+    inBound: Dict[]
     urlQ: string
     urlIn: string
-    calculateSearchURL: (q: string, inDicts: string) => string
+    calculateSearchURL: (q: string, inDicts: string) => LocationDescriptor
+    filterEnabled: boolean
 }
 
-export const SearchControl: React.FC<SearchControlProps> = ({ urlQ, urlIn, calculateSearchURL }) => {
+export const SearchControl: React.FC<SearchControlProps> = ({ inBound, urlQ, urlIn, calculateSearchURL, filterEnabled }) => {
     const [q, setQ] = useState<string>(urlQ)
     const qEl = useRef<HTMLInputElement>(null)
     const history = useHistory()
@@ -23,10 +26,10 @@ export const SearchControl: React.FC<SearchControlProps> = ({ urlQ, urlIn, calcu
         inDicts,
         icon: dictsFilterIcon,
         filter: dictsFilter
-    } = useDictsFilter(urlIn)
+    } = useDictsFilter(inBound, urlIn)
 
     const onSearch = (q: string) => {
-        history.push('/' + calculateSearchURL(q, inDicts))
+        history.push(calculateSearchURL(q, inDicts))
     }
 
     let [
@@ -35,7 +38,7 @@ export const SearchControl: React.FC<SearchControlProps> = ({ urlQ, urlIn, calcu
         calculateQ,
         inputProps,
         suggestionViewProps,
-    ] = useSuggestions(inDicts)
+    ] = useSuggestions(inDicts || inBound.map(d => d.ID).join(','))
 
     const urlQJustChanged = useRef<boolean>(false)
     useEffect(() => {
@@ -92,7 +95,7 @@ export const SearchControl: React.FC<SearchControlProps> = ({ urlQ, urlIn, calcu
                     {q && (<span className="btn button-control button-clear" onClick={onClearClick}>
                         <IconBackspace />
                     </span>)}
-                    {dictsFilterIcon}
+                    {filterEnabled ? dictsFilterIcon : null}
                     <button type="submit" disabled={inDicts === '-'} className="btn button-search button-search-wide">Шукаць</button>
                     <button type="submit" disabled={inDicts === '-'} className="btn button-search button-search-small">
                         <IconSearch />
@@ -101,7 +104,7 @@ export const SearchControl: React.FC<SearchControlProps> = ({ urlQ, urlIn, calcu
                 {suggestions.length > 0 && (
                     <Suggestions onClick={onSearch} {...suggestionViewProps} />
                 )}
-                {dictsFilter}
+                {filterEnabled ? dictsFilter : null}
             </form>
         </div>
     )

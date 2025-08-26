@@ -7,6 +7,7 @@ export type MatchParams = {
 }
 
 export const URLSearchDefaults = {
+    q: '',
     prefix: '',
     page: 1,
     section: '',
@@ -20,11 +21,12 @@ const DICT_ARTICLES_FETCH_KICKOFF = 'DICT_ARTICLES/FETCH/KICKOFF'
 type DictArticlesFetchKickoffAction = {
     type: typeof DICT_ARTICLES_FETCH_KICKOFF
     dictID: string
+    q: string
     prefix: string
     page: number
 }
-function dictArticlesFetchKickOff(dictID: string, prefix: string, page: number): DictArticlesFetchKickoffAction {
-    return { type: DICT_ARTICLES_FETCH_KICKOFF, dictID, prefix, page }
+function dictArticlesFetchKickOff(dictID: string, q: string, prefix: string, page: number): DictArticlesFetchKickoffAction {
+    return { type: DICT_ARTICLES_FETCH_KICKOFF, dictID, q, prefix, page }
 }
 
 const DICT_ARTICLES_FETCH_SUCCESS = 'DICT_ARTICLES/FETCH/SUCCESS'
@@ -75,18 +77,21 @@ export const dictArticlesFetch = (match: match<MatchParams>, urlSearch: URLSearc
             }
 
             const { dictID } = match.params
+            const q = urlSearch.get('q')
             const prefix = urlSearch.get('prefix')
             const page = urlSearch.get('page')
             const state = getState()
             if (state.dictArticles
-                && state.dictArticles.DictID === dictID
+                && state.dictArticles.DictIDs.length == 1
+                && state.dictArticles.DictIDs[0] === dictID
+                && state.dictArticles.Q === q
                 && state.dictArticles.Prefix === prefix
                 && state.dictArticles.Pagination.Current === page
             ) {
                 return
             }
-            dispatch(dictArticlesFetchKickOff(dictID, prefix, page))
-            dispatch(dictArticlesFetchSuccess(await verbumClient.getDictArticles(dictID, prefix, page)))
+            dispatch(dictArticlesFetchKickOff(dictID, q, prefix, page))
+            dispatch(dictArticlesFetchSuccess(await verbumClient.getDictArticles(dictID, q, prefix, page)))
         } catch (err) {
             dispatch(dictArticlesFetchFailure())
             console.log('ERROR: ', err)

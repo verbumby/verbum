@@ -1,7 +1,7 @@
 import { combineReducers } from 'redux'
 import { useSelector as useSelectorParent } from 'react-redux'
 import { SearchActions, SearchState, searchReducer } from './pages/index/index'
-import { Dict, Article, DictsActions, DictsState, dictsReducer } from './common'
+import { Dict, Article, DictsActions, dictsReducer, sectionsReducer, SectionsActions, Section } from './common'
 import { ThunkAction } from '@reduxjs/toolkit'
 import { ArticleState, ArticleActions, articleReducer } from './pages/article'
 import { DictArticlesState, DictArticlesActions, dictArticlesReducer,
@@ -11,10 +11,11 @@ import { DictArticlesState, DictArticlesActions, dictArticlesReducer,
 } from './pages/dict'
 import { loadingBarReducer } from 'react-redux-loading-bar'
 
-type AllActions = DictsActions | SearchActions | ArticleActions | LetterFilterActions | DictArticlesActions | AbbrActions | PrefaceActions
+type AllActions = DictsActions | SectionsActions | SearchActions | ArticleActions | LetterFilterActions | DictArticlesActions | AbbrActions | PrefaceActions
 
 export const rootReducer = combineReducers({
     dicts: dictsReducer,
+    sections: sectionsReducer,
     search: searchReducer,
     article: articleReducer,
     letterFilter: letterFilterReducer,
@@ -33,12 +34,18 @@ export function useSelector<TSelected = unknown>(
     return useSelectorParent<RootState,TSelected>(selector, equalityFn)
 }
 
-export function useDicts(): DictsState {
-    return useSelector<DictsState>(state => state.dicts)
+export function useDicts(): Dict[] {
+    return useSelector<Dict[]>(state => state.dicts)
 }
 
-export function useListedDicts(): DictsState {
+export function useListedDicts(): Dict[] {
     return useDicts().filter(d => !d.Unlisted)
+}
+
+export function useDictsInSection(sectionID: string): Dict[] {
+    const section = useSection(sectionID)
+    const dicts = useDicts()
+    return section.DictIDs.map(dictID => dicts.find(d => d.ID == dictID))
 }
 
 export function useDict(id: string): [Dict, boolean] {
@@ -51,6 +58,14 @@ export function useDict(id: string): [Dict, boolean] {
         return [d, true]
     }
     return [null, false]
+}
+
+export function useSections(): Section[] {
+    return useSelector<Section[]>(state => state.sections)
+}
+
+export function useSection(id: string): Section | undefined {
+    return useSections().find(s => s.ID === id)
 }
 
 export function useSearchState(): SearchState {

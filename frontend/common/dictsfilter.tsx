@@ -2,15 +2,16 @@ import * as React from 'react'
 import { useEffect, useState, useCallback } from 'react'
 
 import { IconFunnel } from '../icons'
-import { useListedDicts } from '../store'
+import { Dict } from '.'
 
 type DictsFilterProps = {
     state: string
+    bound: Dict[]
     onChange?: (state: string) => void
 }
 
-const DictsFilter: React.FC<DictsFilterProps> = ({ state, onChange }) => {
-    const dicts = useListedDicts()
+const DictsFilter: React.FC<DictsFilterProps> = ({ state, bound, onChange }) => {
+    const dicts = bound
     let checkedDicts: string[]
     if (state == '') {
         checkedDicts = dicts.map(d => d.ID)
@@ -76,7 +77,7 @@ const DictsFilter: React.FC<DictsFilterProps> = ({ state, onChange }) => {
     )
 }
 
-export function useDictsFilter(urlIn: string): {
+export function useDictsFilter(bound: Dict[], urlIn: string): {
     inDicts: string,
     icon: JSX.Element,
     filter: JSX.Element,
@@ -135,7 +136,7 @@ export function useDictsFilter(urlIn: string): {
         </span>
     )
 
-    const filter = shown ? <DictsFilter state={inDicts} onChange={setIn} /> : <></>
+    const filter = shown ? <DictsFilter bound={bound} state={inDicts} onChange={setIn} /> : <></>
 
     return { inDicts, icon, filter }
 }

@@ -17,23 +17,28 @@ type Route = {
 
 export const routes: Route[] = [
     {
+        path: '/s/:sectionID',
+        children: <IndexPage />,
+        dataLoaders: [searchServer],
+    },
+    {
         path: '/:dictID/:articleID',
         children: <ArticlePage />,
-        dataLoaders: [dictsFetch, articleFetchServer],
+        dataLoaders: [articleFetchServer],
     },
     {
         path: '/support',
         children: <SupportPage />,
-        dataLoaders: [dictsFetch],
+        dataLoaders: [],
     },
     {
         path: '/:dictID',
         children: <DictPage />,
-        dataLoaders: [dictsFetch, letterFilterFetchServer, dictArticlesFetchServer, abbrFetchServer, prefaceFetchServer],
+        dataLoaders: [letterFilterFetchServer, dictArticlesFetchServer, abbrFetchServer, prefaceFetchServer],
     },
     {
         path: '/',
         children: <IndexPage />,
-        dataLoaders: [dictsFetch, searchServer],
+        dataLoaders: [searchServer],
     },
 ]

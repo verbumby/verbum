@@ -1,15 +1,15 @@
-import { Abbrevs, Article, ArticleList, Dict, LetterFilter, SearchResult, Suggestion } from '../common'
+import { Abbrevs, Article, ArticleList, DictsMetadata, LetterFilter, SearchResult, Suggestion } from '../common'
 
 export interface VerbumAPIClient {
     getPreface(dictID: string): Promise<string>
     getAbbr(dictID: string): any
     withSignal(signal: AbortSignal): this
-    getDictionaries(): Promise<Dict[]>
+    getDictionaries(): Promise<DictsMetadata>
     search(q: string, inDicts: string, page: number): Promise<SearchResult>
     suggest(q: string, inDicts: string): Promise<Suggestion[]>
     getArticle(dictID: string, articleID: string): Promise<Article>
     getLetterFilter(dictID: string, prefix: string): Promise<LetterFilter>
-    getDictArticles(dictID: string, prefix: string, page: number): Promise<ArticleList>
+    getDictArticles(dictID: string, q: string, prefix: string, page: number): Promise<ArticleList>
     getIndexHTML(): Promise<string>
 }
 
@@ -29,8 +29,8 @@ export abstract class VerbumAPIClientImpl implements VerbumAPIClient {
     abstract call<T>(path: string): Promise<T>
     abstract callString(path: string): Promise<string>
 
-    async getDictionaries(): Promise<Dict[]> {
-        return this.call<Dict[]>('/api/dictionaries')
+    async getDictionaries(): Promise<DictsMetadata> {
+        return this.call<DictsMetadata>('/api/dictionaries')
     }
 
     async search(q: string, inDicts: string, page: number): Promise<SearchResult> {
@@ -57,10 +57,11 @@ export abstract class VerbumAPIClientImpl implements VerbumAPIClient {
         return this.call<LetterFilter>(`/api/dictionaries/${dictID}/letterfilter?prefix=${prefix}`)
     }
 
-    async getDictArticles(dictID: string, prefix: string, page: number): Promise<ArticleList> {
+    async getDictArticles(dictID: string, q: string, prefix: string, page: number): Promise<ArticleList> {
         dictID = encodeURIComponent(dictID)
+        q = encodeURIComponent(q)
         prefix = encodeURIComponent(prefix)
-        return this.call<ArticleList>(`/api/dictionaries/${dictID}/articles?prefix=${prefix}&page=${page}`)
+        return this.call<ArticleList>(`/api/search?q=${q}&in=${dictID}&prefix=${prefix}&page=${page}&track_total_hits=true`)
     }
 
     async getAbbr(dictID: string): Promise<Abbrevs> {
