@@ -20,7 +20,7 @@ func ParseReader(r io.Reader, settings dictionary.IndexSettings) (chan dictparse
 
 	go func() {
 		sc := bufio.NewScanner(r)
-		sc.Buffer(make([]byte, 16*1024), bufio.MaxScanTokenSize*4)
+		sc.Buffer(make([]byte, 16*1024), bufio.MaxScanTokenSize*8)
 		sc.Split(textutil.GetDelimSplitFunc("<hr/>\n"))
 		firstArticle := true
 
@@ -137,7 +137,6 @@ func parseArticle(body string, settings dictionary.IndexSettings) (dictparser.Ar
 			title += " " + idx
 		}
 	}
-
 
 	body = strings.ReplaceAll(body, "<sup", "\u200b<sup")
 	return dictparser.Article{

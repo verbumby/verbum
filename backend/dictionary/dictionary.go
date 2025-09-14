@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"html/template"
 	"os"
+	"strings"
 
 	"github.com/verbumby/verbum/backend/config"
 )
@@ -20,7 +21,6 @@ type Dictionary interface {
 	Abbrevs() *Abbrevs
 	ScanURL() string
 	Slugifier() string
-	Unlisted() bool
 	IndexSettings() IndexSettings
 }
 
@@ -39,7 +39,6 @@ func InitDictionaries() error {
 			title:     "Граматычная база Інстытута мовазнаўства НАН Беларусі (2023)",
 			abbrevs:   abbrevs,
 			slugifier: "none",
-			unlisted:  true,
 			indexSettings: IndexSettings{
 				DictProvidesIDs:                  true,
 				DictProvidesIDsWithoutDuplicates: true,
@@ -88,7 +87,6 @@ func InitDictionaries() error {
 				DictProvidesIDs:                  true,
 				DictProvidesIDsWithoutDuplicates: false,
 			},
-			unlisted: true,
 		},
 	})
 
@@ -319,7 +317,6 @@ func InitDictionaries() error {
 			title:     "Руска-беларускі слоўнік НАН Беларусі, 8-е выданне (правапіс да 2008 г.)",
 			abbrevs:   abbrevs,
 			slugifier: "russian",
-			unlisted:  true,
 			indexSettings: IndexSettings{
 				PrependContentWithTitle: true,
 			},
@@ -332,7 +329,6 @@ func InitDictionaries() error {
 			boost:     1,
 			title:     "Руска-беларускі слоўнік НАН Беларусі, 8-е выданне (другая версія, правапіс да 2008 г.)",
 			slugifier: "russian",
-			unlisted:  true,
 		},
 	})
 
@@ -425,7 +421,6 @@ func InitDictionaries() error {
 				DictProvidesIDs:                  true,
 				DictProvidesIDsWithoutDuplicates: true,
 			},
-			unlisted: true,
 		},
 	})
 
@@ -450,7 +445,31 @@ func InitDictionaries() error {
 				DictProvidesIDs:                  true,
 				DictProvidesIDsWithoutDuplicates: true,
 			},
-			unlisted: true,
+		},
+	})
+
+	abbrevs, err = loadDSLAbbrevs("belen/bel_abbr.txt")
+	if err != nil {
+		return fmt.Errorf("load belen abbrevs: %w", err)
+	}
+	preface, err = loadPreface("belen/belen_pradmova.html")
+	if err != nil {
+		return fmt.Errorf("load belen preface: %w", err)
+	}
+	dictionaries = append(dictionaries, HTML{
+		Common: Common{
+			id:        "belen",
+			indexID:   "belen",
+			boost:     1,
+			title:     "Беларуская Энцыклапедыя (1996—2004, правапіс да 2008 г.)",
+			preface:   preface,
+			abbrevs:   abbrevs,
+			slugifier: "none",
+			scanURL:   "https://knihi.com/none/Bielaruskaja_encyklapiedyja_djvu.zip.html",
+			indexSettings: IndexSettings{
+				DictProvidesIDs:                  true,
+				DictProvidesIDsWithoutDuplicates: false,
+			},
 		},
 	})
 	return nil
@@ -461,5 +480,13 @@ func loadPreface(path string) (string, error) {
 	if err != nil {
 		return "", fmt.Errorf("reading preface in %s failed: %w", path, err)
 	}
-	return string(bytes), nil
+
+	preface := string(bytes)
+
+	if strings.Contains(preface, "</style>") {
+		parts := strings.SplitN(preface, "</style>", 2)
+		preface = parts[1]
+	}
+
+	return preface, nil
 }

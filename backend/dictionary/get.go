@@ -22,12 +22,20 @@ func GetAll() []Dictionary {
 }
 
 func GetAllListed() []Dictionary {
-	result := []Dictionary{}
-	for _, d := range GetAll() {
-		if !d.Unlisted() {
-			result = append(result, d)
+	dictIDs := []string{}
+	for _, s := range GetAllSections() {
+		for _, id := range s.DictIDs {
+			if !slices.Contains(dictIDs, id) {
+				dictIDs = append(dictIDs, id)
+			}
 		}
 	}
+
+	result := []Dictionary{}
+	for _, id := range dictIDs {
+		result = append(result, GetByID(id))
+	}
+
 	return result
 }
 

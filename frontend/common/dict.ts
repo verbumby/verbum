@@ -5,5 +5,4 @@ export type Dict = {
     HasPreface: boolean
     HasAbbrevs: boolean
     ScanURL: string
-    Unlisted: boolean
 }
