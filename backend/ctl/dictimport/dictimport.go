@@ -223,7 +223,9 @@ func (c *commandController) indexArticles(articlesCh chan dictparser.Article) er
 	buffsugg := &bytes.Buffer{}
 	buffsuggjenc := json.NewEncoder(buffsugg)
 	i := -1
+	var last dictparser.Article
 	for a := range articlesCh {
+		last = a
 		i++
 		prefixes := []map[string]string{}
 
@@ -275,8 +277,11 @@ func (c *commandController) indexArticles(articlesCh chan dictparser.Article) er
 		if err != nil {
 			return fmt.Errorf("assemble id for %v: %w", a.Headwords, err)
 		}
+
+		idbase, idbaseno := calcIDBase(id)
+
 		idcache[id]++
-		if idcache[id] > 1 {
+		if idcache[id] > 1 || (idbaseno > -1 && idcache[idbase] >= idbaseno) {
 			id = fmt.Sprintf("%s-%d", id, idcache[id])
 			log.Printf("adding index to id %s", id)
 		}
@@ -333,6 +338,7 @@ func (c *commandController) indexArticles(articlesCh chan dictparser.Article) er
 	if err := c.flushBuffer(buff); err != nil {
 		return fmt.Errorf("flush buffer: %w", err)
 	}
+	fmt.Println("LAST: ", last)
 
 	return nil
 }
@@ -448,4 +454,17 @@ func (c *commandController) updateAlias(prefix string) error {
 	}
 
 	return nil
+}
+
+var reIDSuffixRegex = regexp.MustCompile(`-(\d+)$`)
+
+func calcIDBase(id string) (string, int) {
+	matches := reIDSuffixRegex.FindStringSubmatch(id)
+	if len(matches) == 2 {
+		num, err := strconv.Atoi(matches[1])
+		if err == nil {
+			return id[:len(id)-len(matches[0])], num
+		}
+	}
+	return id, -1
 }

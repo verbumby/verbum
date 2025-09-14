@@ -38,10 +38,6 @@ export function useDicts(): Dict[] {
     return useSelector<Dict[]>(state => state.dicts)
 }
 
-export function useListedDicts(): Dict[] {
-    return useDicts().filter(d => !d.Unlisted)
-}
-
 export function useDictsInSection(sectionID: string): Dict[] {
     const section = useSection(sectionID)
     const dicts = useDicts()

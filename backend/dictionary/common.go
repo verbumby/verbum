@@ -10,7 +10,6 @@ type Common struct {
 	abbrevs       *Abbrevs
 	scanURL       string
 	slugifier     string
-	unlisted      bool
 	indexSettings IndexSettings
 }
 
@@ -51,10 +50,6 @@ func (d Common) ScanURL() string {
 
 func (d Common) Slugifier() string {
 	return d.slugifier
-}
-
-func (d Common) Unlisted() bool {
-	return d.unlisted
 }
 
 func (d Common) IndexSettings() IndexSettings {
