@@ -461,7 +461,7 @@ func InitDictionaries() error {
 			id:        "belen",
 			indexID:   "belen",
 			boost:     1,
-			title:     "Беларуская Энцыклапедыя (1996—2004, правапіс да 2008 г.)",
+			title:     "Беларуская Энцыклапедыя (1996—2004, правапіс да 2008 г., часткова)",
 			preface:   preface,
 			abbrevs:   abbrevs,
 			slugifier: "none",
