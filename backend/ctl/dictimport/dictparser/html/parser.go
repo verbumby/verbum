@@ -60,6 +60,7 @@ var (
 )
 
 func parseArticle(body string, settings dictionary.IndexSettings) (dictparser.Article, error) {
+	bodyFirstLine := strings.SplitN(body, "\n", 2)[0]
 	ms := reHW.FindAllStringSubmatch(body, -1)
 	if len(ms) == 0 {
 		return dictparser.Article{}, fmt.Errorf("can't find any attributes in %s", body)
@@ -128,7 +129,7 @@ func parseArticle(body string, settings dictionary.IndexSettings) (dictparser.Ar
 		id = hws[0]
 
 		idx := ""
-		if m := reIndex.FindStringSubmatch(body); m != nil {
+		if m := reIndex.FindStringSubmatch(bodyFirstLine); m != nil {
 			idx = m[1]
 		}
 
