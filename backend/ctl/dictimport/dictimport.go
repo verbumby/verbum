@@ -215,17 +215,14 @@ func (c *commandController) createIndex() error {
 }
 
 func (c *commandController) indexArticles(articlesCh chan dictparser.Article) error {
-	idcache := map[string]int{}
-	iddups := map[string]int{}
+	idgen := NewIDGen(c.dict)
 
 	buff := &bytes.Buffer{}
 	buffjenc := json.NewEncoder(buff)
 	buffsugg := &bytes.Buffer{}
 	buffsuggjenc := json.NewEncoder(buffsugg)
 	i := -1
-	var last dictparser.Article
 	for a := range articlesCh {
-		last = a
 		i++
 		prefixes := []map[string]string{}
 
@@ -264,26 +261,9 @@ func (c *commandController) indexArticles(articlesCh chan dictparser.Article) er
 			prefixes = append(prefixes, prefix)
 		}
 
-		id := strings.ToLower(a.Headwords[0])
-		if c.dict.IndexSettings().DictProvidesIDs {
-			id = a.ID
-			iddups[id]++
-			if c.dict.IndexSettings().DictProvidesIDsWithoutDuplicates && iddups[id] > 1 {
-				return fmt.Errorf("duplicate id: %s", id)
-			}
-		}
-		var err error
-		id, err = c.assembleID(id)
+		id, err := idgen.Gen(a.Headwords[0], a.ID)
 		if err != nil {
-			return fmt.Errorf("assemble id for %v: %w", a.Headwords, err)
-		}
-
-		idbase, idbaseno := calcIDBase(id)
-
-		idcache[id]++
-		if idcache[id] > 1 || (idbaseno > -1 && idcache[idbase] >= idbaseno) {
-			id = fmt.Sprintf("%s-%d", id, idcache[id])
-			log.Printf("adding index to id %s", id)
+			return fmt.Errorf("failed to create id for %v: %w", a, err)
 		}
 
 		content := a.Body
@@ -338,32 +318,8 @@ func (c *commandController) indexArticles(articlesCh chan dictparser.Article) er
 	if err := c.flushBuffer(buff); err != nil {
 		return fmt.Errorf("flush buffer: %w", err)
 	}
-	fmt.Println("LAST: ", last)
 
 	return nil
-}
-
-func (c *commandController) assembleID(firstHW string) (string, error) {
-	hw := firstHW
-	var romanized string
-	switch c.dict.Slugifier() {
-	case "belarusian":
-		romanized = textutil.RomanizeBelarusian(hw)
-	case "none":
-		return firstHW, nil
-	case "russian":
-		romanized = textutil.RomanizeRussian(hw)
-	case "polish":
-		romanized = textutil.SlugifyPolish(hw)
-	case "german":
-		romanized = textutil.SlugifyDeutsch(hw)
-	case "":
-		romanized = hw
-	default:
-		return "", fmt.Errorf("unknown romanizing strategy: %s", c.dict.Slugifier())
-	}
-	result := romanized
-	return textutil.Slugify(result), nil
 }
 
 func (c *commandController) flushBuffer(buff *bytes.Buffer) error {
