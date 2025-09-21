@@ -26,10 +26,6 @@ type configType struct {
 		Addr string
 	}
 
-	Images struct {
-		Path string
-	}
-
 	Dicts struct {
 		Repo struct {
 			Path string
@@ -46,7 +42,6 @@ func ReadConfig() error {
 	config.HTTPS.KeyFile = "key.pem"
 	config.HTTPS.CanonicalAddr = "https://127.0.0.1:8443"
 	config.Elastic.Addr = "http://127.0.0.1:9200"
-	config.Images.Path = "./images"
 	config.Dicts.Repo.Path = "../slouniki"
 
 	atLeastOneFileRead := false
@@ -100,10 +95,6 @@ func HTTPAcmeChallengeRoot() string {
 
 func ElasticAddr() string {
 	return config.Elastic.Addr
-}
-
-func ImagesPath() string {
-	return config.Images.Path
 }
 
 func DictsRepoPath() string {
