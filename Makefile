@@ -12,7 +12,7 @@ run: build
 
 .PHONY: build-parsers
 build-parsers:
-	cd backend/dictionary/dslparser && pigeon -o grammar.go grammar.peg
+	cd backend/dictionary/dslparser && go tool github.com/mna/pigeon -o grammar.go grammar.peg
 
 .PHONY: fe-lint
 fe-lint:
