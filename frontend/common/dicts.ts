@@ -1,7 +1,5 @@
-import { match } from 'react-router-dom'
-import { AppThunkAction } from '../store'
 import { Dict } from './dict'
-import { Section, sectionsSet } from './sections'
+import { Section } from './sections'
 
 const DICTS_SET = 'DICTS/SET'
 
@@ -28,17 +26,4 @@ export function dictsReducer(state: Dict[] = [], a: DictsActions): Dict[] {
 export type DictsMetadata = {
     Dicts: Dict[],
     Sections: Section[],
-}
-
-export const dictsFetch = (match: match, urlSearch: URLSearchParams): AppThunkAction => {
-    return async (dispatch) => {
-        try {
-            const dm = await verbumClient.getDictionaries()
-            dispatch(dictsSet(dm.Dicts))
-            dispatch(sectionsSet(dm.Sections))
-        } catch (err) {
-            console.log("ERROR: ", err)
-            throw err
-        }
-    }
 }

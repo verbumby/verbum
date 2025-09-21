@@ -1,4 +1,3 @@
-import { match } from "react-router-dom"
 import { ArticleList, URLSearch, useURLSearch as useURLSearchCommon } from "../../common"
 import { AppThunkAction } from "../../store"
 
@@ -69,14 +68,14 @@ export function dictArticlesReducer(state: DictArticlesState = null, a: DictArti
     }
 }
 
-export const dictArticlesFetch = (match: match<MatchParams>, urlSearch: URLSearch<typeof URLSearchDefaults>): AppThunkAction => {
+export const dictArticlesFetch = (params: Partial<MatchParams>, urlSearch: URLSearch<typeof URLSearchDefaults>): AppThunkAction => {
     return async (dispatch, getState): Promise<void> => {
         try {
             if (urlSearch.get('section') !== '') {
                 return
             }
 
-            const { dictID } = match.params
+            const { dictID } = params
             const q = urlSearch.get('q')
             const prefix = urlSearch.get('prefix')
             const page = urlSearch.get('page')
@@ -100,5 +99,5 @@ export const dictArticlesFetch = (match: match<MatchParams>, urlSearch: URLSearc
     }
 }
 
-export const dictArticlesFetchServer = (match: match<MatchParams>, urlSearchParams: URLSearchParams): AppThunkAction =>
-    dictArticlesFetch(match, new URLSearch(URLSearchDefaults, urlSearchParams))
+export const dictArticlesFetchServer = (params: Partial<MatchParams>, urlSearchParams: URLSearchParams): AppThunkAction =>
+    dictArticlesFetch(params, new URLSearch(URLSearchDefaults, urlSearchParams))

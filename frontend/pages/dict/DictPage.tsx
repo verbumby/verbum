@@ -1,6 +1,6 @@
 import * as React from 'react'
-import { Redirect, useRouteMatch } from 'react-router-dom'
-import { NotFound } from '../../common'
+import { useParams } from 'react-router'
+import { NotFound, Redirect } from '../../common'
 import { useDict } from '../../store'
 import { AbbrSection } from './AbbrSection'
 import { DefaultSection } from './DefaultSection'
@@ -8,10 +8,10 @@ import { PrefaceSection } from './PrefaceSection'
 import { MatchParams, useURLSearch } from './dict'
 
 export const DictPage: React.FC = ({ }) => {
-    const match = useRouteMatch<MatchParams>()
+    const params = useParams<MatchParams>()
     const urlSearch = useURLSearch()
 
-    const [dict, dictIsAlias] = useDict(match.params.dictID)
+    const [dict, dictIsAlias] = useDict(params.dictID)
     if (dictIsAlias) {
         return <Redirect to={{pathname: `/${dict.ID}`, search: urlSearch.encode() }} />
     }

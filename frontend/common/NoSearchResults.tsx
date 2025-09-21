@@ -1,11 +1,10 @@
 import * as React from 'react'
-import { Link } from "react-router-dom"
-import { LocationDescriptor } from 'history'
+import { Link, To } from "react-router"
 
 type NoSearchResultsProps = {
 	q: string
 	suggestions: string[]
-	calculateSuggestionURL: (q: string) => LocationDescriptor
+	calculateSuggestionURL: (q: string) => To
 }
 
 export const NoSearchResults: React.FC<NoSearchResultsProps> = ({ q, suggestions, calculateSuggestionURL }) => {

@@ -1,11 +1,9 @@
 import * as React from 'react'
 import { useEffect, useState, useRef } from 'react'
-import { LocationDescriptor } from 'history'
-
 import { Suggestions } from './Suggestions'
 import { IconBackspace, IconSearch } from '../icons'
 import { Dict, Suggestion, useDelayed, useDispatch } from '.'
-import { useHistory } from 'react-router-dom'
+import { useNavigate, To } from 'react-router'
 import { hideLoading, showLoading } from 'react-redux-loading-bar'
 import { useDictsFilter } from './dictsfilter'
 
@@ -13,14 +11,14 @@ type SearchControlProps = {
     inBound: Dict[]
     urlQ: string
     urlIn: string
-    calculateSearchURL: (q: string, inDicts: string) => LocationDescriptor
+    calculateSearchURL: (q: string, inDicts: string) => To
     filterEnabled: boolean
 }
 
 export const SearchControl: React.FC<SearchControlProps> = ({ inBound, urlQ, urlIn, calculateSearchURL, filterEnabled }) => {
     const [q, setQ] = useState<string>(urlQ)
     const qEl = useRef<HTMLInputElement>(null)
-    const history = useHistory()
+    const navigate = useNavigate()
 
     const {
         inDicts,
@@ -29,7 +27,7 @@ export const SearchControl: React.FC<SearchControlProps> = ({ inBound, urlQ, url
     } = useDictsFilter(inBound, urlIn)
 
     const onSearch = (q: string) => {
-        history.push(calculateSearchURL(q, inDicts))
+        navigate(calculateSearchURL(q, inDicts))
     }
 
     let [

@@ -1,25 +1,25 @@
 import * as React from 'react'
 import { FC, useEffect } from 'react'
 import { Helmet } from 'react-helmet'
-import { useRouteMatch } from 'react-router-dom'
 import { useDispatch } from '../../common'
 import { usePreface, useDict } from '../../store'
 import { prefaceFetch, prefaceReset } from './preface'
 import { MatchParams, useURLSearch } from './dict'
+import { useParams } from 'react-router'
 
 export const PrefaceSection: FC = ({}) => {
-    const match = useRouteMatch<MatchParams>()
+    const params = useParams<MatchParams>()
     const urlSearch = useURLSearch()
 
-    const [dict] = useDict(match.params.dictID)
+    const [dict] = useDict(params.dictID)
 	const title = `Прадмова - ${dict.Title}`
 
     const preface = usePreface()
     const dispatch = useDispatch()
 
     useEffect(() => {
-        dispatch(prefaceFetch(match, urlSearch))
-    }, [match.params.dictID])
+        dispatch(prefaceFetch(params, urlSearch))
+    }, [params.dictID])
     useEffect(() => () => { dispatch(prefaceReset()) }, [])
 
     if (!preface) {

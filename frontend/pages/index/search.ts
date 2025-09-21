@@ -1,5 +1,3 @@
-import { match } from 'react-router-dom'
-
 import { SearchResult, URLSearch, useURLSearch as useURLSearchCommon } from '../../common'
 import { AppThunkAction } from '../../store'
 
@@ -84,7 +82,7 @@ export function searchReducer(state: SearchState = {q: '', searchResult: null}, 
     }
 }
 
-export const search = (match: match<MatchParams>, urlSearch: URLSearch<typeof URLSearchDefaults>): AppThunkAction => {
+export const search = (params: Partial<MatchParams>, urlSearch: URLSearch<typeof URLSearchDefaults>): AppThunkAction => {
     return async (dispatch, getState): Promise<void> => {
         try {
             const q = urlSearch.get('q')
@@ -97,7 +95,7 @@ export const search = (match: match<MatchParams>, urlSearch: URLSearch<typeof UR
 
             let inDicts = urlSearch.get('in')
             if (!inDicts) {
-                const sectionID = match.params.sectionID || 'default'
+                const sectionID = params.sectionID || 'default'
                 const section = getState().sections.find(s => s.ID === sectionID)
                 if (!section) {
                     return
@@ -116,5 +114,5 @@ export const search = (match: match<MatchParams>, urlSearch: URLSearch<typeof UR
     }
 }
 
-export const searchServer = (match: match, urlSearchParams: URLSearchParams): AppThunkAction =>
-    search(match, new URLSearch(URLSearchDefaults, urlSearchParams))
+export const searchServer = (params: Partial<MatchParams>, urlSearchParams: URLSearchParams): AppThunkAction =>
+    search(params, new URLSearch(URLSearchDefaults, urlSearchParams))

@@ -1,11 +1,10 @@
 import * as React from 'react'
-import { Link } from 'react-router-dom'
-import { LocationDescriptor } from 'history'
+import { Link, To } from 'react-router'
 import { LetterFilter } from '../../common'
 
 type LetterFilterViewProps = {
     letterFilter: LetterFilter
-    prefixToURL: (prefix: string) => LocationDescriptor
+    prefixToURL: (prefix: string) => To
 }
 export const LetterFilterView: React.FC<LetterFilterViewProps> = ({ letterFilter, prefixToURL }) => {
     return (

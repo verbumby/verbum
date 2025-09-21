@@ -1,4 +1,3 @@
-import { match } from "react-router-dom"
 import { URLSearch } from "../../common"
 import { AppThunkAction } from "../../store"
 import { MatchParams, URLSearchDefaults } from './dict'
@@ -60,7 +59,7 @@ export function prefaceReducer(state: PrefaceState = null, a: PrefaceActions): P
     }
 }
 
-export const prefaceFetch = (match: match<MatchParams>, urlSearch: URLSearch<typeof URLSearchDefaults>): AppThunkAction => {
+export const prefaceFetch = (params: Partial<MatchParams>, urlSearch: URLSearch<typeof URLSearchDefaults>): AppThunkAction => {
     return async (dispatch, getState): Promise<void> => {
         try {
             if (urlSearch.get('section') !== 'preface') {
@@ -72,7 +71,7 @@ export const prefaceFetch = (match: match<MatchParams>, urlSearch: URLSearch<typ
                 return
             }
 
-            const { dictID } = match.params
+            const { dictID } = params
             dispatch(prefaceFetchKickOff(dictID))
             dispatch(prefaceFetchSuccess(await verbumClient.getPreface(dictID)))
         } catch (err) {
@@ -83,5 +82,5 @@ export const prefaceFetch = (match: match<MatchParams>, urlSearch: URLSearch<typ
     }
 }
 
-export const prefaceFetchServer = (match: match<MatchParams>, urlSearchParams: URLSearchParams): AppThunkAction =>
-    prefaceFetch(match, new URLSearch(URLSearchDefaults, urlSearchParams))
+export const prefaceFetchServer = (params: Partial<MatchParams>, urlSearchParams: URLSearchParams): AppThunkAction =>
+    prefaceFetch(params, new URLSearch(URLSearchDefaults, urlSearchParams))

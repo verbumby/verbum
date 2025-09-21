@@ -2,7 +2,7 @@ import * as React from 'react'
 import { FC, useEffect } from 'react'
 
 import { Helmet } from 'react-helmet'
-import { Link, useRouteMatch } from 'react-router-dom'
+import { Link, useLocation, useParams } from 'react-router'
 import { ArticleView, NoSearchResults, PaginationView, SearchControl, useDispatch } from '../../common'
 import { useDict, useDictArticles, useLetterFilter } from '../../store'
 import { letterFilterFetch, letterFilterReset } from './letterfilter'
@@ -10,10 +10,11 @@ import { dictArticlesFetch, MatchParams, dictArticlesReset, useURLSearch } from 
 import { LetterFilterView } from './LetterFilterView'
 
 export const DefaultSection: FC = ({ }) => {
-    const match = useRouteMatch<MatchParams>()
+    const location = useLocation()
+    const params = useParams<MatchParams>()
     const urlSearch = useURLSearch()
 
-    const [dict] = useDict(match.params.dictID)
+    const [dict] = useDict(params.dictID)
 
     const letterFilter = useLetterFilter()
     const dictArticles = useDictArticles()
@@ -24,14 +25,14 @@ export const DefaultSection: FC = ({ }) => {
     const page = urlSearch.get('page')
 
     useEffect(() => {
-        dispatch(letterFilterFetch(match, urlSearch))
-    }, [match.params.dictID, prefix])
+        dispatch(letterFilterFetch(params, urlSearch))
+    }, [params.dictID, prefix])
     useEffect(() => () => { dispatch(letterFilterReset()) }, [])
 
     useEffect(() => {
-        dispatch(dictArticlesFetch(match, urlSearch))
+        dispatch(dictArticlesFetch(params, urlSearch))
         return () => { dispatch(dictArticlesReset()) }
-    }, [match.params.dictID, prefix, page, q])
+    }, [params.dictID, prefix, page, q])
 
     if (!letterFilter) {
         return <></>
@@ -49,7 +50,7 @@ export const DefaultSection: FC = ({ }) => {
 
     if (dict.HasPreface) {
         pushToTopLinks(<Link to={{
-            pathname: match.url,
+            pathname: location.pathname,
             search: urlSearch.clone()
                 .resetAll()
                 .set('section', 'preface')
@@ -59,7 +60,7 @@ export const DefaultSection: FC = ({ }) => {
 
     if (dict.HasAbbrevs) {
         pushToTopLinks(<Link to={{
-            pathname: match.url,
+            pathname: location.pathname,
             search: urlSearch.clone()
                 .resetAll()
                 .set('section', 'abbr')
