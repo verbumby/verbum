@@ -74,7 +74,7 @@ func bootstrapServer(cmd *cobra.Command, args []string) error {
 
 	imagesServer := http.FileServer(http.Dir(config.DictsRepoPath()))
 	imagesHandler := http.StripPrefix("/images", imagesServer)
-	reAllowedImages := regexp.MustCompile(`^/images/\w+/img/[^/]+\.(png|jpeg|jpg)$`)
+	reAllowedImages := regexp.MustCompile(`^/images/\w+/img/.*(png|jpeg|jpg)$`)
 	r.Mount("/images/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if reAllowedImages.MatchString(r.URL.Path) {
 			imagesHandler.ServeHTTP(w, r)
