@@ -34,5 +34,5 @@ func (resp BulkResponse) Error() error {
 			}
 		}
 	}
-	return fmt.Errorf("bulk post failed: " + strings.Join(errors, "; "))
+	return fmt.Errorf("bulk post failed: %s", strings.Join(errors, "; "))
 }
