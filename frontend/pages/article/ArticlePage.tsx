@@ -1,17 +1,20 @@
 import * as React from 'react'
 import { Helmet } from 'react-helmet'
-import { Redirect, useRouteMatch } from 'react-router-dom'
-import { ArticleView, SearchControl, NotFound, useDispatch } from '../../common'
+import { useLocation, useParams } from 'react-router'
+import { ArticleView, SearchControl, NotFound, useDispatch, Redirect } from '../../common'
 import { useArticle, useDict } from '../../store'
 import { useURLSearch as useDictURLSearch } from '../dict/dict'
 import { articleFetch, articleReset, MatchParams } from './article'
 
 export const ArticlePage: React.FC = () => {
-    const match = useRouteMatch<MatchParams>()
-    const [dict, dictIsAlias] = useDict(match.params.dictID)
+    const params = useParams<MatchParams>()
+    const location = useLocation()
+    const [dict, dictIsAlias] = useDict(params.dictID)
+
     if (dictIsAlias) {
-        return <Redirect to={{ pathname: `/${dict.ID}/${match.params.articleID}` }} />
+        return <Redirect to={{ pathname: `/${dict.ID}/${params.articleID}` }} />
     }
+
     if (dict === null) {
         return <NotFound />
     }
@@ -22,10 +25,10 @@ export const ArticlePage: React.FC = () => {
     const dispatch = useDispatch()
     React.useEffect(() => {
         if (a === undefined) {
-            dispatch(articleFetch(match))
+            dispatch(articleFetch(params))
         }
         return () => { dispatch(articleReset()) }
-    }, [match.path])
+    }, [location])
 
     if (a === undefined) {
         return <></>

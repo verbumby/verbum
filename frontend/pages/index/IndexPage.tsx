@@ -1,7 +1,7 @@
 import * as React from 'react'
 import { useEffect } from 'react'
 import { NoSearchResults, NotFound, useDispatch } from '../../common'
-import { Link, useRouteMatch } from 'react-router-dom'
+import { Link, useParams } from 'react-router'
 import { Helmet } from "react-helmet"
 
 import { useDictsInSection, useSearchState, useSection, useSections } from '../../store'
@@ -10,8 +10,8 @@ import { DictsList } from './DictsList'
 import { ArticleView, PaginationView, SearchControl } from '../../common'
 
 export const IndexPage: React.FC = () => {
-    const match = useRouteMatch<{ sectionID?: string }>()
-    const sectionID = match.params.sectionID || 'default'
+    const params = useParams<{ sectionID?: string }>()
+    const sectionID = params.sectionID || 'default'
     const section = useSection(sectionID)
     const urlSearch = useURLSearch()
     const q = urlSearch.get('q')
@@ -22,7 +22,7 @@ export const IndexPage: React.FC = () => {
 
     const dispatch = useDispatch()
     useEffect(() => {
-        dispatch(search(match, urlSearch))
+        dispatch(search(params, urlSearch))
         return () => { dispatch(searchReset()) }
     }, [sectionID, q, inDicts, page])
 

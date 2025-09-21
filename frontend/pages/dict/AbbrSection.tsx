@@ -1,25 +1,25 @@
 import * as React from 'react'
 import { FC, useEffect } from 'react'
 import { Helmet } from 'react-helmet'
-import { useRouteMatch } from 'react-router-dom'
 import { useDispatch } from '../../common'
 import { useAbbr, useDict } from '../../store'
 import { abbrFetch, abbrReset } from './abbr'
 import { MatchParams, useURLSearch } from './dict'
+import { useParams } from 'react-router'
 
 export const AbbrSection: FC = ({}) => {
-    const match = useRouteMatch<MatchParams>()
+    const params = useParams<MatchParams>()
     const urlSearch = useURLSearch()
 
-    const [dict] = useDict(match.params.dictID)
+    const [dict] = useDict(params.dictID)
 	const title = `Скарачэнні - ${dict.Title}`
 
     const abbr = useAbbr()
     const dispatch = useDispatch()
 
     useEffect(() => {
-        dispatch(abbrFetch(match, urlSearch))
-    }, [match.params.dictID])
+        dispatch(abbrFetch(params, urlSearch))
+    }, [params.dictID])
     useEffect(() => () => { dispatch(abbrReset()) }, [])
 
     if (!abbr) {

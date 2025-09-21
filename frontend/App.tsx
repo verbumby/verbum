@@ -1,5 +1,5 @@
 import * as React from "react"
-import { Switch, Route } from "react-router-dom"
+import { Route, Routes } from "react-router"
 import LoadingBarContainer from "react-redux-loading-bar"
 import 'bootstrap/dist/css/bootstrap.css'
 import './styles.css'
@@ -16,9 +16,9 @@ const App: React.FC = () => (
         <LoadingBarContainer />
         <div className="content">
             <Logo />
-            <Switch>
+            <Routes>
                 {routes.map(r => <Route key={r.path} {...r} />)}
-            </Switch>
+            </Routes>
             <Footer />
         </div>
     </>

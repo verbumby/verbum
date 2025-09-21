@@ -1,4 +1,3 @@
-import { match } from "react-router-dom"
 import { Abbrevs, URLSearch } from "../../common"
 import { AppThunkAction } from "../../store"
 import { MatchParams, URLSearchDefaults } from './dict'
@@ -60,7 +59,7 @@ export function abbrReducer(state: AbbrState = null, a: AbbrActions): AbbrState 
     }
 }
 
-export const abbrFetch = (match: match<MatchParams>, urlSearch: URLSearch<typeof URLSearchDefaults>): AppThunkAction => {
+export const abbrFetch = (params: Partial<MatchParams>, urlSearch: URLSearch<typeof URLSearchDefaults>): AppThunkAction => {
     return async (dispatch, getState): Promise<void> => {
         try {
             if (urlSearch.get('section') !== 'abbr') {
@@ -72,7 +71,7 @@ export const abbrFetch = (match: match<MatchParams>, urlSearch: URLSearch<typeof
                 return
             }
 
-            const { dictID } = match.params
+            const { dictID } = params
             dispatch(abbrFetchKickOff(dictID))
             dispatch(abbrFetchSuccess(await verbumClient.getAbbr(dictID)))
         } catch (err) {
@@ -83,5 +82,5 @@ export const abbrFetch = (match: match<MatchParams>, urlSearch: URLSearch<typeof
     }
 }
 
-export const abbrFetchServer = (match: match<MatchParams>, urlSearchParams: URLSearchParams): AppThunkAction =>
-    abbrFetch(match, new URLSearch(URLSearchDefaults, urlSearchParams))
+export const abbrFetchServer = (params: Partial<MatchParams>, urlSearchParams: URLSearchParams): AppThunkAction =>
+    abbrFetch(params, new URLSearch(URLSearchDefaults, urlSearchParams))

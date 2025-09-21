@@ -1,7 +1,7 @@
 import * as React from 'react'
 import { IconGitHub } from '../icons'
 import ThemeSelector from './ThemeSelector'
-import { Link } from 'react-router-dom'
+import { Link } from 'react-router'
 
 export const Footer: React.FunctionComponent = () => (
     <footer className="text-center" style={{ marginTop: 'auto' }}>
