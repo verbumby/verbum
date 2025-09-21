@@ -16,5 +16,7 @@ func (d HTML) ToHTML(content string) template.HTML {
 
 	content = strings.ReplaceAll(content, `href="#`, `target="_blank" href="/`+d.ID()+`/`)
 
+	content = strings.ReplaceAll(content, `<img src="`, `<img src="/images/`+d.ID()+`/`)
+
 	return template.HTML(content)
 }
