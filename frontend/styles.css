@@ -105,6 +105,8 @@ textarea, input[type="text"], input[type="button"], input[type="submit"] {
 [data-bs-theme=dark] .article [style='color: brown'] {color: #b59696 !important;}
 .article v-illustration {letter-spacing: 0.4em;}
 .article letter-spacing {letter-spacing: 0.25em;}
+.article.belen figure {text-align: center;}
+.article.belen figure img {max-width: 100%;}
 
 .logo {color:darkgrey; padding: 6px 0; font-weight: bold;}
 .logo h1 {display: inline; font-weight: bold;}
