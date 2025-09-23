@@ -13,7 +13,7 @@ var sections = []Section{
 		Name: "Рэкамендаваныя слоўнікі",
 		DictIDs: []string{
 			"tsblm2022", "tsbm", "klyshka", "sis1999", "sis2005", "bhn1971",
-			"proverbia", "hsbm", "esbm", "brs", "rbs10", "abs", "susha", "pbs",
+			"proverbia", "hsbm", "esbm", "belen", "brs", "rbs10", "abs", "susha", "pbs",
 		},
 	},
 	{
