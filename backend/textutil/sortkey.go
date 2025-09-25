@@ -5,8 +5,9 @@ import (
 	"strings"
 )
 
-const runeOrder = " aäąàbcćdeęfghijklłmnńoöópqrsßśtuüvwxyzźż" +
-	"абвгґдеёжзіийклмнопрстуўфхцчшщъыьэюя"
+const runeOrder = "абвгґдеёжзіийклмнопрстуўфхцчшщъыьэюя" +
+	"aäąàbcćdeęfghijklłmnńoöópqrsßśtuüvwxyzźż" +
+	"0123456789-.$'’«°"
 
 var runeOrderMap = map[rune]byte{}
 

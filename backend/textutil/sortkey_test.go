@@ -9,6 +9,7 @@ func TestSortKey(t *testing.T) {
 		{"аба", "аб’едкі"},
 		{"г", "ґ"},
 		{"ґ", "д"},
+		{"я", "p"},
 	}
 
 	for _, p := range pairs {
