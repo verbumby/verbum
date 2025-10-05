@@ -122,8 +122,8 @@ export const IndexPage: React.FC = () => {
                     <Link
                         className={`nav-link ${sectionID === s.ID ? 'active' : ''}`}
                         to={{
-                            pathname: s.ID === 'default' ? '/' : `/s/${s.ID}`, 
-                            search: urlSearch.clone().reset('in').reset('page').encode(),
+                            pathname: s.ID === 'default' ? '/' : `/s/${s.ID}`,
+                            search: sectionID === s.ID ? '' : urlSearch.clone().reset('in').reset('page').encode(),
                         }}>{s.Name}</Link>
                 </li>)}
             </ul>
