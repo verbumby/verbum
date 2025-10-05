@@ -5,6 +5,7 @@
   --color-example: darkgrey;
   --color-border: lightgray;
   --border-radius: 3px;
+  --color-sections-nav: var(--bs-secondary-color);
 }
 
 [data-bs-theme=dark] {
@@ -124,3 +125,6 @@ textarea, input[type="text"], input[type="button"], input[type="submit"] {
 .pagination .page-item .page-link {border-radius: 0; border:0; color: darkgray; }
 .pagination .page-link.disabled, .pagination .disabled > .page-link {background: none;}
 .pagination .page-item.active .page-link { background-color: inherit; border-bottom:1px solid darkgray; cursor: inherit;}
+
+.nav-sections .nav-link {text-decoration: none; color: var(--color-sections-nav);}
+.nav-sections .nav-link.active {font-weight: inherit; color: var(--color-sections-nav);}
