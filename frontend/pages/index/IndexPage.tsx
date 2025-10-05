@@ -46,16 +46,8 @@ export const IndexPage: React.FC = () => {
                 <meta property="og:description" content={title} />
                 <meta name="robots" content="index, follow" />
             </Helmet>
-            <p />
-            <h4 className='mx-1 mb-3'>{section.Name}</h4>
-            <p className='mx-1 mb-3'>{section.Descr}</p>
+            {section.Descr ? <p className='mx-1 mb-3'>{section.Descr}</p> : <></>}
             <DictsList dictionaries={dicts} />
-            <p className='mx-1 mb-3'>Іншыя раздзелы: {
-                sections.filter(s => s.ID !== sectionID).map((s, i) => <React.Fragment key={s.ID}>
-                    {i == 0 ? '' : ', '}
-                    <Link to={s.ID === 'default' ? '/' : `/s/${s.ID}`}>{s.Name}</Link>
-                </React.Fragment>)
-            }</p>
         </>
     }
 
@@ -125,6 +117,11 @@ export const IndexPage: React.FC = () => {
                         .encode()
                 }
             />
+            <ul className='nav nav-sections nav-underline mx-1 mb-1'>
+                {sections.map((s, i) => <li className="nav-item" key={s.ID}>
+                    <Link className={`nav-link ${sectionID === s.ID ? 'active' : ''}`} to={s.ID === 'default' ? '/' : `/s/${s.ID}`}>{s.Name}</Link>
+                </li>)}
+            </ul>
             {!q ? renderDictList() : renderSearchResults()}
         </div>
     )

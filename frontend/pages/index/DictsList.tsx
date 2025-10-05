@@ -8,7 +8,7 @@ type DictsListProps = {
 
 export const DictsList: React.FC<DictsListProps> = ({ dictionaries }) => {
     return (
-        <ul>
+        <ul className='mt-2'>
             {dictionaries.map(d => <li key={d.ID}><Link to={`/${d.ID}`}>{d.Title}</Link></li>)}
         </ul>
     )
