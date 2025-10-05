@@ -119,7 +119,12 @@ export const IndexPage: React.FC = () => {
             />
             <ul className='nav nav-sections nav-underline mx-1 mb-1'>
                 {sections.map((s, i) => <li className="nav-item" key={s.ID}>
-                    <Link className={`nav-link ${sectionID === s.ID ? 'active' : ''}`} to={s.ID === 'default' ? '/' : `/s/${s.ID}`}>{s.Name}</Link>
+                    <Link
+                        className={`nav-link ${sectionID === s.ID ? 'active' : ''}`}
+                        to={{
+                            pathname: s.ID === 'default' ? '/' : `/s/${s.ID}`, 
+                            search: urlSearch.clone().reset('in').reset('page').encode(),
+                        }}>{s.Name}</Link>
                 </li>)}
             </ul>
             {!q ? renderDictList() : renderSearchResults()}
