@@ -1,7 +1,7 @@
 import * as React from 'react'
 import { useEffect } from 'react'
 import { NoSearchResults, NotFound, useDispatch } from '../../common'
-import { Link, useRouteMatch } from 'react-router-dom'
+import { Link, useParams } from 'react-router'
 import { Helmet } from "react-helmet"
 
 import { useDictsInSection, useSearchState, useSection, useSections } from '../../store'
@@ -10,8 +10,8 @@ import { DictsList } from './DictsList'
 import { ArticleView, PaginationView, SearchControl } from '../../common'
 
 export const IndexPage: React.FC = () => {
-    const match = useRouteMatch<{ sectionID?: string }>()
-    const sectionID = match.params.sectionID || 'default'
+    const params = useParams<{ sectionID?: string }>()
+    const sectionID = params.sectionID || 'default'
     const section = useSection(sectionID)
     const urlSearch = useURLSearch()
     const q = urlSearch.get('q')
@@ -22,7 +22,7 @@ export const IndexPage: React.FC = () => {
 
     const dispatch = useDispatch()
     useEffect(() => {
-        dispatch(search(match, urlSearch))
+        dispatch(search(params, urlSearch))
         return () => { dispatch(searchReset()) }
     }, [sectionID, q, inDicts, page])
 
@@ -46,16 +46,8 @@ export const IndexPage: React.FC = () => {
                 <meta property="og:description" content={title} />
                 <meta name="robots" content="index, follow" />
             </Helmet>
-            <p />
-            <h4 className='mx-1 mb-3'>{section.Name}</h4>
-            <p className='mx-1 mb-3'>{section.Descr}</p>
+            {section.Descr ? <p className='mx-1 mb-3'>{section.Descr}</p> : <></>}
             <DictsList dictionaries={dicts} />
-            <p className='mx-1 mb-3'>Іншыя раздзелы: {
-                sections.filter(s => s.ID !== sectionID).map((s, i) => <React.Fragment key={s.ID}>
-                    {i == 0 ? '' : ', '}
-                    <Link to={s.ID === 'default' ? '/' : `/s/${s.ID}`}>{s.Name}</Link>
-                </React.Fragment>)
-            }</p>
         </>
     }
 
@@ -125,6 +117,16 @@ export const IndexPage: React.FC = () => {
                         .encode()
                 }
             />
+            <ul className='nav nav-sections nav-underline mx-1 mb-1'>
+                {sections.map((s, i) => <li className="nav-item" key={s.ID}>
+                    <Link
+                        className={`nav-link ${sectionID === s.ID ? 'active' : ''}`}
+                        to={{
+                            pathname: s.ID === 'default' ? '/' : `/s/${s.ID}`,
+                            search: sectionID === s.ID ? '' : urlSearch.clone().reset('in').reset('page').encode(),
+                        }}>{s.Name}</Link>
+                </li>)}
+            </ul>
             {!q ? renderDictList() : renderSearchResults()}
         </div>
     )

@@ -1,4 +1,3 @@
-import { match } from "react-router-dom"
 import { Article } from "../../common"
 import { AppThunkAction } from "../../store"
 
@@ -65,10 +64,10 @@ export function articleReducer(state: ArticleState = {}, a: ArticleActions): Art
     }
 }
 
-export const articleFetch = (match: match<MatchParams>): AppThunkAction => {
+export const articleFetch = (params: Partial<MatchParams>): AppThunkAction => {
     return async (dispatch, getState): Promise<void> => {
         try {
-            const { dictID, articleID } = match.params
+            const { dictID, articleID } = params
             dispatch(articleFetchKickOff(dictID, articleID))
             dispatch(articleFetchSuccess(await verbumClient.getArticle(dictID, articleID)))
         } catch (err) {
@@ -79,5 +78,5 @@ export const articleFetch = (match: match<MatchParams>): AppThunkAction => {
     }
 }
 
-export const articleFetchServer = (match: match<MatchParams>, urlSearchParams: URLSearchParams): AppThunkAction =>
-    articleFetch(match)
+export const articleFetchServer = (params: MatchParams, urlSearchParams: URLSearchParams): AppThunkAction =>
+    articleFetch(params)

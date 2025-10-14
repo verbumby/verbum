@@ -1,4 +1,3 @@
-import { match } from "react-router-dom"
 import { LetterFilter, URLSearch } from "../../common"
 import { AppThunkAction } from "../../store"
 import { MatchParams, URLSearchDefaults } from './dict'
@@ -62,14 +61,14 @@ export function letterFilterReducer(state: LetterFilterState = null, a: LetterFi
     }
 }
 
-export const letterFilterFetch = (match: match<MatchParams>, urlSearch: URLSearch<typeof URLSearchDefaults>): AppThunkAction => {
+export const letterFilterFetch = (params: Partial<MatchParams>, urlSearch: URLSearch<typeof URLSearchDefaults>): AppThunkAction => {
     return async (dispatch, getState): Promise<void> => {
         try {
             if (urlSearch.get('section') !== '') {
                 return
             }
 
-            const { dictID } = match.params
+            const { dictID } = params
             const prefix = urlSearch.get('prefix')
             const state = getState()
             if (state.letterFilter
@@ -88,5 +87,5 @@ export const letterFilterFetch = (match: match<MatchParams>, urlSearch: URLSearc
     }
 }
 
-export const letterFilterFetchServer = (match: match<MatchParams>, urlSearchParams: URLSearchParams): AppThunkAction =>
-    letterFilterFetch(match, new URLSearch(URLSearchDefaults, urlSearchParams))
+export const letterFilterFetchServer = (params: Partial<MatchParams>, urlSearchParams: URLSearchParams): AppThunkAction =>
+    letterFilterFetch(params, new URLSearch(URLSearchDefaults, urlSearchParams))

@@ -1,9 +1,9 @@
 import * as React from 'react'
-import { Route } from 'react-router-dom'
+import { SetStatusCodeContext } from './StatusCodeContext';
+import { useContext } from 'react';
 
-export const NotFound: React.FC = () => (
-    <Route render={({ staticContext }) => {
-        if (staticContext) staticContext.statusCode = 404;
-        return (<div>Такой старонкі не існуе.</div>)
-    }} />
-)
+export const NotFound: React.FC = () => {
+    const setStatusCode = useContext(SetStatusCodeContext)
+    setStatusCode(404)
+    return (<div>Такой старонкі не існуе.</div>)
+}

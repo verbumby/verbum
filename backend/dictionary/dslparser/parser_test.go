@@ -25,10 +25,10 @@ func TestKrapivaParser(t *testing.T) {
 		},
 		{
 			name:    "case2",
-			content: "[m1][b]Том:[/b] 2, [b]старонка:[/b] 26.[/m]\n[s]02-026_0079_\\[no_name\\].jpg[/s]\n",
+			content: "[m1][b]Том:[/b] 2, [b]старонка:[/b] 26.[/m]\n[s]02-026_0079_Абв.jpg[/s]\n",
 			opts:    []Option{GlobalStore("dictID", "dict-id-1")},
 			want: `<p class="ms-0"><strong>Том:</strong> 2, <strong>старонка:</strong> 26.</p>` + "\n" +
-				`<img src="/images/dict-id-1/02/02-026_0079_%5Bno_name%5D.jpg" alt="02-026_0079_%5Bno_name%5D.jpg"/></p>` + "\n",
+				`<img src="/images/dict-id-1/02-026_0079_Абв.jpg" alt="02-026_0079_Абв.jpg"/></p>` + "\n",
 			wantErr: false,
 		},
 		{

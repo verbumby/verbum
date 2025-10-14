@@ -10,6 +10,7 @@ import (
 	"os"
 	"os/exec"
 	"os/signal"
+	"regexp"
 	"syscall"
 	"time"
 
@@ -70,14 +71,25 @@ func bootstrapServer(cmd *cobra.Command, args []string) error {
 	r.HandleFunc("/api/suggest", chttp.MakeHandler(handlers.APISuggest, chttp.ContentTypeJSONMiddleware))
 	r.HandleFunc("/api/index.html", chttp.MakeHandler(handlers.IndexHTML))
 	r.Mount("/api/", chttp.MakeHandler(handlers.APINotFound))
-	imagesServer := http.FileServer(http.Dir(config.ImagesPath()))
-	r.Mount("/images/", http.StripPrefix("/images", imagesServer))
+
+	imagesServer := http.FileServer(http.Dir(config.DictsRepoPath()))
+	imagesHandler := http.StripPrefix("/images", imagesServer)
+	reAllowedImages := regexp.MustCompile(`^/images/\w+/img/.*(png|jpeg|jpg)$`)
+	r.Mount("/images/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if reAllowedImages.MatchString(r.URL.Path) {
+			imagesHandler.ServeHTTP(w, r)
+		} else {
+			http.Error(w, http.StatusText(http.StatusNotFound), http.StatusNotFound)
+		}
+	}))
+
 	staticsServer := http.FileServer(http.FS(frontend.DistPublic))
 	staticsHander := http.StripPrefix("/statics", staticsServer)
 	r.Mount("/statics/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Cache-Control", "public, max-age=31536000, immutable")
 		staticsHander.ServeHTTP(w, r)
 	}))
+
 	r.HandleFunc("/robots.txt", chttp.MakeHandler(handlers.RobotsTXT))
 	r.HandleFunc("/sitemap-index.xml", chttp.MakeHandler(handlers.SitemapIndex))
 	r.HandleFunc("/{dictionary:[a-z0-9-]+}/sitemap-{n:[0-9]+}.xml", chttp.MakeHandler(handlers.SitemapOfDictionary))

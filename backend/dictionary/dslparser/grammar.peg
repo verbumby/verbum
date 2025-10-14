@@ -82,11 +82,10 @@ Image ⟵ "[s]" fnitf:( EscapeSequence / [^[] )+ "[/s]" {
     fn := result.String()
     dictID := c.globalStore["dictID"].(string)
     return fmt.Sprintf(
-        `<img src="/images/%s/%s/%s" alt="%s"/>`,
+        `<img src="/images/%s/%s" alt="%s"/>`,
         url.PathEscape(dictID),
-        url.PathEscape(fn[:2]),
-        url.PathEscape(fn),
-        url.QueryEscape(fn),
+        fn,
+        fn,
     ), nil
 }
 

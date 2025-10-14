@@ -1,18 +1,17 @@
 import * as React from 'react'
-import { Link } from 'react-router-dom'
-import { LocationDescriptor } from 'history'
+import { Link, To } from 'react-router'
 
 type PaginationProps = {
     current: number
     total: number
-    pageToURL: (p: number) => LocationDescriptor
+    pageToURL: (p: number) => To
 }
 
 type PageLink = {
     Key: number
     Active: boolean
     Disabled: boolean
-    URL: LocationDescriptor
+    URL: To
     Text: string
 }
 
