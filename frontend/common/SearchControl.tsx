@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { useEffect, useState, useRef } from 'react'
+import { useEffect, useState, useRef, useCallback } from 'react'
 import { LocationDescriptor } from 'history'
 
 import { Suggestions } from './Suggestions'
@@ -67,6 +67,24 @@ export const SearchControl: React.FC<SearchControlProps> = ({ inBound, urlQ, url
             onChange(e)
         }
     }
+
+
+    useEffect(() => {
+        const globalKeyPressHandler = (ev: KeyboardEvent) => {
+            if (ev.key === '/' && ev.target !== qEl.current) {
+                ev.preventDefault()
+                ev.stopPropagation()
+                window.setTimeout(() => {
+                    qEl.current.scrollIntoView({ behavior: 'smooth', block: 'center', inline: "center" })
+                    qEl.current.focus({ preventScroll: true })
+                    qEl.current.setSelectionRange(0, qEl.current.value.length)
+                }, 10)
+            }
+        }
+
+        window.addEventListener('keypress', globalKeyPressHandler)
+        return () => window.removeEventListener('keypress', globalKeyPressHandler)
+    }, [])
 
     return (
         <div id="search">
