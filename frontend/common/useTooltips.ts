@@ -17,6 +17,10 @@ export function useTooltips<T extends HTMLElement>() {
             ts.push(new bootstrapAPI.Tooltip(e))
         }
 
+        if (el.current.hasAttribute('data-bs-toggle')) {
+            ts.push(new bootstrapAPI.Tooltip(el.current))
+        }
+
         return () => {
             for (let t of ts) {
                 t.dispose()
