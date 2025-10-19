@@ -4,7 +4,7 @@ import { Article } from './article'
 import { useDict } from '../store'
 import { IconClipboard, IconExternal } from '../icons'
 import { DictTitle } from './AuthorsDict';
-import { useBSTooltips } from './useBSTooltips';
+import { useTooltips } from './useTooltips';
 
 type ArticleViewProps = {
     a: Article
@@ -15,7 +15,7 @@ type ArticleViewProps = {
 const delayConfig = `{"show": 1000, "hide": 20}`
 
 const IconExternalController: React.FC<{ a: Article }> = ({ a }) => {
-    const el = useBSTooltips<HTMLAnchorElement>()
+    const el = useTooltips<HTMLAnchorElement>()
 
     return <a ref={el} href={`/${a.DictionaryID}/${a.ID}`} className="btn btn-link ms-2" target="_blank"
         data-bs-toggle="tooltip" data-bs-title="Адчыніць артыкул асобна" data-bs-delay={delayConfig}>
@@ -25,7 +25,7 @@ const IconExternalController: React.FC<{ a: Article }> = ({ a }) => {
 
 const IconCopyLinkController: React.FC<{ a: Article }> = ({ a }) => {
     const [activated, setActivated] = useState<boolean>(false)
-    const el = useBSTooltips<HTMLButtonElement>()
+    const el = useTooltips<HTMLButtonElement>()
 
     const onClick = () => {
         const { protocol, host } = window.location
@@ -47,7 +47,7 @@ const IconCopyLinkController: React.FC<{ a: Article }> = ({ a }) => {
 
 export const ArticleView: React.FC<ArticleViewProps> = ({ a, showExternalButton, showSource }) => {
     const [dict, _] = useDict(a.DictionaryID)
-    const articleRoot = useBSTooltips<HTMLDivElement>()
+    const articleRoot = useTooltips<HTMLDivElement>()
 
     return (
         <div className={`article ${a.DictionaryID}`} ref={articleRoot}>

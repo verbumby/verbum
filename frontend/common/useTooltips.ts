@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 
-export function useBSTooltips<T extends HTMLElement>() {
+export function useTooltips<T extends HTMLElement>() {
 	const el = useRef<T>()
     const [bootstrapAPI, setBootstrapAPI] = useState(null)
     useEffect(() => {
