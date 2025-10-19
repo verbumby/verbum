@@ -48,7 +48,7 @@ fe-build:
 
 .PHONY: es-run
 es-run:
-	ES_JAVA_HOME=$$(brew --prefix)/opt/openjdk@21 elastic/elasticsearch/bin/elasticsearch \
+	elastic/elasticsearch/bin/elasticsearch \
 		-Expack.security.enabled=false \
         -Expack.profiling.enabled=false \
 		-Ehttp.host=127.0.0.1 \

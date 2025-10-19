@@ -18,6 +18,7 @@ func APIDictionariesList(w http.ResponseWriter, rctx *chttp.Context) error {
 		HasPreface bool
 		HasAbbrevs bool
 		ScanURL    string
+		Authors    bool
 	}
 
 	resp := struct {
@@ -35,6 +36,7 @@ func APIDictionariesList(w http.ResponseWriter, rctx *chttp.Context) error {
 			HasPreface: d.Preface() != "",
 			HasAbbrevs: d.Abbrevs() != nil,
 			ScanURL:    d.ScanURL(),
+			Authors:    d.Authors(),
 		})
 	}
 

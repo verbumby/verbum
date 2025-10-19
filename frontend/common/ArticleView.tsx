@@ -2,10 +2,11 @@ import * as React from 'react'
 import { useState, useEffect } from 'react'
 import { OverlayTrigger, Tooltip } from "react-bootstrap";
 import { Article } from './article'
-import { useDicts } from '../store'
+import { useDict } from '../store'
 import { IconClipboard, IconExternal } from '../icons'
 import { OverlayInjectedProps } from 'react-bootstrap/esm/Overlay';
 import { OverlayDelay } from 'react-bootstrap/esm/OverlayTrigger';
+import { DictTitle } from './AuthorsDict';
 
 type ArticleViewProps = {
     a: Article
@@ -45,7 +46,7 @@ const IconCopyLinkController: React.FC<{ a: Article }> = ({ a }) => {
         window.setTimeout(() => { setActivated(false) }, 1500)
     }
 
-    const iconStyles: React.CSSProperties = { }
+    const iconStyles: React.CSSProperties = {}
     if (activated) {
         iconStyles.color = 'red'
     }
@@ -58,7 +59,7 @@ const IconCopyLinkController: React.FC<{ a: Article }> = ({ a }) => {
 }
 
 export const ArticleView: React.FC<ArticleViewProps> = ({ a, showExternalButton, showSource }) => {
-    const dicts = useDicts()
+    const [dict, _] = useDict(a.DictionaryID)
     const [articleRoot, setArticleRoot] = useState(null)
     const [bootstrapAPI, setBootstrapAPI] = useState(null)
 
@@ -90,9 +91,7 @@ export const ArticleView: React.FC<ArticleViewProps> = ({ a, showExternalButton,
                 <IconCopyLinkController a={a} />
             </div>
             <div dangerouslySetInnerHTML={{ __html: a.Content }} />
-            {showSource && (<div className="source"><p>
-                {dicts.find(d => d.ID === a.DictionaryID).Title}
-            </p></div>)}
+            {showSource && (<div className="source"><p> <DictTitle d={dict} /> </p></div>)}
         </div>
     )
 }
