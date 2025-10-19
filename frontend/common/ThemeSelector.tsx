@@ -1,5 +1,4 @@
 import * as React from 'react'
-import Dropdown from 'react-bootstrap/Dropdown'
 import { IconCircleHalf, IconMoonStarsFill, IconSunFill } from '../icons'
 import { useState, useEffect } from 'react'
 import { Theme, ThemeID } from './theme'
@@ -23,7 +22,7 @@ const themes: Theme[] = [
 ]
 
 function ThemeSelector() {
-	const [theme, setTheme] = useState<ThemeID|null>(null)
+	const [theme, setTheme] = useState<ThemeID | null>(null)
 
 	useEffect(() => {
 		setTheme(window.getStoredTheme())
@@ -44,25 +43,25 @@ function ThemeSelector() {
 		})
 	}, [])
 
+	useEffect(() => {
+		import('bootstrap')
+	}, [])
+
 	if (!theme) {
 		return <></>
 	}
 
-	return (
-		<Dropdown as="span" drop='up'>
-		  <Dropdown.Toggle size="sm" variant="link" id="theme-selector" className='text-secondary'>
-		  	{themes.find(t => t.id == theme).icon}
-		  </Dropdown.Toggle>
-
-		  <Dropdown.Menu>
-		  	{themes.map(t => (
-				<Dropdown.Item active={t.id == theme} className='btn btn-sm' onClick={() => setTheme(t.id)}>
-					{t.icon} {t.label}
-				</Dropdown.Item>
+	return <span className='btn-group dropup'>
+		<button className="btn btn-sm btn-link text-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+			{themes.find(t => t.id == theme).icon}
+		</button>
+		<ul className="dropdown-menu">
+			{themes.map(t => (
+				<li><a className={`btn btn-sm dropdown-item ${t.id == theme ? 'active' : ''}`}
+					onClick={() => setTheme(t.id)}>{t.icon} {t.label}</a></li>
 			))}
-		  </Dropdown.Menu>
-		</Dropdown>
-	)
+		</ul>
+	</span>
 }
 
 export default ThemeSelector
