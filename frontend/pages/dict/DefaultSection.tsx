@@ -3,11 +3,12 @@ import { FC, useEffect } from 'react'
 
 import { Helmet } from 'react-helmet'
 import { Link, useLocation, useParams } from 'react-router'
-import { ArticleView, NoSearchResults, PaginationView, SearchControl, useDispatch } from '../../common'
+import { ArticleView, AuthorsDictWarning, NoSearchResults, PaginationView, SearchControl, useDispatch } from '../../common'
 import { useDict, useDictArticles, useLetterFilter } from '../../store'
 import { letterFilterFetch, letterFilterReset } from './letterfilter'
 import { dictArticlesFetch, MatchParams, dictArticlesReset, useURLSearch } from './dict'
 import { LetterFilterView } from './LetterFilterView'
+import { IconExclamationTriangle } from '../../icons'
 
 export const DefaultSection: FC = ({ }) => {
     const location = useLocation()
@@ -85,6 +86,9 @@ export const DefaultSection: FC = ({ }) => {
                 <h4>{dict.Title}</h4>
                 {topLinks}
             </div>
+            {dict.Authors && <div className='mx-1 mb-3 alert alert-warning'>
+                <IconExclamationTriangle />&nbsp;<AuthorsDictWarning />
+            </div>}
             <div className="mb-3">
                 <SearchControl
                     inBound={[dict]}

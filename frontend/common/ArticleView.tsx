@@ -1,11 +1,10 @@
 import * as React from 'react'
-import { useState, useEffect } from 'react'
-import { OverlayTrigger, Tooltip } from "react-bootstrap";
+import { useState } from 'react'
 import { Article } from './article'
-import { useDicts } from '../store'
+import { useDict } from '../store'
 import { IconClipboard, IconExternal } from '../icons'
-import { OverlayInjectedProps } from 'react-bootstrap/esm/Overlay';
-import { OverlayDelay } from 'react-bootstrap/esm/OverlayTrigger';
+import { DictTitle } from './AuthorsDict';
+import { useTooltips } from './useTooltips';
 
 type ArticleViewProps = {
     a: Article
@@ -13,30 +12,20 @@ type ArticleViewProps = {
     showSource: boolean
 }
 
-const defaultIconTooltipDelayConfig: OverlayDelay = { show: 1000, hide: 20 }
+const delayConfig = `{"show": 1000, "hide": 20}`
 
 const IconExternalController: React.FC<{ a: Article }> = ({ a }) => {
-    const renderOpenInNewTabTooltip = (props: OverlayInjectedProps) => (
-        <Tooltip
-            id={`tooltip-open-article-in-new-tab-${a.DictionaryID}-${a.ID}`}
-            {...props}
-        >Адчыніць артыкул асобна</Tooltip>
-    )
-    return (<OverlayTrigger overlay={renderOpenInNewTabTooltip} delay={defaultIconTooltipDelayConfig}>
-        <a href={`/${a.DictionaryID}/${a.ID}`} className="btn btn-link ms-2" target="_blank">
-            <IconExternal />
-        </a>
-    </OverlayTrigger>)
+    const el = useTooltips<HTMLAnchorElement>()
+
+    return <a ref={el} href={`/${a.DictionaryID}/${a.ID}`} className="btn btn-link ms-2" target="_blank"
+        data-bs-toggle="tooltip" data-bs-title="Адчыніць артыкул асобна" data-bs-delay={delayConfig}>
+        <IconExternal />
+    </a>
 }
 
 const IconCopyLinkController: React.FC<{ a: Article }> = ({ a }) => {
     const [activated, setActivated] = useState<boolean>(false)
-    const renderCopyLinkTooltip = (props: OverlayInjectedProps) => (
-        <Tooltip
-            id={`tooltip-copy-article-link-${a.DictionaryID}-${a.ID}`}
-            {...props}
-        >Капіраваць простую спасылку на артыкул</Tooltip>
-    )
+    const el = useTooltips<HTMLButtonElement>()
 
     const onClick = () => {
         const { protocol, host } = window.location
@@ -45,54 +34,29 @@ const IconCopyLinkController: React.FC<{ a: Article }> = ({ a }) => {
         window.setTimeout(() => { setActivated(false) }, 1500)
     }
 
-    const iconStyles: React.CSSProperties = { }
+    const iconStyles: React.CSSProperties = {}
     if (activated) {
         iconStyles.color = 'red'
     }
 
-    return (<OverlayTrigger overlay={renderCopyLinkTooltip} delay={defaultIconTooltipDelayConfig}>
-        <button type="button" className="btn btn-link ms-2" style={iconStyles} onClick={onClick}>
-            <IconClipboard type={activated ? 'check' : ''} />
-        </button>
-    </OverlayTrigger>)
+    return <button ref={el} type="button" className="btn btn-link ms-2" style={iconStyles} onClick={onClick}
+        data-bs-toggle="tooltip" data-bs-title="Капіраваць простую спасылку на артыкул" data-bs-delay={delayConfig}>
+        <IconClipboard type={activated ? 'check' : ''} />
+    </button>
 }
 
 export const ArticleView: React.FC<ArticleViewProps> = ({ a, showExternalButton, showSource }) => {
-    const dicts = useDicts()
-    const [articleRoot, setArticleRoot] = useState(null)
-    const [bootstrapAPI, setBootstrapAPI] = useState(null)
-
-    useEffect(() => {
-        import('bootstrap').then(setBootstrapAPI)
-    }, [])
-
-    useEffect(() => {
-        if (!bootstrapAPI || !articleRoot) {
-            return
-        }
-
-        let ts = new Array()
-        for (let e of articleRoot.querySelectorAll('[data-bs-toggle="tooltip"]')) {
-            ts.push(new bootstrapAPI.Tooltip(e))
-        }
-
-        return () => {
-            for (let t of ts) {
-                t.dispose()
-            }
-        }
-    }, [bootstrapAPI, articleRoot])
+    const [dict, _] = useDict(a.DictionaryID)
+    const articleRoot = useTooltips<HTMLDivElement>()
 
     return (
-        <div className={`article ${a.DictionaryID}`} ref={setArticleRoot}>
+        <div className={`article ${a.DictionaryID}`} ref={articleRoot}>
             <div className="buttons" >
                 {showExternalButton && <IconExternalController a={a} />}
                 <IconCopyLinkController a={a} />
             </div>
             <div dangerouslySetInnerHTML={{ __html: a.Content }} />
-            {showSource && (<div className="source"><p>
-                {dicts.find(d => d.ID === a.DictionaryID).Title}
-            </p></div>)}
+            {showSource && (<div className="source"><p> <DictTitle d={dict} /> </p></div>)}
         </div>
     )
 }

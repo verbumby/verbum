@@ -21,6 +21,7 @@ type Dictionary interface {
 	Abbrevs() *Abbrevs
 	ScanURL() string
 	Slugifier() string
+	Authors() bool
 	IndexSettings() IndexSettings
 }
 
@@ -35,7 +36,7 @@ func InitDictionaries() error {
 		Common: Common{
 			id:        "grammardb",
 			indexID:   "grammardb",
-			boost:     1,
+			boost:     1.3,
 			title:     "Граматычная база Інстытута мовазнаўства НАН Беларусі (2023)",
 			abbrevs:   abbrevs,
 			slugifier: "none",
@@ -59,7 +60,7 @@ func InitDictionaries() error {
 			id:        "tsblm2022",
 			indexID:   "tsblm2022",
 			boost:     1.6,
-			title:     "Тлумачальны слоўнік беларускай літаратурнай мовы (пад рэд. І. Л. Капылова, 2022, актуальны правапіс)",
+			title:     "Тлумачальны слоўнік беларускай літаратурнай мовы (І. Л. Капылоў, 2022, актуальны правапіс)",
 			abbrevs:   abbrevs,
 			preface:   preface,
 			slugifier: "none",
@@ -350,6 +351,7 @@ func InitDictionaries() error {
 			preface: preface,
 			abbrevs: abbrevs,
 			scanURL: "https://knihi.com/Valancina_Paskievic/Anhielska-bielaruski_slounik.html",
+			authors: true,
 			indexSettings: IndexSettings{
 				PrependContentWithTitle: true,
 			},
@@ -417,6 +419,7 @@ func InitDictionaries() error {
 			abbrevs:   abbrevs,
 			scanURL:   "https://knihi.com/none/Bielaruska-niamiecki_slounik.html",
 			slugifier: "none",
+			authors:   true,
 			indexSettings: IndexSettings{
 				DictProvidesIDs:                  true,
 				DictProvidesIDsWithoutDuplicates: true,
@@ -441,6 +444,7 @@ func InitDictionaries() error {
 			preface: preface,
 			abbrevs: abbrevs,
 			scanURL: "https://knihi.com/Mikalaj_Kurjanka/Niamiecka-bielaruski_slounik_2006.html",
+			authors: true,
 			indexSettings: IndexSettings{
 				DictProvidesIDs:                  true,
 				DictProvidesIDsWithoutDuplicates: true,
