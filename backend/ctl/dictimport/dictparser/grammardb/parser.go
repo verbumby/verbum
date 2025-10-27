@@ -276,7 +276,7 @@ func ParseDirectory(dirname string) (chan dictparser.Article, chan error) {
 						ID:           outid,
 						Title:        hws[0],
 						Headwords:    hws,
-						HeadwordsAlt: headwordsAlt(variantXML, *paradigmXML),
+						HeadwordsAlt: []string{},
 						Body:         body.String(),
 					}
 
@@ -302,29 +302,6 @@ func headwords(variantXML xmlparser.XMLElement) []string {
 	lemma = strings.ReplaceAll(lemma, "+", "")
 	lemma = strings.ReplaceAll(lemma, "'", "’")
 	return []string{lemma}
-}
-
-func headwordsAlt(variantXML, paradigmXML xmlparser.XMLElement) []string {
-	lemma := variantXML.Attrs["lemma"]
-	result := []string{}
-
-	for _, formXML := range variantXML.Childs["Form"] {
-		result = append(result, formXML.InnerText)
-	}
-
-	for _, otherVariantXML := range paradigmXML.Childs["Variant"] {
-		otherLemma := otherVariantXML.Attrs["lemma"]
-		if otherLemma != lemma {
-			result = append(result, otherLemma)
-		}
-	}
-
-	for i := range result {
-		result[i] = strings.ReplaceAll(result[i], "+", "")
-		result[i] = strings.ReplaceAll(result[i], "'", "’")
-	}
-
-	return result
 }
 
 func grammarCategories(tag string) string {
