@@ -37,7 +37,7 @@ func InitDictionaries() error {
 			id:        "grammardb",
 			indexID:   "grammardb",
 			boost:     1.3,
-			title:     "Граматычная база Інстытута мовазнаўства НАН Беларусі (2023)",
+			title:     "Граматычная база Інстытута мовазнаўства НАН Беларусі (2023, актуальны правапіс)",
 			abbrevs:   abbrevs,
 			slugifier: "none",
 			indexSettings: IndexSettings{

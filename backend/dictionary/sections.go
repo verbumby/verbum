@@ -12,7 +12,7 @@ var sections = []Section{
 		ID:   "default",
 		Name: "Усе",
 		DictIDs: []string{
-			"tsblm2022", "grammardb", "tsbm", "klyshka", "sis1999", "sis2005", "bhn1971",
+			"grammardb", "tsblm2022", "tsbm", "klyshka", "sis1999", "sis2005", "bhn1971",
 			"proverbia", "hsbm", "esbm", "belen", "brs", "rbs10", "abs", "susha", "pbs",
 			"beldeu", "kurjanka",
 		},
@@ -20,7 +20,7 @@ var sections = []Section{
 	{
 		ID:      "main",
 		Name:    "Асноўныя",
-		DictIDs: []string{"brs", "rbs10", "tsbm", "tsblm2022", "esbm", "klyshka"},
+		DictIDs: []string{"grammardb", "brs", "rbs10", "tsbm", "tsblm2022", "esbm", "klyshka"},
 		Descr:   "Самы неабходны мінімум слоўнікаў беларускай мовы. Нічога лішняга.",
 	},
 	{
