@@ -281,7 +281,7 @@ func ParseDirectory(dirname string) (chan dictparser.Article, chan error) {
 					}
 
 					for _, form := range data.Forms {
-						if !form.Visited && form.Tag != "" && form.Tag != "0" && form.Tag != "1" && form.Tag != "XXX" && !strings.HasSuffix(form.Tag, "HX") {
+						if !form.Visited && form.Tag != "" && form.Tag != "0" && form.Tag != "1" && form.Tag != "XXX" && !strings.HasSuffix(form.Tag, "HX") && !strings.HasSuffix(form.Tag, "HS") {
 							retErr("form %v was not visited", form)
 							return
 						}
