@@ -98,7 +98,7 @@ textarea, input[type="text"], input[type="button"], input[type="submit"] {
 .article.tsbm [style='color: crimson'] v-abbr {color: crimson;}
 .article.tsbm [style='color: midnightblue'] v-abbr {color: var(--color-midnightblue);}
 .article v-abbr[data-bs-toggle="tooltip"] {cursor: default; text-decoration: underline; text-decoration-style: dotted;}
-.article table, .article tr, .article td, .article th { border: 1px solid lightgrey; vertical-align: top; padding: 0.2rem;}
+.article table, .article tr, .article td, .article th { border: 1px solid var(--color-border); vertical-align: top; padding: 0.2rem;}
 .article th {text-align:center; font-weight: normal; background-color: #d3d3d31f;}
 .article table {border-collapse: collapse; margin: 0.5em 0;}
 [data-bs-theme=dark] .article [style='color: darkblue'],
