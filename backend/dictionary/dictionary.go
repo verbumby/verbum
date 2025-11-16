@@ -144,7 +144,7 @@ func InitDictionaries() error {
 			id:        "sis1999",
 			indexID:   "sis1999",
 			boost:     1,
-			title:     "Слоўнік іншамоўных слоў (А. Булыка, 1999, правапіс да 2008 г., часткова)",
+			title:     "Слоўнік іншамоўных слоў (А. Булыка, 1999, правапіс да 2008 г.)",
 			preface:   preface,
 			slugifier: "none",
 			abbrevs:   abbrevs,
