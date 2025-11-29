@@ -476,6 +476,31 @@ func InitDictionaries() error {
 			},
 		},
 	})
+
+	abbrevs, err = loadDSLAbbrevs("belse/belse_abbr.txt")
+	if err != nil {
+		return fmt.Errorf("load belse abbrevs: %w", err)
+	}
+	preface, err = loadPreface("belse/belse_pradmova.html")
+	if err != nil {
+		return fmt.Errorf("load belse preface: %w", err)
+	}
+	dictionaries = append(dictionaries, HTML{
+		Common: Common{
+			id:        "belse",
+			indexID:   "belse",
+			boost:     1,
+			title:     "Беларуская Савецкая Энцыклапедыя (1969—76, паказальнікі; правапіс да 2008 г., часткова)",
+			preface:   preface,
+			abbrevs:   abbrevs,
+			slugifier: "none",
+			scanURL:   "https://knihi.com/none/Bielaruskaja_Savieckaja_Encyklapiedyja_zip.html",
+			indexSettings: IndexSettings{
+				DictProvidesIDs:                  true,
+				DictProvidesIDsWithoutDuplicates: false,
+			},
+		},
+	})
 	return nil
 }
 
