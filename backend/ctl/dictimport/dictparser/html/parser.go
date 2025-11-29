@@ -55,7 +55,7 @@ func ParseReader(r io.Reader, settings dictionary.IndexSettings) (chan dictparse
 }
 
 var (
-	reHW    = regexp.MustCompile(`<(?:strong|b) class="(hw(?:-alt)?)"(?: id="([^"]+)")?[^>]*>([^<]*)</(?:strong|b)>`)
+	reHW    = regexp.MustCompile(`<(?:strong|b|span) class="(hw(?:-alt)?)"(?: id="([^"]+)")?[^>]*>([^<]*)</(?:strong|b|span)>`)
 	reIndex = regexp.MustCompile(`<sup[^>]*>([\dIVX-]+)</sup>`)
 )
 
