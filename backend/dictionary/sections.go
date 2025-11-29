@@ -13,7 +13,7 @@ var sections = []Section{
 		Name: "Усе",
 		DictIDs: []string{
 			"grammardb", "tsblm2022", "tsbm", "klyshka", "sis1999", "sis2005", "bhn1971",
-			"proverbia", "hsbm", "esbm", "belen", "brs", "rbs10", "abs", "susha", "pbs",
+			"proverbia", "hsbm", "esbm", "belen", "belse", "brs", "rbs10", "abs", "susha", "pbs",
 			"beldeu", "kurjanka",
 		},
 	},
