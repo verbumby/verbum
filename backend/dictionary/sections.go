@@ -32,7 +32,7 @@ var sections = []Section{
 	{
 		ID:      "encyclopedias",
 		Name:    "Энцыклапедыі",
-		DictIDs: []string{"belen"},
+		DictIDs: []string{"belen", "belse"},
 		Descr:   "Тут знаходзяцца артыкулы з «Беларускай Энцыклапедыі» — афіцыйнай крыніцы дакладнай і навукова праверанай інфармацыі.",
 	},
 }
