@@ -258,6 +258,7 @@ func InitDictionaries() error {
 			indexSettings: IndexSettings{
 				DictProvidesIDs:                  true,
 				DictProvidesIDsWithoutDuplicates: true,
+				LowercaseSuggestions:             true,
 			},
 		},
 	})
@@ -473,6 +474,7 @@ func InitDictionaries() error {
 			indexSettings: IndexSettings{
 				DictProvidesIDs:                  true,
 				DictProvidesIDsWithoutDuplicates: false,
+				LowercaseSuggestions:             true,
 			},
 		},
 	})
@@ -498,6 +500,7 @@ func InitDictionaries() error {
 			indexSettings: IndexSettings{
 				DictProvidesIDs:                  true,
 				DictProvidesIDsWithoutDuplicates: false,
+				LowercaseSuggestions:             true,
 			},
 		},
 	})
