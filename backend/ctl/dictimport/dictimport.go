@@ -236,6 +236,9 @@ func (c *commandController) indexArticles(articlesCh chan dictparser.Article) er
 
 		for _, hws := range hwl {
 			for _, hw := range hws.list {
+				if c.dict.IndexSettings().LowercaseSuggestions {
+					hw = strings.ToLower(hw)
+				}
 				s := map[string]any{"input": hw, "weight": hws.weight}
 
 				if err := buffsuggjenc.Encode(map[string]any{"create": map[string]any{}}); err != nil {
