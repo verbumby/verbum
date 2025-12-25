@@ -46,10 +46,24 @@ func APISearch(w http.ResponseWriter, rctx *chttp.Context) error {
 
 	if q != "" {
 		queryBoolMusts = append(queryBoolMusts, map[string]any{
-			"simple_query_string": map[string]any{
-				"query":            q,
-				"fields":           searchFields,
-				"default_operator": "AND",
+			"bool": map[string]any{
+				"should": []map[string]any{
+					{
+						"match": map[string]any{
+							"Headword": map[string]any{
+								"query": q,
+								"boost": 2.0,
+							},
+						},
+					},
+					{
+						"simple_query_string": map[string]any{
+							"query":            q,
+							"fields":           searchFields,
+							"default_operator": "AND",
+						},
+					},
+				},
 			},
 		})
 	}
