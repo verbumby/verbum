@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { useEffect, useState, useRef } from 'react'
+import { useEffect, useState, useRef, useCallback } from 'react'
 import { Suggestions } from './Suggestions'
 import { IconBackspace, IconSearch } from '../icons'
 import { Dict, Suggestion, useDelayed, useDispatch } from '.'
@@ -135,7 +135,6 @@ type useSuggestionsSuggestionsViewProps = {
 type useSuggestionsInputProps = {
     onChange: (e: React.ChangeEvent<HTMLInputElement>) => void,
     onKeyDown: (e: React.KeyboardEvent<HTMLInputElement>) => void,
-    onBlur: (e: React.FocusEvent<HTMLInputElement>) => void
 }
 
 function useSuggestions(inDicts: string): [
@@ -152,7 +151,7 @@ function useSuggestions(inDicts: string): [
     const abort = useRef<AbortController>(null)
     const dispatch = useDispatch()
 
-    const resetSuggestions = () => {
+    const resetSuggestions = useCallback(() => {
         setSuggs([])
         setActive(-1)
         setHard(false)
@@ -161,8 +160,9 @@ function useSuggestions(inDicts: string): [
             abort.current.abort()
         }
         abort.current = null
-        onChangeHandlerCancel()
-    }
+        // onChangeHandlerCancel()
+        window.removeEventListener('click', onWindowClick)
+    }, [])
 
     const [onChangeHandler, onChangeHandlerCancel] = useDelayed((q: string): void => {
         if (!q || inDicts == '-') {
@@ -190,6 +190,11 @@ function useSuggestions(inDicts: string): [
                     setHard(false)
                 }
                 setSuggs(suggs)
+                if (suggs.length > 0) {
+                    window.addEventListener('click', onWindowClick)
+                } else {
+                    window.removeEventListener('click', onWindowClick)
+                }
             }).catch(() => {
                 // ignore abort exception
             }).finally(() => {
@@ -228,11 +233,9 @@ function useSuggestions(inDicts: string): [
         }
     }
 
-    const onBlur = (_: React.FocusEvent<HTMLInputElement>) => {
-        if (suggs.length > 0) {
-            setTimeout(() => resetSuggestions(), 150)
-        }
-    }
+    const onWindowClick = useCallback(() => {
+        resetSuggestions()
+    }, [])
 
     const [setActiveSuggestionDelayed] = useDelayed((n: number) => {
         setActive(n)
@@ -247,7 +250,7 @@ function useSuggestions(inDicts: string): [
         suggs,
         resetSuggestions,
         calculateQ,
-        { onChange, onKeyDown, onBlur },
+        { onChange, onKeyDown },
         { suggestions: suggs, active, setActive: setActiveSuggestionDelayed },
     ]
 }

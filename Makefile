@@ -31,7 +31,10 @@ fe-build:
 		--outdir=frontend/dist
 	rm frontend/dist/server.css
 
-	rm -f frontend/dist/public/*.{js,js.map,css,css.map,png}
+	find frontend/dist/public/ -type f \
+		\( -name "*.js" -o -name "*.js.map" -o -name "*.css" -o -name "*.css.map" -o -name "*.png" \) \
+		-print0 | xargs -0 rm -f
+
 	npx esbuild frontend/browser.tsx frontend/theme.ts \
 		--bundle \
 		--define:process.env.NODE_ENV='"production"' \
@@ -48,9 +51,10 @@ fe-build:
 
 .PHONY: es-run
 es-run:
+	ES_JAVA_OPTS="-Xms1600m -Xmx1600m" \
 	elastic/elasticsearch/bin/elasticsearch \
 		-Expack.security.enabled=false \
-        -Expack.profiling.enabled=false \
+		-Expack.profiling.enabled=false \
 		-Ehttp.host=127.0.0.1 \
 		-Ecluster.name=verbum-dev \
 		-Enode.name=verbum-1 \
