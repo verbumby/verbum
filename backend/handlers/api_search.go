@@ -45,25 +45,14 @@ func APISearch(w http.ResponseWriter, rctx *chttp.Context) error {
 	q = textutil.NormalizeQuery(q)
 
 	if q != "" {
+		if strings.HasPrefix(q, "-") && !strings.ContainsRune(q, ' ') {
+			q = "\\" + q
+		}
 		queryBoolMusts = append(queryBoolMusts, map[string]any{
-			"bool": map[string]any{
-				"should": []map[string]any{
-					{
-						"match": map[string]any{
-							"Headword": map[string]any{
-								"query": q,
-								"boost": 2.0,
-							},
-						},
-					},
-					{
-						"simple_query_string": map[string]any{
-							"query":            q,
-							"fields":           searchFields,
-							"default_operator": "AND",
-						},
-					},
-				},
+			"simple_query_string": map[string]any{
+				"query":            q,
+				"fields":           searchFields,
+				"default_operator": "AND",
 			},
 		})
 	}

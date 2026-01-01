@@ -18,7 +18,7 @@ export const SupportPage: React.FC = () => {
 			<p><a href="https://verbum.by/">Verbum.by</a> можна падтрымаць фінансава праз <a href="https://www.buymeacoffee.com/verbum.by" target="_blank" rel="noopener noreferrer"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" style={{height: '30px', width: '120px'}} /></a>. Гэта дазволіць пакрываць аплату сервера і даменнага імя, а таксама дадасць матывацыі падтрымліваць і паляпшаць праект.</p>
 			<p>Таксама заклікаю вас падтрымаць перакладчыцкую суполку <a href="https://by-reservation.com/" target='_blank' rel="noopener noreferrer" style={{color: 'inherit'}}>«МТГ «Rэ<span style={{color: 'red'}}>З</span>ервацыЯ»</a> праз <a href="https://www.patreon.com/by_reservation" target='_blank' rel="noopener noreferrer">Patreon</a> ці <a href="https://boosty.to/by_reservation" target='_blank' rel="noopener noreferrer">Boosty</a>. Суполка зрабіла і працягвае рабіць агромністы ўнёсак у развіццё гэтага сайта.</p>
 			<p>Дзякуй вялікі, што карыстаецеся <a href="https://verbum.by/">verbum.by</a>!</p>
-			<p>З павагай,<br/>
+			<p>З найлепшымі,<br/>
 			Вадзім.</p>
 		</div>
 	</>
