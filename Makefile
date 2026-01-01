@@ -27,7 +27,7 @@ fe-build:
 		--minify \
 		--sourcemap=inline \
 		--platform=node \
-		--target=node20 \
+		--target=node25 \
 		--outdir=frontend/dist
 	rm frontend/dist/server.css
 
