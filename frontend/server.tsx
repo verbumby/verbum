@@ -40,10 +40,18 @@ async function getDictsMetadata(): Promise<DictsMetadata> {
 
 const k = new Koa()
 k.use(async ctx => {
+    const dm = await getDictsMetadata()
+    if (ctx.URL.pathname === '/') {
+        const sectionID = ctx.cookies.get('lastRenderedSectionID')
+        if (sectionID && sectionID !== 'default' && dm.Sections.some(s => s.ID == sectionID)) {
+            ctx.status = 301
+            ctx.redirect(`/s/${sectionID}`)
+            return
+        }
+    }
     const store = configureStore({
         reducer: rootReducer,
     })
-    const dm = await getDictsMetadata()
     store.dispatch(dictsSet(dm.Dicts))
     store.dispatch(sectionsSet(dm.Sections))
 
