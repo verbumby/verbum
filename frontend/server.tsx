@@ -44,7 +44,7 @@ k.use(async ctx => {
     if (ctx.URL.pathname === '/') {
         const sectionID = ctx.cookies.get('lastRenderedSectionID')
         if (sectionID && sectionID !== 'default' && dm.Sections.some(s => s.ID == sectionID)) {
-            ctx.status = 301
+            ctx.status = 302
             ctx.redirect(`/s/${sectionID}`)
             return
         }
