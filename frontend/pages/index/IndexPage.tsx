@@ -32,6 +32,10 @@ export const IndexPage: React.FC = () => {
         return <NotFound />
     }
 
+    useEffect(() => {
+        document.cookie = `lastRenderedSectionID=${sectionID}; max-age=3153600000; path=/;`
+    })
+
     const renderDictList = (): React.ReactNode => {
         let title = "Verbum - Анлайнавы Слоўнік Беларускай Мовы"
         if (sectionID !== 'default') {
