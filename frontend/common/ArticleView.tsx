@@ -9,6 +9,7 @@ import { useTooltips } from './useTooltips';
 type ArticleViewProps = {
     a: Article
     showExternalButton: boolean
+    showCopyURLButton: boolean
     showSource: boolean
 }
 
@@ -45,7 +46,7 @@ const IconCopyLinkController: React.FC<{ a: Article }> = ({ a }) => {
     </button>
 }
 
-export const ArticleView: React.FC<ArticleViewProps> = ({ a, showExternalButton, showSource }) => {
+export const ArticleView: React.FC<ArticleViewProps> = ({ a, showExternalButton, showCopyURLButton, showSource }) => {
     const [dict, _] = useDict(a.DictionaryID)
     const articleRoot = useTooltips<HTMLDivElement>()
 
@@ -53,7 +54,7 @@ export const ArticleView: React.FC<ArticleViewProps> = ({ a, showExternalButton,
         <div className={`article ${a.DictionaryID}`} ref={articleRoot}>
             <div className="buttons" >
                 {showExternalButton && <IconExternalController a={a} />}
-                <IconCopyLinkController a={a} />
+                {showCopyURLButton && <IconCopyLinkController a={a} />}
             </div>
             <div dangerouslySetInnerHTML={{ __html: a.Content }} />
             {showSource && (<div className="source"><p> <DictTitle d={dict} /> </p></div>)}
