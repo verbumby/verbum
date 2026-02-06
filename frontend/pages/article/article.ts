@@ -1,4 +1,5 @@
 import { Article } from "../../common"
+import { useURLSearch as useURLSearchCommon } from "../../common"
 import { AppThunkAction } from "../../store"
 
 export type ArticleState = {
@@ -9,6 +10,12 @@ export type MatchParams = {
     dictID: string
     articleID: string
 }
+
+export const URLSearchDefaults = {
+    og_preview: '',
+}
+
+export const useURLSearch = () => useURLSearchCommon(URLSearchDefaults)
 
 const ARTICLE_FETCH_KICKOFF = 'ARTICLE/FETCH/KICKOFF'
 type ArticleFetchKickOffAction = {
