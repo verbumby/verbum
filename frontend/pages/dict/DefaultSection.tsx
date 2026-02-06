@@ -123,7 +123,6 @@ export const DefaultSection: FC = ({ }) => {
                             key={a.DictionaryID + a.ID}
                             a={a}
                             showExternalButton={true}
-                            showCopyURLButton={true}
                             showSource={false}
                         />
                     ))}

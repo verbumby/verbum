@@ -77,7 +77,6 @@ export const IndexPage: React.FC = () => {
                                 key={`${hit.DictionaryID}-${hit.ID}`}
                                 a={hit}
                                 showExternalButton={true}
-                                showCopyURLButton={true}
                                 showSource={true}
                             />
                         )
