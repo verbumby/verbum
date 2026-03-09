@@ -109,6 +109,7 @@ textarea, input[type="text"], input[type="button"], input[type="submit"] {
 .article letter-spacing {letter-spacing: 0.25em;}
 .article.belen figure {text-align: center;}
 .article.belen figure img {max-width: 100%;}
+.article.belen table {caption-side: top;}
 
 .logo {color:darkgrey; padding: 6px 0; font-weight: bold;}
 .logo h1 {display: inline; font-weight: bold;}
