@@ -453,7 +453,7 @@ func InitDictionaries() error {
 		},
 	})
 
-	abbrevs, err = loadDSLAbbrevs("belen/bel_abbr.txt")
+	abbrevs, err = loadDSLAbbrevs("belen/belen_abbr.txt")
 	if err != nil {
 		return fmt.Errorf("load belen abbrevs: %w", err)
 	}
