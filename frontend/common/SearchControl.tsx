@@ -151,6 +151,11 @@ function useSuggestions(inDicts: string): [
     const abort = useRef<AbortController>(null)
     const dispatch = useDispatch()
 
+    const onWindowClick = useCallback((e: MouseEvent) => {
+        if (e.detail === 0) return // ignore synthetic clicks from keyboard
+        resetSuggestions()
+    }, [])
+
     const resetSuggestions = useCallback(() => {
         setSuggs([])
         setActive(-1)
@@ -232,10 +237,6 @@ function useSuggestions(inDicts: string): [
             }
         }
     }
-
-    const onWindowClick = useCallback(() => {
-        resetSuggestions()
-    }, [])
 
     const [setActiveSuggestionDelayed] = useDelayed((n: number) => {
         setActive(n)
