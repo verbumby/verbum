@@ -16,7 +16,7 @@ build-parsers:
 
 .PHONY: fe-lint
 fe-lint:
-	npx tsc --noEmit
+	npx tsgo --noEmit
 
 .PHONY: fe-build
 fe-build:
