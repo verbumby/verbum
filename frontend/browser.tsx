@@ -13,11 +13,14 @@ window.verbumClient = new VerbumAPIClientBrowser()
 
 declare global {
     interface Window {
-        __PRELOADED_STATE__: RootState
+        __PRELOADED_STATE__?: RootState
     }
 }
 
 const preloadedState = window.__PRELOADED_STATE__
+if (!preloadedState) {
+    throw new Error('__PRELOADED_STATE__ missing')
+}
 delete window.__PRELOADED_STATE__
 
 const store = configureStore({
