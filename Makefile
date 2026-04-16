@@ -17,6 +17,7 @@ build-parsers:
 .PHONY: fe-lint
 fe-lint:
 	npx tsgo --noEmit
+	npx biome ci
 
 .PHONY: fe-build
 fe-build:
