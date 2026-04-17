@@ -1,3 +1,4 @@
+import { createSlice, type PayloadAction } from '@reduxjs/toolkit'
 import { useURLSearch as useURLSearchCommon } from '../../common/hooks'
 import type { SearchResult } from '../../common/search'
 import { URLSearch } from '../../common/urlsearch'
@@ -20,76 +21,25 @@ export type SearchState = {
     searchResult: SearchResult
 }
 
-const SEARCH_KICKOFF = 'SEARCH/KICKOFF'
-type SearchKickOffAction = {
-    type: typeof SEARCH_KICKOFF
-    q: string
-}
-function searchKickOff(q: string): SearchKickOffAction {
-    return {
-        type: SEARCH_KICKOFF,
-        q,
-    }
-}
+const searchSlice = createSlice({
+    name: 'search',
+    initialState: { q: '', searchResult: null } as SearchState,
+    reducers: {
+        searchKickOff: (state, action: PayloadAction<string>) => {
+            state.q = action.payload
+            state.searchResult = null
+        },
+        searchSuccess: (state, action: PayloadAction<SearchResult>) => {
+            state.searchResult = action.payload
+        },
+        searchFailure: () => {},
+        searchReset: () => ({ q: '', searchResult: null }),
+    },
+})
 
-const SEARCH_SUCCESS = 'SEARCH/SUCCESS'
-type SearchSuccessAction = {
-    type: typeof SEARCH_SUCCESS
-    searchResult: SearchResult
-}
-function searchSuccess(searchResult: SearchResult): SearchSuccessAction {
-    return {
-        type: SEARCH_SUCCESS,
-        searchResult,
-    }
-}
-
-const SEARCH_FAILURE = 'SEARCH/FAILURE'
-type SearchFailureAction = {
-    type: typeof SEARCH_FAILURE
-}
-function searchFailure(): SearchFailureAction {
-    return { type: SEARCH_FAILURE }
-}
-
-const SEARCH_RESET = 'SEARCH/RESET'
-type SearchResetAction = {
-    type: typeof SEARCH_RESET
-}
-export function searchReset(): SearchResetAction {
-    return { type: SEARCH_RESET }
-}
-
-export type SearchActions =
-    | SearchKickOffAction
-    | SearchSuccessAction
-    | SearchFailureAction
-    | SearchResetAction
-
-export function searchReducer(
-    state: SearchState = { q: '', searchResult: null },
-    a: SearchActions,
-): SearchState {
-    switch (a.type) {
-        case SEARCH_KICKOFF:
-            return {
-                q: a.q,
-                searchResult: null,
-            }
-        case SEARCH_SUCCESS:
-            return {
-                ...state,
-                searchResult: a.searchResult,
-            }
-        case SEARCH_RESET:
-            return {
-                q: '',
-                searchResult: null,
-            }
-        default:
-            return state
-    }
-}
+const { searchKickOff, searchSuccess, searchFailure } = searchSlice.actions
+export const { searchReset } = searchSlice.actions
+export const searchReducer = searchSlice.reducer
 
 export const search = (
     params: Partial<MatchParams>,

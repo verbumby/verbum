@@ -26,11 +26,7 @@ import {
     type PrefaceState,
     prefaceReducer,
 } from './pages/dict/preface'
-import {
-    SearchActions,
-    type SearchState,
-    searchReducer,
-} from './pages/index/search'
+import { type SearchState, searchReducer } from './pages/index/search'
 
 export const rootReducer = combineReducers({
     dicts: dictsReducer,
