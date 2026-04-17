@@ -16,8 +16,8 @@ build-parsers:
 
 .PHONY: fe-lint
 fe-lint:
-	npx tsgo --noEmit
 	npx biome ci
+	npx tsgo --noEmit
 
 .PHONY: fe-build
 fe-build:
@@ -29,7 +29,8 @@ fe-build:
 		--sourcemap=inline \
 		--platform=node \
 		--target=node25 \
-		--outdir=frontend/dist
+		--outdir=frontend/dist \
+		--jsx=automatic
 	rm frontend/dist/server.css
 
 	find frontend/dist/public/ -type f \
@@ -45,7 +46,8 @@ fe-build:
 		--target=es2016 \
 		--outdir=frontend/dist/public \
 		--entry-names=[name]-[hash] \
-		--loader:.png=file
+		--loader:.png=file \
+		--jsx=automatic
 
 	cp -v frontend/index.html frontend/dist/index.html
 	cp -v frontend/*.png frontend/dist/public/

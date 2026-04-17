@@ -1,5 +1,5 @@
-import { Dict } from './dict'
-import { Section } from './sections'
+import type { Dict } from './dict'
+import type { Section } from './sections'
 
 const DICTS_SET = 'DICTS/SET'
 
@@ -24,6 +24,6 @@ export function dictsReducer(state: Dict[] = [], a: DictsActions): Dict[] {
 }
 
 export type DictsMetadata = {
-    Dicts: Dict[],
-    Sections: Section[],
+    Dicts: Dict[]
+    Sections: Section[]
 }

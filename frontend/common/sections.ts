@@ -1,9 +1,8 @@
-
 export type Section = {
-    ID: string,
-    Name: string,
-    DictIDs: string[],
-    Descr: string,
+    ID: string
+    Name: string
+    DictIDs: string[]
+    Descr: string
 }
 
 const SECTIONS_SET = 'SECTIONS/SET'
@@ -18,7 +17,10 @@ export function sectionsSet(sections: Section[]): SectionsSetAction {
 
 export type SectionsActions = SectionsSetAction
 
-export function sectionsReducer(state: Section[] = [], a: SectionsActions): Section[] {
+export function sectionsReducer(
+    state: Section[] = [],
+    a: SectionsActions,
+): Section[] {
     switch (a.type) {
         case SECTIONS_SET:
             return [...a.sections]

@@ -2,13 +2,13 @@ import * as React from 'react'
 import { Helmet } from 'react-helmet'
 import { useLocation, useParams } from 'react-router'
 import { ArticleView } from '../../common/ArticleView'
-import { SearchControl } from '../../common/SearchControl'
-import { NotFound } from '../../common/NotFound'
 import { useDispatch } from '../../common/hooks'
+import { NotFound } from '../../common/NotFound'
 import { Redirect } from '../../common/Redirect'
+import { SearchControl } from '../../common/SearchControl'
 import { useArticle, useDict } from '../../store'
 import { useURLSearch as useDictURLSearch } from '../dict/dict'
-import { articleFetch, articleReset, MatchParams } from './article'
+import { articleFetch, articleReset, type MatchParams } from './article'
 
 export const ArticlePage: React.FC = () => {
     const params = useParams<MatchParams>()
@@ -31,7 +31,9 @@ export const ArticlePage: React.FC = () => {
         if (a === undefined) {
             dispatch(articleFetch(params))
         }
-        return () => { dispatch(articleReset()) }
+        return () => {
+            dispatch(articleReset())
+        }
     }, [location])
 
     if (a === undefined) {
@@ -58,14 +60,16 @@ export const ArticlePage: React.FC = () => {
                     urlQ={a.Headword[0]}
                     urlIn={dict.ID}
                     filterEnabled={false}
-                    calculateSearchURL={
-                        (q, inDicts) => ({
-                            pathname: `/${dict.ID}`,
-                            search: dictURLSearch.clone().set('q', q).encode(),
-                        })
-                    }
+                    calculateSearchURL={(q, inDicts) => ({
+                        pathname: `/${dict.ID}`,
+                        search: dictURLSearch.clone().set('q', q).encode(),
+                    })}
                 />
-                <ArticleView a={a} showExternalButton={false} showSource={true} />
+                <ArticleView
+                    a={a}
+                    showExternalButton={false}
+                    showSource={true}
+                />
             </div>
         </>
     )

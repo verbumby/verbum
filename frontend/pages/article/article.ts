@@ -1,5 +1,5 @@
-import { Article } from "../../common/article"
-import { AppThunkAction } from "../../thunk"
+import type { Article } from '../../common/article'
+import type { AppThunkAction } from '../../thunk'
 
 export type ArticleState = {
     a?: Article
@@ -12,11 +12,14 @@ export type MatchParams = {
 
 const ARTICLE_FETCH_KICKOFF = 'ARTICLE/FETCH/KICKOFF'
 type ArticleFetchKickOffAction = {
-    type: typeof ARTICLE_FETCH_KICKOFF,
+    type: typeof ARTICLE_FETCH_KICKOFF
     dictID: string
     articleID: string
 }
-function articleFetchKickOff(dictID: string, articleID: string): ArticleFetchKickOffAction {
+function articleFetchKickOff(
+    dictID: string,
+    articleID: string,
+): ArticleFetchKickOffAction {
     return {
         type: ARTICLE_FETCH_KICKOFF,
         dictID,
@@ -26,7 +29,7 @@ function articleFetchKickOff(dictID: string, articleID: string): ArticleFetchKic
 
 const ARTICLE_FETCH_SUCCESS = 'ARTICLE/FETCH/SUCCESS'
 type ArticleFetchSuccessAction = {
-    type: typeof ARTICLE_FETCH_SUCCESS,
+    type: typeof ARTICLE_FETCH_SUCCESS
     a: Article
 }
 export function articleFetchSuccess(a: Article): ArticleFetchSuccessAction {
@@ -43,15 +46,22 @@ function articleFetchFailure(): ArticleFetchFailureAction {
 
 const ARTICLE_RESET = 'ARTICLE/RESET'
 type ArticleResetAction = {
-    type: typeof ARTICLE_RESET,
+    type: typeof ARTICLE_RESET
 }
 export function articleReset(): ArticleResetAction {
     return { type: ARTICLE_RESET }
 }
 
-export type ArticleActions = ArticleFetchKickOffAction | ArticleFetchSuccessAction | ArticleFetchFailureAction | ArticleResetAction
+export type ArticleActions =
+    | ArticleFetchKickOffAction
+    | ArticleFetchSuccessAction
+    | ArticleFetchFailureAction
+    | ArticleResetAction
 
-export function articleReducer(state: ArticleState = {}, a: ArticleActions): ArticleState {
+export function articleReducer(
+    state: ArticleState = {},
+    a: ArticleActions,
+): ArticleState {
     switch (a.type) {
         case ARTICLE_FETCH_KICKOFF:
             return state
@@ -69,7 +79,11 @@ export const articleFetch = (params: Partial<MatchParams>): AppThunkAction => {
         try {
             const { dictID, articleID } = params
             dispatch(articleFetchKickOff(dictID, articleID))
-            dispatch(articleFetchSuccess(await verbumClient.getArticle(dictID, articleID)))
+            dispatch(
+                articleFetchSuccess(
+                    await verbumClient.getArticle(dictID, articleID),
+                ),
+            )
         } catch (err) {
             dispatch(articleFetchFailure())
             console.log('ERROR: ', err)
@@ -78,5 +92,7 @@ export const articleFetch = (params: Partial<MatchParams>): AppThunkAction => {
     }
 }
 
-export const articleFetchServer = (params: MatchParams, urlSearchParams: URLSearchParams): AppThunkAction =>
-    articleFetch(params)
+export const articleFetchServer = (
+    params: MatchParams,
+    urlSearchParams: URLSearchParams,
+): AppThunkAction => articleFetch(params)

@@ -1,6 +1,4 @@
-import { ThemeID } from "./common/theme"
-
-export {}
+import type { ThemeID } from './common/theme'
 
 declare global {
     interface Window {
@@ -11,7 +9,7 @@ declare global {
 
 window.getStoredTheme = () => {
     const stored = localStorage.getItem('theme')
-    return stored ? stored as ThemeID : 'auto'
+    return stored ? (stored as ThemeID) : 'auto'
 }
 
 window.updateStoredTheme = (theme) => {
@@ -23,16 +21,23 @@ window.updateStoredTheme = (theme) => {
     setTheme(theme)
 }
 
-window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
-    const storedTheme = window.getStoredTheme()
-    if (storedTheme !== 'light' && storedTheme !== 'dark') {
-        setTheme(storedTheme)
-    }
-})
+window
+    .matchMedia('(prefers-color-scheme: dark)')
+    .addEventListener('change', () => {
+        const storedTheme = window.getStoredTheme()
+        if (storedTheme !== 'light' && storedTheme !== 'dark') {
+            setTheme(storedTheme)
+        }
+    })
 
 const setTheme = (theme: ThemeID) => {
     if (theme === 'auto') {
-        document.documentElement.setAttribute('data-bs-theme', (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'))
+        document.documentElement.setAttribute(
+            'data-bs-theme',
+            window.matchMedia('(prefers-color-scheme: dark)').matches
+                ? 'dark'
+                : 'light',
+        )
     } else {
         document.documentElement.setAttribute('data-bs-theme', theme)
     }

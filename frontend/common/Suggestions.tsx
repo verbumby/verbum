@@ -1,22 +1,29 @@
-import * as React from 'react'
-import { Suggestion } from './suggestion'
+import type * as React from 'react'
+import type { Suggestion } from './suggestion'
 
 type SuggestionsProps = {
-    suggestions: Suggestion[],
-    active: number,
-    onClick: (s: string) => void,
-    setActive: (n: number) => void,
+    suggestions: Suggestion[]
+    active: number
+    onClick: (s: string) => void
+    setActive: (n: number) => void
 }
-export const Suggestions: React.FC<SuggestionsProps> = ({ suggestions, active, onClick, setActive }) => (
+export const Suggestions: React.FC<SuggestionsProps> = ({
+    suggestions,
+    active,
+    onClick,
+    setActive,
+}) => (
     <ul className="suggestions">
         {suggestions.map((s, i) => (
             <li
                 key={s}
-                className={i === active ? 'active': ''}
+                className={i === active ? 'active' : ''}
                 onClick={() => onClick(s)}
                 onMouseEnter={() => setActive(i)}
                 onMouseLeave={() => setActive(-1)}
-            >{s}</li>
+            >
+                {s}
+            </li>
         ))}
     </ul>
 )

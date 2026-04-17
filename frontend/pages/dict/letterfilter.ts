@@ -1,7 +1,7 @@
-import { LetterFilter } from "../../common/letterfilter"
-import { URLSearch } from "../../common/urlsearch"
-import { AppThunkAction } from "../../thunk"
-import { MatchParams, URLSearchDefaults } from './dict'
+import type { LetterFilter } from '../../common/letterfilter'
+import { URLSearch } from '../../common/urlsearch'
+import type { AppThunkAction } from '../../thunk'
+import { type MatchParams, URLSearchDefaults } from './dict'
 
 export type LetterFilterState = LetterFilter
 
@@ -11,7 +11,10 @@ type LetterFilterFetchKickOffAction = {
     dictID: string
     prefix: string
 }
-function letterFilterFetchKickOff(dictID: string, prefix: string): LetterFilterFetchKickOffAction {
+function letterFilterFetchKickOff(
+    dictID: string,
+    prefix: string,
+): LetterFilterFetchKickOffAction {
     return {
         type: LETTER_FILTER_FETCH_KICKOFF,
         dictID,
@@ -24,7 +27,9 @@ type LetterFilterFetchSuccessAction = {
     type: typeof LETTER_FILTER_FETCH_SUCCESS
     letterFilter: LetterFilter
 }
-function letterFilterFetchSuccess(letterFilter: LetterFilter): LetterFilterFetchSuccessAction {
+function letterFilterFetchSuccess(
+    letterFilter: LetterFilter,
+): LetterFilterFetchSuccessAction {
     return {
         type: LETTER_FILTER_FETCH_SUCCESS,
         letterFilter,
@@ -47,9 +52,16 @@ export function letterFilterReset(): LetterFilterResetAction {
     return { type: LETTER_FILTER_RESET }
 }
 
-export type LetterFilterActions = LetterFilterFetchKickOffAction | LetterFilterFetchSuccessAction | LetterFilterFetchFailureAction | LetterFilterResetAction
+export type LetterFilterActions =
+    | LetterFilterFetchKickOffAction
+    | LetterFilterFetchSuccessAction
+    | LetterFilterFetchFailureAction
+    | LetterFilterResetAction
 
-export function letterFilterReducer(state: LetterFilterState = null, a: LetterFilterActions): LetterFilterState {
+export function letterFilterReducer(
+    state: LetterFilterState = null,
+    a: LetterFilterActions,
+): LetterFilterState {
     switch (a.type) {
         case LETTER_FILTER_FETCH_KICKOFF:
             return state
@@ -62,7 +74,10 @@ export function letterFilterReducer(state: LetterFilterState = null, a: LetterFi
     }
 }
 
-export const letterFilterFetch = (params: Partial<MatchParams>, urlSearch: URLSearch<typeof URLSearchDefaults>): AppThunkAction => {
+export const letterFilterFetch = (
+    params: Partial<MatchParams>,
+    urlSearch: URLSearch<typeof URLSearchDefaults>,
+): AppThunkAction => {
     return async (dispatch, getState): Promise<void> => {
         try {
             if (urlSearch.get('section') !== '') {
@@ -72,14 +87,19 @@ export const letterFilterFetch = (params: Partial<MatchParams>, urlSearch: URLSe
             const { dictID } = params
             const prefix = urlSearch.get('prefix')
             const state = getState()
-            if (state.letterFilter
-                && state.letterFilter.DictID === dictID
-                && state.letterFilter.Prefix === prefix
+            if (
+                state.letterFilter &&
+                state.letterFilter.DictID === dictID &&
+                state.letterFilter.Prefix === prefix
             ) {
                 return
             }
             dispatch(letterFilterFetchKickOff(dictID, prefix))
-            dispatch(letterFilterFetchSuccess(await verbumClient.getLetterFilter(dictID, prefix)))
+            dispatch(
+                letterFilterFetchSuccess(
+                    await verbumClient.getLetterFilter(dictID, prefix),
+                ),
+            )
         } catch (err) {
             dispatch(letterFilterFetchFailure())
             console.log('ERROR: ', err)
@@ -88,5 +108,8 @@ export const letterFilterFetch = (params: Partial<MatchParams>, urlSearch: URLSe
     }
 }
 
-export const letterFilterFetchServer = (params: Partial<MatchParams>, urlSearchParams: URLSearchParams): AppThunkAction =>
+export const letterFilterFetchServer = (
+    params: Partial<MatchParams>,
+    urlSearchParams: URLSearchParams,
+): AppThunkAction =>
     letterFilterFetch(params, new URLSearch(URLSearchDefaults, urlSearchParams))

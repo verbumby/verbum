@@ -1,5 +1,5 @@
-import { VerbumAPIClientImpl } from './client'
 import fetch from 'node-fetch'
+import { VerbumAPIClientImpl } from './client'
 
 type VerbumAPIClientServerOptions = {
     apiURL: string
@@ -21,11 +21,11 @@ export class VerbumAPIClientServer extends VerbumAPIClientImpl {
         return resp.json() as Promise<T>
     }
 
-	async callString(path: string): Promise<string> {
+    async callString(path: string): Promise<string> {
         const resp = await fetch(this.apiURL + path, { signal: this.signal })
         if (resp.status === 404) {
             return Promise.resolve(null)
         }
         return resp.text()
-	}
+    }
 }

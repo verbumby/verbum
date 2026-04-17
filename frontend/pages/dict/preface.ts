@@ -1,6 +1,6 @@
-import { URLSearch } from "../../common/urlsearch"
-import { AppThunkAction } from "../../thunk"
-import { MatchParams, URLSearchDefaults } from './dict'
+import { URLSearch } from '../../common/urlsearch'
+import type { AppThunkAction } from '../../thunk'
+import { type MatchParams, URLSearchDefaults } from './dict'
 
 export type PrefaceState = string | null
 
@@ -44,9 +44,16 @@ export function prefaceReset(): PrefaceResetAction {
     return { type: PREFACE_RESET }
 }
 
-export type PrefaceActions = PrefaceFetchKickOffAction | PrefaceFetchSuccessAction | PrefaceFetchFailureAction | PrefaceResetAction
+export type PrefaceActions =
+    | PrefaceFetchKickOffAction
+    | PrefaceFetchSuccessAction
+    | PrefaceFetchFailureAction
+    | PrefaceResetAction
 
-export function prefaceReducer(state: PrefaceState = null, a: PrefaceActions): PrefaceState {
+export function prefaceReducer(
+    state: PrefaceState = null,
+    a: PrefaceActions,
+): PrefaceState {
     switch (a.type) {
         case PREFACE_FETCH_KICKOFF:
             return state
@@ -59,7 +66,10 @@ export function prefaceReducer(state: PrefaceState = null, a: PrefaceActions): P
     }
 }
 
-export const prefaceFetch = (params: Partial<MatchParams>, urlSearch: URLSearch<typeof URLSearchDefaults>): AppThunkAction => {
+export const prefaceFetch = (
+    params: Partial<MatchParams>,
+    urlSearch: URLSearch<typeof URLSearchDefaults>,
+): AppThunkAction => {
     return async (dispatch, getState): Promise<void> => {
         try {
             if (urlSearch.get('section') !== 'preface') {
@@ -82,5 +92,8 @@ export const prefaceFetch = (params: Partial<MatchParams>, urlSearch: URLSearch<
     }
 }
 
-export const prefaceFetchServer = (params: Partial<MatchParams>, urlSearchParams: URLSearchParams): AppThunkAction =>
+export const prefaceFetchServer = (
+    params: Partial<MatchParams>,
+    urlSearchParams: URLSearchParams,
+): AppThunkAction =>
     prefaceFetch(params, new URLSearch(URLSearchDefaults, urlSearchParams))

@@ -1,7 +1,7 @@
-import { Abbrevs } from "../../common/abbrevs"
-import { URLSearch } from "../../common/urlsearch"
-import { AppThunkAction } from "../../thunk"
-import { MatchParams, URLSearchDefaults } from './dict'
+import type { Abbrevs } from '../../common/abbrevs'
+import { URLSearch } from '../../common/urlsearch'
+import type { AppThunkAction } from '../../thunk'
+import { type MatchParams, URLSearchDefaults } from './dict'
 
 export type AbbrState = Abbrevs
 
@@ -45,9 +45,16 @@ export function abbrReset(): AbbrResetAction {
     return { type: ABBR_RESET }
 }
 
-export type AbbrActions = AbbrFetchKickOffAction | AbbrFetchSuccessAction | AbbrFetchFailureAction | AbbrResetAction
+export type AbbrActions =
+    | AbbrFetchKickOffAction
+    | AbbrFetchSuccessAction
+    | AbbrFetchFailureAction
+    | AbbrResetAction
 
-export function abbrReducer(state: AbbrState = null, a: AbbrActions): AbbrState {
+export function abbrReducer(
+    state: AbbrState = null,
+    a: AbbrActions,
+): AbbrState {
     switch (a.type) {
         case ABBR_FETCH_KICKOFF:
             return state
@@ -60,7 +67,10 @@ export function abbrReducer(state: AbbrState = null, a: AbbrActions): AbbrState 
     }
 }
 
-export const abbrFetch = (params: Partial<MatchParams>, urlSearch: URLSearch<typeof URLSearchDefaults>): AppThunkAction => {
+export const abbrFetch = (
+    params: Partial<MatchParams>,
+    urlSearch: URLSearch<typeof URLSearchDefaults>,
+): AppThunkAction => {
     return async (dispatch, getState): Promise<void> => {
         try {
             if (urlSearch.get('section') !== 'abbr') {
@@ -83,5 +93,8 @@ export const abbrFetch = (params: Partial<MatchParams>, urlSearch: URLSearch<typ
     }
 }
 
-export const abbrFetchServer = (params: Partial<MatchParams>, urlSearchParams: URLSearchParams): AppThunkAction =>
+export const abbrFetchServer = (
+    params: Partial<MatchParams>,
+    urlSearchParams: URLSearchParams,
+): AppThunkAction =>
     abbrFetch(params, new URLSearch(URLSearchDefaults, urlSearchParams))

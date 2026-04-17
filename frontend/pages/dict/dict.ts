@@ -1,7 +1,7 @@
-import { ArticleList } from "../../common/article"
-import { URLSearch } from "../../common/urlsearch"
-import { useURLSearch as useURLSearchCommon } from "../../common/hooks"
-import { AppThunkAction } from "../../thunk"
+import type { ArticleList } from '../../common/article'
+import { useURLSearch as useURLSearchCommon } from '../../common/hooks'
+import { URLSearch } from '../../common/urlsearch'
+import type { AppThunkAction } from '../../thunk'
 
 export type MatchParams = {
     dictID: string
@@ -26,7 +26,12 @@ type DictArticlesFetchKickoffAction = {
     prefix: string
     page: number
 }
-function dictArticlesFetchKickOff(dictID: string, q: string, prefix: string, page: number): DictArticlesFetchKickoffAction {
+function dictArticlesFetchKickOff(
+    dictID: string,
+    q: string,
+    prefix: string,
+    page: number,
+): DictArticlesFetchKickoffAction {
     return { type: DICT_ARTICLES_FETCH_KICKOFF, dictID, q, prefix, page }
 }
 
@@ -35,7 +40,9 @@ type DictArticlesFetchSuccessAction = {
     type: typeof DICT_ARTICLES_FETCH_SUCCESS
     articleList: ArticleList
 }
-function dictArticlesFetchSuccess(articleList: ArticleList): DictArticlesFetchSuccessAction {
+function dictArticlesFetchSuccess(
+    articleList: ArticleList,
+): DictArticlesFetchSuccessAction {
     return { type: DICT_ARTICLES_FETCH_SUCCESS, articleList }
 }
 
@@ -55,9 +62,16 @@ export function dictArticlesReset(): DictArticlesResetAction {
     return { type: DICT_ARTICLES_RESET }
 }
 
-export type DictArticlesActions = DictArticlesFetchKickoffAction | DictArticlesFetchSuccessAction | DictArticlesFetchFailureAction | DictArticlesResetAction
+export type DictArticlesActions =
+    | DictArticlesFetchKickoffAction
+    | DictArticlesFetchSuccessAction
+    | DictArticlesFetchFailureAction
+    | DictArticlesResetAction
 
-export function dictArticlesReducer(state: DictArticlesState = null, a: DictArticlesActions): DictArticlesState {
+export function dictArticlesReducer(
+    state: DictArticlesState = null,
+    a: DictArticlesActions,
+): DictArticlesState {
     switch (a.type) {
         case DICT_ARTICLES_FETCH_KICKOFF:
             return null
@@ -70,7 +84,10 @@ export function dictArticlesReducer(state: DictArticlesState = null, a: DictArti
     }
 }
 
-export const dictArticlesFetch = (params: Partial<MatchParams>, urlSearch: URLSearch<typeof URLSearchDefaults>): AppThunkAction => {
+export const dictArticlesFetch = (
+    params: Partial<MatchParams>,
+    urlSearch: URLSearch<typeof URLSearchDefaults>,
+): AppThunkAction => {
     return async (dispatch, getState): Promise<void> => {
         try {
             if (urlSearch.get('section') !== '') {
@@ -82,17 +99,22 @@ export const dictArticlesFetch = (params: Partial<MatchParams>, urlSearch: URLSe
             const prefix = urlSearch.get('prefix')
             const page = urlSearch.get('page')
             const state = getState()
-            if (state.dictArticles
-                && state.dictArticles.DictIDs.length == 1
-                && state.dictArticles.DictIDs[0] === dictID
-                && state.dictArticles.Q === q
-                && state.dictArticles.Prefix === prefix
-                && state.dictArticles.Pagination.Current === page
+            if (
+                state.dictArticles &&
+                state.dictArticles.DictIDs.length == 1 &&
+                state.dictArticles.DictIDs[0] === dictID &&
+                state.dictArticles.Q === q &&
+                state.dictArticles.Prefix === prefix &&
+                state.dictArticles.Pagination.Current === page
             ) {
                 return
             }
             dispatch(dictArticlesFetchKickOff(dictID, q, prefix, page))
-            dispatch(dictArticlesFetchSuccess(await verbumClient.getDictArticles(dictID, q, prefix, page)))
+            dispatch(
+                dictArticlesFetchSuccess(
+                    await verbumClient.getDictArticles(dictID, q, prefix, page),
+                ),
+            )
         } catch (err) {
             dispatch(dictArticlesFetchFailure())
             console.log('ERROR: ', err)
@@ -101,5 +123,8 @@ export const dictArticlesFetch = (params: Partial<MatchParams>, urlSearch: URLSe
     }
 }
 
-export const dictArticlesFetchServer = (params: Partial<MatchParams>, urlSearchParams: URLSearchParams): AppThunkAction =>
+export const dictArticlesFetchServer = (
+    params: Partial<MatchParams>,
+    urlSearchParams: URLSearchParams,
+): AppThunkAction =>
     dictArticlesFetch(params, new URLSearch(URLSearchDefaults, urlSearchParams))

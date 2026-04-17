@@ -1,16 +1,16 @@
-import { SearchResult } from '../../common/search'
-import { URLSearch } from '../../common/urlsearch'
 import { useURLSearch as useURLSearchCommon } from '../../common/hooks'
-import { AppThunkAction } from '../../thunk'
+import type { SearchResult } from '../../common/search'
+import { URLSearch } from '../../common/urlsearch'
+import type { AppThunkAction } from '../../thunk'
 
 export type MatchParams = {
-    sectionID?: string,
+    sectionID?: string
 }
 
 const URLSearchDefaults = {
     q: '',
     in: '',
-    page: 1
+    page: 1,
 }
 
 export const useURLSearch = () => useURLSearchCommon(URLSearchDefaults)
@@ -22,7 +22,7 @@ export type SearchState = {
 
 const SEARCH_KICKOFF = 'SEARCH/KICKOFF'
 type SearchKickOffAction = {
-    type: typeof SEARCH_KICKOFF,
+    type: typeof SEARCH_KICKOFF
     q: string
 }
 function searchKickOff(q: string): SearchKickOffAction {
@@ -54,15 +54,22 @@ function searchFailure(): SearchFailureAction {
 
 const SEARCH_RESET = 'SEARCH/RESET'
 type SearchResetAction = {
-    type: typeof SEARCH_RESET,
+    type: typeof SEARCH_RESET
 }
 export function searchReset(): SearchResetAction {
-    return {type: SEARCH_RESET}
+    return { type: SEARCH_RESET }
 }
 
-export type SearchActions = SearchKickOffAction | SearchSuccessAction | SearchFailureAction | SearchResetAction
+export type SearchActions =
+    | SearchKickOffAction
+    | SearchSuccessAction
+    | SearchFailureAction
+    | SearchResetAction
 
-export function searchReducer(state: SearchState = {q: '', searchResult: null}, a: SearchActions): SearchState {
+export function searchReducer(
+    state: SearchState = { q: '', searchResult: null },
+    a: SearchActions,
+): SearchState {
     switch (a.type) {
         case SEARCH_KICKOFF:
             return {
@@ -84,7 +91,10 @@ export function searchReducer(state: SearchState = {q: '', searchResult: null}, 
     }
 }
 
-export const search = (params: Partial<MatchParams>, urlSearch: URLSearch<typeof URLSearchDefaults>): AppThunkAction => {
+export const search = (
+    params: Partial<MatchParams>,
+    urlSearch: URLSearch<typeof URLSearchDefaults>,
+): AppThunkAction => {
     return async (dispatch, getState): Promise<void> => {
         try {
             const q = urlSearch.get('q')
@@ -98,7 +108,9 @@ export const search = (params: Partial<MatchParams>, urlSearch: URLSearch<typeof
             let inDicts = urlSearch.get('in')
             if (!inDicts) {
                 const sectionID = params.sectionID || 'default'
-                const section = getState().sections.find(s => s.ID === sectionID)
+                const section = getState().sections.find(
+                    (s) => s.ID === sectionID,
+                )
                 if (!section) {
                     return
                 }
@@ -116,5 +128,8 @@ export const search = (params: Partial<MatchParams>, urlSearch: URLSearch<typeof
     }
 }
 
-export const searchServer = (params: Partial<MatchParams>, urlSearchParams: URLSearchParams): AppThunkAction =>
+export const searchServer = (
+    params: Partial<MatchParams>,
+    urlSearchParams: URLSearchParams,
+): AppThunkAction =>
     search(params, new URLSearch(URLSearchDefaults, urlSearchParams))
