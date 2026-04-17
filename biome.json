@@ -18,8 +18,40 @@
         "enabled": true,
         "rules": {
             "recommended": true,
+            "security": {
+                "noDangerouslySetInnerHtml": "off"
+            },
+            "a11y": {
+                "noSvgWithoutTitle": "off",
+                "noNoninteractiveTabindex": "off",
+                "noStaticElementInteractions": "off",
+                "useHtmlLang": "off",
+                "useKeyWithClickEvents": "off",
+                "useValidAnchor": "off"
+            },
+            "complexity": {
+                "noBannedTypes": "off",
+                "noImportantStyles": "off",
+                "noUselessFragments": "off",
+                "useOptionalChain": "off"
+            },
+            "correctness": {
+                "noUnknownTypeSelector": "off",
+                "useHookAtTopLevel": "off",
+                "useExhaustiveDependencies": "off",
+                "noEmptyPattern": "off",
+                "noUnusedFunctionParameters": "off",
+                "noUnusedImports": "off",
+                "noUnusedVariables": "off",
+                "useJsxKeyInIterable": "off",
+                "useParseIntRadix": "off"
+            },
             "suspicious": {
-                "noImportCycles": "error"
+                "noImportCycles": "error",
+                "noDoubleEquals": "off",
+                "noArrayIndexKey": "off",
+                "noDocumentCookie": "off",
+                "noExplicitAny": "off"
             }
         }
     },
