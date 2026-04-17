@@ -5,27 +5,14 @@ import type { Article } from './common/article'
 import type { Dict } from './common/dict'
 import { dictsReducer } from './common/dicts'
 import { type Section, sectionsReducer } from './common/sections'
+import { type ArticleState, articleReducer } from './pages/article/article'
+import { type AbbrState, abbrReducer } from './pages/dict/abbr'
+import { type DictArticlesState, dictArticlesReducer } from './pages/dict/dict'
 import {
-    ArticleActions,
-    type ArticleState,
-    articleReducer,
-} from './pages/article/article'
-import { AbbrActions, type AbbrState, abbrReducer } from './pages/dict/abbr'
-import {
-    DictArticlesActions,
-    type DictArticlesState,
-    dictArticlesReducer,
-} from './pages/dict/dict'
-import {
-    LetterFilterActions,
     type LetterFilterState,
     letterFilterReducer,
 } from './pages/dict/letterfilter'
-import {
-    PrefaceActions,
-    type PrefaceState,
-    prefaceReducer,
-} from './pages/dict/preface'
+import { type PrefaceState, prefaceReducer } from './pages/dict/preface'
 import { type SearchState, searchReducer } from './pages/index/search'
 
 export const rootReducer = combineReducers({

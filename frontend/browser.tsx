@@ -29,7 +29,7 @@ const store = configureStore({
     middleware: (getDefaultMiddleware) =>
         getDefaultMiddleware().concat(
             loadingBarMiddleware({
-                promiseTypeSuffixes: ['KICKOFF', 'SUCCESS', 'FAILURE'],
+                promiseTypeSuffixes: ['KickOff', 'Success', 'Failure'],
             }),
         ),
 })

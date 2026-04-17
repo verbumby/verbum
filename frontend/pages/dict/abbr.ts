@@ -1,3 +1,4 @@
+import { createSlice, type PayloadAction } from '@reduxjs/toolkit'
 import type { Abbrevs } from '../../common/abbrevs'
 import { URLSearch } from '../../common/urlsearch'
 import type { AppThunkAction } from '../../thunk'
@@ -5,67 +6,20 @@ import { type MatchParams, URLSearchDefaults } from './dict'
 
 export type AbbrState = Abbrevs
 
-const ABBR_FETCH_KICKOFF = 'ABBR/FETCH/KICKOFF'
-type AbbrFetchKickOffAction = {
-    type: typeof ABBR_FETCH_KICKOFF
-    dictID: string
-}
-function abbrFetchKickOff(dictID: string): AbbrFetchKickOffAction {
-    return {
-        type: ABBR_FETCH_KICKOFF,
-        dictID,
-    }
-}
+const abbrSlice = createSlice({
+    name: 'abbr',
+    initialState: null as AbbrState,
+    reducers: {
+        abbrFetchKickOff: (state) => state,
+        abbrFetchSuccess: (_, action: PayloadAction<Abbrevs>) => action.payload,
+        abbrFetchFailure: (state) => state,
+        abbrReset: () => null,
+    },
+})
 
-const ABBR_FETCH_SUCCESS = 'ABBR/FETCH/SUCCESS'
-type AbbrFetchSuccessAction = {
-    type: typeof ABBR_FETCH_SUCCESS
-    abbr: Abbrevs
-}
-function abbrFetchSuccess(abbr: Abbrevs): AbbrFetchSuccessAction {
-    return {
-        type: ABBR_FETCH_SUCCESS,
-        abbr,
-    }
-}
-
-const ABBR_FETCH_FAILURE = 'ABBR/FETCH/FAILURE'
-type AbbrFetchFailureAction = {
-    type: typeof ABBR_FETCH_FAILURE
-}
-function abbrFetchFailure(): AbbrFetchFailureAction {
-    return { type: ABBR_FETCH_FAILURE }
-}
-
-const ABBR_RESET = 'ABBR/RESET'
-type AbbrResetAction = {
-    type: typeof ABBR_RESET
-}
-export function abbrReset(): AbbrResetAction {
-    return { type: ABBR_RESET }
-}
-
-export type AbbrActions =
-    | AbbrFetchKickOffAction
-    | AbbrFetchSuccessAction
-    | AbbrFetchFailureAction
-    | AbbrResetAction
-
-export function abbrReducer(
-    state: AbbrState = null,
-    a: AbbrActions,
-): AbbrState {
-    switch (a.type) {
-        case ABBR_FETCH_KICKOFF:
-            return state
-        case ABBR_FETCH_SUCCESS:
-            return a.abbr
-        case ABBR_RESET:
-            return null
-        default:
-            return state
-    }
-}
+const { abbrFetchKickOff, abbrFetchFailure } = abbrSlice.actions
+export const { abbrFetchSuccess, abbrReset } = abbrSlice.actions
+export const abbrReducer = abbrSlice.reducer
 
 export const abbrFetch = (
     params: Partial<MatchParams>,

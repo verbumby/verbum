@@ -1,3 +1,4 @@
+import { createSlice, type PayloadAction } from '@reduxjs/toolkit'
 import type { Article } from '../../common/article'
 import type { AppThunkAction } from '../../thunk'
 
@@ -10,69 +11,22 @@ export type MatchParams = {
     articleID: string
 }
 
-const ARTICLE_FETCH_KICKOFF = 'ARTICLE/FETCH/KICKOFF'
-type ArticleFetchKickOffAction = {
-    type: typeof ARTICLE_FETCH_KICKOFF
-    dictID: string
-    articleID: string
-}
-function articleFetchKickOff(
-    dictID: string,
-    articleID: string,
-): ArticleFetchKickOffAction {
-    return {
-        type: ARTICLE_FETCH_KICKOFF,
-        dictID,
-        articleID,
-    }
-}
+const articleSlice = createSlice({
+    name: 'article',
+    initialState: {} as ArticleState,
+    reducers: {
+        articleFetchKickOff: (state) => state,
+        articleFetchSuccess: (_, action: PayloadAction<Article>) => ({
+            a: action.payload,
+        }),
+        articleFetchFailure: (state) => state,
+        articleReset: () => ({}),
+    },
+})
 
-const ARTICLE_FETCH_SUCCESS = 'ARTICLE/FETCH/SUCCESS'
-type ArticleFetchSuccessAction = {
-    type: typeof ARTICLE_FETCH_SUCCESS
-    a: Article
-}
-export function articleFetchSuccess(a: Article): ArticleFetchSuccessAction {
-    return { type: ARTICLE_FETCH_SUCCESS, a }
-}
-
-const ARTICLE_FETCH_FAILURE = 'ARTICLE/FETCH/FAILURE'
-type ArticleFetchFailureAction = {
-    type: typeof ARTICLE_FETCH_FAILURE
-}
-function articleFetchFailure(): ArticleFetchFailureAction {
-    return { type: ARTICLE_FETCH_FAILURE }
-}
-
-const ARTICLE_RESET = 'ARTICLE/RESET'
-type ArticleResetAction = {
-    type: typeof ARTICLE_RESET
-}
-export function articleReset(): ArticleResetAction {
-    return { type: ARTICLE_RESET }
-}
-
-export type ArticleActions =
-    | ArticleFetchKickOffAction
-    | ArticleFetchSuccessAction
-    | ArticleFetchFailureAction
-    | ArticleResetAction
-
-export function articleReducer(
-    state: ArticleState = {},
-    a: ArticleActions,
-): ArticleState {
-    switch (a.type) {
-        case ARTICLE_FETCH_KICKOFF:
-            return state
-        case ARTICLE_FETCH_SUCCESS:
-            return { a: a.a }
-        case ARTICLE_RESET:
-            return {}
-        default:
-            return state
-    }
-}
+const { articleFetchKickOff, articleFetchFailure } = articleSlice.actions
+export const { articleFetchSuccess, articleReset } = articleSlice.actions
+export const articleReducer = articleSlice.reducer
 
 export const articleFetch = (params: Partial<MatchParams>): AppThunkAction => {
     return async (dispatch, getState): Promise<void> => {
