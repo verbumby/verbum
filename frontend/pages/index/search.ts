@@ -1,5 +1,7 @@
-import { SearchResult, URLSearch, useURLSearch as useURLSearchCommon } from '../../common'
-import { AppThunkAction } from '../../store'
+import { SearchResult } from '../../common/search'
+import { URLSearch } from '../../common/urlsearch'
+import { useURLSearch as useURLSearchCommon } from '../../common/hooks'
+import { AppThunkAction } from '../../thunk'
 
 export type MatchParams = {
     sectionID?: string,

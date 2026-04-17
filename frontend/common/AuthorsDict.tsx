@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { IconExclamationTriangle } from '../icons'
+import { IconExclamationTriangle } from '../icons/IconExclamationTriangle'
 import { Dict } from './dict'
 import { useTooltips } from './useTooltips'
 

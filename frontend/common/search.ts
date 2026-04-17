@@ -1,4 +1,4 @@
-import { Article } from '.'
+import { Article } from './article'
 import { Pagination } from './pagination'
 
 export type SearchResult = {

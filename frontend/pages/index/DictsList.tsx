@@ -1,6 +1,7 @@
 import * as React from 'react'
 import { Link } from 'react-router'
-import { Dict, DictTitle } from '../../common'
+import { Dict } from '../../common/dict'
+import { DictTitle } from '../../common/AuthorsDict'
 
 type DictsListProps = {
     dictionaries: Dict[]

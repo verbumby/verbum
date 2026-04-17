@@ -1,13 +1,17 @@
 import * as React from 'react'
 import { useEffect } from 'react'
-import { NoSearchResults, NotFound, useDispatch } from '../../common'
+import { NoSearchResults } from '../../common/NoSearchResults'
+import { NotFound } from '../../common/NotFound'
+import { useDispatch } from '../../common/hooks'
+import { ArticleView } from '../../common/ArticleView'
+import { PaginationView } from '../../common/PaginationView'
+import { SearchControl } from '../../common/SearchControl'
 import { Link, useParams } from 'react-router'
 import { Helmet } from "react-helmet"
 
 import { useDictsInSection, useSearchState, useSection, useSections } from '../../store'
 import { search, searchReset, useURLSearch } from './search'
 import { DictsList } from './DictsList'
-import { ArticleView, PaginationView, SearchControl } from '../../common'
 
 export const IndexPage: React.FC = () => {
     const params = useParams<{ sectionID?: string }>()

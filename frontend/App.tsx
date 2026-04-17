@@ -4,7 +4,8 @@ import LoadingBarContainer from "react-redux-loading-bar"
 import 'bootstrap/dist/css/bootstrap.css'
 import './styles.css'
 
-import { Footer, Logo } from './common'
+import { Footer } from './common/Footer'
+import { Logo } from './common/Logo'
 import { routes } from './routes'
 import { Helmet } from "react-helmet"
 

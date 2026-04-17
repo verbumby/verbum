@@ -1,17 +1,16 @@
 import { combineReducers } from 'redux'
 import { useSelector as useSelectorParent } from 'react-redux'
-import { SearchActions, SearchState, searchReducer } from './pages/index/index'
-import { Dict, Article, DictsActions, dictsReducer, sectionsReducer, SectionsActions, Section } from './common'
-import { ThunkAction } from '@reduxjs/toolkit'
-import { ArticleState, ArticleActions, articleReducer } from './pages/article'
-import { DictArticlesState, DictArticlesActions, dictArticlesReducer,
-    LetterFilterState, LetterFilterActions, letterFilterReducer,
-    AbbrActions, AbbrState, abbrReducer,
-    PrefaceActions, PrefaceState, prefaceReducer
-} from './pages/dict'
+import { SearchActions, SearchState, searchReducer } from './pages/index/search'
+import { Dict } from './common/dict'
+import { Article } from './common/article'
+import { DictsActions, dictsReducer } from './common/dicts'
+import { Section, SectionsActions, sectionsReducer } from './common/sections'
+import { ArticleState, ArticleActions, articleReducer } from './pages/article/article'
+import { DictArticlesState, DictArticlesActions, dictArticlesReducer } from './pages/dict/dict'
+import { LetterFilterState, LetterFilterActions, letterFilterReducer } from './pages/dict/letterfilter'
+import { AbbrActions, AbbrState, abbrReducer } from './pages/dict/abbr'
+import { PrefaceActions, PrefaceState, prefaceReducer } from './pages/dict/preface'
 import { loadingBarReducer } from 'react-redux-loading-bar'
-
-type AllActions = DictsActions | SectionsActions | SearchActions | ArticleActions | LetterFilterActions | DictArticlesActions | AbbrActions | PrefaceActions
 
 export const rootReducer = combineReducers({
     dicts: dictsReducer,
@@ -92,4 +91,4 @@ export function usePreface(): PrefaceState {
     return useSelector<PrefaceState>(state => state.preface)
 }
 
-export type AppThunkAction<ReturnType = void> = ThunkAction<Promise<ReturnType>, RootState, unknown, AllActions>
+export type { AppThunkAction } from './thunk'

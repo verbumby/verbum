@@ -1,4 +1,9 @@
-import { Abbrevs, Article, ArticleList, DictsMetadata, LetterFilter, SearchResult, Suggestion } from '../common'
+import { Abbrevs } from '../common/abbrevs'
+import { Article, ArticleList } from '../common/article'
+import { DictsMetadata } from '../common/dicts'
+import { LetterFilter } from '../common/letterfilter'
+import { SearchResult } from '../common/search'
+import { Suggestion } from '../common/suggestion'
 
 export interface VerbumAPIClient {
     getPreface(dictID: string): Promise<string>

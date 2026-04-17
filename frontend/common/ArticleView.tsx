@@ -2,7 +2,8 @@ import * as React from 'react'
 import { useState } from 'react'
 import { Article } from './article'
 import { useDict } from '../store'
-import { IconClipboard, IconExternal } from '../icons'
+import { IconClipboard } from '../icons/IconClipboard'
+import { IconExternal } from '../icons/IconExternal'
 import { DictTitle } from './AuthorsDict';
 import { useTooltips } from './useTooltips';
 

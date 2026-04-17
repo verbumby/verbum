@@ -1,5 +1,5 @@
-import { URLSearch } from "../../common"
-import { AppThunkAction } from "../../store"
+import { URLSearch } from "../../common/urlsearch"
+import { AppThunkAction } from "../../thunk"
 import { MatchParams, URLSearchDefaults } from './dict'
 
 export type PrefaceState = string | null

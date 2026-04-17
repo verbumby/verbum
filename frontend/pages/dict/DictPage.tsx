@@ -1,6 +1,7 @@
 import * as React from 'react'
 import { useParams } from 'react-router'
-import { NotFound, Redirect } from '../../common'
+import { NotFound } from '../../common/NotFound'
+import { Redirect } from '../../common/Redirect'
 import { useDict } from '../../store'
 import { AbbrSection } from './AbbrSection'
 import { DefaultSection } from './DefaultSection'

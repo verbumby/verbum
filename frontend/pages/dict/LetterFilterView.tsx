@@ -1,6 +1,6 @@
 import * as React from 'react'
 import { Link, To } from 'react-router'
-import { LetterFilter } from '../../common'
+import { LetterFilter } from '../../common/letterfilter'
 
 type LetterFilterViewProps = {
     letterFilter: LetterFilter

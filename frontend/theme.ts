@@ -1,4 +1,4 @@
-import { ThemeID } from "./common"
+import { ThemeID } from "./common/theme"
 
 export {}
 

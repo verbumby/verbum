@@ -3,12 +3,17 @@ import { FC, useEffect } from 'react'
 
 import { Helmet } from 'react-helmet'
 import { Link, useLocation, useParams } from 'react-router'
-import { ArticleView, AuthorsDictWarning, NoSearchResults, PaginationView, SearchControl, useDispatch } from '../../common'
+import { ArticleView } from '../../common/ArticleView'
+import { AuthorsDictWarning } from '../../common/AuthorsDict'
+import { NoSearchResults } from '../../common/NoSearchResults'
+import { PaginationView } from '../../common/PaginationView'
+import { SearchControl } from '../../common/SearchControl'
+import { useDispatch } from '../../common/hooks'
 import { useDict, useDictArticles, useLetterFilter } from '../../store'
 import { letterFilterFetch, letterFilterReset } from './letterfilter'
 import { dictArticlesFetch, MatchParams, dictArticlesReset, useURLSearch } from './dict'
 import { LetterFilterView } from './LetterFilterView'
-import { IconExclamationTriangle } from '../../icons'
+import { IconExclamationTriangle } from '../../icons/IconExclamationTriangle'
 
 export const DefaultSection: FC = ({ }) => {
     const location = useLocation()

@@ -1,7 +1,7 @@
 import * as React from 'react'
 import { FC, useEffect } from 'react'
 import { Helmet } from 'react-helmet'
-import { useDispatch } from '../../common'
+import { useDispatch } from '../../common/hooks'
 import { usePreface, useDict } from '../../store'
 import { prefaceFetch, prefaceReset } from './preface'
 import { MatchParams, useURLSearch } from './dict'

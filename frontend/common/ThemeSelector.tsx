@@ -1,5 +1,7 @@
 import * as React from 'react'
-import { IconCircleHalf, IconMoonStarsFill, IconSunFill } from '../icons'
+import { IconCircleHalf } from '../icons/IconCircleHalf'
+import { IconMoonStarsFill } from '../icons/IconMoonStarsFill'
+import { IconSunFill } from '../icons/IconSunFill'
 import { useState, useEffect } from 'react'
 import { Theme, ThemeID } from './theme'
 

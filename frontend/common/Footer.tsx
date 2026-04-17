@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { IconGitHub } from '../icons'
+import { IconGitHub } from '../icons/IconGitHub'
 import ThemeSelector from './ThemeSelector'
 import { Link } from 'react-router'
 

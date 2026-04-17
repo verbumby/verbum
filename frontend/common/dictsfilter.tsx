@@ -1,8 +1,8 @@
 import * as React from 'react'
 import { useEffect, useState, useCallback } from 'react'
 
-import { IconFunnel } from '../icons'
-import { Dict } from '.'
+import { IconFunnel } from '../icons/IconFunnel'
+import { Dict } from './dict'
 
 type DictsFilterProps = {
     state: string

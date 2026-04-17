@@ -1,5 +1,5 @@
-import { Article } from "../../common"
-import { AppThunkAction } from "../../store"
+import { Article } from "../../common/article"
+import { AppThunkAction } from "../../thunk"
 
 export type ArticleState = {
     a?: Article
