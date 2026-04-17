@@ -3,12 +3,8 @@ import { loadingBarReducer } from 'react-redux-loading-bar'
 import { combineReducers } from 'redux'
 import type { Article } from './common/article'
 import type { Dict } from './common/dict'
-import { DictsActions, dictsReducer } from './common/dicts'
-import {
-    type Section,
-    SectionsActions,
-    sectionsReducer,
-} from './common/sections'
+import { dictsReducer } from './common/dicts'
+import { type Section, sectionsReducer } from './common/sections'
 import {
     ArticleActions,
     type ArticleState,

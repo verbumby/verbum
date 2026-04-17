@@ -1,27 +1,17 @@
+import { createSlice, type PayloadAction } from '@reduxjs/toolkit'
 import type { Dict } from './dict'
 import type { Section } from './sections'
 
-const DICTS_SET = 'DICTS/SET'
+const dictsSlice = createSlice({
+    name: 'dicts',
+    initialState: [] as Dict[],
+    reducers: {
+        dictsSet: (_, action: PayloadAction<Dict[]>) => [...action.payload],
+    },
+})
 
-type DictsSetAction = {
-    type: typeof DICTS_SET
-    dicts: Dict[]
-}
-
-export function dictsSet(dicts: Dict[]): DictsSetAction {
-    return { type: DICTS_SET, dicts }
-}
-
-export type DictsActions = DictsSetAction
-
-export function dictsReducer(state: Dict[] = [], a: DictsActions): Dict[] {
-    switch (a.type) {
-        case DICTS_SET:
-            return [...a.dicts]
-        default:
-            return state
-    }
-}
+export const { dictsSet } = dictsSlice.actions
+export const dictsReducer = dictsSlice.reducer
 
 export type DictsMetadata = {
     Dicts: Dict[]
