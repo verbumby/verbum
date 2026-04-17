@@ -1,11 +1,14 @@
-import * as React from 'react'
-import { useEffect, useState, useRef, useCallback } from 'react'
-import { Suggestions } from './Suggestions'
-import { IconBackspace, IconSearch } from '../icons'
-import { Dict, Suggestion, useDelayed, useDispatch } from '.'
-import { useNavigate, To } from 'react-router'
+import type * as React from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { hideLoading, showLoading } from 'react-redux-loading-bar'
+import { type To, useNavigate } from 'react-router'
+import { IconBackspace } from '../icons/IconBackspace'
+import { IconSearch } from '../icons/IconSearch'
+import type { Dict } from './dict'
 import { useDictsFilter } from './dictsfilter'
+import { useDelayed, useDispatch } from './hooks'
+import { Suggestions } from './Suggestions'
+import type { Suggestion } from './suggestion'
 
 type SearchControlProps = {
     inBound: Dict[]
@@ -15,7 +18,13 @@ type SearchControlProps = {
     filterEnabled: boolean
 }
 
-export const SearchControl: React.FC<SearchControlProps> = ({ inBound, urlQ, urlIn, calculateSearchURL, filterEnabled }) => {
+export const SearchControl: React.FC<SearchControlProps> = ({
+    inBound,
+    urlQ,
+    urlIn,
+    calculateSearchURL,
+    filterEnabled,
+}) => {
     const [q, setQ] = useState<string>(urlQ)
     const qEl = useRef<HTMLInputElement>(null)
     const navigate = useNavigate()
@@ -23,7 +32,7 @@ export const SearchControl: React.FC<SearchControlProps> = ({ inBound, urlQ, url
     const {
         inDicts,
         icon: dictsFilterIcon,
-        filter: dictsFilter
+        filter: dictsFilter,
     } = useDictsFilter(inBound, urlIn)
 
     const onSearch = (q: string) => {
@@ -36,7 +45,7 @@ export const SearchControl: React.FC<SearchControlProps> = ({ inBound, urlQ, url
         calculateQ,
         inputProps,
         suggestionViewProps,
-    ] = useSuggestions(inDicts || inBound.map(d => d.ID).join(','))
+    ] = useSuggestions(inDicts || inBound.map((d) => d.ID).join(','))
 
     const urlQJustChanged = useRef<boolean>(false)
     useEffect(() => {
@@ -60,12 +69,12 @@ export const SearchControl: React.FC<SearchControlProps> = ({ inBound, urlQ, url
 
     const { onChange } = inputProps
     inputProps = {
-        ...inputProps, onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
+        ...inputProps,
+        onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
             setQ(e.target.value)
             onChange(e)
-        }
+        },
     }
-
 
     useEffect(() => {
         const globalKeyPressHandler = (ev: KeyboardEvent) => {
@@ -73,7 +82,11 @@ export const SearchControl: React.FC<SearchControlProps> = ({ inBound, urlQ, url
                 ev.preventDefault()
                 ev.stopPropagation()
                 window.setTimeout(() => {
-                    qEl.current.scrollIntoView({ behavior: 'smooth', block: 'center', inline: "center" })
+                    qEl.current.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'center',
+                        inline: 'center',
+                    })
                     qEl.current.focus({ preventScroll: true })
                     qEl.current.setSelectionRange(0, qEl.current.value.length)
                 }, 10)
@@ -81,7 +94,8 @@ export const SearchControl: React.FC<SearchControlProps> = ({ inBound, urlQ, url
         }
 
         window.addEventListener('keypress', globalKeyPressHandler)
-        return () => window.removeEventListener('keypress', globalKeyPressHandler)
+        return () =>
+            window.removeEventListener('keypress', globalKeyPressHandler)
     }, [])
 
     return (
@@ -89,15 +103,13 @@ export const SearchControl: React.FC<SearchControlProps> = ({ inBound, urlQ, url
             <form
                 action="/"
                 method="get"
-                onSubmit={
-                    e => {
-                        e.preventDefault()
-                        if (inDicts === '-') {
-                            return
-                        }
-                        onSearch(calculateQ(q))
+                onSubmit={(e) => {
+                    e.preventDefault()
+                    if (inDicts === '-') {
+                        return
                     }
-                }
+                    onSearch(calculateQ(q))
+                }}
             >
                 <div className="search-input">
                     <input
@@ -108,12 +120,27 @@ export const SearchControl: React.FC<SearchControlProps> = ({ inBound, urlQ, url
                         autoComplete="off"
                         {...inputProps}
                     />
-                    {q && (<span className="btn button-control button-clear" onClick={onClearClick}>
-                        <IconBackspace />
-                    </span>)}
+                    {q && (
+                        <span
+                            className="btn button-control button-clear"
+                            onClick={onClearClick}
+                        >
+                            <IconBackspace />
+                        </span>
+                    )}
                     {filterEnabled ? dictsFilterIcon : null}
-                    <button type="submit" disabled={inDicts === '-'} className="btn button-search button-search-wide">Шукаць</button>
-                    <button type="submit" disabled={inDicts === '-'} className="btn button-search button-search-small">
+                    <button
+                        type="submit"
+                        disabled={inDicts === '-'}
+                        className="btn button-search button-search-wide"
+                    >
+                        Шукаць
+                    </button>
+                    <button
+                        type="submit"
+                        disabled={inDicts === '-'}
+                        className="btn button-search button-search-small"
+                    >
                         <IconSearch />
                     </button>
                 </div>
@@ -127,17 +154,19 @@ export const SearchControl: React.FC<SearchControlProps> = ({ inBound, urlQ, url
 }
 
 type useSuggestionsSuggestionsViewProps = {
-    suggestions: Suggestion[],
-    active: number,
-    setActive: (n: number) => void,
+    suggestions: Suggestion[]
+    active: number
+    setActive: (n: number) => void
 }
 
 type useSuggestionsInputProps = {
-    onChange: (e: React.ChangeEvent<HTMLInputElement>) => void,
-    onKeyDown: (e: React.KeyboardEvent<HTMLInputElement>) => void,
+    onChange: (e: React.ChangeEvent<HTMLInputElement>) => void
+    onKeyDown: (e: React.KeyboardEvent<HTMLInputElement>) => void
 }
 
-function useSuggestions(inDicts: string): [
+function useSuggestions(
+    inDicts: string,
+): [
     Suggestion[],
     () => void,
     (q: string) => string,
@@ -169,53 +198,58 @@ function useSuggestions(inDicts: string): [
         window.removeEventListener('click', onWindowClick)
     }, [])
 
-    const [onChangeHandler, onChangeHandlerCancel] = useDelayed((q: string): void => {
-        if (!q || inDicts == '-') {
-            resetSuggestions()
-        } else {
-            setHard(false)
+    const [onChangeHandler, onChangeHandlerCancel] = useDelayed(
+        (q: string): void => {
+            if (!q || inDicts == '-') {
+                resetSuggestions()
+            } else {
+                setHard(false)
 
-            dispatch(showLoading())
+                dispatch(showLoading())
 
-            if (abort.current) {
-                abort.current.abort()
+                if (abort.current) {
+                    abort.current.abort()
+                }
+                abort.current = new AbortController()
+
+                const p = verbumClient
+                    .withSignal(abort.current.signal)
+                    .suggest(q, inDicts)
+                promise.current = p
+                p.then((suggs) => {
+                    if (promise.current != p) {
+                        return
+                    }
+                    if (active > suggs.length - 1) {
+                        setActive(-1)
+                        setHard(false)
+                    }
+                    setSuggs(suggs)
+                    if (suggs.length > 0) {
+                        window.addEventListener('click', onWindowClick)
+                    } else {
+                        window.removeEventListener('click', onWindowClick)
+                    }
+                })
+                    .catch(() => {
+                        // ignore abort exception
+                    })
+                    .finally(() => {
+                        dispatch(hideLoading())
+                    })
             }
-            abort.current = new AbortController()
-
-            const p = verbumClient
-                .withSignal(abort.current.signal)
-                .suggest(q, inDicts)
-            promise.current = p
-            p.then(suggs => {
-                if (promise.current != p) {
-                    return
-                }
-                if (active > suggs.length - 1) {
-                    setActive(-1)
-                    setHard(false)
-                }
-                setSuggs(suggs)
-                if (suggs.length > 0) {
-                    window.addEventListener('click', onWindowClick)
-                } else {
-                    window.removeEventListener('click', onWindowClick)
-                }
-            }).catch(() => {
-                // ignore abort exception
-            }).finally(() => {
-                dispatch(hideLoading())
-            })
-        }
-    }, 150)
+        },
+        150,
+    )
 
     const onChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
         onChangeHandler(e.target.value)
     }
 
     const onKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-        if (e.key == "Escape") {
+        if (e.key == 'Escape') {
             resetSuggestions()
-        } else if (e.key == "ArrowDown" || e.key == "j" && e.metaKey) {
+        } else if (e.key == 'ArrowDown' || (e.key == 'j' && e.metaKey)) {
             e.stopPropagation()
             e.preventDefault()
             if (active + 1 < suggs.length) {
@@ -225,7 +259,7 @@ function useSuggestions(inDicts: string): [
                 setActive(-1)
                 setHard(true)
             }
-        } else if (e.key == "ArrowUp" || e.key == "k" && e.metaKey) {
+        } else if (e.key == 'ArrowUp' || (e.key == 'k' && e.metaKey)) {
             e.stopPropagation()
             e.preventDefault()
             if (active - 1 >= -1) {

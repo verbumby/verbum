@@ -1,16 +1,22 @@
-import * as React from 'react'
-import { articleFetchServer, ArticlePage } from './pages/article'
-import { IndexPage, searchServer } from './pages/index/index'
-import { AppThunkAction } from './store'
-import { DictPage, letterFilterFetchServer, dictArticlesFetchServer, abbrFetchServer, prefaceFetchServer } from './pages/dict'
+import type * as React from 'react'
+import { ArticlePage } from './pages/article/ArticlePage'
+import { articleFetchServer } from './pages/article/article'
+import { abbrFetchServer } from './pages/dict/abbr'
+import { DictPage } from './pages/dict/DictPage'
+import { dictArticlesFetchServer } from './pages/dict/dict'
+import { letterFilterFetchServer } from './pages/dict/letterfilter'
+import { prefaceFetchServer } from './pages/dict/preface'
+import { IndexPage } from './pages/index/IndexPage'
+import { searchServer } from './pages/index/search'
 import { SupportPage } from './pages/support/SupportPage'
+import type { AppThunkAction } from './store'
 
 type DataLoader = (match: {}, urlSearch: URLSearchParams) => AppThunkAction
 
 type Route = {
-    path: string,
-    element: React.ReactElement,
-    dataLoaders: DataLoader[],
+    path: string
+    element: React.ReactElement
+    dataLoaders: DataLoader[]
 }
 
 export const routes: Route[] = [
@@ -32,7 +38,12 @@ export const routes: Route[] = [
     {
         path: '/:dictID',
         element: <DictPage />,
-        dataLoaders: [letterFilterFetchServer, dictArticlesFetchServer, abbrFetchServer, prefaceFetchServer],
+        dataLoaders: [
+            letterFilterFetchServer,
+            dictArticlesFetchServer,
+            abbrFetchServer,
+            prefaceFetchServer,
+        ],
     },
     {
         path: '/',

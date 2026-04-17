@@ -15,6 +15,7 @@
   },
   "homepage": "https://github.com/verbumby/verbum#readme",
   "dependencies": {
+    "@biomejs/biome": "^2.4.12",
     "@popperjs/core": "2.11.8",
     "@reduxjs/toolkit": "2.11.2",
     "@types/bootstrap": "5.2.10",

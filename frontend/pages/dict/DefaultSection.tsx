@@ -1,16 +1,26 @@
 import * as React from 'react'
-import { FC, useEffect } from 'react'
+import { type FC, useEffect } from 'react'
 
 import { Helmet } from 'react-helmet'
 import { Link, useLocation, useParams } from 'react-router'
-import { ArticleView, AuthorsDictWarning, NoSearchResults, PaginationView, SearchControl, useDispatch } from '../../common'
+import { ArticleView } from '../../common/ArticleView'
+import { AuthorsDictWarning } from '../../common/AuthorsDict'
+import { useDispatch } from '../../common/hooks'
+import { NoSearchResults } from '../../common/NoSearchResults'
+import { PaginationView } from '../../common/PaginationView'
+import { SearchControl } from '../../common/SearchControl'
+import { IconExclamationTriangle } from '../../icons/IconExclamationTriangle'
 import { useDict, useDictArticles, useLetterFilter } from '../../store'
-import { letterFilterFetch, letterFilterReset } from './letterfilter'
-import { dictArticlesFetch, MatchParams, dictArticlesReset, useURLSearch } from './dict'
+import {
+    dictArticlesFetch,
+    dictArticlesReset,
+    type MatchParams,
+    useURLSearch,
+} from './dict'
 import { LetterFilterView } from './LetterFilterView'
-import { IconExclamationTriangle } from '../../icons'
+import { letterFilterFetch, letterFilterReset } from './letterfilter'
 
-export const DefaultSection: FC = ({ }) => {
+export const DefaultSection: FC = ({}) => {
     const location = useLocation()
     const params = useParams<MatchParams>()
     const urlSearch = useURLSearch()
@@ -28,11 +38,18 @@ export const DefaultSection: FC = ({ }) => {
     useEffect(() => {
         dispatch(letterFilterFetch(params, urlSearch))
     }, [params.dictID, prefix])
-    useEffect(() => () => { dispatch(letterFilterReset()) }, [])
+    useEffect(
+        () => () => {
+            dispatch(letterFilterReset())
+        },
+        [],
+    )
 
     useEffect(() => {
         dispatch(dictArticlesFetch(params, urlSearch))
-        return () => { dispatch(dictArticlesReset()) }
+        return () => {
+            dispatch(dictArticlesReset())
+        }
     }, [params.dictID, prefix, page, q])
 
     if (!letterFilter) {
@@ -42,35 +59,59 @@ export const DefaultSection: FC = ({ }) => {
     const topLinks: React.JSX.Element[] = []
     const pushToTopLinks = (node: React.JSX.Element, key: string) => {
         if (topLinks.length > 0) {
-            topLinks.push(<span
-                key={`separator-${key}`}
-                style={{ color: 'darkgray' }}> ∙ </span>)
+            topLinks.push(
+                <span key={`separator-${key}`} style={{ color: 'darkgray' }}>
+                    {' '}
+                    ∙{' '}
+                </span>,
+            )
         }
         topLinks.push(React.cloneElement(node, { key }))
     }
 
     if (dict.HasPreface) {
-        pushToTopLinks(<Link to={{
-            pathname: location.pathname,
-            search: urlSearch.clone()
-                .resetAll()
-                .set('section', 'preface')
-                .encode()
-        }}>Прадмова</Link>, 'preface')
+        pushToTopLinks(
+            <Link
+                to={{
+                    pathname: location.pathname,
+                    search: urlSearch
+                        .clone()
+                        .resetAll()
+                        .set('section', 'preface')
+                        .encode(),
+                }}
+            >
+                Прадмова
+            </Link>,
+            'preface',
+        )
     }
 
     if (dict.HasAbbrevs) {
-        pushToTopLinks(<Link to={{
-            pathname: location.pathname,
-            search: urlSearch.clone()
-                .resetAll()
-                .set('section', 'abbr')
-                .encode()
-        }}>Скарачэнні</Link>, 'abbr')
+        pushToTopLinks(
+            <Link
+                to={{
+                    pathname: location.pathname,
+                    search: urlSearch
+                        .clone()
+                        .resetAll()
+                        .set('section', 'abbr')
+                        .encode(),
+                }}
+            >
+                Скарачэнні
+            </Link>,
+            'abbr',
+        )
     }
 
     if (dict.ScanURL) {
-        pushToTopLinks(<a href={dict.ScanURL} target='_blank' rel='noopener noreferrer'>Кніга ў PDF/DjVu</a>, 'scan')
+        pushToTopLinks(
+            <a href={dict.ScanURL} target="_blank" rel="noopener noreferrer">
+                Кніга ў PDF/DjVu
+            </a>,
+            'scan',
+        )
     }
 
     return (
@@ -80,67 +121,77 @@ export const DefaultSection: FC = ({ }) => {
                 <meta name="description" content={dict.Title} />
                 <meta property="og:title" content={dict.Title} />
                 <meta property="og:description" content={dict.Title} />
-                <meta name="robots" content={`${urlSearch.allDefault() ? '' : 'no'}index, follow`} />
+                <meta
+                    name="robots"
+                    content={`${urlSearch.allDefault() ? '' : 'no'}index, follow`}
+                />
             </Helmet>
-            <div className='mx-1 mb-3'>
+            <div className="mx-1 mb-3">
                 <h4>{dict.Title}</h4>
                 {topLinks}
             </div>
-            {dict.Authors && <div className='mx-1 mb-3 alert alert-warning'>
-                <IconExclamationTriangle />&nbsp;<AuthorsDictWarning />
-            </div>}
+            {dict.Authors && (
+                <div className="mx-1 mb-3 alert alert-warning">
+                    <IconExclamationTriangle />
+                    &nbsp;
+                    <AuthorsDictWarning />
+                </div>
+            )}
             <div className="mb-3">
                 <SearchControl
                     inBound={[dict]}
                     urlQ={q}
                     urlIn={dict.ID}
                     filterEnabled={false}
-                    calculateSearchURL={
-                        (q, inDicts) => ({
-                            search: urlSearch
-                                .clone()
-                                .set('q', q)
-                                .set('page', 1)
-                                .encode()
-                        })
-                    }
+                    calculateSearchURL={(q, inDicts) => ({
+                        search: urlSearch
+                            .clone()
+                            .set('q', q)
+                            .set('page', 1)
+                            .encode(),
+                    })}
                 />
             </div>
             <LetterFilterView
                 letterFilter={letterFilter}
-                prefixToURL={prefix => ({
+                prefixToURL={(prefix) => ({
                     search: urlSearch
                         .clone()
                         .reset('page')
                         .set('prefix', prefix)
-                        .encode()
+                        .encode(),
                 })}
             />
-            {dictArticles && dictArticles.Articles.length > 0 && <>
-                <div>
-                    {dictArticles.Articles.map(a => (
-                        <ArticleView
-                            key={a.DictionaryID + a.ID}
-                            a={a}
-                            showExternalButton={true}
-                            showSource={false}
-                        />
-                    ))}
-                </div>
-                <PaginationView
-                    current={dictArticles.Pagination.Current}
-                    total={dictArticles.Pagination.Total}
-                    pageToURL={p => ({
-                        search: urlSearch
-                            .clone()
-                            .set('page', p)
-                            .encode()
+            {dictArticles && dictArticles.Articles.length > 0 && (
+                <>
+                    <div>
+                        {dictArticles.Articles.map((a) => (
+                            <ArticleView
+                                key={a.DictionaryID + a.ID}
+                                a={a}
+                                showExternalButton={true}
+                                showSource={false}
+                            />
+                        ))}
+                    </div>
+                    <PaginationView
+                        current={dictArticles.Pagination.Current}
+                        total={dictArticles.Pagination.Total}
+                        pageToURL={(p) => ({
+                            search: urlSearch.clone().set('page', p).encode(),
+                        })}
+                    />
+                </>
+            )}
+            {dictArticles && dictArticles.Articles.length == 0 && (
+                <NoSearchResults
+                    q={q}
+                    suggestions={dictArticles.TermSuggestions}
+                    calculateSuggestionURL={(s) => ({
+                        search: urlSearch.clone().set('q', s).encode(),
                     })}
                 />
-            </>}
-            {dictArticles && dictArticles.Articles.length == 0
-                && <NoSearchResults q={q} suggestions={dictArticles.TermSuggestions}
-                    calculateSuggestionURL={s => ({ search: urlSearch.clone().set('q', s).encode() })} />}
+            )}
         </>
     )
 }

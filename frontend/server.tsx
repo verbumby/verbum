@@ -1,20 +1,22 @@
+import { configureStore } from '@reduxjs/toolkit'
+import Koa from 'koa'
 import * as React from 'react'
 import { renderToString } from 'react-dom/server'
-import Koa from 'koa'
-import { matchPath, StaticRouter } from 'react-router'
-import { configureStore } from '@reduxjs/toolkit'
+import { Helmet } from 'react-helmet'
 import { Provider } from 'react-redux'
-import { Helmet } from "react-helmet";
-
-import { VerbumAPIClientServer } from './verbum/server'
+import { createPath, matchPath, StaticRouter, type To } from 'react-router'
 import { App } from './App'
-import { rootReducer } from './store'
-import { routes } from './routes'
-import { DictsMetadata, dictsSet, SetRedirectContext, SetStatusCodeContext } from './common'
+import { type DictsMetadata, dictsSet } from './common/dicts'
+import { SetRedirectContext } from './common/Redirect'
+import { SetStatusCodeContext } from './common/StatusCodeContext'
 import { sectionsSet } from './common/sections'
-import { createPath, To } from 'react-router'
+import { routes } from './routes'
+import { rootReducer } from './store'
+import { VerbumAPIClientServer } from './verbum/server'
 
-globalThis.verbumClient = new VerbumAPIClientServer({ apiURL: 'http://127.0.0.1:8080' })
+globalThis.verbumClient = new VerbumAPIClientServer({
+    apiURL: 'http://127.0.0.1:8080',
+})
 
 let indexhtml: string
 async function getIndexHTML(): Promise<string> {
@@ -39,11 +41,15 @@ async function getDictsMetadata(): Promise<DictsMetadata> {
 }
 
 const k = new Koa()
-k.use(async ctx => {
+k.use(async (ctx) => {
     const dm = await getDictsMetadata()
     if (ctx.URL.pathname === '/') {
         const sectionID = ctx.cookies.get('lastRenderedSectionID')
-        if (sectionID && sectionID !== 'default' && dm.Sections.some(s => s.ID == sectionID)) {
+        if (
+            sectionID &&
+            sectionID !== 'default' &&
+            dm.Sections.some((s) => s.ID == sectionID)
+        ) {
             ctx.status = 302
             ctx.redirect(`/s/${sectionID}`)
             return
@@ -56,11 +62,15 @@ k.use(async ctx => {
     store.dispatch(sectionsSet(dm.Sections))
 
     const promises: Promise<void>[] = []
-    routes.some(route => {
+    routes.some((route) => {
         const match = matchPath(route.path, ctx.URL.pathname)
         if (match) {
             for (const dataLoader of route.dataLoaders) {
-                promises.push(store.dispatch(dataLoader(match.params, ctx.URL.searchParams)))
+                promises.push(
+                    store.dispatch(
+                        dataLoader(match.params, ctx.URL.searchParams),
+                    ),
+                )
             }
         }
         return match
@@ -74,20 +84,20 @@ k.use(async ctx => {
 
     const reactRendered = renderToString(
         <Provider store={store}>
-            <SetStatusCodeContext.Provider value={sc => statusCode = sc}>
-                <SetRedirectContext.Provider value={t => to = t}>
+            <SetStatusCodeContext.Provider value={(sc) => (statusCode = sc)}>
+                <SetRedirectContext.Provider value={(t) => (to = t)}>
                     <StaticRouter location={ctx.url}>
                         <App />
                     </StaticRouter>
                 </SetRedirectContext.Provider>
             </SetStatusCodeContext.Provider>
-        </Provider>
+        </Provider>,
     )
     const helmet = Helmet.renderStatic()
 
     if (to) {
         ctx.status = 301
-        ctx.redirect(typeof to === "string" ? to : createPath(to))
+        ctx.redirect(typeof to === 'string' ? to : createPath(to))
         return
     }
 
@@ -98,7 +108,10 @@ k.use(async ctx => {
     let body = await getIndexHTML()
     body = body.replace('HEAD_TITLE_PLACEHOLDER', helmet.title.toString())
     body = body.replace('HEAD_META_PLACEHOLDER', helmet.meta.toString())
-    body = body.replace('PRELOADED_STATE_PLACEHOLDER', JSON.stringify(preloadedState).replace(/</g, '\\u003c'))
+    body = body.replace(
+        'PRELOADED_STATE_PLACEHOLDER',
+        JSON.stringify(preloadedState).replace(/</g, '\\u003c'),
+    )
     body = body.replace('BODY_PLACEHOLDER', reactRendered)
     ctx.body = body
 })
