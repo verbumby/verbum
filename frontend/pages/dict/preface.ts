@@ -1,4 +1,5 @@
 import { createSlice, type PayloadAction } from '@reduxjs/toolkit'
+import { serverLoader } from '../../common/serverLoader'
 import { URLSearch } from '../../common/urlsearch'
 import type { AppThunkAction } from '../../thunk'
 import { type MatchParams, URLSearchDefaults } from './dict'
@@ -47,8 +48,4 @@ export const prefaceFetch = (
     }
 }
 
-export const prefaceFetchServer = (
-    params: Partial<MatchParams>,
-    urlSearchParams: URLSearchParams,
-): AppThunkAction =>
-    prefaceFetch(params, new URLSearch(URLSearchDefaults, urlSearchParams))
+export const prefaceFetchServer = serverLoader(URLSearchDefaults, prefaceFetch)

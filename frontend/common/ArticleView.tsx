@@ -2,7 +2,7 @@ import type * as React from 'react'
 import { useState } from 'react'
 import { IconClipboard } from '../icons/IconClipboard'
 import { IconExternal } from '../icons/IconExternal'
-import { useDict } from '../store'
+import { useDictMust } from '../store'
 import { DictTitle } from './AuthorsDict'
 import type { Article } from './article'
 import { useTooltips } from './useTooltips'
@@ -75,7 +75,7 @@ export const ArticleView: React.FC<ArticleViewProps> = ({
     showExternalButton,
     showSource,
 }) => {
-    const [dict, _] = useDict(a.DictionaryID)
+    const [dict, _] = useDictMust(a.DictionaryID)
     const articleRoot = useTooltips<HTMLDivElement>()
 
     return (

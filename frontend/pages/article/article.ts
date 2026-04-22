@@ -1,9 +1,11 @@
 import { createSlice, type PayloadAction } from '@reduxjs/toolkit'
 import type { Article } from '../../common/article'
+import { serverLoader } from '../../common/serverLoader'
+import { URLSearch } from '../../common/urlsearch'
 import type { AppThunkAction } from '../../thunk'
 
 export type ArticleState = {
-    a?: Article
+    a?: Article | null
 }
 
 export type MatchParams = {
@@ -11,12 +13,14 @@ export type MatchParams = {
     articleID: string
 }
 
+export const URLSearchDefaults = {}
+
 const articleSlice = createSlice({
     name: 'article',
     initialState: {} as ArticleState,
     reducers: {
         articleFetchKickOff: (state) => state,
-        articleFetchSuccess: (_, action: PayloadAction<Article>) => ({
+        articleFetchSuccess: (_, action: PayloadAction<Article | null>) => ({
             a: action.payload,
         }),
         articleFetchFailure: (state) => state,
@@ -28,11 +32,11 @@ const { articleFetchKickOff, articleFetchFailure } = articleSlice.actions
 export const { articleFetchSuccess, articleReset } = articleSlice.actions
 export const articleReducer = articleSlice.reducer
 
-export const articleFetch = (params: Partial<MatchParams>): AppThunkAction => {
-    return async (dispatch, getState): Promise<void> => {
+export const articleFetch = (params: MatchParams, _urlSearch: URLSearch<typeof URLSearchDefaults>): AppThunkAction => {
+    return async (dispatch, _getState): Promise<void> => {
         try {
             const { dictID, articleID } = params
-            dispatch(articleFetchKickOff(dictID, articleID))
+            dispatch(articleFetchKickOff())
             dispatch(
                 articleFetchSuccess(
                     await verbumClient.getArticle(dictID, articleID),
@@ -46,7 +50,4 @@ export const articleFetch = (params: Partial<MatchParams>): AppThunkAction => {
     }
 }
 
-export const articleFetchServer = (
-    params: MatchParams,
-    urlSearchParams: URLSearchParams,
-): AppThunkAction => articleFetch(params)
+export const articleFetchServer = serverLoader(URLSearchDefaults, articleFetch)

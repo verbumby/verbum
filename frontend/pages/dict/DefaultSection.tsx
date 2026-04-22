@@ -25,7 +25,7 @@ export const DefaultSection: FC = ({}) => {
     const params = useParams<MatchParams>()
     const urlSearch = useURLSearch()
 
-    const [dict] = useDict(params.dictID)
+    const [dict, _] = useDictMust(params.dictID)
 
     const letterFilter = useLetterFilter()
     const dictArticles = useDictArticles()

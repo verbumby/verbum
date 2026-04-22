@@ -1,6 +1,7 @@
 import { createSlice, type PayloadAction } from '@reduxjs/toolkit'
 import type { ArticleList } from '../../common/article'
 import { useURLSearch as useURLSearchCommon } from '../../common/hooks'
+import { serverLoader } from '../../common/serverLoader'
 import { URLSearch } from '../../common/urlsearch'
 import type { AppThunkAction } from '../../thunk'
 
@@ -21,7 +22,7 @@ export type DictArticlesState = ArticleList
 
 const dictArticlesSlice = createSlice({
     name: 'dictArticles',
-    initialState: null as DictArticlesState,
+    initialState: null as DictArticlesState | null,
     reducers: {
         dictArticlesFetchKickOff: () => null,
         dictArticlesFetchSuccess: (_, action: PayloadAction<ArticleList>) =>
@@ -62,7 +63,7 @@ export const dictArticlesFetch = (
             ) {
                 return
             }
-            dispatch(dictArticlesFetchKickOff(dictID, q, prefix, page))
+            dispatch(dictArticlesFetchKickOff())
             dispatch(
                 dictArticlesFetchSuccess(
                     await verbumClient.getDictArticles(dictID, q, prefix, page),
@@ -76,8 +77,4 @@ export const dictArticlesFetch = (
     }
 }
 
-export const dictArticlesFetchServer = (
-    params: Partial<MatchParams>,
-    urlSearchParams: URLSearchParams,
-): AppThunkAction =>
-    dictArticlesFetch(params, new URLSearch(URLSearchDefaults, urlSearchParams))
+export const dictArticlesFetchServer = serverLoader(URLSearchDefaults, dictArticlesFetch)

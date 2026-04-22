@@ -1,5 +1,5 @@
 import fetch from 'node-fetch'
-import { VerbumAPIClientImpl } from './client'
+import { NotFoundError, VerbumAPIClientImpl } from './client'
 
 type VerbumAPIClientServerOptions = {
     apiURL: string
@@ -16,7 +16,7 @@ export class VerbumAPIClientServer extends VerbumAPIClientImpl {
     async call<T>(path: string): Promise<T> {
         const resp = await fetch(this.apiURL + path, { signal: this.signal })
         if (resp.status === 404) {
-            return Promise.resolve(null)
+            throw new NotFoundError()
         }
         return resp.json() as Promise<T>
     }
@@ -24,7 +24,7 @@ export class VerbumAPIClientServer extends VerbumAPIClientImpl {
     async callString(path: string): Promise<string> {
         const resp = await fetch(this.apiURL + path, { signal: this.signal })
         if (resp.status === 404) {
-            return Promise.resolve(null)
+            throw new NotFoundError()
         }
         return resp.text()
     }

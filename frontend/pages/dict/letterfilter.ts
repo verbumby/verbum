@@ -1,10 +1,11 @@
 import { createSlice, type PayloadAction } from '@reduxjs/toolkit'
 import type { LetterFilter } from '../../common/letterfilter'
+import { serverLoader } from '../../common/serverLoader'
 import { URLSearch } from '../../common/urlsearch'
 import type { AppThunkAction } from '../../thunk'
 import { type MatchParams, URLSearchDefaults } from './dict'
 
-export type LetterFilterState = LetterFilter
+export type LetterFilterState = LetterFilter | null
 
 const letterFilterSlice = createSlice({
     name: 'letterFilter',
@@ -25,7 +26,7 @@ export const { letterFilterFetchSuccess, letterFilterReset } =
 export const letterFilterReducer = letterFilterSlice.reducer
 
 export const letterFilterFetch = (
-    params: Partial<MatchParams>,
+    params: MatchParams,
     urlSearch: URLSearch<typeof URLSearchDefaults>,
 ): AppThunkAction => {
     return async (dispatch, getState): Promise<void> => {
@@ -44,7 +45,7 @@ export const letterFilterFetch = (
             ) {
                 return
             }
-            dispatch(letterFilterFetchKickOff(dictID, prefix))
+            dispatch(letterFilterFetchKickOff())
             dispatch(
                 letterFilterFetchSuccess(
                     await verbumClient.getLetterFilter(dictID, prefix),
@@ -58,8 +59,7 @@ export const letterFilterFetch = (
     }
 }
 
-export const letterFilterFetchServer = (
-    params: Partial<MatchParams>,
-    urlSearchParams: URLSearchParams,
-): AppThunkAction =>
-    letterFilterFetch(params, new URLSearch(URLSearchDefaults, urlSearchParams))
+export const letterFilterFetchServer = serverLoader(
+    URLSearchDefaults,
+    letterFilterFetch,
+)

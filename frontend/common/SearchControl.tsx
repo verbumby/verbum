@@ -54,6 +54,9 @@ export const SearchControl: React.FC<SearchControlProps> = ({
         urlQJustChanged.current = true
     }, [urlQ])
     useEffect(() => {
+        if (!qEl.current) {
+            return
+        }
         if (urlQJustChanged.current) {
             qEl.current.focus()
             qEl.current.setSelectionRange(0, qEl.current.value.length)
@@ -64,6 +67,9 @@ export const SearchControl: React.FC<SearchControlProps> = ({
     const onClearClick = () => {
         setQ('')
         resetSuggestions()
+        if (!qEl.current) {
+            throw new Error('qel is null')
+        }
         qEl.current.focus()
     }
 
@@ -82,6 +88,9 @@ export const SearchControl: React.FC<SearchControlProps> = ({
                 ev.preventDefault()
                 ev.stopPropagation()
                 window.setTimeout(() => {
+                    if (!qEl.current) {
+                        return
+                    }
                     qEl.current.scrollIntoView({
                         behavior: 'smooth',
                         block: 'center',
@@ -176,8 +185,8 @@ function useSuggestions(
     const [suggs, setSuggs] = useState<Suggestion[]>([])
     const [active, setActive] = useState<number>(-1)
     const [hard, setHard] = useState<boolean>(false)
-    const promise = useRef<Promise<Suggestion[]>>(null)
-    const abort = useRef<AbortController>(null)
+    const promise = useRef<Promise<Suggestion[]> | null>(null)
+    const abort = useRef<AbortController | null>(null)
     const dispatch = useDispatch()
 
     const onWindowClick = useCallback((e: MouseEvent) => {

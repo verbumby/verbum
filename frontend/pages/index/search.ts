@@ -1,6 +1,7 @@
 import { createSlice, type PayloadAction } from '@reduxjs/toolkit'
 import { useURLSearch as useURLSearchCommon } from '../../common/hooks'
 import type { SearchResult } from '../../common/search'
+import { serverLoader } from '../../common/serverLoader'
 import { URLSearch } from '../../common/urlsearch'
 import type { AppThunkAction } from '../../thunk'
 
@@ -18,7 +19,7 @@ export const useURLSearch = () => useURLSearchCommon(URLSearchDefaults)
 
 export type SearchState = {
     q: string
-    searchResult: SearchResult
+    searchResult: SearchResult | null
 }
 
 const searchSlice = createSlice({
@@ -42,7 +43,7 @@ export const { searchReset } = searchSlice.actions
 export const searchReducer = searchSlice.reducer
 
 export const search = (
-    params: Partial<MatchParams>,
+    params: MatchParams,
     urlSearch: URLSearch<typeof URLSearchDefaults>,
 ): AppThunkAction => {
     return async (dispatch, getState): Promise<void> => {
@@ -78,8 +79,4 @@ export const search = (
     }
 }
 
-export const searchServer = (
-    params: Partial<MatchParams>,
-    urlSearchParams: URLSearchParams,
-): AppThunkAction =>
-    search(params, new URLSearch(URLSearchDefaults, urlSearchParams))
+export const searchServer = serverLoader(URLSearchDefaults, search)

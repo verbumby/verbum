@@ -3,7 +3,7 @@ import { type FC, useEffect } from 'react'
 import { Helmet } from 'react-helmet'
 import { useParams } from 'react-router'
 import { useDispatch } from '../../common/hooks'
-import { useDict, usePreface } from '../../store'
+import { useDictMust, usePreface } from '../../store'
 import { type MatchParams, useURLSearch } from './dict'
 import { prefaceFetch, prefaceReset } from './preface'
 
@@ -11,7 +11,7 @@ export const PrefaceSection: FC = ({}) => {
     const params = useParams<MatchParams>()
     const urlSearch = useURLSearch()
 
-    const [dict] = useDict(params.dictID)
+    const [dict, _] = useDictMust(params.dictID)
     const title = `Прадмова - ${dict.Title}`
 
     const preface = usePreface()

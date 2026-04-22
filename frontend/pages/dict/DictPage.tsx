@@ -13,15 +13,17 @@ export const DictPage: React.FC = ({}) => {
     const urlSearch = useURLSearch()
 
     const [dict, dictIsAlias] = useDict(params.dictID)
+
+    if (dict === null) {
+        return <NotFound />
+    }
+
     if (dictIsAlias) {
         return (
             <Redirect
                 to={{ pathname: `/${dict.ID}`, search: urlSearch.encode() }}
             />
         )
-    }
-    if (dict === null) {
-        return <NotFound />
     }
 
     if (urlSearch.get('section') == 'abbr') {

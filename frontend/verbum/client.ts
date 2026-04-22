@@ -5,6 +5,8 @@ import type { LetterFilter } from '../common/letterfilter'
 import type { SearchResult } from '../common/search'
 import type { Suggestion } from '../common/suggestion'
 
+export class NotFoundError extends Error {}
+
 export interface VerbumAPIClient {
     getPreface(dictID: string): Promise<string>
     getAbbr(dictID: string): any
@@ -12,7 +14,7 @@ export interface VerbumAPIClient {
     getDictionaries(): Promise<DictsMetadata>
     search(q: string, inDicts: string, page: number): Promise<SearchResult>
     suggest(q: string, inDicts: string): Promise<Suggestion[]>
-    getArticle(dictID: string, articleID: string): Promise<Article>
+    getArticle(dictID: string, articleID: string): Promise<Article | null>
     getLetterFilter(dictID: string, prefix: string): Promise<LetterFilter>
     getDictArticles(
         dictID: string,
@@ -28,7 +30,7 @@ declare global {
 }
 
 export abstract class VerbumAPIClientImpl implements VerbumAPIClient {
-    protected signal: AbortSignal
+    protected signal: AbortSignal | undefined
 
     withSignal(signal: AbortSignal): this {
         const result = Object.create(this) as this
@@ -61,12 +63,22 @@ export abstract class VerbumAPIClientImpl implements VerbumAPIClient {
         return this.call<Suggestion[]>(`/api/suggest?q=${q}&in=${inDicts}`)
     }
 
-    async getArticle(dictID: string, articleID: string): Promise<Article> {
+    async getArticle(
+        dictID: string,
+        articleID: string,
+    ): Promise<Article | null> {
         dictID = encodeURIComponent(dictID)
         articleID = encodeURIComponent(articleID)
-        return this.call<Article>(
-            `/api/dictionaries/${dictID}/articles/${articleID}`,
-        )
+        try {
+            return await this.call<Article>(
+                `/api/dictionaries/${dictID}/articles/${articleID}`,
+            )
+        } catch (e) {
+            if (e instanceof NotFoundError) {
+                return null
+            }
+            throw e
+        }
     }
 
     async getLetterFilter(

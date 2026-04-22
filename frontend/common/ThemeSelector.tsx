@@ -53,6 +53,11 @@ function ThemeSelector() {
         return <></>
     }
 
+    const themeIcon = themes.find((t) => t.id == theme)?.icon
+    if (!themeIcon) {
+        throw new Error(`${theme} theme's icon is not found`)
+    }
+
     return (
         <span className="btn-group dropup">
             <button
@@ -61,7 +66,7 @@ function ThemeSelector() {
                 data-bs-toggle="dropdown"
                 aria-expanded="false"
             >
-                {themes.find((t) => t.id == theme).icon}
+                {themeIcon}
             </button>
             <ul className="dropdown-menu">
                 {themes.map((t) => (

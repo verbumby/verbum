@@ -10,8 +10,12 @@ import { IndexPage } from './pages/index/IndexPage'
 import { searchServer } from './pages/index/search'
 import { SupportPage } from './pages/support/SupportPage'
 import type { AppThunkAction } from './store'
+import type { Params } from 'react-router'
 
-type DataLoader = (match: {}, urlSearch: URLSearchParams) => AppThunkAction
+type DataLoader = (
+    match: Params<string>,
+    urlSearch: URLSearchParams,
+) => AppThunkAction
 
 type Route = {
     path: string

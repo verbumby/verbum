@@ -3,7 +3,7 @@ import { type FC, useEffect } from 'react'
 import { Helmet } from 'react-helmet'
 import { useParams } from 'react-router'
 import { useDispatch } from '../../common/hooks'
-import { useAbbr, useDict } from '../../store'
+import { useAbbr, useDictMust } from '../../store'
 import { abbrFetch, abbrReset } from './abbr'
 import { type MatchParams, useURLSearch } from './dict'
 
@@ -11,7 +11,7 @@ export const AbbrSection: FC = ({}) => {
     const params = useParams<MatchParams>()
     const urlSearch = useURLSearch()
 
-    const [dict] = useDict(params.dictID)
+    const [dict, _] = useDictMust(params.dictID)
     const title = `Скарачэнні - ${dict.Title}`
 
     const abbr = useAbbr()

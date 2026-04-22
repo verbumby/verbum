@@ -43,10 +43,15 @@ export function useDicts(): Dict[] {
 export function useDictsInSection(sectionID: string): Dict[] {
     const section = useSection(sectionID)
     const dicts = useDicts()
-    return section.DictIDs.map((dictID) => dicts.find((d) => d.ID == dictID))
+    if (!section) {
+        return []
+    }
+    return section.DictIDs.map((dictID) =>
+        dicts.find((d) => d.ID == dictID),
+    ).filter((d) => d !== undefined)
 }
 
-export function useDict(id: string): [Dict, boolean] {
+export function useDict(id: string): [Dict | null, boolean] {
     let d = useDicts().find((d) => d.ID === id)
     if (d) {
         return [d, false]
@@ -56,6 +61,14 @@ export function useDict(id: string): [Dict, boolean] {
         return [d, true]
     }
     return [null, false]
+}
+
+export function useDictMust(id: string): [Dict, boolean] {
+    const [d, isAlias] = useDict(id)
+    if (d === null) {
+        throw new Error(`dict ${id} not known`)
+    }
+    return [d, isAlias]
 }
 
 export function useSections(): Section[] {
@@ -74,7 +87,7 @@ export function useArticleState(): ArticleState {
     return useSelector<ArticleState>((state) => state.article)
 }
 
-export function useArticle(): Article {
+export function useArticle() {
     return useArticleState().a
 }
 
@@ -82,8 +95,8 @@ export function useLetterFilter(): LetterFilterState {
     return useSelector<LetterFilterState>((state) => state.letterFilter)
 }
 
-export function useDictArticles(): DictArticlesState {
-    return useSelector<DictArticlesState>((state) => state.dictArticles)
+export function useDictArticles(): DictArticlesState | null {
+    return useSelector<DictArticlesState | null>((state) => state.dictArticles)
 }
 
 export function useAbbr(): AbbrState {

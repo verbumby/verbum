@@ -8,19 +8,20 @@ import { Redirect } from '../../common/Redirect'
 import { SearchControl } from '../../common/SearchControl'
 import { useArticle, useDict } from '../../store'
 import { useURLSearch as useDictURLSearch } from '../dict/dict'
+import { assertParams } from '../../common/assertParams'
 import { articleFetch, articleReset, type MatchParams } from './article'
 
 export const ArticlePage: React.FC = () => {
-    const params = useParams<MatchParams>()
+    const params = useParams() as MatchParams
     const location = useLocation()
     const [dict, dictIsAlias] = useDict(params.dictID)
 
-    if (dictIsAlias) {
-        return <Redirect to={{ pathname: `/${dict.ID}/${params.articleID}` }} />
-    }
-
     if (dict === null) {
         return <NotFound />
+    }
+
+    if (dictIsAlias) {
+        return <Redirect to={{ pathname: `/${dict.ID}/${params.articleID}` }} />
     }
 
     const a = useArticle()
