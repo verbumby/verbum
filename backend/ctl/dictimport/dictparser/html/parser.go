@@ -20,7 +20,7 @@ func ParseReader(r io.Reader, settings dictionary.IndexSettings) (chan dictparse
 
 	go func() {
 		sc := bufio.NewScanner(r)
-		sc.Buffer(make([]byte, 16*1024), bufio.MaxScanTokenSize*8)
+		sc.Buffer(make([]byte, 1024*1024), bufio.MaxScanTokenSize*8)
 		sc.Split(textutil.GetDelimSplitFunc("<hr/>\n"))
 		firstArticle := true
 
