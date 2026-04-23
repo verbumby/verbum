@@ -8,7 +8,6 @@ import { Redirect } from '../../common/Redirect'
 import { SearchControl } from '../../common/SearchControl'
 import { useArticle, useDict } from '../../store'
 import { useURLSearch as useDictURLSearch } from '../dict/dict'
-import { assertParams } from '../../common/assertParams'
 import { articleFetch, articleReset, type MatchParams } from './article'
 
 export const ArticlePage: React.FC = () => {

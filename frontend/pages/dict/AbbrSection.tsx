@@ -8,7 +8,7 @@ import { abbrFetch, abbrReset } from './abbr'
 import { type MatchParams, useURLSearch } from './dict'
 
 export const AbbrSection: FC = ({}) => {
-    const params = useParams<MatchParams>()
+    const params = useParams() as MatchParams
     const urlSearch = useURLSearch()
 
     const [dict, _] = useDictMust(params.dictID)

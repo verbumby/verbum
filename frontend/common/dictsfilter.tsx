@@ -7,7 +7,7 @@ import type { Dict } from './dict'
 type DictsFilterProps = {
     state: string
     bound: Dict[]
-    onChange?: (state: string) => void
+    onChange: (state: string) => void
 }
 
 const DictsFilter: React.FC<DictsFilterProps> = ({

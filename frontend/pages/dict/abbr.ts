@@ -5,7 +5,7 @@ import { URLSearch } from '../../common/urlsearch'
 import type { AppThunkAction } from '../../thunk'
 import { type MatchParams, URLSearchDefaults } from './dict'
 
-export type AbbrState = Abbrevs
+export type AbbrState = Abbrevs | null
 
 const abbrSlice = createSlice({
     name: 'abbr',
@@ -23,7 +23,7 @@ export const { abbrFetchSuccess, abbrReset } = abbrSlice.actions
 export const abbrReducer = abbrSlice.reducer
 
 export const abbrFetch = (
-    params: Partial<MatchParams>,
+    params: MatchParams,
     urlSearch: URLSearch<typeof URLSearchDefaults>,
 ): AppThunkAction => {
     return async (dispatch, getState): Promise<void> => {
@@ -38,7 +38,7 @@ export const abbrFetch = (
             }
 
             const { dictID } = params
-            dispatch(abbrFetchKickOff(dictID))
+            dispatch(abbrFetchKickOff())
             dispatch(abbrFetchSuccess(await verbumClient.getAbbr(dictID)))
         } catch (err) {
             dispatch(abbrFetchFailure())

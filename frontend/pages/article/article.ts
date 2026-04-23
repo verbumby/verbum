@@ -32,7 +32,10 @@ const { articleFetchKickOff, articleFetchFailure } = articleSlice.actions
 export const { articleFetchSuccess, articleReset } = articleSlice.actions
 export const articleReducer = articleSlice.reducer
 
-export const articleFetch = (params: MatchParams, _urlSearch: URLSearch<typeof URLSearchDefaults>): AppThunkAction => {
+export const articleFetch = (
+    params: MatchParams,
+    _urlSearch?: URLSearch<typeof URLSearchDefaults>,
+): AppThunkAction => {
     return async (dispatch, _getState): Promise<void> => {
         try {
             const { dictID, articleID } = params

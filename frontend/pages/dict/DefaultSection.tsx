@@ -10,7 +10,7 @@ import { NoSearchResults } from '../../common/NoSearchResults'
 import { PaginationView } from '../../common/PaginationView'
 import { SearchControl } from '../../common/SearchControl'
 import { IconExclamationTriangle } from '../../icons/IconExclamationTriangle'
-import { useDict, useDictArticles, useLetterFilter } from '../../store'
+import { useDictArticles, useDictMust, useLetterFilter } from '../../store'
 import {
     dictArticlesFetch,
     dictArticlesReset,
@@ -22,7 +22,7 @@ import { letterFilterFetch, letterFilterReset } from './letterfilter'
 
 export const DefaultSection: FC = ({}) => {
     const location = useLocation()
-    const params = useParams<MatchParams>()
+    const params = useParams() as MatchParams
     const urlSearch = useURLSearch()
 
     const [dict, _] = useDictMust(params.dictID)

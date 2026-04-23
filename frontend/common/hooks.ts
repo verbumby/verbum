@@ -17,7 +17,7 @@ export function useDelayed<T extends (...args: any[]) => any>(
     f: T,
     delayMs: number,
 ): [(...funcArgs: Parameters<T>) => void, () => void] {
-    const timeoutID = useRef<number>(null)
+    const timeoutID = useRef<number | null>(null)
     return [
         (...args: Parameters<T>): void => {
             if (timeoutID.current) {

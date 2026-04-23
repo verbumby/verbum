@@ -23,7 +23,7 @@ export const { prefaceFetchSuccess, prefaceReset } = prefaceSlice.actions
 export const prefaceReducer = prefaceSlice.reducer
 
 export const prefaceFetch = (
-    params: Partial<MatchParams>,
+    params: MatchParams,
     urlSearch: URLSearch<typeof URLSearchDefaults>,
 ): AppThunkAction => {
     return async (dispatch, getState): Promise<void> => {
@@ -38,7 +38,7 @@ export const prefaceFetch = (
             }
 
             const { dictID } = params
-            dispatch(prefaceFetchKickOff(dictID))
+            dispatch(prefaceFetchKickOff())
             dispatch(prefaceFetchSuccess(await verbumClient.getPreface(dictID)))
         } catch (err) {
             dispatch(prefaceFetchFailure())

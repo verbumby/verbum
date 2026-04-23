@@ -17,7 +17,9 @@ export class URLSearch<Entries extends URLSearchEntries = {}> {
                 this.values[k as Extract<keyof Entries, string>] = v
             } else if (typeof dflt === 'number') {
                 const v = (
-                    init && init.has(k) ? parseInt(init.get(k)) : dflt
+                    init && init.has(k) && init.get(k) !== null
+                        ? parseInt(init.get(k) || '')
+                        : dflt
                 ) as Entries[Extract<keyof Entries, string>]
                 this.values[k as Extract<keyof Entries, string>] = v
             }
@@ -72,6 +74,8 @@ export class URLSearch<Entries extends URLSearchEntries = {}> {
                 v = this.values[k] as string
             } else if (typeof this.defaults[k] === 'number') {
                 v = `${this.values[k]}`
+            } else {
+                throw new Error(`unsupported type ${typeof this.defaults[k]}`)
             }
             pairs.push(`${encodeURIComponent(k)}=${encodeURIComponent(v)}`)
         }

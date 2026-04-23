@@ -129,7 +129,7 @@ export const IndexPage: React.FC = () => {
     const renderNoSearchResults = (): React.ReactNode => (
         <NoSearchResults
             q={q}
-            suggestions={searchState.searchResult.TermSuggestions}
+            suggestions={searchState.searchResult?.TermSuggestions || []}
             calculateSuggestionURL={(s) => ({
                 search: urlSearch.clone().set('q', s).encode(),
             })}

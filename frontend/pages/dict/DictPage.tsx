@@ -9,7 +9,7 @@ import { type MatchParams, useURLSearch } from './dict'
 import { PrefaceSection } from './PrefaceSection'
 
 export const DictPage: React.FC = ({}) => {
-    const params = useParams<MatchParams>()
+    const params = useParams() as MatchParams
     const urlSearch = useURLSearch()
 
     const [dict, dictIsAlias] = useDict(params.dictID)

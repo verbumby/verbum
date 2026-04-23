@@ -8,7 +8,7 @@ import { type MatchParams, useURLSearch } from './dict'
 import { prefaceFetch, prefaceReset } from './preface'
 
 export const PrefaceSection: FC = ({}) => {
-    const params = useParams<MatchParams>()
+    const params = useParams() as MatchParams
     const urlSearch = useURLSearch()
 
     const [dict, _] = useDictMust(params.dictID)

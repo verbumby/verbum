@@ -39,7 +39,7 @@ export const { dictArticlesFetchSuccess, dictArticlesReset } =
 export const dictArticlesReducer = dictArticlesSlice.reducer
 
 export const dictArticlesFetch = (
-    params: Partial<MatchParams>,
+    params: MatchParams,
     urlSearch: URLSearch<typeof URLSearchDefaults>,
 ): AppThunkAction => {
     return async (dispatch, getState): Promise<void> => {
@@ -77,4 +77,7 @@ export const dictArticlesFetch = (
     }
 }
 
-export const dictArticlesFetchServer = serverLoader(URLSearchDefaults, dictArticlesFetch)
+export const dictArticlesFetchServer = serverLoader(
+    URLSearchDefaults,
+    dictArticlesFetch,
+)
