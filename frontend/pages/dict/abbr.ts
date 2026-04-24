@@ -1,7 +1,7 @@
 import { createSlice, type PayloadAction } from '@reduxjs/toolkit'
 import type { Abbrevs } from '../../common/abbrevs'
 import { serverLoader } from '../../common/serverLoader'
-import { URLSearch } from '../../common/urlsearch'
+import type { URLSearch } from '../../common/urlsearch'
 import type { AppThunkAction } from '../../thunk'
 import { type MatchParams, URLSearchDefaults } from './dict'
 

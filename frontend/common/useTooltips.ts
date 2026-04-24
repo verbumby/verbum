@@ -3,7 +3,9 @@ import { useEffect, useRef, useState } from 'react'
 
 export function useTooltips<T extends HTMLElement>() {
     const el = useRef<T | null>(null)
-    const [bootstrapAPI, setBootstrapAPI] = useState<typeof Bootstrap | null>(null)
+    const [bootstrapAPI, setBootstrapAPI] = useState<typeof Bootstrap | null>(
+        null,
+    )
     useEffect(() => {
         import('bootstrap').then(setBootstrapAPI)
     }, [])

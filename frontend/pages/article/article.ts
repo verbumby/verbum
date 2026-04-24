@@ -1,7 +1,7 @@
 import { createSlice, type PayloadAction } from '@reduxjs/toolkit'
 import type { Article } from '../../common/article'
 import { serverLoader } from '../../common/serverLoader'
-import { URLSearch } from '../../common/urlsearch'
+import type { URLSearch } from '../../common/urlsearch'
 import type { AppThunkAction } from '../../thunk'
 
 export type ArticleState = {

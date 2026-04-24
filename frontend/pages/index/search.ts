@@ -2,7 +2,7 @@ import { createSlice, type PayloadAction } from '@reduxjs/toolkit'
 import { useURLSearch as useURLSearchCommon } from '../../common/hooks'
 import type { SearchResult } from '../../common/search'
 import { serverLoader } from '../../common/serverLoader'
-import { URLSearch } from '../../common/urlsearch'
+import type { URLSearch } from '../../common/urlsearch'
 import type { AppThunkAction } from '../../thunk'
 
 export type MatchParams = {
