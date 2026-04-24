@@ -1,67 +1,34 @@
-import { LetterFilter, URLSearch } from "../../common"
-import { AppThunkAction } from "../../store"
-import { MatchParams, URLSearchDefaults } from './dict'
+import { createSlice, type PayloadAction } from '@reduxjs/toolkit'
+import type { LetterFilter } from '../../common/letterfilter'
+import { serverLoader } from '../../common/serverLoader'
+import type { URLSearch } from '../../common/urlsearch'
+import type { AppThunkAction } from '../../thunk'
+import { type MatchParams, URLSearchDefaults } from './dict'
 
-export type LetterFilterState = LetterFilter
+export type LetterFilterState = LetterFilter | null
 
-const LETTER_FILTER_FETCH_KICKOFF = 'LETTER_FILTER/FETCH/KICKOFF'
-type LetterFilterFetchKickOffAction = {
-    type: typeof LETTER_FILTER_FETCH_KICKOFF
-    dictID: string
-    prefix: string
-}
-function letterFilterFetchKickOff(dictID: string, prefix: string): LetterFilterFetchKickOffAction {
-    return {
-        type: LETTER_FILTER_FETCH_KICKOFF,
-        dictID,
-        prefix,
-    }
-}
+const letterFilterSlice = createSlice({
+    name: 'letterFilter',
+    initialState: null as LetterFilterState,
+    reducers: {
+        letterFilterFetchKickOff: (state) => state,
+        letterFilterFetchSuccess: (_, action: PayloadAction<LetterFilter>) =>
+            action.payload,
+        letterFilterFetchFailure: (state) => state,
+        letterFilterReset: () => null,
+    },
+})
 
-const LETTER_FILTER_FETCH_SUCCESS = 'LETTER_FILTER/FETCH/SUCCESS'
-type LetterFilterFetchSuccessAction = {
-    type: typeof LETTER_FILTER_FETCH_SUCCESS
-    letterFilter: LetterFilter
-}
-function letterFilterFetchSuccess(letterFilter: LetterFilter): LetterFilterFetchSuccessAction {
-    return {
-        type: LETTER_FILTER_FETCH_SUCCESS,
-        letterFilter,
-    }
-}
+const { letterFilterFetchKickOff, letterFilterFetchFailure } =
+    letterFilterSlice.actions
+export const { letterFilterFetchSuccess, letterFilterReset } =
+    letterFilterSlice.actions
+export const letterFilterReducer = letterFilterSlice.reducer
 
-const LETTER_FILTER_FETCH_FAILURE = 'LETTER_FILTER/FETCH/FAILURE'
-type LetterFilterFetchFailureAction = {
-    type: typeof LETTER_FILTER_FETCH_FAILURE
-}
-function letterFilterFetchFailure(): LetterFilterFetchFailureAction {
-    return { type: LETTER_FILTER_FETCH_FAILURE }
-}
-
-const LETTER_FILTER_RESET = 'LETTER_FILTER/RESET'
-type LetterFilterResetAction = {
-    type: typeof LETTER_FILTER_RESET
-}
-export function letterFilterReset(): LetterFilterResetAction {
-    return { type: LETTER_FILTER_RESET }
-}
-
-export type LetterFilterActions = LetterFilterFetchKickOffAction | LetterFilterFetchSuccessAction | LetterFilterFetchFailureAction | LetterFilterResetAction
-
-export function letterFilterReducer(state: LetterFilterState = null, a: LetterFilterActions): LetterFilterState {
-    switch (a.type) {
-        case LETTER_FILTER_FETCH_KICKOFF:
-            return state
-        case LETTER_FILTER_FETCH_SUCCESS:
-            return a.letterFilter
-        case LETTER_FILTER_RESET:
-            return null
-        default:
-            return state
-    }
-}
-
-export const letterFilterFetch = (params: Partial<MatchParams>, urlSearch: URLSearch<typeof URLSearchDefaults>): AppThunkAction => {
+export const letterFilterFetch = (
+    params: MatchParams,
+    urlSearch: URLSearch<typeof URLSearchDefaults>,
+): AppThunkAction => {
     return async (dispatch, getState): Promise<void> => {
         try {
             if (urlSearch.get('section') !== '') {
@@ -71,14 +38,19 @@ export const letterFilterFetch = (params: Partial<MatchParams>, urlSearch: URLSe
             const { dictID } = params
             const prefix = urlSearch.get('prefix')
             const state = getState()
-            if (state.letterFilter
-                && state.letterFilter.DictID === dictID
-                && state.letterFilter.Prefix === prefix
+            if (
+                state.letterFilter &&
+                state.letterFilter.DictID === dictID &&
+                state.letterFilter.Prefix === prefix
             ) {
                 return
             }
-            dispatch(letterFilterFetchKickOff(dictID, prefix))
-            dispatch(letterFilterFetchSuccess(await verbumClient.getLetterFilter(dictID, prefix)))
+            dispatch(letterFilterFetchKickOff())
+            dispatch(
+                letterFilterFetchSuccess(
+                    await verbumClient.getLetterFilter(dictID, prefix),
+                ),
+            )
         } catch (err) {
             dispatch(letterFilterFetchFailure())
             console.log('ERROR: ', err)
@@ -87,5 +59,7 @@ export const letterFilterFetch = (params: Partial<MatchParams>, urlSearch: URLSe
     }
 }
 
-export const letterFilterFetchServer = (params: Partial<MatchParams>, urlSearchParams: URLSearchParams): AppThunkAction =>
-    letterFilterFetch(params, new URLSearch(URLSearchDefaults, urlSearchParams))
+export const letterFilterFetchServer = serverLoader(
+    URLSearchDefaults,
+    letterFilterFetch,
+)

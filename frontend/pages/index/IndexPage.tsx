@@ -1,13 +1,22 @@
-import * as React from 'react'
+import type * as React from 'react'
 import { useEffect } from 'react'
-import { NoSearchResults, NotFound, useDispatch } from '../../common'
+import { Helmet } from 'react-helmet'
 import { Link, useParams } from 'react-router'
-import { Helmet } from "react-helmet"
+import { ArticleView } from '../../common/ArticleView'
+import { useDispatch } from '../../common/hooks'
+import { NoSearchResults } from '../../common/NoSearchResults'
+import { NotFound } from '../../common/NotFound'
+import { PaginationView } from '../../common/PaginationView'
+import { SearchControl } from '../../common/SearchControl'
 
-import { useDictsInSection, useSearchState, useSection, useSections } from '../../store'
-import { search, searchReset, useURLSearch } from './search'
+import {
+    useDictsInSection,
+    useSearchState,
+    useSection,
+    useSections,
+} from '../../store'
 import { DictsList } from './DictsList'
-import { ArticleView, PaginationView, SearchControl } from '../../common'
+import { search, searchReset, useURLSearch } from './search'
 
 export const IndexPage: React.FC = () => {
     const params = useParams<{ sectionID?: string }>()
@@ -23,7 +32,9 @@ export const IndexPage: React.FC = () => {
     const dispatch = useDispatch()
     useEffect(() => {
         dispatch(search(params, urlSearch))
-        return () => { dispatch(searchReset()) }
+        return () => {
+            dispatch(searchReset())
+        }
     }, [sectionID, q, inDicts, page])
 
     const sections = useSections()
@@ -37,22 +48,28 @@ export const IndexPage: React.FC = () => {
     })
 
     const renderDictList = (): React.ReactNode => {
-        let title = "Verbum - Анлайнавы Слоўнік Беларускай Мовы"
+        let title = 'Verbum - Анлайнавы Слоўнік Беларускай Мовы'
         if (sectionID !== 'default') {
             title = `${section.Name} - ${title}`
         }
 
-        return <>
-            <Helmet>
-                <title>{title}</title>
-                <meta name="description" content={title} />
-                <meta property="og:title" content={title} />
-                <meta property="og:description" content={title} />
-                <meta name="robots" content="index, follow" />
-            </Helmet>
-            {section.Descr ? <p className='mx-1 mb-3'>{section.Descr}</p> : <></>}
-            <DictsList dictionaries={dicts} />
-        </>
+        return (
+            <>
+                <Helmet>
+                    <title>{title}</title>
+                    <meta name="description" content={title} />
+                    <meta property="og:title" content={title} />
+                    <meta property="og:description" content={title} />
+                    <meta name="robots" content="index, follow" />
+                </Helmet>
+                {section.Descr ? (
+                    <p className="mx-1 mb-3">{section.Descr}</p>
+                ) : (
+                    <></>
+                )}
+                <DictsList dictionaries={dicts} />
+            </>
+        )
     }
 
     const renderSearchResults = (): React.ReactNode => {
@@ -70,40 +87,54 @@ export const IndexPage: React.FC = () => {
                     <meta property="og:description" content={title} />
                     <meta name="robots" content="noindex, nofollow" />
                 </Helmet>
-                {searchState.searchResult && searchState.searchResult.Articles.length > 0 && (
-                    <> <div>{searchState.searchResult.Articles.map(
-                        hit => (
-                            <ArticleView
-                                key={`${hit.DictionaryID}-${hit.ID}`}
-                                a={hit}
-                                showExternalButton={true}
-                                showSource={true}
+                {searchState.searchResult &&
+                    searchState.searchResult.Articles.length > 0 && (
+                        <>
+                            {' '}
+                            <div>
+                                {searchState.searchResult.Articles.map(
+                                    (hit) => (
+                                        <ArticleView
+                                            key={`${hit.DictionaryID}-${hit.ID}`}
+                                            a={hit}
+                                            showExternalButton={true}
+                                            showSource={true}
+                                        />
+                                    ),
+                                )}
+                            </div>
+                            <PaginationView
+                                current={
+                                    searchState.searchResult.Pagination.Current
+                                }
+                                total={
+                                    searchState.searchResult.Pagination.Total
+                                }
+                                pageToURL={(p) => ({
+                                    search: urlSearch
+                                        .clone()
+                                        .set('page', p)
+                                        .encode(),
+                                })}
                             />
-                        )
+                        </>
                     )}
-                    </div>
-                        <PaginationView
-                            current={searchState.searchResult.Pagination.Current}
-                            total={searchState.searchResult.Pagination.Total}
-                            pageToURL={p => ({
-                                search: urlSearch
-                                    .clone()
-                                    .set("page", p)
-                                    .encode()
-                            })}
-                        />
-                    </>
-                )}
-                {searchState.searchResult
-                    && searchState.searchResult.Articles.length == 0
-                    && renderNoSearchResults()
-                }
+                {searchState.searchResult &&
+                    searchState.searchResult.Articles.length == 0 &&
+                    renderNoSearchResults()}
             </>
         )
     }
 
-    const renderNoSearchResults = (): React.ReactNode => <NoSearchResults q={q} suggestions={searchState.searchResult.TermSuggestions}
-        calculateSuggestionURL={(s) => ({ search: urlSearch.clone().set('q', s).encode() })} />
+    const renderNoSearchResults = (): React.ReactNode => (
+        <NoSearchResults
+            q={q}
+            suggestions={searchState.searchResult?.TermSuggestions || []}
+            calculateSuggestionURL={(s) => ({
+                search: urlSearch.clone().set('q', s).encode(),
+            })}
+        />
+    )
 
     return (
         <div>
@@ -112,8 +143,8 @@ export const IndexPage: React.FC = () => {
                 urlQ={q}
                 urlIn={inDicts}
                 filterEnabled
-                calculateSearchURL={
-                    (q, inDicts) => urlSearch
+                calculateSearchURL={(q, inDicts) =>
+                    urlSearch
                         .clone()
                         .set('q', q)
                         .set('in', inDicts)
@@ -121,15 +152,28 @@ export const IndexPage: React.FC = () => {
                         .encode()
                 }
             />
-            <ul className='nav nav-sections nav-underline mx-1 mb-1'>
-                {sections.map((s, i) => <li className="nav-item" key={s.ID}>
-                    <Link
-                        className={`nav-link ${sectionID === s.ID ? 'active' : ''}`}
-                        to={{
-                            pathname: s.ID === 'default' ? '/' : `/s/${s.ID}`,
-                            search: sectionID === s.ID ? '' : urlSearch.clone().reset('in').reset('page').encode(),
-                        }}>{s.Name}</Link>
-                </li>)}
+            <ul className="nav nav-sections nav-underline mx-1 mb-1">
+                {sections.map((s, i) => (
+                    <li className="nav-item" key={s.ID}>
+                        <Link
+                            className={`nav-link ${sectionID === s.ID ? 'active' : ''}`}
+                            to={{
+                                pathname:
+                                    s.ID === 'default' ? '/' : `/s/${s.ID}`,
+                                search:
+                                    sectionID === s.ID
+                                        ? ''
+                                        : urlSearch
+                                              .clone()
+                                              .reset('in')
+                                              .reset('page')
+                                              .encode(),
+                            }}
+                        >
+                            {s.Name}
+                        </Link>
+                    </li>
+                ))}
             </ul>
             {!q ? renderDictList() : renderSearchResults()}
         </div>

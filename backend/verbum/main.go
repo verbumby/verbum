@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"fmt"
+	"io"
 	"log"
 	"net/http"
 	"net/http/httputil"
@@ -140,13 +141,13 @@ func bootstrapServer(cmd *cobra.Command, args []string) error {
 		}
 	}()
 
-	node := exec.Command("node", "-")
-	serverJS, err := frontend.Dist.Open("dist/server.js")
+	serverJSPath, err := unpackServerJS()
 	if err != nil {
-		return fmt.Errorf("open server.js: %w", err)
+		return fmt.Errorf("unpack server.js: %w", err)
 	}
-	defer serverJS.Close()
-	node.Stdin = serverJS
+	defer os.Remove(serverJSPath)
+
+	node := exec.Command("node", "--enable-source-maps", serverJSPath)
 	node.Stdout = os.Stdout
 	node.Stderr = os.Stderr
 	if err := node.Start(); err != nil {
@@ -177,4 +178,24 @@ func bootstrapServer(cmd *cobra.Command, args []string) error {
 	log.Println("see ya!")
 
 	return nil
+}
+
+func unpackServerJS() (string, error) {
+	tmpFile, err := os.CreateTemp("", "server-*.js")
+	if err != nil {
+		return "", fmt.Errorf("create server.js tmp file: %w", err)
+	}
+	defer tmpFile.Close()
+
+	serverJS, err := frontend.Dist.Open("dist/server.js")
+	if err != nil {
+		return "", fmt.Errorf("open server.js: %w", err)
+	}
+	defer serverJS.Close()
+
+	if _, err := io.Copy(tmpFile, serverJS); err != nil {
+		return "", fmt.Errorf("write to temp file: %w", err)
+	}
+
+	return tmpFile.Name(), nil
 }

@@ -1,4 +1,11 @@
-import { Abbrevs, Article, ArticleList, DictsMetadata, LetterFilter, SearchResult, Suggestion } from '../common'
+import type { Abbrevs } from '../common/abbrevs'
+import type { Article, ArticleList } from '../common/article'
+import type { DictsMetadata } from '../common/dicts'
+import type { LetterFilter } from '../common/letterfilter'
+import type { SearchResult } from '../common/search'
+import type { Suggestion } from '../common/suggestion'
+
+export class NotFoundError extends Error {}
 
 export interface VerbumAPIClient {
     getPreface(dictID: string): Promise<string>
@@ -7,9 +14,14 @@ export interface VerbumAPIClient {
     getDictionaries(): Promise<DictsMetadata>
     search(q: string, inDicts: string, page: number): Promise<SearchResult>
     suggest(q: string, inDicts: string): Promise<Suggestion[]>
-    getArticle(dictID: string, articleID: string): Promise<Article>
+    getArticle(dictID: string, articleID: string): Promise<Article | null>
     getLetterFilter(dictID: string, prefix: string): Promise<LetterFilter>
-    getDictArticles(dictID: string, q: string, prefix: string, page: number): Promise<ArticleList>
+    getDictArticles(
+        dictID: string,
+        q: string,
+        prefix: string,
+        page: number,
+    ): Promise<ArticleList>
     getIndexHTML(): Promise<string>
 }
 
@@ -18,7 +30,7 @@ declare global {
 }
 
 export abstract class VerbumAPIClientImpl implements VerbumAPIClient {
-    protected signal: AbortSignal;
+    protected signal: AbortSignal | undefined
 
     withSignal(signal: AbortSignal): this {
         const result = Object.create(this) as this
@@ -33,10 +45,16 @@ export abstract class VerbumAPIClientImpl implements VerbumAPIClient {
         return this.call<DictsMetadata>('/api/dictionaries')
     }
 
-    async search(q: string, inDicts: string, page: number): Promise<SearchResult> {
+    async search(
+        q: string,
+        inDicts: string,
+        page: number,
+    ): Promise<SearchResult> {
         q = encodeURIComponent(q)
         inDicts = encodeURIComponent(inDicts)
-        return this.call<SearchResult>(`/api/search?q=${q}&in=${inDicts}&page=${page}`)
+        return this.call<SearchResult>(
+            `/api/search?q=${q}&in=${inDicts}&page=${page}`,
+        )
     }
 
     async suggest(q: string, inDicts: string): Promise<Suggestion[]> {
@@ -45,23 +63,47 @@ export abstract class VerbumAPIClientImpl implements VerbumAPIClient {
         return this.call<Suggestion[]>(`/api/suggest?q=${q}&in=${inDicts}`)
     }
 
-    async getArticle(dictID: string, articleID: string): Promise<Article> {
+    async getArticle(
+        dictID: string,
+        articleID: string,
+    ): Promise<Article | null> {
         dictID = encodeURIComponent(dictID)
         articleID = encodeURIComponent(articleID)
-        return this.call<Article>(`/api/dictionaries/${dictID}/articles/${articleID}`)
+        try {
+            return await this.call<Article>(
+                `/api/dictionaries/${dictID}/articles/${articleID}`,
+            )
+        } catch (e) {
+            if (e instanceof NotFoundError) {
+                return null
+            }
+            throw e
+        }
     }
 
-    async getLetterFilter(dictID: string, prefix: string): Promise<LetterFilter> {
+    async getLetterFilter(
+        dictID: string,
+        prefix: string,
+    ): Promise<LetterFilter> {
         dictID = encodeURIComponent(dictID)
         prefix = encodeURIComponent(prefix)
-        return this.call<LetterFilter>(`/api/dictionaries/${dictID}/letterfilter?prefix=${prefix}`)
+        return this.call<LetterFilter>(
+            `/api/dictionaries/${dictID}/letterfilter?prefix=${prefix}`,
+        )
     }
 
-    async getDictArticles(dictID: string, q: string, prefix: string, page: number): Promise<ArticleList> {
+    async getDictArticles(
+        dictID: string,
+        q: string,
+        prefix: string,
+        page: number,
+    ): Promise<ArticleList> {
         dictID = encodeURIComponent(dictID)
         q = encodeURIComponent(q)
         prefix = encodeURIComponent(prefix)
-        return this.call<ArticleList>(`/api/search?q=${q}&in=${dictID}&prefix=${prefix}&page=${page}&track_total_hits=true`)
+        return this.call<ArticleList>(
+            `/api/search?q=${q}&in=${dictID}&prefix=${prefix}&page=${page}&track_total_hits=true`,
+        )
     }
 
     async getAbbr(dictID: string): Promise<Abbrevs> {

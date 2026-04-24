@@ -1,5 +1,5 @@
-import { Article } from '.'
-import { Pagination } from './pagination'
+import type { Article } from './article'
+import type { Pagination } from './pagination'
 
 export type SearchResult = {
     Articles: Article[]

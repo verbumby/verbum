@@ -1,4 +1,4 @@
-import { Pagination } from "./"
+import type { Pagination } from './pagination'
 
 export type Article = {
     ID: string

@@ -1,28 +1,21 @@
+import { createSlice, type PayloadAction } from '@reduxjs/toolkit'
 
 export type Section = {
-    ID: string,
-    Name: string,
-    DictIDs: string[],
-    Descr: string,
+    ID: string
+    Name: string
+    DictIDs: string[]
+    Descr: string
 }
 
-const SECTIONS_SET = 'SECTIONS/SET'
-type SectionsSetAction = {
-    type: typeof SECTIONS_SET
-    sections: Section[]
-}
+const sectionsSlice = createSlice({
+    name: 'sections',
+    initialState: [] as Section[],
+    reducers: {
+        sectionsSet: (_, action: PayloadAction<Section[]>) => [
+            ...action.payload,
+        ],
+    },
+})
 
-export function sectionsSet(sections: Section[]): SectionsSetAction {
-    return { type: SECTIONS_SET, sections }
-}
-
-export type SectionsActions = SectionsSetAction
-
-export function sectionsReducer(state: Section[] = [], a: SectionsActions): Section[] {
-    switch (a.type) {
-        case SECTIONS_SET:
-            return [...a.sections]
-        default:
-            return state
-    }
-}
+export const { sectionsSet } = sectionsSlice.actions
+export const sectionsReducer = sectionsSlice.reducer

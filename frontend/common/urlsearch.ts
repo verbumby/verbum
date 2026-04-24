@@ -1,7 +1,6 @@
-export type URLSearchEntries = Record<string, string|number>
+export type URLSearchEntries = Record<string, string | number>
 
 export class URLSearch<Entries extends URLSearchEntries = {}> {
-
     private defaults: Entries
 
     private values: Entries
@@ -12,10 +11,16 @@ export class URLSearch<Entries extends URLSearchEntries = {}> {
 
         for (const [k, dflt] of Object.entries(defaults)) {
             if (typeof dflt === 'string') {
-                const v = (init && init.has(k) ? init.get(k) : dflt) as Entries[Extract<keyof Entries, string>]
+                const v = (
+                    init && init.has(k) ? init.get(k) : dflt
+                ) as Entries[Extract<keyof Entries, string>]
                 this.values[k as Extract<keyof Entries, string>] = v
             } else if (typeof dflt === 'number') {
-                const v = (init && init.has(k) ? parseInt(init.get(k)) : dflt) as Entries[Extract<keyof Entries, string>]
+                const v = (
+                    init && init.has(k) && init.get(k) !== null
+                        ? parseInt(init.get(k) || '')
+                        : dflt
+                ) as Entries[Extract<keyof Entries, string>]
                 this.values[k as Extract<keyof Entries, string>] = v
             }
         }
@@ -53,7 +58,7 @@ export class URLSearch<Entries extends URLSearchEntries = {}> {
 
     clone(): URLSearch<Entries> {
         const result: URLSearch<Entries> = new URLSearch<Entries>(this.defaults)
-        result.values = {...this.values}
+        result.values = { ...this.values }
         return result
     }
 
@@ -69,6 +74,8 @@ export class URLSearch<Entries extends URLSearchEntries = {}> {
                 v = this.values[k] as string
             } else if (typeof this.defaults[k] === 'number') {
                 v = `${this.values[k]}`
+            } else {
+                throw new Error(`unsupported type ${typeof this.defaults[k]}`)
             }
             pairs.push(`${encodeURIComponent(k)}=${encodeURIComponent(v)}`)
         }

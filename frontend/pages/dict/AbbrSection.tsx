@@ -1,18 +1,18 @@
 import * as React from 'react'
-import { FC, useEffect } from 'react'
+import { type FC, useEffect } from 'react'
 import { Helmet } from 'react-helmet'
-import { useDispatch } from '../../common'
-import { useAbbr, useDict } from '../../store'
-import { abbrFetch, abbrReset } from './abbr'
-import { MatchParams, useURLSearch } from './dict'
 import { useParams } from 'react-router'
+import { useDispatch } from '../../common/hooks'
+import { useAbbr, useDictMust } from '../../store'
+import { abbrFetch, abbrReset } from './abbr'
+import { type MatchParams, useURLSearch } from './dict'
 
 export const AbbrSection: FC = ({}) => {
-    const params = useParams<MatchParams>()
+    const params = useParams() as MatchParams
     const urlSearch = useURLSearch()
 
-    const [dict] = useDict(params.dictID)
-	const title = `Скарачэнні - ${dict.Title}`
+    const [dict, _] = useDictMust(params.dictID)
+    const title = `Скарачэнні - ${dict.Title}`
 
     const abbr = useAbbr()
     const dispatch = useDispatch()
@@ -20,7 +20,12 @@ export const AbbrSection: FC = ({}) => {
     useEffect(() => {
         dispatch(abbrFetch(params, urlSearch))
     }, [params.dictID])
-    useEffect(() => () => { dispatch(abbrReset()) }, [])
+    useEffect(
+        () => () => {
+            dispatch(abbrReset())
+        },
+        [],
+    )
 
     if (!abbr) {
         return <></>
@@ -35,13 +40,18 @@ export const AbbrSection: FC = ({}) => {
                 <meta property="og:description" content={title} />
                 <meta name="robots" content="index, follow" />
             </Helmet>
-            <div className='mx-1 mb-3'>
+            <div className="mx-1 mb-3">
                 <h4>{dict.Title}</h4>
-				<h5>Скарачэнні</h5>
-				<ul>
-					{abbr.map(a => <li>{a.Keys.join(", ")} → <span className='text-secondary'>{a.Value}</span></li>)}
-				</ul>
+                <h5>Скарачэнні</h5>
+                <ul>
+                    {abbr.map((a) => (
+                        <li>
+                            {a.Keys.join(', ')} →{' '}
+                            <span className="text-secondary">{a.Value}</span>
+                        </li>
+                    ))}
+                </ul>
             </div>
-		</>
-	)
+        </>
+    )
 }

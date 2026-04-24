@@ -1,5 +1,5 @@
-import * as React from 'react'
-import { Link, To } from 'react-router'
+import type * as React from 'react'
+import { Link, type To } from 'react-router'
 
 type PaginationProps = {
     current: number
@@ -15,7 +15,11 @@ type PageLink = {
     Text: string
 }
 
-export const PaginationView: React.FC<PaginationProps> = ({ current, total, pageToURL }) => {
+export const PaginationView: React.FC<PaginationProps> = ({
+    current,
+    total,
+    pageToURL,
+}) => {
     const links: PageLink[] = []
 
     const d = 3
@@ -90,11 +94,16 @@ export const PaginationView: React.FC<PaginationProps> = ({ current, total, page
     return (
         <>
             <p />
-            <nav aria-label="pagination" >
+            <nav aria-label="pagination">
                 <ul className="pagination justify-content-center">
-                    {links.map(l => (
-                        <li key={l.Key} className={`page-item ${l.Active ? 'active' : ''} ${l.Disabled ? 'disabled' : ''}`}>
-                            <Link className="page-link" to={l.URL}>{l.Text}</Link>
+                    {links.map((l) => (
+                        <li
+                            key={l.Key}
+                            className={`page-item ${l.Active ? 'active' : ''} ${l.Disabled ? 'disabled' : ''}`}
+                        >
+                            <Link className="page-link" to={l.URL}>
+                                {l.Text}
+                            </Link>
                         </li>
                     ))}
                 </ul>

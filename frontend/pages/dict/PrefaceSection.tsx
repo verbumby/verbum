@@ -1,18 +1,18 @@
 import * as React from 'react'
-import { FC, useEffect } from 'react'
+import { type FC, useEffect } from 'react'
 import { Helmet } from 'react-helmet'
-import { useDispatch } from '../../common'
-import { usePreface, useDict } from '../../store'
-import { prefaceFetch, prefaceReset } from './preface'
-import { MatchParams, useURLSearch } from './dict'
 import { useParams } from 'react-router'
+import { useDispatch } from '../../common/hooks'
+import { useDictMust, usePreface } from '../../store'
+import { type MatchParams, useURLSearch } from './dict'
+import { prefaceFetch, prefaceReset } from './preface'
 
 export const PrefaceSection: FC = ({}) => {
-    const params = useParams<MatchParams>()
+    const params = useParams() as MatchParams
     const urlSearch = useURLSearch()
 
-    const [dict] = useDict(params.dictID)
-	const title = `Прадмова - ${dict.Title}`
+    const [dict, _] = useDictMust(params.dictID)
+    const title = `Прадмова - ${dict.Title}`
 
     const preface = usePreface()
     const dispatch = useDispatch()
@@ -20,7 +20,12 @@ export const PrefaceSection: FC = ({}) => {
     useEffect(() => {
         dispatch(prefaceFetch(params, urlSearch))
     }, [params.dictID])
-    useEffect(() => () => { dispatch(prefaceReset()) }, [])
+    useEffect(
+        () => () => {
+            dispatch(prefaceReset())
+        },
+        [],
+    )
 
     if (!preface) {
         return <></>
@@ -35,9 +40,9 @@ export const PrefaceSection: FC = ({}) => {
                 <meta property="og:description" content={title} />
                 <meta name="robots" content="index, follow" />
             </Helmet>
-            <div className='mx-1 mb-3'>
-				<div dangerouslySetInnerHTML={{ __html: preface }} />
+            <div className="mx-1 mb-3">
+                <div dangerouslySetInnerHTML={{ __html: preface }} />
             </div>
-		</>
-	)
+        </>
+    )
 }

@@ -1,17 +1,19 @@
-import { combineReducers } from 'redux'
 import { useSelector as useSelectorParent } from 'react-redux'
-import { SearchActions, SearchState, searchReducer } from './pages/index/index'
-import { Dict, Article, DictsActions, dictsReducer, sectionsReducer, SectionsActions, Section } from './common'
-import { ThunkAction } from '@reduxjs/toolkit'
-import { ArticleState, ArticleActions, articleReducer } from './pages/article'
-import { DictArticlesState, DictArticlesActions, dictArticlesReducer,
-    LetterFilterState, LetterFilterActions, letterFilterReducer,
-    AbbrActions, AbbrState, abbrReducer,
-    PrefaceActions, PrefaceState, prefaceReducer
-} from './pages/dict'
 import { loadingBarReducer } from 'react-redux-loading-bar'
-
-type AllActions = DictsActions | SectionsActions | SearchActions | ArticleActions | LetterFilterActions | DictArticlesActions | AbbrActions | PrefaceActions
+import { combineReducers } from 'redux'
+import type { Article } from './common/article'
+import type { Dict } from './common/dict'
+import { dictsReducer } from './common/dicts'
+import { type Section, sectionsReducer } from './common/sections'
+import { type ArticleState, articleReducer } from './pages/article/article'
+import { type AbbrState, abbrReducer } from './pages/dict/abbr'
+import { type DictArticlesState, dictArticlesReducer } from './pages/dict/dict'
+import {
+    type LetterFilterState,
+    letterFilterReducer,
+} from './pages/dict/letterfilter'
+import { type PrefaceState, prefaceReducer } from './pages/dict/preface'
+import { type SearchState, searchReducer } from './pages/index/search'
 
 export const rootReducer = combineReducers({
     dicts: dictsReducer,
@@ -29,67 +31,80 @@ export type RootState = ReturnType<typeof rootReducer>
 
 export function useSelector<TSelected = unknown>(
     selector: (state: RootState) => TSelected,
-    equalityFn?: (left: TSelected, right: TSelected) => boolean
+    equalityFn?: (left: TSelected, right: TSelected) => boolean,
 ): TSelected {
-    return useSelectorParent<RootState,TSelected>(selector, equalityFn)
+    return useSelectorParent<RootState, TSelected>(selector, equalityFn)
 }
 
 export function useDicts(): Dict[] {
-    return useSelector<Dict[]>(state => state.dicts)
+    return useSelector<Dict[]>((state) => state.dicts)
 }
 
 export function useDictsInSection(sectionID: string): Dict[] {
     const section = useSection(sectionID)
     const dicts = useDicts()
-    return section.DictIDs.map(dictID => dicts.find(d => d.ID == dictID))
+    if (!section) {
+        return []
+    }
+    return section.DictIDs.map((dictID) =>
+        dicts.find((d) => d.ID == dictID),
+    ).filter((d) => d !== undefined)
 }
 
-export function useDict(id: string): [Dict, boolean] {
-    let d = useDicts().find(d => d.ID === id)
+export function useDict(id: string): [Dict | null, boolean] {
+    let d = useDicts().find((d) => d.ID === id)
     if (d) {
         return [d, false]
     }
-    d = useDicts().find(d => d.Aliases && d.Aliases.includes(id))
+    d = useDicts().find((d) => d.Aliases && d.Aliases.includes(id))
     if (d) {
         return [d, true]
     }
     return [null, false]
 }
 
+export function useDictMust(id: string): [Dict, boolean] {
+    const [d, isAlias] = useDict(id)
+    if (d === null) {
+        throw new Error(`dict ${id} not known`)
+    }
+    return [d, isAlias]
+}
+
 export function useSections(): Section[] {
-    return useSelector<Section[]>(state => state.sections)
+    return useSelector<Section[]>((state) => state.sections)
 }
 
 export function useSection(id: string): Section | undefined {
-    return useSections().find(s => s.ID === id)
+    return useSections().find((s) => s.ID === id)
 }
 
 export function useSearchState(): SearchState {
-    return useSelector<SearchState>(state => state.search)
+    return useSelector<SearchState>((state) => state.search)
 }
 
 export function useArticleState(): ArticleState {
-    return useSelector<ArticleState>(state => state.article)
+    return useSelector<ArticleState>((state) => state.article)
 }
 
-export function useArticle(): Article {
+export function useArticle() {
     return useArticleState().a
 }
 
 export function useLetterFilter(): LetterFilterState {
-    return useSelector<LetterFilterState>(state => state.letterFilter)
+    return useSelector<LetterFilterState>((state) => state.letterFilter)
 }
 
-export function useDictArticles(): DictArticlesState {
-    return useSelector<DictArticlesState>(state => state.dictArticles)
+export function useDictArticles(): DictArticlesState | null {
+    return useSelector<DictArticlesState | null>((state) => state.dictArticles)
 }
 
 export function useAbbr(): AbbrState {
-    return useSelector<AbbrState>(state => state.abbr)
+    return useSelector<AbbrState>((state) => state.abbr)
 }
 
 export function usePreface(): PrefaceState {
-    return useSelector<PrefaceState>(state => state.preface)
+    return useSelector<PrefaceState>((state) => state.preface)
 }
 
-export type AppThunkAction<ReturnType = void> = ThunkAction<Promise<ReturnType>, RootState, unknown, AllActions>
+export type { AppThunkAction } from './thunk'
