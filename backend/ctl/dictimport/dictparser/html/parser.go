@@ -47,6 +47,13 @@ func ParseReader(r io.Reader, settings dictionary.IndexSettings) (chan dictparse
 			articlesCh <- a
 		}
 
+		if err := sc.Err(); err != nil {
+			close(articlesCh)
+			errCh <- fmt.Errorf("scan: %w", err)
+			close(errCh)
+			return
+		}
+
 		close(articlesCh)
 		close(errCh)
 	}()
