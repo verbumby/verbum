@@ -6,8 +6,8 @@ jobs:
   build-frontend:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v3
-    - uses: actions/setup-node@v3
+    - uses: actions/checkout@v4
+    - uses: actions/setup-node@v4
       with:
         node-version: 25
     - run: npm ci
@@ -24,8 +24,8 @@ jobs:
     needs:
     - build-frontend
     steps:
-    - uses: actions/checkout@v3
-    - uses: actions/setup-go@v3
+    - uses: actions/checkout@v4
+    - uses: actions/setup-go@v5
       with:
         go-version: '1.25'
     - uses: actions/download-artifact@v4
@@ -47,7 +47,7 @@ jobs:
     - build-backend
     - build-frontend
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v4
     - uses: actions/download-artifact@v4
       with:
         name: binaries
@@ -68,7 +68,7 @@ jobs:
     needs: package
     environment: prod
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
     - uses: actions/download-artifact@v4
       with:
         name: verbum.deb
