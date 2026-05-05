@@ -6,14 +6,14 @@ jobs:
   build-frontend:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v4
-    - uses: actions/setup-node@v4
+    - uses: actions/checkout@v6
+    - uses: actions/setup-node@v6
       with:
         node-version: 25
     - run: npm ci
     - run: make fe-lint
     - run: make fe-build
-    - uses: actions/upload-artifact@v4
+    - uses: actions/upload-artifact@v7
       with:
         name: frontend-bundle
         path: frontend/dist/
@@ -24,17 +24,17 @@ jobs:
     needs:
     - build-frontend
     steps:
-    - uses: actions/checkout@v4
-    - uses: actions/setup-go@v5
+    - uses: actions/checkout@v6
+    - uses: actions/setup-go@v6
       with:
         go-version: '1.25'
-    - uses: actions/download-artifact@v4
+    - uses: actions/download-artifact@v8
       with:
         name: frontend-bundle
         path: frontend/dist/
     - run: go test -v ./...
     - run: make build-ci
-    - uses: actions/upload-artifact@v4
+    - uses: actions/upload-artifact@v7
       with:
         name: binaries
         path: |
@@ -47,16 +47,16 @@ jobs:
     - build-backend
     - build-frontend
     steps:
-    - uses: actions/checkout@v4
-    - uses: actions/download-artifact@v4
+    - uses: actions/checkout@v6
+    - uses: actions/download-artifact@v8
       with:
         name: binaries
-    - uses: actions/download-artifact@v4
+    - uses: actions/download-artifact@v8
       with:
         name: frontend-bundle
         path: frontend/dist/
     - run: deploy/deb.bash
-    - uses: actions/upload-artifact@v4
+    - uses: actions/upload-artifact@v7
       with:
         name: verbum.deb
         path: deploy/verbum.deb
@@ -68,8 +68,8 @@ jobs:
     needs: package
     environment: prod
     steps:
-    - uses: actions/checkout@v4
-    - uses: actions/download-artifact@v4
+    - uses: actions/checkout@v6
+    - uses: actions/download-artifact@v8
       with:
         name: verbum.deb
         path: deploy/
