@@ -40,8 +40,7 @@ export const NoSearchResults: React.FC<NoSearchResultsProps> = ({
             )}
             <p>
                 Каб шукаць паводле пачатковай часткі слова, трэба дадаць зорачку
-                ў канцы слова:{' '}
-                <Link to={calculateSuggestionURL('зорн*')}>зорн*</Link>
+                ў канцы: <Link to={calculateSuggestionURL('зорн*')}>зорн*</Link>
             </p>
         </div>
     )
