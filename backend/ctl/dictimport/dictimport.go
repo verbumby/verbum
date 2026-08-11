@@ -9,6 +9,7 @@ import (
 	"regexp"
 	"strconv"
 	"strings"
+	"unicode/utf8"
 
 	"github.com/spf13/cobra"
 	"github.com/verbumby/verbum/backend/config"
@@ -227,11 +228,11 @@ func (c *commandController) indexArticles(articlesCh chan dictparser.Article) er
 		prefixes := []map[string]string{}
 
 		hwl := []struct {
-			weight int
-			list   []string
+			baseWeight int
+			list       []string
 		}{
-			{weight: 2, list: a.HeadwordsAlt},
-			{weight: 4, list: a.Headwords},
+			{baseWeight: 2000, list: a.HeadwordsAlt},
+			{baseWeight: 4000, list: a.Headwords},
 		}
 
 		for _, hws := range hwl {
@@ -239,7 +240,10 @@ func (c *commandController) indexArticles(articlesCh chan dictparser.Article) er
 				if c.dict.IndexSettings().LowercaseSuggestions {
 					hw = strings.ToLower(hw)
 				}
-				s := map[string]any{"input": hw, "weight": hws.weight}
+				// subtract the headword length so that shorter headwords
+				// come first among the suggestions of the same class
+				weight := max(hws.baseWeight-utf8.RuneCountInString(hw), 1)
+				s := map[string]any{"input": hw, "weight": weight}
 
 				if err := buffsuggjenc.Encode(map[string]any{"create": map[string]any{}}); err != nil {
 					return fmt.Errorf("encode bulk insert meta for hw %s: %w", hw, err)
@@ -320,6 +324,9 @@ func (c *commandController) indexArticles(articlesCh chan dictparser.Article) er
 
 	if err := c.flushBuffer(buff); err != nil {
 		return fmt.Errorf("flush buffer: %w", err)
+	}
+	if err := c.flushSuggBuffer(buffsugg); err != nil {
+		return fmt.Errorf("flush sugg buffer: %w", err)
 	}
 
 	return nil
