@@ -5,6 +5,7 @@ import { type To, useNavigate } from 'react-router'
 import { IconBackspace } from '../icons/IconBackspace'
 import { IconSearch } from '../icons/IconSearch'
 import type { Dict } from './dict'
+import { hasPhysicalKeyboard } from './device'
 import { useDictsFilter } from './dictsfilter'
 import { useDelayed, useDispatch } from './hooks'
 import { Suggestions } from './Suggestions'
@@ -58,8 +59,10 @@ export const SearchControl: React.FC<SearchControlProps> = ({
             return
         }
         if (urlQJustChanged.current) {
-            qEl.current.focus()
-            qEl.current.setSelectionRange(0, qEl.current.value.length)
+            if (hasPhysicalKeyboard()) {
+                qEl.current.focus()
+                qEl.current.setSelectionRange(0, qEl.current.value.length)
+            }
             urlQJustChanged.current = false
         }
     }, [q, urlQJustChanged.current])
