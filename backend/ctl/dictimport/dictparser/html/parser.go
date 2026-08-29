@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"html"
 	"io"
+	"os"
 	"regexp"
 	"strings"
 
@@ -13,6 +14,44 @@ import (
 	"github.com/verbumby/verbum/backend/textutil"
 	"golang.org/x/text/unicode/norm"
 )
+
+// ParseFiles parses a dictionary that is split across several files (each
+// one self-contained, with its own leading styles block) and streams their
+// articles, in filename order, as if they were one dictionary.
+func ParseFiles(filenames []string, settings dictionary.IndexSettings) (chan dictparser.Article, chan error) {
+	articlesCh := make(chan dictparser.Article, 64)
+	errCh := make(chan error)
+
+	go func() {
+		for _, filename := range filenames {
+			file, err := os.Open(filename)
+			if err != nil {
+				close(articlesCh)
+				errCh <- fmt.Errorf("open %s: %w", filename, err)
+				close(errCh)
+				return
+			}
+
+			fileArticlesCh, fileErrCh := ParseReader(file, settings)
+			for a := range fileArticlesCh {
+				articlesCh <- a
+			}
+			err = <-fileErrCh
+			file.Close()
+			if err != nil {
+				close(articlesCh)
+				errCh <- fmt.Errorf("parse %s: %w", filename, err)
+				close(errCh)
+				return
+			}
+		}
+
+		close(articlesCh)
+		close(errCh)
+	}()
+
+	return articlesCh, errCh
+}
 
 func ParseReader(r io.Reader, settings dictionary.IndexSettings) (chan dictparser.Article, chan error) {
 	articlesCh := make(chan dictparser.Article, 64)
