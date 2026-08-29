@@ -7,6 +7,7 @@ import (
 	"log"
 	"os"
 	"regexp"
+	"sort"
 	"strconv"
 	"strings"
 	"unicode/utf8"
@@ -58,25 +59,38 @@ func (c *commandController) Run(cmd *cobra.Command, args []string) {
 	}
 }
 
-func (c *commandController) getFilename() (string, error) {
+// getFilenames returns the source file(s) of a dictionary to be imported.
+// A dictionary's content is normally a single file named "<dictID>.<ext>",
+// but it may also be split into several files named "<dictID>-<suffix>.<ext>"
+// (e.g. belen-1-10.html and belen-11-18.html), which are then imported in
+// filename order.
+func (c *commandController) getFilenames() ([]string, error) {
 	dir := config.DictsRepoPath() + "/" + c.dictID
 
 	if c.dictID == "grammardb" {
-		return dir, nil
+		return []string{dir}, nil
 	}
 
 	files, err := os.ReadDir(dir)
 	if err != nil {
-		return "", fmt.Errorf("read %s: %w", dir, err)
+		return nil, fmt.Errorf("read %s: %w", dir, err)
 	}
 
+	filenames := []string{}
 	for _, f := range files {
-		if strings.HasPrefix(f.Name(), c.dictID+".") {
-			return dir + "/" + f.Name(), nil
+		name := f.Name()
+		if strings.HasPrefix(name, c.dictID+".") || strings.HasPrefix(name, c.dictID+"-") {
+			filenames = append(filenames, dir+"/"+name)
 		}
 	}
 
-	return "", fmt.Errorf("couldn't find the file of %s dictionary", c.dictID)
+	if len(filenames) == 0 {
+		return nil, fmt.Errorf("couldn't find the file(s) of %s dictionary", c.dictID)
+	}
+
+	sort.Strings(filenames)
+
+	return filenames, nil
 }
 
 var reIndexSuffix = regexp.MustCompile(`^dict-(?:.+?)(?:-(\d*))?$`)
@@ -128,41 +142,41 @@ func (c *commandController) run() error {
 	}
 	log.Printf("indexing into %s", c.indexID)
 
-	filename, err := c.getFilename()
+	filenames, err := c.getFilenames()
 	if err != nil {
 		return err
 	}
-	log.Println("processing ", filename)
+	log.Println("processing ", filenames)
 
 	var articlesCh chan dictparser.Article
 	var errCh chan error
 
 	switch c.dict.(type) {
 	case dictionary.GrammarDB:
-		articlesCh, errCh = grammardb.ParseDirectory(filename)
+		articlesCh, errCh = grammardb.ParseDirectory(filenames[0])
 
 	case dictionary.DSL:
-		file, err := os.Open(filename)
+		if len(filenames) != 1 {
+			return fmt.Errorf("expected exactly one file for dsl dict %s, got %v", c.dictID, filenames)
+		}
+		file, err := os.Open(filenames[0])
 		if err != nil {
-			return fmt.Errorf("open %s", filename)
+			return fmt.Errorf("open %s", filenames[0])
 		}
 		defer file.Close()
 
 		articlesCh, errCh = dsl.ParseReader(file)
 
 	case dictionary.HTML:
-		file, err := os.Open(filename)
-		if err != nil {
-			return fmt.Errorf("open %s", filename)
-		}
-		defer file.Close()
-
-		articlesCh, errCh = html.ParseReader(file, c.dict.IndexSettings())
+		articlesCh, errCh = html.ParseFiles(filenames, c.dict.IndexSettings())
 
 	case dictionary.Stardict:
-		file, err := os.Open(filename)
+		if len(filenames) != 1 {
+			return fmt.Errorf("expected exactly one file for stardict dict %s, got %v", c.dictID, filenames)
+		}
+		file, err := os.Open(filenames[0])
 		if err != nil {
-			return fmt.Errorf("open %s", filename)
+			return fmt.Errorf("open %s", filenames[0])
 		}
 		defer file.Close()
 
