@@ -504,6 +504,29 @@ func InitDictionaries() error {
 			},
 		},
 	})
+
+	abbrevs, err = loadDSLAbbrevs("mif2011/mif2011_abbr.txt")
+	if err != nil {
+		return fmt.Errorf("load mif2011 abbrevs: %w", err)
+	}
+	preface, err = loadPreface("mif2011/mif2011_pradmova.html")
+	if err != nil {
+		return fmt.Errorf("load mif2011 preface: %w", err)
+	}
+	dictionaries = append(dictionaries, HTML{
+		Common: Common{
+			id:        "mif2011",
+			indexID:   "mif2011",
+			boost:     1,
+			title:     "Міфалогія беларусаў: энцыклапедычны слоўнік (2011, актуальны правапіс)",
+			preface:   preface,
+			abbrevs:   abbrevs,
+			slugifier: "belarusian",
+			indexSettings: IndexSettings{
+				LowercaseSuggestions: true,
+			},
+		},
+	})
 	return nil
 }
 
