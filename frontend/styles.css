@@ -253,9 +253,6 @@ input[type="submit"] {
 .article p {
     margin: 0;
 }
-.article.hsbm img {
-    max-width: 100%;
-}
 .article.grammardb em {
     color: darkgrey;
 }
@@ -338,7 +335,9 @@ input[type="submit"] {
 .article.belen figure {
     text-align: center;
 }
-.article.belen figure img {
+.article.hsbm img,
+.article.belen figure img,
+.article.mif2011 figure img {
     max-width: 100%;
 }
 .article.belen table {
