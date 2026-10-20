@@ -30,11 +30,12 @@ fe-build:
 		--platform=node \
 		--target=node25 \
 		--outdir=frontend/dist \
+		--loader:.woff2=empty \
 		--jsx=automatic
 	rm frontend/dist/server.css
 
 	find frontend/dist/public/ -type f \
-		\( -name "*.js" -o -name "*.js.map" -o -name "*.css" -o -name "*.css.map" -o -name "*.png" \) \
+		\( -name "*.js" -o -name "*.js.map" -o -name "*.css" -o -name "*.css.map" -o -name "*.png" -o -name "*.woff2" \) \
 		-print0 | xargs -0 rm -f
 
 	npx esbuild frontend/browser.tsx frontend/theme.ts \
@@ -47,6 +48,7 @@ fe-build:
 		--outdir=frontend/dist/public \
 		--entry-names=[name]-[hash] \
 		--loader:.png=file \
+		--loader:.woff2=file \
 		--jsx=automatic
 
 	cp -v frontend/index.html frontend/dist/index.html

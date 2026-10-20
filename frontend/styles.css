@@ -1,3 +1,10 @@
+@font-face {
+    font-family: "Monomakh";
+    src: url("./fonts/Monomakh-Regular.woff2") format("woff2");
+    font-weight: normal;
+    font-style: normal;
+}
+
 :root {
     --color-darkblue: darkblue;
     --color-darkmagenta: darkmagenta;
@@ -31,6 +38,9 @@ a {
 }
 a:hover {
     text-decoration: underline;
+}
+:lang(cu) {
+    font-family: "Monomakh", serif;
 }
 
 textarea,
