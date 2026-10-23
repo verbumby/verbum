@@ -1,7 +1,7 @@
 import type * as React from 'react'
 import LoadingBarContainer from 'react-redux-loading-bar'
 import { Route, Routes } from 'react-router'
-import 'bootstrap/dist/css/bootstrap.css'
+import './bootstrap.gen.css'
 import './styles.css'
 
 import { Helmet } from 'react-helmet'
