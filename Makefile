@@ -19,6 +19,14 @@ fe-lint:
 	npx biome ci
 	npx tsgo --noEmit
 
+.PHONY: bootstrap-css
+bootstrap-css:
+	npx sass frontend/bootstrap.scss frontend/bootstrap.gen.css \
+		--load-path=node_modules \
+		--no-source-map \
+		--quiet-deps \
+		--silence-deprecation=import,global-builtin,color-functions
+
 .PHONY: fe-build
 fe-build:
 	npx esbuild frontend/server.tsx \

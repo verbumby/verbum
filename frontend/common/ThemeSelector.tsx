@@ -46,7 +46,7 @@ function ThemeSelector() {
     }, [])
 
     useEffect(() => {
-        import('bootstrap')
+        import('bootstrap/js/src/dropdown')
     }, [])
 
     if (!theme) {

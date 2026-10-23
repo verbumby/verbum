@@ -7,7 +7,7 @@
     },
     "files": {
         "ignoreUnknown": false,
-        "includes": ["frontend/**"]
+        "includes": ["frontend/**", "!frontend/bootstrap.gen.css"]
     },
     "formatter": {
         "enabled": true,
