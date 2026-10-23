@@ -329,6 +329,9 @@ input[type="submit"] {
     border-collapse: collapse;
     margin: 0.5em 0;
 }
+.article .table-responsive {
+    overflow-x: auto;
+}
 [data-bs-theme="dark"] .article [style="color: darkblue"],
 [data-bs-theme="dark"] .article [style="color: midnightblue"] {
     color: var(--color-midnightblue) !important;
