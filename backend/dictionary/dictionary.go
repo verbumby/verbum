@@ -63,6 +63,7 @@ func InitDictionaries() error {
 			title:     "Тлумачальны слоўнік беларускай літаратурнай мовы (І. Л. Капылоў, 2022, актуальны правапіс)",
 			abbrevs:   abbrevs,
 			preface:   preface,
+			scanURL:   "https://knihi.com/none/Tlumacalny_slounik_bielaruskaj_litaraturnaj_movy_djvu.zip.html",
 			slugifier: "none",
 			indexSettings: IndexSettings{
 				DictProvidesIDs:                  true,
